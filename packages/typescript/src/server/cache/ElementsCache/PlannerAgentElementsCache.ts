@@ -1,16 +1,25 @@
 import { xxh64Str } from "@js-fns/xxhash/str";
-import type { LchainSchema } from "../../../llm/LchainSchema.ts";
+import type { LanguageModelV4GenerateResult } from "@ai-sdk/provider";
 import { Logger } from "../../../telemetry/Logger.ts";
 import { PlannerAgent } from "../../agents/PlannerAgent.ts";
 import { BaseAgentElementsCache } from "./BaseAgentElementsCache.ts";
 
 const logger = Logger.get(import.meta.url);
+const CACHE_VERSION = "ai-sdk-v1";
 
 export class PlannerAgentElementsCache extends BaseAgentElementsCache<PlannerAgent.Meta> {
-  static isCacheable(generation: LchainSchema.StoredGeneration): boolean {
-    const parsed = PlannerAgent.Plan.safeParse(
-      generation.message?.data.additional_kwargs.parsed,
-    );
+  static isCacheable(generation: LanguageModelV4GenerateResult): boolean {
+    const text = generation.content
+      .filter((part) => part.type === "text")
+      .map((part) => part.text)
+      .join("");
+    let value: unknown;
+    try {
+      value = JSON.parse(text);
+    } catch {
+      return Boolean(text);
+    }
+    const parsed = PlannerAgent.Plan.safeParse(value);
     return !parsed.success || parsed.data.actions.some(Boolean);
   }
 
@@ -20,7 +29,7 @@ export class PlannerAgentElementsCache extends BaseAgentElementsCache<PlannerAge
     const { cacheHash, memoryKey, meta, generation } = props;
     const { goal } = meta;
 
-    if (!generation.message?.data.content) {
+    if (!generation.content.length) {
       logger.warn(
         `Skipping planner cache update: empty plan content for goal: ${goal.slice(0, 50)}...`,
       );
@@ -53,7 +62,7 @@ export class PlannerAgentElementsCache extends BaseAgentElementsCache<PlannerAge
     newElements: Array<Record<string, string | number>>,
   ): void {
     try {
-      const goalHash = xxh64Str(goal);
+      const goalHash = xxh64Str(CACHE_VERSION + goal);
 
       for (const [memoryKey, entry] of this.getEntries()) {
         const { cacheHash, agentKind, app } = entry;

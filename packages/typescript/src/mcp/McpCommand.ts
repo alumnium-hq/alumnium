@@ -15,7 +15,7 @@ export const McpCommand = CliCommand.define({
 
   action: async ({ logFilenameHint }) => {
     Logger.path = { filename: logFilenameHint };
-    await Logger.initEnv(logger);
+    await Logger.initEnv({ logger });
 
     const server = new McpServer();
     await server.run();

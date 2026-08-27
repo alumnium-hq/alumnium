@@ -95,6 +95,7 @@ public final class Model {
             Map.entry(Provider.MISTRALAI, "mistral-medium-2505"),
             Map.entry(Provider.OLLAMA, "qwen3.6"),
             Map.entry(Provider.OPENAI, "gpt-5-nano-2025-08-07"),
+            Map.entry(Provider.OPENROUTER, "openai/gpt-5-nano"),
             Map.entry(Provider.XAI, "grok-4-1-fast-reasoning"));
 
     public static String defaultFor(Provider provider) {

@@ -102,7 +102,7 @@ export const ServerCommand = CliCommand.define({
     if (Env.ALUMNIUM_SERVER_DAEMONIZE)
       Logger.path = { filename: logFilenameHint };
 
-    await Logger.initEnv(logger);
+    await Logger.initEnv({ logger });
 
     const {
       host,

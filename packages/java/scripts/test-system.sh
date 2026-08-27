@@ -5,12 +5,16 @@
 
 set -euo pipefail
 
-PKG_DIR="$(dirname "${BASH_SOURCE[0]}")/.."
-ALUMNIUM_TEST_ARG="${ALUMNIUM_TEST_ARG:-}"
-
 normalize_test_name() {
 	printf '%s' "$1" | tr '[:upper:]' '[:lower:]' | tr -cd '[:lower:][:digit:]'
 }
+
+sanitize_filename() {
+  printf '%s' "$1" | sed 's/[^[:alnum:]._-][^[:alnum:]._-]*/_/g'
+}
+
+PKG_DIR="$(dirname "${BASH_SOURCE[0]}")/.."
+ALUMNIUM_TEST_ARG="${ALUMNIUM_TEST_ARG:-}"
 
 failed=0
 run_tests() {
@@ -51,7 +55,7 @@ if [ -n "$ALUMNIUM_TEST_ARG" ]; then
 fi
 
 export ALUMNIUM_LOG_LEVEL=debug
-export ALUMNIUM_LOG_FILENAME="test-system-${ALUMNIUM_DRIVER}.log"
+export ALUMNIUM_LOG_FILENAME="test-system-${ALUMNIUM_DRIVER}-$(sanitize_filename "$ALUMNIUM_MODEL").log"
 export ALUMNIUM_PRUNE_LOGS=false
 export ALUMNIUM_LOG_BUFFER_SIZE=0
 export ALUMNIUM_LOG_FLUSH_INTERVAL=0

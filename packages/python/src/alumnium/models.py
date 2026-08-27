@@ -15,6 +15,7 @@ class Provider(Enum):
     MISTRALAI = "mistralai"
     OLLAMA = "ollama"
     OPENAI = "openai"
+    OPENROUTER = "openrouter"
     XAI = "xai"
 
 
@@ -32,6 +33,7 @@ class Name:
         Provider.MISTRALAI: "mistral-medium-2505",
         Provider.OLLAMA: "qwen3.6",
         Provider.OPENAI: "gpt-5-nano-2025-08-07",
+        Provider.OPENROUTER: "openai/gpt-5-nano",
         Provider.XAI: "grok-4-1-fast-reasoning",
     }
 

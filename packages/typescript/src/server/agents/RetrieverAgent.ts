@@ -1,9 +1,9 @@
-import { BaseChatModel } from "@langchain/core/language_models/chat_models";
-import type { MessageContent } from "@langchain/core/messages";
+import { type ModelMessage, Output } from "ai";
 import z from "zod";
+import type { Model } from "../../Model.ts";
+import type { LanguageModel } from "../../llm/LanguageModel.ts";
 import { pythonicFormat } from "../../pythonic/pythonicFormat.ts";
 import { Telemetry } from "../../telemetry/Telemetry.ts";
-import type { LlmContext } from "../LlmContext.ts";
 import { BaseAgent } from "./BaseAgent.ts";
 import { txt } from "smollit";
 
@@ -59,14 +59,8 @@ export class RetrieverAgent extends BaseAgent {
 
   static readonly EXCLUDE_ATTRIBUTES = new Set(["id"]);
 
-  chain;
-
-  constructor(llmContext: LlmContext, llm: BaseChatModel) {
-    super(llmContext);
-
-    this.chain = llm.withStructuredOutput(RetrievedInformation, {
-      includeRaw: true,
-    });
+  constructor(model: Model, llm: LanguageModel) {
+    super(model, llm);
   }
 
   @span("agent.invoke", (props) => ({
@@ -101,14 +95,15 @@ export class RetrieverAgent extends BaseAgent {
     prompt += "\n";
     prompt += `Retrieve the following information: ${statement}`;
 
-    const humanMessages: MessageContent = [{ type: "text", text: prompt }];
+    const humanContent: Extract<ModelMessage, { role: "user" }>["content"] = [
+      { type: "text", text: prompt },
+    ];
 
     if (screenshot) {
-      humanMessages.push({
-        type: "image_url",
-        image_url: {
-          url: `data:image/png;base64,${screenshot}`,
-        },
+      humanContent.push({
+        type: "file",
+        mediaType: "image/png",
+        data: screenshot,
       });
     }
 
@@ -121,19 +116,14 @@ export class RetrieverAgent extends BaseAgent {
       screenshot,
     };
 
-    const response = await this.invokeChain(
-      this.chain,
-      [
-        [
-          "system",
-          pythonicFormat(this.prompts.system, {
-            separator: RetrieverAgent.#separatorSeq,
-          }),
-        ],
-        ["human", humanMessages],
-      ],
+    const response = await this.invokeModel({
+      instructions: pythonicFormat(this.prompts.system, {
+        separator: RetrieverAgent.#separatorSeq,
+      }),
+      messages: [{ role: "user", content: humanContent }],
+      output: Output.object({ schema: RetrievedInformation }),
       meta,
-    );
+    });
 
     this.logData(logger, "out", {
       Result: response.structured,

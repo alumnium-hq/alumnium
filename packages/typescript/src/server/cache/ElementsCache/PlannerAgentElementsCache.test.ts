@@ -1,7 +1,8 @@
+import { xxh64Str } from "@js-fns/xxhash/str";
 import { describe, expect, it } from "vitest";
 import { setupBeforeEach } from "../../../../tests/unit/mocks.ts";
 import { AppId } from "../../../AppId.ts";
-import { LchainFactory } from "../../../llm/__factories__/LchainFactory.ts";
+import { AiSdkFactory } from "../../../llm/__factories__/AiSdkFactory.ts";
 import type { BaseAgent } from "../../agents/BaseAgent.ts";
 import { SessionFactory } from "../../session/__factories__/SessionFactory.ts";
 import type { ElementsCache } from "./ElementsCache.ts";
@@ -25,6 +26,7 @@ describe("PlannerAgentElementsCache", () => {
 
   it("stores planner generation with empty elements", async () => {
     const { memoryKey, plannerCache } = setup.cur;
+    const generation = AiSdkFactory.generateResult({ text: "step1\nstep2" });
 
     await plannerCache.update({
       memoryKey,
@@ -34,12 +36,12 @@ describe("PlannerAgentElementsCache", () => {
         goal: "login to app" as BaseAgent.Goal,
         treeXml: "<button id='1'>Login</button>",
       },
-      generation: LchainFactory.storedGeneration({ text: "step1\nstep2" }),
+      generation,
     });
 
     expect(plannerCache.getRecord(memoryKey)).toEqual({
       cacheHash: "hash" as ElementsCache.CacheHash,
-      generation: LchainFactory.storedGeneration({ text: "step1\nstep2" }),
+      generation,
       elements: [],
       agentKind: "planner",
       app: AppId.parse("test-app"),
@@ -58,7 +60,7 @@ describe("PlannerAgentElementsCache", () => {
         goal: "login to app" as BaseAgent.Goal,
         treeXml: "<button id='1'>Login</button>",
       },
-      generation: LchainFactory.storedGeneration({ text: "" }),
+      generation: AiSdkFactory.generateResult(),
     });
 
     expect(plannerCache.getEntries()).toEqual([]);
@@ -75,18 +77,11 @@ describe("PlannerAgentElementsCache", () => {
         goal: "click upload" as BaseAgent.Goal,
         treeXml: "<button id='1'>Upload</button>",
       },
-      generation: LchainFactory.storedGeneration({
-        text: '{"actions":[]}',
-        message: {
-          data: {
-            additional_kwargs: {
-              parsed: {
-                explanation: "No matching element",
-                actions: [],
-              },
-            },
-          },
-        },
+      generation: AiSdkFactory.generateResult({
+        text: JSON.stringify({
+          explanation: "No matching element",
+          actions: [],
+        }),
       }),
     });
 
@@ -94,31 +89,24 @@ describe("PlannerAgentElementsCache", () => {
   });
 
   it("allows element-free planner generation with actions", () => {
-    const generation = LchainFactory.storedGeneration({
-      text: '{"actions":["navigate"]}',
-      message: {
-        data: {
-          additional_kwargs: {
-            parsed: {
-              explanation: "Navigate directly",
-              actions: ['navigate to "https://example.com" URL'],
-            },
-          },
-        },
-      },
+    const generation = AiSdkFactory.generateResult({
+      text: JSON.stringify({
+        explanation: "Navigate directly",
+        actions: ['navigate to "https://example.com" URL'],
+      }),
     });
 
     expect(PlannerAgentElementsCache.isCacheable(generation)).toBe(true);
   });
 
-  it("updates elements while deduplicating by non-index attrs", async () => {
+  it("updates elements while deduplicating by non-index attrs", () => {
     const { plannerCache, app } = setup.cur;
-
-    const plannerHash = "planner-hash" as ElementsCache.CacheHash;
+    const plannerHash = xxh64Str("ai-sdk-v1login") as ElementsCache.CacheHash;
     const plannerKey = "planner-memory" as ElementsCache.MemoryKey;
+    const generation = AiSdkFactory.generateResult({ text: "step1" });
 
     plannerCache.setRecord({
-      generation: LchainFactory.storedGeneration({ text: "step1" }),
+      generation,
       memoryKey: plannerKey,
       cacheHash: plannerHash,
       agentKind: "planner",
@@ -133,7 +121,7 @@ describe("PlannerAgentElementsCache", () => {
 
     expect(plannerCache.getRecord(plannerKey)).toEqual({
       cacheHash: plannerHash,
-      generation: LchainFactory.storedGeneration({ text: "step1" }),
+      generation,
       elements: [{ role: "button", name: "Login", index: 0 }],
       agentKind: "planner",
       app,

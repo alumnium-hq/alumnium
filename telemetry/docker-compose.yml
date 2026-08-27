@@ -12,6 +12,6 @@ services:
       GF_AUTH_DISABLE_LOGIN_FORM: "true"
       GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: /otel-lgtm/grafana/conf/provisioning/dashboards/custom/main.json
     volumes:
-      - ../.alumnium/telemetry:/data
-      - ./provisioning/dashboards/main.json:/otel-lgtm/grafana/conf/provisioning/dashboards/custom/main.json:ro
-      - ./provisioning/dashboards/provisioning.yaml:/otel-lgtm/grafana/conf/provisioning/dashboards/custom.yaml:ro
+      - ../.alumnium/telemetry:/data:Z
+      - ./provisioning/dashboards/main.json:/otel-lgtm/grafana/conf/provisioning/dashboards/custom/main.json:ro,Z
+      - ./provisioning/dashboards/provisioning.yaml:/otel-lgtm/grafana/conf/provisioning/dashboards/custom.yaml:ro,Z

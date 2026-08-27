@@ -9,3 +9,5 @@ ALUMNIUM_LOG_MAX_STR_LENGTH = false
 ALUMNIUM_DEV_CAPTURE_TREES = true
 ALUMNIUM_TEST_MAX_CONCURRENCY = 16
 ALUMNIUM_CLI_CMD = "mise //packages/typescript:dev/cli"
+# Uncomment to use Podman instead of Docker:
+# DOCKER_CLI_CMD = "podman"

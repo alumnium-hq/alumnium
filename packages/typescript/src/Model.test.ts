@@ -7,6 +7,10 @@ describe("Model.parse", () => {
       provider: "openai",
       name: "gpt-5-nano-2025-08-07",
     });
+    expect(Model.parse("openrouter")).toEqual({
+      provider: "openrouter",
+      name: "openai/gpt-5-nano",
+    });
   });
 
   it("parses a single-segment model name", () => {
@@ -17,9 +21,9 @@ describe("Model.parse", () => {
   });
 
   it("keeps slashes in the model name (e.g. OpenRouter/Fireworks ids)", () => {
-    expect(Model.parse("openai/xiaomi/mimo-v2.5")).toEqual({
-      provider: "openai",
-      name: "xiaomi/mimo-v2.5",
+    expect(Model.parse("openrouter/anthropic/claude-sonnet-4.5")).toEqual({
+      provider: "openrouter",
+      name: "anthropic/claude-sonnet-4.5",
     });
   });
 
@@ -34,8 +38,10 @@ describe("Model.parse", () => {
 
 describe("Model.toString", () => {
   it("round-trips a model id whose name contains slashes", () => {
-    const model = Model.parse("openai/xiaomi/mimo-v2.5");
-    expect(Model.toString(model)).toBe("openai/xiaomi/mimo-v2.5");
+    const model = Model.parse("openrouter/anthropic/claude-sonnet-4.5");
+    expect(Model.toString(model)).toBe(
+      "openrouter/anthropic/claude-sonnet-4.5",
+    );
     expect(Model.parse(Model.toString(model))).toEqual(model);
   });
 });

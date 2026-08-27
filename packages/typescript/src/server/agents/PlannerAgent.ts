@@ -1,17 +1,11 @@
-import { BaseChatModel } from "@langchain/core/language_models/chat_models";
-import {
-  AIMessageChunk,
-  BaseMessage,
-  type MessageStructure,
-} from "@langchain/core/messages";
-import { ChatPromptTemplate } from "@langchain/core/prompts";
-import { Runnable } from "@langchain/core/runnables";
+import { Output } from "ai";
 import z from "zod";
+import type { Model } from "../../Model.ts";
+import type { LanguageModel } from "../../llm/LanguageModel.ts";
 import { pythonicFormat } from "../../pythonic/pythonicFormat.ts";
 import { Telemetry } from "../../telemetry/Telemetry.ts";
 import { NavigateToUrlTool } from "../../tools/NavigateToUrlTool.ts";
 import { UploadTool } from "../../tools/UploadTool.ts";
-import type { LlmContext } from "../LlmContext.ts";
 import { BaseAgent } from "./BaseAgent.ts";
 import { SwitchToNextTabTool } from "../../tools/SwitchToNextTabTool.ts";
 import { SwitchToPreviousTabTool } from "../../tools/SwitchToPreviousTabTool.ts";
@@ -21,20 +15,6 @@ const { span } = tracer.dec();
 
 export namespace PlannerAgent {
   export type Meta = z.infer<typeof PlannerAgent.Meta>;
-
-  export interface ChainInput {
-    goal: string;
-    accessibility_tree: string;
-  }
-
-  export type ChainOutput = ChainOutputStructured | ChainOutputUnstructured;
-
-  export interface ChainOutputStructured {
-    raw: BaseMessage;
-    parsed: Plan;
-  }
-
-  export type ChainOutputUnstructured = AIMessageChunk<MessageStructure>;
 
   export type Plan = z.infer<typeof PlannerAgent.Plan>;
 }
@@ -98,9 +78,7 @@ I don't need to click the button first, as the upload action will handle that.
 Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
 `.trim();
 
-  llm: BaseChatModel;
   toolNames: string[];
-  chain!: Runnable<PlannerAgent.ChainInput, PlannerAgent.ChainOutput>;
   // TODO: There's a bug in Bun that results in `#baseExamples` compiled to
   // `__privateGet(this, _baseExamples)` which causes a runtime error.
   // Figure out a solution to use private fields without breaking Bun
@@ -108,9 +86,8 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
   private baseExamples = "";
   private extraExamples = "";
 
-  constructor(llmContext: LlmContext, llm: BaseChatModel, toolNames: string[]) {
-    super(llmContext);
-    this.llm = llm;
+  constructor(model: Model, llm: LanguageModel, toolNames: string[]) {
+    super(model, llm);
 
     // Convert tool class names to human-readable names
     // E.g., "NavigateToUrlTool" -> "navigate to url"
@@ -137,30 +114,10 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
     }
 
     this.extraExamples = this.baseExamples;
-
-    this.#generateChain();
-  }
-
-  #generateChain(): void {
-    const finalPrompt = ChatPromptTemplate.fromMessages([
-      [
-        "system",
-        pythonicFormat(this.prompts.system, {
-          tools: this.toolNames.join(", "),
-          extra_examples: this.extraExamples,
-        }),
-      ],
-      ["human", this.prompts["user"]],
-    ]);
-
-    this.chain = finalPrompt.pipe(
-      this.llm.withStructuredOutput(PlannerAgent.Plan, { includeRaw: true }),
-    );
   }
 
   clearExamples(): void {
     this.extraExamples = this.baseExamples;
-    this.#generateChain();
     logger.info("Examples cleared.");
   }
 
@@ -170,7 +127,6 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
     logger.debug(`  -> Actions: ${actions.join(", ")}`);
 
     this.extraExamples += `\n\n${PlannerAgent.#formatExample(goal, actions)}`;
-    this.#generateChain();
 
     logger.info("Example added.");
   }
@@ -210,11 +166,23 @@ Actions: [${actionsStr}]`.trim();
       treeXml,
     };
 
-    const input = {
-      goal,
-      accessibility_tree: treeXml,
-    };
-    const result = await this.invokeChain(this.chain, input, meta);
+    const result = await this.invokeModel({
+      instructions: pythonicFormat(this.prompts.system, {
+        tools: this.toolNames.join(", "),
+        extra_examples: this.extraExamples,
+      }),
+      messages: [
+        {
+          role: "user",
+          content: pythonicFormat(this.prompts.user, {
+            goal,
+            accessibility_tree: treeXml,
+          }),
+        },
+      ],
+      output: Output.object({ schema: PlannerAgent.Plan }),
+      meta,
+    });
 
     const structured = result.structured as PlannerAgent.Plan;
     this.logData(logger, "out", {

@@ -4,7 +4,7 @@ import { canonize } from "@js-fns/canon";
 import { xxh32Str } from "@js-fns/xxhash/str";
 import z from "zod";
 import { Driver } from "./drivers/Driver.ts";
-import { Model } from "./Model.ts";
+import { defaultModelProvider, Model } from "./Model.ts";
 import { LoggerSchema } from "./telemetry/LoggerSchema.ts";
 import {
   arrayString,
@@ -14,6 +14,8 @@ import {
 } from "./utils/schema.ts";
 import { maskString } from "./utils/string.ts";
 import os from "node:os";
+
+let logEnabled = true;
 
 export namespace Env {
   export type VarsRecord = Record<string, unknown>;
@@ -79,7 +81,13 @@ export const Env = {
   get ALUMNIUM_LOG_DEBUG_EXTRA() {
     return envVar(
       "ALUMNIUM_LOG_DEBUG_EXTRA",
-      arrayString(LoggerSchema.DebugExtra).default([]),
+      arrayString(LoggerSchema.DebugExtraWithLegacy)
+        .transform((extras) => [
+          ...new Set(
+            extras.map((extra) => (extra === "langchain" ? "ai-sdk" : extra)),
+          ),
+        ])
+        .default([]),
     );
   },
 
@@ -142,13 +150,24 @@ export const Env = {
         .union([
           Model.Provider,
           z.templateLiteral([Model.Provider, "/", z.string()]),
+          z.literal("github"),
+          z.templateLiteral(["github/", z.string()]),
         ])
         .optional()
-        .transform((val): Model => {
-          const defaultProvider: Model.Provider = Env.GITHUB_ACTIONS
-            ? "github"
-            : "openai";
-          return Model.parse(typeof val === "string" ? val : defaultProvider);
+        .transform((val, ctx): Model => {
+          if (val === "github" || val?.startsWith("github/")) {
+            ctx.issues.push({
+              code: "custom",
+              input: val,
+              message:
+                "GitHub Models were retired on July 30, 2026: https://docs.github.com/en/github-models",
+            });
+            return z.NEVER;
+          }
+
+          return Model.parse(
+            typeof val === "string" ? val : defaultModelProvider,
+          );
         }),
     );
   },
@@ -178,15 +197,28 @@ export const Env = {
   },
 
   get ALUMNIUM_MODEL_RETRIES() {
-    return envVar("ALUMNIUM_MODEL_RETRIES", z.coerce.number().default(8));
+    return envVar(
+      "ALUMNIUM_MODEL_RETRIES",
+      z.coerce.number().int().positive().default(8),
+    );
   },
 
   get ALUMNIUM_MODEL_TIMEOUT() {
-    return envVar("ALUMNIUM_MODEL_TIMEOUT", z.coerce.number().default(90));
+    return envVar(
+      "ALUMNIUM_MODEL_TIMEOUT",
+      z.coerce.number().positive().default(90),
+    );
   },
 
   get ALUMNIUM_OLLAMA_URL() {
     return envVar("ALUMNIUM_OLLAMA_URL", z.httpUrl().optional());
+  },
+
+  get LANGCHAIN_CODEX_LITTERBOX_UPLOAD() {
+    return envVar(
+      "LANGCHAIN_CODEX_LITTERBOX_UPLOAD",
+      z.stringbool().default(false),
+    );
   },
 
   get ALUMNIUM_PLANNER() {
@@ -392,6 +424,10 @@ export const Env = {
     );
   },
 
+  get OPENROUTER_API_KEY() {
+    return secretEnvVar("OPENROUTER_API_KEY", z.string().optional());
+  },
+
   get XAI_API_KEY() {
     return secretEnvVar("XAI_API_KEY", z.string().optional());
   },
@@ -440,6 +476,14 @@ export const Env = {
 
     return { vars, valid };
   },
+
+  get log() {
+    return logEnabled;
+  },
+
+  set log(value: boolean) {
+    logEnabled = value;
+  },
 };
 
 function secretEnvVar<Type>(name: string, Schema: z.ZodType<Type>): Type {
@@ -460,10 +504,12 @@ function envVar<Type>(
       const maskedVal = maskedValue(envVal, isSecretVar);
       const message = `Invalid environment variable ${name} value \`${maskedVal}\``;
 
-      if (envLogger) envLogger.error(message);
-      else console.error(`${ansi.red("Error:")} ${message}`);
+      if (Env.log) {
+        if (envLogger) envLogger.error(message);
+        else console.error(`${ansi.red("Error:")} ${message}`);
+      }
 
-      throw parsedVar.error;
+      throw new Error(message);
     }
 
     const val = parsedVar.data;
@@ -532,10 +578,12 @@ function expandEnvCommand(
       stderr ? `: ${stderr}` : ""
     }`;
 
-    if (envLogger) envLogger.error(message);
-    else console.error(`${ansi.red("Error:")} ${message}`);
+    if (Env.log) {
+      if (envLogger) envLogger.error(message);
+      else console.error(`${ansi.red("Error:")} ${message}`);
+    }
 
-    throw error;
+    throw new Error(message);
   }
 }
 

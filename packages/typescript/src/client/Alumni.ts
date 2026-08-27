@@ -1,4 +1,3 @@
-import type { BaseChatModel } from "@langchain/core/language_models/chat_models";
 import { always } from "alwaysly";
 import type { Page } from "playwright-core";
 import { WebDriver } from "selenium-webdriver";
@@ -16,6 +15,7 @@ import {
 } from "../drivers/index.ts";
 import { Env } from "../Env.ts";
 import { LlmUsageStats } from "../llm/llmSchema.ts";
+import type { LanguageModel } from "../llm/LanguageModel.ts";
 import { Model } from "../Model.ts";
 import { Telemetry } from "../telemetry/Telemetry.ts";
 import type { Tracer } from "../telemetry/Tracer.ts";
@@ -45,7 +45,7 @@ export namespace Alumni {
   export interface Options {
     url?: string | undefined;
     model?: Model | undefined;
-    llm?: BaseChatModel | undefined;
+    llm?: LanguageModel | undefined;
     extraTools?: ToolClass[];
     planner?: boolean | undefined;
     changeAnalysis?: boolean | undefined;
@@ -73,7 +73,7 @@ export class Alumni {
   private tools: Record<string, ToolClass> = {};
   public cache: Cache;
   private changeAnalysis: boolean;
-  private llm: BaseChatModel | undefined;
+  private llm: LanguageModel | undefined;
 
   constructor(driver: Alumni.Driver, options: Alumni.Options = {}) {
     logger.debug("Initializing Alumni with options: {options}", { options });

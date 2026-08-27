@@ -32,7 +32,9 @@ export class ActorAgentElementsCache extends BaseAgentElementsCache<ActorAgent.M
     const { cacheHash, memoryKey, meta, generation } = props;
     const { goal, step, treeXml } = meta;
 
-    const toolCalls = generation.message?.data.tool_calls;
+    const toolCalls = generation.content.filter(
+      (part) => part.type === "tool-call",
+    );
     if (!toolCalls?.length) {
       logger.debug(
         `Skipping actor cache update: no tool calls for step: "${step.slice(0, 50)}..."`,
@@ -59,6 +61,12 @@ export class ActorAgentElementsCache extends BaseAgentElementsCache<ActorAgent.M
     logger.debug(`Caching actor response for step: "${step.slice(0, 50)}..."`);
 
     const masked = ElementsCacheMask.mask(generation, elIds);
+    if (!masked) {
+      logger.debug(
+        `Skipping actor cache update: malformed tool input for step: "${step.slice(0, 50)}..."`,
+      );
+      return;
+    }
 
     this.setRecord({
       cacheHash,

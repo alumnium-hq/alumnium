@@ -35,6 +35,11 @@ export namespace Logger {
   }
 
   export type Sinks = Record<string, Sink>;
+
+  export interface InitEnvProps {
+    logger?: LoggerSchema.Like | undefined;
+    quiet?: boolean | undefined;
+  }
 }
 
 const logPathTemplateVars = new Set<Env.Var>(["VITEST_WORKER_ID"]);
@@ -82,13 +87,16 @@ export abstract class Logger {
     return boundLogger as LoggerSchema.Like;
   }
 
-  static async initEnv(logger?: LoggerSchema.Like): Promise<void> {
+  static async initEnv(props?: Logger.InitEnvProps): Promise<void> {
+    const { logger, quiet } = props || {};
     const envLogger = logger || this.#logger();
 
     const { vars, valid } = Env.init(envLogger);
-    envLogger.debug("Environment variables: {vars}", {
-      vars: this.debugExtra("env", vars),
-    });
+    if (!quiet) {
+      envLogger.debug("Environment variables: {vars}", {
+        vars: this.debugExtra("env", vars),
+      });
+    }
 
     if (!valid) {
       await this.#flush();

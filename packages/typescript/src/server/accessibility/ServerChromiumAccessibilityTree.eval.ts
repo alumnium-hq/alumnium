@@ -1,12 +1,7 @@
 import { evalite } from "evalite";
 import { reportTrace } from "evalite/traces";
-import { nanoid } from "nanoid";
-import type { AppId } from "../../AppId.ts";
 import { Logger } from "../../telemetry/Logger.ts";
-import { NullCache } from "../cache/NullCache.ts";
-import { LlmContext } from "../LlmContext.ts";
 import { LlmFactory } from "../LlmFactory.ts";
-import { SessionContext } from "../session/SessionContext.ts";
 import { Env } from "../../Env.ts";
 import { RetrieverAgent } from "../agents/RetrieverAgent.ts";
 import * as fs from "node:fs/promises";
@@ -110,14 +105,8 @@ evalite("ServerChromiumAccessibilityTree", {
 
 async function runRetriever(input: RetrieverAgent.Props) {
   const model = Env.ALUMNIUM_MODEL;
-  const llmContext = new LlmContext(model);
-  const sessionContext = new SessionContext({
-    app: "eval" as AppId,
-    sessionId: nanoid(),
-  });
-  const cache = new NullCache(sessionContext);
-  const llm = LlmFactory.createLlm(model, cache);
-  const agent = new RetrieverAgent(llmContext, llm);
+  const llm = LlmFactory.createLlm(model);
+  const agent = new RetrieverAgent(model, llm);
 
   const start = performance.now();
   const result = await agent.invoke(input);

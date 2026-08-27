@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { pushMock, setupBeforeEach } from "../../../../tests/unit/mocks.ts";
 import { AppId } from "../../../AppId.ts";
-import { LchainFactory } from "../../../llm/__factories__/LchainFactory.ts";
+import { AiSdkFactory } from "../../../llm/__factories__/AiSdkFactory.ts";
 import type { BaseAgent } from "../../agents/BaseAgent.ts";
 import { SessionFactory } from "../../session/__factories__/SessionFactory.ts";
 import { ActorAgentElementsCache } from "./ActorAgentElementsCache.ts";
@@ -41,22 +41,21 @@ describe("ActorAgentElementsCache", () => {
         step: "click login button" as BaseAgent.Step,
         treeXml: '<button id="1" name="Login"/><input id="2" name="username"/>',
       },
-      generation: LchainFactory.storedGenerationWith({
+      generation: AiSdkFactory.generateResult({
         toolCalls: [
-          LchainFactory.toolCall({ name: "ClickTool", args: { id: 1 } }),
+          AiSdkFactory.toolCall({ name: "ClickTool", args: { id: 1 } }),
         ],
       }),
     });
 
-    const entry = actorCache.getRecord(memoryKey);
-    expect(entry).toEqual({
+    expect(actorCache.getRecord(memoryKey)).toEqual({
       agentKind: "actor",
       app,
       cacheHash,
       elements: [{ index: 0, name: "Login", role: "button" }],
-      generation: LchainFactory.storedGenerationWith({
+      generation: AiSdkFactory.generateResult({
         toolCalls: [
-          LchainFactory.toolCall({
+          AiSdkFactory.toolCall({
             args: { id: "<MASKED_0>" },
             name: "ClickTool",
           }),
@@ -81,7 +80,7 @@ describe("ActorAgentElementsCache", () => {
         step: "click login button" as BaseAgent.Step,
         treeXml: '<button id="1" name="Login"/>',
       },
-      generation: LchainFactory.storedGeneration(),
+      generation: AiSdkFactory.generateResult(),
     });
 
     expect(actorCache.getEntries()).toEqual([]);
@@ -99,9 +98,32 @@ describe("ActorAgentElementsCache", () => {
         step: "navigate back" as BaseAgent.Step,
         treeXml: '<button id="1" name="Login"/>',
       },
-      generation: LchainFactory.storedGenerationWith({
+      generation: AiSdkFactory.generateResult({
         toolCalls: [
-          LchainFactory.toolCall({ name: "NavigateBackTool", args: {} }),
+          AiSdkFactory.toolCall({ name: "NavigateBackTool", args: {} }),
+        ],
+      }),
+    });
+
+    expect(actorCache.getEntries()).toEqual([]);
+  });
+
+  it("skips caching atomically when any tool input is malformed", async () => {
+    const { actorCache, cacheHash, memoryKey } = setup.cur;
+
+    await actorCache.update({
+      memoryKey,
+      cacheHash,
+      meta: {
+        kind: "actor",
+        goal: "login" as BaseAgent.Goal,
+        step: "click login button" as BaseAgent.Step,
+        treeXml: '<button id="1" name="Login"/>',
+      },
+      generation: AiSdkFactory.generateResult({
+        toolCalls: [
+          AiSdkFactory.toolCall({ args: { id: 1 } }),
+          AiSdkFactory.toolCall({ input: "{" }),
         ],
       }),
     });
@@ -126,10 +148,10 @@ describe("ActorAgentElementsCache", () => {
         step: "click login button" as BaseAgent.Step,
         treeXml: '<button id="10" name="Login"/><button id="11" name="Login"/>',
       },
-      generation: LchainFactory.storedGenerationWith({
+      generation: AiSdkFactory.generateResult({
         toolCalls: [
-          LchainFactory.toolCall({ name: "ClickTool", args: { id: 10 } }),
-          LchainFactory.toolCall({ name: "ClickTool", args: { id: 11 } }),
+          AiSdkFactory.toolCall({ name: "ClickTool", args: { id: 10 } }),
+          AiSdkFactory.toolCall({ name: "ClickTool", args: { id: 11 } }),
         ],
       }),
     });

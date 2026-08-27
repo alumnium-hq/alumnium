@@ -116,12 +116,16 @@ Select AI provider and model to use.
 | aws_meta      | us.meta.llama4-maverick-17b-instruct-v1:0   | Serverless Amazon Bedrock API.                                           |
 | codex         | gpt-5.4-mini                                | OpenAI models via ChatGPT Plus/Pro OAuth.                                |
 | deepseek      | deepseek-reasoner                           | DeepSeek Platform.                                                       |
-| github        | gpt-4o-mini                                 | GitHub Models API.                                                       |
 | google        | gemini-3.1-flash-lite                       | Google AI Studio API.                                                    |
 | mistralai     | mistral-medium-2505                         | Mistral AI Studio API.                                                   |
 | ollama        | qwen3.6:35b                                 | Local model inference with Ollama.                                       |
 | openai        | gpt-5-nano-2025-08-07                       | OpenAI API.                                                              |
+| openrouter    | openai/gpt-5-nano                           | Models routed through OpenRouter.                                        |
 | xai           | grok-4-1-fast-reasoning                     | xAI API.                                                                 |
+
+:::caution[GitHub Models retired]
+The `github` provider is no longer supported because [GitHub Models][5] was fully retired on July 30, 2026.
+:::
 
 You can also override the LLM for each provider by passing it after `/`.
 
@@ -235,7 +239,7 @@ Sets the URL for Ollama models if you host them externally on a server.
 
 ### `OPENAI_API_KEY`
 
-API key used when `ALUMNIUM_MODEL` is set to `openai` (or `github`, which authenticates with a GitHub personal access token via this variable).
+API key used when `ALUMNIUM_MODEL` is set to `openai`.
 
 ### `OPENAI_CUSTOM_URL`
 
@@ -249,7 +253,12 @@ JSON string of additional headers to send with OpenAI requests (e.g. `{"x-custom
 
 API key used when `ALUMNIUM_MODEL` is set to `xai`.
 
+### `OPENROUTER_API_KEY`
+
+API key used when `ALUMNIUM_MODEL` is set to `openrouter`.
+
 [1]: https://docs.github.com/en/actions/monitoring-and-troubleshooting-workflows/troubleshooting-workflows/enabling-debug-logging
 [2]: https://github.com/alumnium-hq/alumnium/issues/112
 [3]: /docs/guides/mcp
 [4]: https://litterbox.catbox.moe
+[5]: https://docs.github.com/en/github-models

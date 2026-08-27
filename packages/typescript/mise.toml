@@ -90,51 +90,118 @@ arg "<driver>" help="Driver to use for system tests" {
   default "selenium"
 }
 arg "[test]" help="System test to run" default=""
+flag "--model <model>" env="ALUMNIUM_MODEL"
 '''
-run = "ALUMNIUM_DRIVER={{usage.driver}} ALUMNIUM_TEST_ARG={{usage.test}} ./scripts/test-system.sh"
+run = '''
+#!/usr/bin/env bash
+ALUMNIUM_DRIVER={{usage.driver}} \
+  ALUMNIUM_MODEL={{usage.model}} \
+  ALUMNIUM_TEST_ARG={{usage.test}} \
+  ./scripts/test-system.sh
+'''
 
 [tasks."test/system:all"]
 usage = '''
 arg "[test]" help="System test to run" default=""
+flag "--model <model>" env="ALUMNIUM_MODEL"
 '''
 run = [
   { task = "test/system:selenium", args = [
     "{{usage.test}}",
+    "--model",
+    "{{usage.model}}",
   ] },
   { task = "test/system:playwright", args = [
     "{{usage.test}}",
+    "--model",
+    "{{usage.model}}",
   ] },
   { task = "test/system:appium-ios", args = [
     "{{usage.test}}",
+    "--model",
+    "{{usage.model}}",
   ] },
   { task = "test/system:appium-android", args = [
     "{{usage.test}}",
+    "--model",
+    "{{usage.model}}",
   ] },
+]
+
+
+[tasks."test/system:all-models"]
+description = "Run system tests for all models."
+# TODO: Some models aren't configured in the dev env. Add missing keys and env
+# vars if applicable, then re-enable or remove commented system tests below.
+run = [
+  # { task = "test/system:playwright", env = { ALUMNIUM_MODEL = "azure_foundry" } }, # Missing key
+  { task = "test/system:playwright", env = { ALUMNIUM_MODEL = "azure_openai" } },
+  { task = "test/system:playwright", env = { ALUMNIUM_MODEL = "anthropic" } },
+  { task = "test/system:playwright", env = { ALUMNIUM_MODEL = "aws_anthropic" } },
+  { task = "test/system:playwright", env = { ALUMNIUM_MODEL = "aws_meta" } },
+  { task = "test/system:playwright", env = { ALUMNIUM_MODEL = "deepseek" } },
+  { task = "test/system:playwright", env = { ALUMNIUM_MODEL = "google" } },
+  { task = "test/system:playwright", env = { ALUMNIUM_MODEL = "mistralai" } },
+  { task = "test/system:playwright", env = { ALUMNIUM_MODEL = "ollama" } },
+  { task = "test/system:playwright", env = { ALUMNIUM_MODEL = "openai" } },
+  { task = "test/system:playwright", env = { ALUMNIUM_MODEL = "xai" } },
 ]
 
 [tasks."test/system:selenium"]
 usage = '''
 arg "[test]" help="System test to run" default=""
+flag "--model <model>" help="Model to use for selenium tests" env="ALUMNIUM_MODEL"
 '''
-run = [{ task = "test/system", args = ["selenium", "{{usage.test}}"] }]
+run = [
+  { task = "test/system", args = [
+    "selenium",
+    "{{usage.test}}",
+    "--model",
+    "{{usage.model}}",
+  ] },
+]
 
 [tasks."test/system:playwright"]
 usage = '''
 arg "[test]" help="System test to run" default=""
+flag "--model <model>" help="Model to use for playwright tests" env="ALUMNIUM_MODEL"
 '''
-run = [{ task = "test/system", args = ["playwright", "{{usage.test}}"] }]
+run = [
+  { task = "test/system", args = [
+    "playwright",
+    "{{usage.test}}",
+    "--model",
+    "{{usage.model}}",
+  ] },
+]
 
 [tasks."test/system:appium-ios"]
 usage = '''
 arg "[test]" help="System test to run" default=""
+flag "--model <model>" help="Model to use for appium-ios tests" env="ALUMNIUM_MODEL"
 '''
-run = [{ task = "test/system", args = ["appium-ios", "{{usage.test}}"] }]
+run = [
+  { task = "test/system", args = [
+    "appium-ios",
+    "{{usage.test}}",
+    "--model",
+    "{{usage.model}}",
+  ] },
+]
 
 [tasks."test/system:appium-android"]
 usage = '''
 arg "[test]" help="System test to run" default=""
+flag "--model <model>" help="Model to use for appium-android tests" env="ALUMNIUM_MODEL"
 '''
-run = [{ task = "test/system", args = ["appium-android", "{{usage.test}}"] }]
+run = [
+  { task = "test/system", args = [
+    "appium-android",
+    "{{usage.test}}",
+    "--model",
+    "{{usage.model}}",
+  ] },
+]
 
 [tasks."test/waiter"]
 usage = '''
@@ -156,7 +223,7 @@ run = [{ task = "test/waiter selenium" }]
 run = [{ task = "test/waiter playwright" }]
 
 [tasks."test/cache"]
-description = "Run cache tests checking if Alumnium cache correctly generated for given model. It indirectly verified LangChain Zod schemas parsing."
+description = "Run cache tests checking if Alumnium cache is correctly generated for a given model."
 usage = '''
 arg "<model>" help="Model to use for cache tests" {
   default "azure_openai"
@@ -181,11 +248,10 @@ run = [
   { task = "test/cache:aws_anthropic" },
   { task = "test/cache:aws_meta" },
   { task = "test/cache:deepseek" },
-  # { task = "test/cache:github" }, # Not supported
   { task = "test/cache:google" },
   { task = "test/cache:mistralai" },
-  # { task = "test/cache:ollama" }, # Fails
-  # { task = "test/cache:openai" }, # Missing key
+  { task = "test/cache:ollama" },
+  { task = "test/cache:openai" },
   { task = "test/cache:xai" },
 ]
 
@@ -291,12 +357,6 @@ arg "<types_scan_path>" help="Path to .types-scan.json file"
 arg "<class_name>" help="Name of the class to enclose the generated schema in"
 '''
 run = "./scripts/generate-types-scan-schema.ts {{usage.types_scan_path}} --mode class --class-name {{usage.class_name}}"
-
-[tasks."generate/lchain-schema"]
-description = "Generates LchainSchema from scanned types. See docs/contributing/scan-types.md for details."
-run = '''
-mise :generate/types-scan-schema:class ./src/llm/Lchain.serialized.types-scan.json LchainSchema > ./src/llm/LchainSchema.ts
-'''
 
 [tasks."bench/tree-tokens"]
 description = "Benchmarks tree tokens."
