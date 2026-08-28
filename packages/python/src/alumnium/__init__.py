@@ -7,8 +7,10 @@ logger: logging.Logger = get_logger(__name__)
 logger.addHandler(logging.NullHandler())
 
 ARTIFACTS_DIR = getenv("ALUMNIUM_ARTIFACTS_DIR", "")
+CAPTURE_SCREENSHOTS = getenv("ALUMNIUM_CAPTURE_SCREENSHOTS", "false").lower() == "true"
 CHANGE_ANALYSIS = getenv("ALUMNIUM_CHANGE_ANALYSIS", "false").lower() == "true"
 DELAY = float(getenv("ALUMNIUM_DELAY", 0.5))
+DRIVER_TRACE = getenv("ALUMNIUM_DRIVER_TRACE", "false").lower() == "true"
 EXCLUDE_ATTRIBUTES = set(filter(None, getenv("ALUMNIUM_EXCLUDE_ATTRIBUTES", "").split(",")))
 FULL_PAGE_SCREENSHOT = getenv("ALUMNIUM_FULL_PAGE_SCREENSHOT", "false").lower() == "true"
 PLANNER = getenv("ALUMNIUM_PLANNER", "true").lower() == "true"

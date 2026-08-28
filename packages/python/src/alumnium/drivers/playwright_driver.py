@@ -35,7 +35,7 @@ class PlaywrightDriver(BaseDriver):
     NOT_SELECTABLE_ERROR = "Element is not a <select> element"
     CONTEXT_WAS_DESTROYED_ERROR = "Execution context was destroyed"
 
-    def __init__(self, page: Page):
+    def __init__(self, page: Page, driver_trace: bool = False):
         self.page = page
         self.autoswitch_to_new_tab = True
         self.full_page_screenshot = FULL_PAGE_SCREENSHOT
@@ -48,6 +48,7 @@ class PlaywrightDriver(BaseDriver):
             UploadTool,
         }
         self.oopif_frames: set[Frame] = set()
+        self._tracing = False
         self._page_sessions: dict[Page, CDPSession] = {}
         self._tracked_pages: set[Page] = set()
         self._previous_page: Page | None = None
@@ -56,6 +57,8 @@ class PlaywrightDriver(BaseDriver):
         self._setup_page_tracking(page)
         self.page.context.add_init_script(script=WAITER_SCRIPT)
         self._init_cdp_session()
+        if driver_trace:
+            self._start_tracing()
 
     @property
     def platform(self) -> str:
@@ -128,7 +131,20 @@ class PlaywrightDriver(BaseDriver):
             self.page.keyboard.press(key.value)
 
     def quit(self):
+        # Discard the trace if nobody claimed it via save_trace(), so the context closes cleanly.
+        self._stop_tracing()
         self.page.close()
+
+    def save_trace(self, path: Path) -> bool:
+        if not self._tracing:
+            return False
+        try:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            self._stop_tracing(path)
+            return path.exists()
+        except Exception as e:
+            logger.warning(f"Failed to save Playwright trace: {e}")
+            return False
 
     def back(self):
         self.page.go_back()
@@ -271,6 +287,24 @@ class PlaywrightDriver(BaseDriver):
         finally:
             if self._new_tab_action is action:
                 self._new_tab_action = None
+
+    def _start_tracing(self):
+        try:
+            self.page.context.tracing.start(screenshots=True, snapshots=True)
+            self._tracing = True
+        except Exception as e:
+            # E.g. the caller already started tracing on this context — don't interfere.
+            logger.warning(f"Playwright tracing not started: {e}")
+
+    def _stop_tracing(self, path: Path | None = None):
+        if not self._tracing:
+            return
+        try:
+            self.page.context.tracing.stop(path=str(path) if path else None)
+        except Exception as e:
+            logger.debug(f"Failed to stop Playwright tracing: {e}")
+        finally:
+            self._tracing = False
 
     def _send_cdp_command(self, method: str, params: dict | None = None):
         return self._cdp_session().send(method, params or {})

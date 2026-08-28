@@ -34,6 +34,10 @@ class TokenUsage:
     def __add__(self, other: "TokenUsage") -> "TokenUsage":
         return TokenUsage(**{name: getattr(self, name) + getattr(other, name) for name in _TOKEN_FIELDS})
 
+    def __sub__(self, other: "TokenUsage") -> "TokenUsage":
+        """Field-wise delta, mirroring the server's `subtractLlmUsage` (no clamping)."""
+        return TokenUsage(**{name: getattr(self, name) - getattr(other, name) for name in _TOKEN_FIELDS})
+
 
 @dataclass
 class SessionTokens:

@@ -23,6 +23,22 @@ def test_token_usage_add_is_pure():
     assert b.reasoning == 7
 
 
+def test_token_usage_sub_is_pure():
+    after = TokenUsage(input_tokens=10, output_tokens=8, total_tokens=18, reasoning=4)
+    before = TokenUsage(input_tokens=4, output_tokens=3, total_tokens=7)
+    delta = after - before
+    assert delta == TokenUsage(input_tokens=6, output_tokens=5, total_tokens=11, reasoning=4)
+    # Operands are not mutated.
+    assert after.input_tokens == 10
+    assert before.input_tokens == 4
+
+
+def test_token_usage_sub_does_not_clamp():
+    """Mirrors the server's `subtractLlmUsage`, which subtracts field-wise without clamping."""
+    delta = TokenUsage(input_tokens=1) - TokenUsage(input_tokens=4)
+    assert delta.input_tokens == -3
+
+
 def test_session_tokens_from_dict_mirrors_server_shape():
     tokens = SessionTokens.from_dict({"total": {"input_tokens": 10}, "cache": {"cache_read": 2}})
     assert tokens.total.input_tokens == 10

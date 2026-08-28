@@ -28,14 +28,7 @@ def test_save_screenshot_non_fatal_on_bad_input(tmp_path):
     assert store.save_screenshot(1, "x", "A") is None
 
 
-def test_save_token_stats(tmp_path):
+def test_trace_path_is_under_session_dir(tmp_path):
     store = ArtifactsStore("sess1", str(tmp_path))
-    path = store.save_token_stats({"total": {"input_tokens": 1}})
-    assert path is not None
-    assert path.exists()
-    assert "input_tokens" in path.read_text()
-
-
-def test_trace_artifact_absent_by_default(tmp_path):
-    store = ArtifactsStore("sess1", str(tmp_path))
-    assert store.trace_artifact() is None
+    assert store.trace_path == tmp_path / "sess1" / "trace.zip"
+    assert not store.trace_path.exists()

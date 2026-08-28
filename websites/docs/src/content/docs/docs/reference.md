@@ -30,12 +30,20 @@ step.kind                # "do" | "check" | "get"
 step.outcome             # "passed" | "failed" (failed = the call raised)
 step.duration            # seconds
 step.tokens.input_tokens # per-step token usage
-step.artifacts           # list[Artifact(path, kind, mime)] — screenshots (+ trace)
+step.artifacts           # list[Artifact(path, kind, mime)] — screenshots, when enabled
 
 m.last                   # the most recent step (== m.steps[-1])
 ```
 
-Screenshots (and, for the Playwright driver, a `trace.zip`) are written under `al.artifacts_dir`; see [`ALUMNIUM_ARTIFACTS_DIR`](#alumnium_artifacts_dir). Read `al.metrics` before calling `al.quit()` for server-authoritative session token totals. The existing `al.stats` property is unchanged.
+Artifact capture is opt-in, because screenshots and traces slow down execution:
+
+```python
+al = Alumni(driver, capture_screenshots=True, driver_trace=True)
+```
+
+With `capture_screenshots` enabled, a screenshot is saved after every call and attached to that step's `artifacts`. With `driver_trace` enabled, the Playwright driver records a trace for the whole session and writes it to `trace.zip` on `al.quit()`. Leave `driver_trace` off if you start tracing on the Playwright context yourself. Both are written under `al.artifacts_dir`; see [`ALUMNIUM_ARTIFACTS_DIR`](#alumnium_artifacts_dir).
+
+Read `al.metrics` before calling `al.quit()` for server-authoritative session token totals. The existing `al.stats` property is unchanged.
 
 ## Environment Variables
 
@@ -58,6 +66,10 @@ Sets the cache provider used by Alumnium. Supported values are:
 
 Sets the directory where the filesystem cache is stored. Default is `.alumnium/cache`.
 
+### `ALUMNIUM_CAPTURE_SCREENSHOTS`
+
+Set to `true` to save a screenshot after every `do()`, `check()`, and `get()` call and attach it to the corresponding `al.metrics` step. Screenshots are written under `al.artifacts_dir`. Default is `false`, since capturing screenshots slows down execution. Equivalent to the `capture_screenshots` option of `Alumni()`.
+
 ### `ALUMNIUM_CHANGE_ANALYSIS`
 
 Set to `true` to enable analysis of UI changes made by `do()`. When enabled, Alumnium captures the accessibility tree before and after each action and returns a description of what changed. Default is `false` when using Alumnium as a library and `true` when running Alumnium MCP server.
@@ -65,6 +77,10 @@ Set to `true` to enable analysis of UI changes made by `do()`. When enabled, Alu
 ### `ALUMNIUM_DELAY`
 
 Delay in seconds between retries when an action fails. Default is `0.5`.
+
+### `ALUMNIUM_DRIVER_TRACE`
+
+Set to `true` to record a driver-level trace for the session. Currently only the Playwright driver implements this: it starts a Playwright trace (with screenshots and snapshots) when `Alumni()` is created and writes it to `trace.zip` under `al.artifacts_dir` on `al.quit()`. Other drivers ignore it. Default is `false`, so Alumnium never interferes with tracing you start yourself. Equivalent to the `driver_trace` option of `Alumni()`. Unrelated to [`ALUMNIUM_TRACE`](#alumnium_trace), which controls OpenTelemetry tracing.
 
 ### `ALUMNIUM_EXCLUDE_ATTRIBUTES`
 

@@ -9,6 +9,7 @@ from requests import ConnectionError, delete, get, post
 
 from ..cli import run_server
 from ..logutils import get_logger
+from ..metrics import TokenUsage
 from ..models import Model
 from ..tools.base_tool import BaseTool
 from ..tools.tool_to_schema_converter import convert_tools_to_schemas
@@ -32,8 +33,9 @@ class HttpClient:
         self._server_pid: str | None = None
         self.base_url = self._resolve_url(url)
         self.session_id = None
-        # Token usage reported by the most recent plan/step/statement call.
-        self.last_usage: dict[str, int] = {}
+        # Cumulative token usage across all plan/step/statement calls in this session.
+        # Reassigned, never mutated in place, so callers can hold a snapshot and diff against it.
+        self.usage_total = TokenUsage()
 
         tool_schemas = convert_tools_to_schemas(tools)
 
@@ -71,6 +73,9 @@ class HttpClient:
         response.raise_for_status()
         return response.json()
 
+    def _accumulate_usage(self, response_data: dict) -> None:
+        self.usage_total = self.usage_total + TokenUsage.from_dict(response_data.get("usage"))
+
     def quit(self):
         try:
             if self.session_id:
@@ -100,7 +105,7 @@ class HttpClient:
         )
         response.raise_for_status()
         response_data = response.json()
-        self.last_usage = response_data.get("usage") or {}
+        self._accumulate_usage(response_data)
         return (response_data["explanation"], response_data["steps"])
 
     def add_example(self, goal: str, actions: list[str]):
@@ -129,7 +134,7 @@ class HttpClient:
         )
         response.raise_for_status()
         data = response.json()
-        self.last_usage = data.get("usage") or {}
+        self._accumulate_usage(data)
         return data["explanation"], data["actions"]
 
     def retrieve(
@@ -155,7 +160,7 @@ class HttpClient:
         )
         response.raise_for_status()
         data = response.json()
-        self.last_usage = data.get("usage") or {}
+        self._accumulate_usage(data)
         return data["explanation"], loosely_typecast(data["result"])
 
     def find_area(self, description: str, accessibility_tree: str, app: str = "unknown"):

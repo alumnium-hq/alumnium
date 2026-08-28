@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from pathlib import Path
 
 from ..accessibility import BaseAccessibilityTree
 from . import Element
@@ -43,6 +44,14 @@ class BaseDriver(ABC):
     @abstractmethod
     def quit(self):
         pass
+
+    def save_trace(self, path: Path) -> bool:
+        """
+        Stops the driver trace started at initialization and writes it to the given path.
+
+        Returns False when the driver does not support tracing or tracing was not started.
+        """
+        return False
 
     @abstractmethod
     def back(self):
