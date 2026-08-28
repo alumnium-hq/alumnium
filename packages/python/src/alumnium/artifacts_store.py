@@ -1,4 +1,3 @@
-import json
 import re
 from base64 import b64decode
 from pathlib import Path
@@ -45,25 +44,3 @@ class ArtifactsStore:
     def trace_path(self) -> Path:
         """Path where a Playwright trace archive is written (on quit)."""
         return self.dir / "trace.zip"
-
-    def trace_artifact(self) -> Artifact | None:
-        """Return an Artifact for the trace archive if it exists on disk."""
-        if self.trace_path.exists():
-            return Artifact(path=self.trace_path, kind="trace", mime="application/zip")
-        return None
-
-    def ensure_dir(self) -> Path:
-        """Create and return the session artifacts directory."""
-        self.dir.mkdir(parents=True, exist_ok=True)
-        return self.dir
-
-    def save_token_stats(self, stats: dict) -> Path | None:
-        """Persist session token stats to token-stats.json. Returns None on failure (non-fatal)."""
-        try:
-            self.ensure_dir()
-            path = self.dir / "token-stats.json"
-            path.write_text(json.dumps(stats, indent=2))
-            return path
-        except Exception as e:
-            logger.warning(f"Failed to save token stats: {e}")
-            return None
