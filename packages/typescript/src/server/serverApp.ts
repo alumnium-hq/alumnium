@@ -1,6 +1,6 @@
 import { cors } from "@elysiajs/cors";
 import { Elysia } from "elysia";
-import { LlmUsageStats } from "../llm/llmSchema.ts";
+import { LlmUsageStats, subtractLlmUsage } from "../llm/llmSchema.ts";
 import { Model } from "../Model.ts";
 import { Telemetry } from "../telemetry/Telemetry.ts";
 import { AccessibilityTreeDiff } from "./accessibility/AccessibilityTreeDiff.ts";
@@ -125,6 +125,7 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                   const accessibilityTree = session.parseTree(
                     ctx.body.accessibility_tree,
                   );
+                  const usageBefore = session.stats.total;
                   const [explanation, steps] =
                     await session.plannerAgent.invoke(
                       ctx.body.goal,
@@ -133,6 +134,7 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                   return {
                     explanation,
                     steps,
+                    usage: subtractLlmUsage(session.stats.total, usageBefore),
                   };
                 } catch (error) {
                   logger.error(`Error generating plan: ${error}`);
@@ -163,6 +165,7 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                 const accessibilityTree = session.parseTree(
                   ctx.body.accessibility_tree,
                 );
+                const usageBefore = session.stats.total;
                 const [explanation, actions] = await session.actorAgent.invoke(
                   ctx.body.goal,
                   ctx.body.step,
@@ -171,6 +174,7 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                 return {
                   explanation,
                   actions: accessibilityTree.mapToolCallsToRawId(actions),
+                  usage: subtractLlmUsage(session.stats.total, usageBefore),
                 };
               },
               {
@@ -241,6 +245,7 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                     ...session.excludeAttributes,
                   ]),
                 );
+                const usageBefore = session.stats.total;
                 const [explanation, value] =
                   await session.retrieverAgent.invoke({
                     statement,
@@ -252,6 +257,7 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                 return {
                   result: value,
                   explanation,
+                  usage: subtractLlmUsage(session.stats.total, usageBefore),
                 };
               },
               {

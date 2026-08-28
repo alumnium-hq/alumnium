@@ -1,5 +1,9 @@
+import time
 from asyncio import AbstractEventLoop
+from contextlib import contextmanager
 from os import getenv
+from pathlib import Path
+from typing import Literal
 
 from appium.webdriver.webdriver import WebDriver as Appium
 from playwright.async_api import Page as PageAsync
@@ -7,8 +11,9 @@ from playwright.sync_api import Page
 from retry import retry
 from selenium.webdriver.remote.webdriver import WebDriver
 
-from . import CHANGE_ANALYSIS, DELAY, EXCLUDE_ATTRIBUTES, PLANNER, RETRIES
+from . import ARTIFACTS_DIR, CHANGE_ANALYSIS, DELAY, EXCLUDE_ATTRIBUTES, PLANNER, RETRIES
 from .area import Area
+from .artifacts_store import ArtifactsStore
 from .cache import Cache
 from .clients.http_client import HttpClient
 from .clients.typecasting import Data
@@ -18,6 +23,7 @@ from .drivers.playwright_async_driver import PlaywrightAsyncDriver
 from .drivers.playwright_driver import PlaywrightDriver
 from .drivers.selenium_driver import SeleniumDriver
 from .logutils import get_logger
+from .metrics import Artifact, SessionMetrics, SessionTokens, StepMetrics, TokenUsage
 from .models import Model
 from .result import DoResult, DoStep
 from .tools import BaseTool
@@ -78,11 +84,89 @@ class Alumni:
 
         self.cache = Cache(self.client)
 
+        # Execution metrics + artifacts (issue #293).
+        self._artifacts = ArtifactsStore(str(self.client.session_id), ARTIFACTS_DIR or None)
+        self._steps: list[StepMetrics] = []
+        self._step_counter = 0
+        self._metric_usage = TokenUsage()
+        self._metrics_started_at = time.time()
+        self._tracing = self._start_tracing()
+
     def quit(self) -> None:
+        # Capture stats + trace while the session and driver are still alive.
+        try:
+            stats = self.client.stats
+        except Exception as e:
+            logger.debug(f"Could not fetch session stats on quit: {e}")
+            stats = None
+        self._stop_tracing()
+        if stats is not None:
+            self._artifacts.save_token_stats(stats)
         self.client.quit()
         self.driver.quit()
 
-    @retry(tries=RETRIES, delay=DELAY, logger=logger)  # pyright: ignore[reportArgumentType]
+    def _start_tracing(self) -> bool:
+        """Best-effort start of Playwright tracing. Returns True if this session owns the trace."""
+        if not isinstance(self.driver, PlaywrightDriver):
+            return False
+        try:
+            self.driver.page.context.tracing.start(screenshots=True, snapshots=True)
+            return True
+        except Exception as e:
+            # E.g. the caller already started tracing on this context — don't interfere.
+            logger.debug(f"Playwright tracing not started: {e}")
+            return False
+
+    def _stop_tracing(self) -> None:
+        if not self._tracing or not isinstance(self.driver, PlaywrightDriver):
+            return
+        try:
+            self._artifacts.ensure_dir()
+            self.driver.page.context.tracing.stop(path=str(self._artifacts.trace_path))
+        except Exception as e:
+            logger.warning(f"Failed to stop Playwright tracing: {e}")
+        finally:
+            self._tracing = False
+
+    def _accumulate_usage(self) -> None:
+        """Add the most recent client call's token usage to the current step's running total."""
+        self._metric_usage = self._metric_usage + TokenUsage.from_dict(self.client.last_usage)
+
+    def _capture_screenshot(self, label: str) -> Artifact | None:
+        try:
+            self._step_counter += 1
+            return self._artifacts.save_screenshot(self._step_counter, label, self.driver.screenshot)
+        except Exception as e:
+            logger.debug(f"Screenshot capture skipped: {e}")
+            return None
+
+    @contextmanager
+    def _record_step(self, kind: Literal["do", "check", "get"], label: str):
+        """Record one StepMetrics per public do/check/get call (outcome via thrown exception)."""
+        started_at = time.time()
+        monotonic_start = time.monotonic()
+        outcome: Literal["passed", "failed"] = "passed"
+        try:
+            yield
+        except Exception:
+            outcome = "failed"
+            raise
+        finally:
+            duration = time.monotonic() - monotonic_start
+            artifact = self._capture_screenshot(label)
+            self._steps.append(
+                StepMetrics(
+                    kind=kind,
+                    label=label,
+                    outcome=outcome,
+                    started_at=started_at,
+                    finished_at=time.time(),
+                    duration=duration,
+                    tokens=self._metric_usage,
+                    artifacts=[artifact] if artifact is not None else [],
+                )
+            )
+
     def do(self, goal: str) -> DoResult:
         """
         Executes a series of steps to achieve the given goal.
@@ -93,12 +177,19 @@ class Alumni:
         Returns:
             DoResult containing the explanation and executed steps with their actions.
         """
+        with self._record_step("do", goal):
+            return self._do(goal)
+
+    @retry(tries=RETRIES, delay=DELAY, logger=logger)  # pyright: ignore[reportArgumentType]
+    def _do(self, goal: str) -> DoResult:
+        self._metric_usage = TokenUsage()
         app = self.driver.app
         self.driver.reset_accessibility_tree()
         initial_accessibility_tree = self.driver.accessibility_tree
         before_tree = initial_accessibility_tree.to_str() if self.change_analysis else None
         before_url = self.driver.url if self.change_analysis else None
         explanation, steps = self.client.plan_actions(goal, initial_accessibility_tree.to_str(), app=app)
+        self._accumulate_usage()
 
         executed_steps = []
         for idx, step in enumerate(steps):
@@ -107,6 +198,7 @@ class Alumni:
                 self.driver.reset_accessibility_tree()
             accessibility_tree = self.driver.accessibility_tree
             actor_explanation, actions = self.client.execute_action(goal, step, accessibility_tree.to_str(), app=app)
+            self._accumulate_usage()
 
             # When planner is off, explanation is just the goal — replace with actor's reasoning.
             if explanation == goal:
@@ -136,7 +228,6 @@ class Alumni:
 
         return DoResult(explanation=explanation, steps=executed_steps, changes=changes)
 
-    @retry(tries=RETRIES, delay=DELAY, logger=logger)  # pyright: ignore[reportArgumentType]
     def check(self, statement: str, vision: bool = False) -> str:
         """
         Checks a given statement true or false.
@@ -151,6 +242,12 @@ class Alumni:
         Raises:
             AssertionError: If the verification fails.
         """
+        with self._record_step("check", statement):
+            return self._check(statement, vision)
+
+    @retry(tries=RETRIES, delay=DELAY, logger=logger)  # pyright: ignore[reportArgumentType]
+    def _check(self, statement: str, vision: bool = False) -> str:
+        self._metric_usage = TokenUsage()
         self.driver.reset_accessibility_tree()
         explanation, value = self.client.retrieve(
             f"Is the following true or false - {statement}",
@@ -160,10 +257,10 @@ class Alumni:
             screenshot=self.driver.screenshot if vision else None,
             app=self.driver.app,
         )
+        self._accumulate_usage()
         assert value, explanation
         return explanation
 
-    @retry(tries=RETRIES, delay=DELAY, logger=logger)  # pyright: ignore[reportArgumentType]
     def get(self, data: str, vision: bool = False) -> Data:
         """
         Extracts requested data from the page.
@@ -175,6 +272,12 @@ class Alumni:
         Returns:
             The extracted data. If data cannot be extracted, returns the explanation string.
         """
+        with self._record_step("get", data):
+            return self._get(data, vision)
+
+    @retry(tries=RETRIES, delay=DELAY, logger=logger)  # pyright: ignore[reportArgumentType]
+    def _get(self, data: str, vision: bool = False) -> Data:
+        self._metric_usage = TokenUsage()
         self.driver.reset_accessibility_tree()
         explanation, value = self.client.retrieve(
             data,
@@ -184,6 +287,7 @@ class Alumni:
             screenshot=self.driver.screenshot if vision else None,
             app=self.driver.app,
         )
+        self._accumulate_usage()
         return explanation if value is None else value
 
     @retry(tries=RETRIES, delay=DELAY, logger=logger)  # pyright: ignore[reportArgumentType]
@@ -249,3 +353,35 @@ class Alumni:
         Returns the stats of the session.
         """
         return self.client.stats
+
+    @property
+    def metrics(self) -> SessionMetrics:
+        """
+        Returns per-step execution metrics for the session (issue #293).
+
+        Steps are ordered by call: ``metrics.steps[i]`` is the i-th do()/check()/get() call.
+        Read before ``quit()`` for server-authoritative session token totals.
+        """
+        finished_at = time.time()
+        try:
+            tokens = SessionTokens.from_dict(self.client.stats)
+        except Exception as e:
+            logger.debug(f"Falling back to summed step tokens for session metrics: {e}")
+            total = TokenUsage()
+            for step in self._steps:
+                total = total + step.tokens
+            tokens = SessionTokens(total=total)
+        return SessionMetrics(
+            started_at=self._metrics_started_at,
+            finished_at=finished_at,
+            duration=finished_at - self._metrics_started_at,
+            tokens=tokens,
+            steps=list(self._steps),
+        )
+
+    @property
+    def artifacts_dir(self) -> Path:
+        """
+        Returns the directory where per-session artifacts (screenshots, traces) are written.
+        """
+        return self._artifacts.dir
