@@ -40,10 +40,13 @@ sources = [
   "src/server/agents/prompts/prompts.ts",
   "src/drivers/scripts/*.js",
   "src/server/agents/prompts/**/*.md",
+  "src/standalone/cursorSdkManifest.ts",
+  "../../bun.lock",
 ]
 outputs = [
   "src/server/agents/prompts/bundledPrompts.ts",
   "src/drivers/scripts/bundledScripts.ts",
+  "src/standalone/cursorSdkVendorManifest.ts",
 ]
 
 [tasks.publish]
@@ -180,6 +183,7 @@ run = [
   { task = "test/cache:anthropic" },
   { task = "test/cache:aws_anthropic" },
   { task = "test/cache:aws_meta" },
+  # { task = "test/cache:cursor" }, # Missing key
   { task = "test/cache:deepseek" },
   # { task = "test/cache:github" }, # Not supported
   { task = "test/cache:google" },
@@ -208,6 +212,10 @@ run = { task = "test/cache", args = ["aws_anthropic"] }
 [tasks."test/cache:aws_meta"]
 description = "Run cache tests for `aws_meta` model. See `test/cache` task for details."
 run = { task = "test/cache", args = ["aws_meta"] }
+
+[tasks."test/cache:cursor"]
+description = "Run cache tests for `cursor` model. See `test/cache` task for details."
+run = { task = "test/cache", args = ["cursor"] }
 
 [tasks."test/cache:deepseek"]
 description = "Run cache tests for `deepseek` model. See `test/cache` task for details."

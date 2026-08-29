@@ -377,7 +377,15 @@ async function main() {
       TARGET_PLATFORMS.map(async ({ os, arch, target, binPath }) => {
         const result = await Bun.build({
           entrypoints: [BIN_SRC_PATH, ...standaloneEmbeddedAssetPaths],
-          external: ["chromium-bidi", "electron"],
+          // NOTE: @cursor/sdk (a transitive dependency of
+          // langchain-cursor) is external because its
+          // webpack-chunked dist loads chunks dynamically
+          // (`require("./" + chunkId + ".js")`), which cannot be bundled into
+          // a single-file executable — and its license does not permit
+          // embedding it as an asset either. Compiled binaries download it
+          // from the npm registry on first cursor-provider use and load it
+          // from ~/.alumnium/vendor (src/standalone/installCursorSdk.ts).
+          external: ["chromium-bidi", "electron", "@cursor/sdk"],
           compile: {
             target: getBunTarget(os, arch),
             outfile: binPath,

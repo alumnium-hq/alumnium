@@ -9,6 +9,7 @@ class Provider(Enum):
     AWS_ANTHROPIC = "aws_anthropic"
     AWS_META = "aws_meta"
     CODEX = "codex"
+    CURSOR = "cursor"
     DEEPSEEK = "deepseek"
     GITHUB = "github"
     GOOGLE = "google"
@@ -26,6 +27,7 @@ class Name:
         Provider.AWS_ANTHROPIC: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
         Provider.AWS_META: "us.meta.llama4-maverick-17b-instruct-v1:0",
         Provider.CODEX: "gpt-5.4-mini",
+        Provider.CURSOR: "composer-2.5",
         Provider.DEEPSEEK: "deepseek-reasoner",
         Provider.GITHUB: "gpt-4o-mini",
         Provider.GOOGLE: "gemini-3.1-flash-lite",

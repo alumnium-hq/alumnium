@@ -134,6 +134,18 @@ Add the following to `mcp.json`:
 }
 ```
 
+:::tip[Reuse your Cursor subscription]
+You can point Alumnium at [Cursor Agents][12] instead of OpenAI by swapping the `env` block. See the [Cursor configuration][13] for details.
+
+```json
+"env": {
+  "ALUMNIUM_MODEL": "cursor",
+  "CURSOR_API_KEY": "..."
+}
+```
+
+:::
+
 ### Gemini CLI
 
 ```bash
@@ -277,3 +289,5 @@ Returns the raw accessibility tree of the current page as XML. Useful for debugg
 [9]: https://appium.io/docs/en/2.0/guides/settings/
 [10]: https://github.com/openai/codex
 [11]: /docs/getting-started/configuration#codex
+[12]: https://cursor.com/docs/cloud-agent
+[13]: /docs/getting-started/configuration#cursor

@@ -44,6 +44,7 @@ export const PROVIDER_TO_PROMPTS_DEV: AgentPrompts.ProviderToDev = {
   azure_foundry: "openai",
   azure_openai: "openai",
   codex: "openai",
+  cursor: "openai",
   github: "openai",
   openai: "openai",
 };

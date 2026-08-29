@@ -16,8 +16,11 @@ import {
 import { ChatXAI } from "@langchain/xai";
 import type { DocumentType } from "@smithy/types";
 import { never } from "alwaysly";
+import { ChatCursor } from "langchain-cursor";
+import { isSingleFileExecutable } from "../bundle.ts";
 import { Env } from "../Env.ts";
 import { Model } from "../Model.ts";
+import { loadVendoredCursorSdk } from "../standalone/installCursorSdk.ts";
 import { Logger } from "../telemetry/Logger.ts";
 import { maskString } from "../utils/string.ts";
 
@@ -49,6 +52,8 @@ export class LlmFactory {
         return LlmFactory.createAwsLlm(model, cache);
       case "codex":
         return LlmFactory.createCodexLlm(model, cache);
+      case "cursor":
+        return LlmFactory.createCursorLlm(model, cache);
       case "deepseek":
         return LlmFactory.createDeepSeekLlm(model, cache);
       case "google":
@@ -212,6 +217,23 @@ export class LlmFactory {
     return new ChatCodex({
       model: model.name,
       cache,
+    });
+  }
+
+  static createCursorLlm(model: Model, cache: BaseCache): BaseChatModel {
+    logger.debug(`Creating Cursor LLM with model ${model.name}`);
+
+    const apiKey = Env.CURSOR_API_KEY;
+    if (apiKey) logMaskedSecret("Cursor API Key", apiKey);
+
+    return new ChatCursor({
+      model: model.name,
+      ...apiKeyField(apiKey),
+      cache,
+      // The compiled binary cannot resolve @cursor/sdk from node_modules;
+      // the loader downloads it on first use and serves it from
+      // ~/.alumnium/vendor (see standalone/installCursorSdk.ts).
+      ...(isSingleFileExecutable() ? { sdkLoader: loadVendoredCursorSdk } : {}),
     });
   }
 

@@ -9,6 +9,13 @@ describe("Model.parse", () => {
     });
   });
 
+  it("uses the cursor provider's default model", () => {
+    expect(Model.parse("cursor")).toEqual({
+      provider: "cursor",
+      name: "composer-2.5",
+    });
+  });
+
   it("parses a single-segment model name", () => {
     expect(Model.parse("openai/gpt-5")).toEqual({
       provider: "openai",

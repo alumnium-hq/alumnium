@@ -82,6 +82,7 @@
     "entities": "^8.0.0",
     "filenamify": "^7.0.1",
     "htmlparser2": "^11.0.0",
+    "langchain-cursor": "^0.1.0",
     "nanoid": "^5.1.9",
     "picocolors": "^1.1.1",
     "playwright-core": "^1.60.0",

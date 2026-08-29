@@ -27,6 +27,13 @@ export default defineConfig({
           name: "unit",
           include: ["src/**/*.test.ts"],
           setupFiles: ["tests/unit/setup.ts"],
+          server: {
+            deps: {
+              // Process the package with vitest so vi.mock("@cursor/sdk")
+              // reaches the dynamic import inside it.
+              inline: ["langchain-cursor"],
+            },
+          },
           pool: "threads",
           maxWorkers: Env.ALUMNIUM_TEST_MAX_CONCURRENCY,
         },
