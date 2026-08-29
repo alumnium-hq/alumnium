@@ -75,8 +75,13 @@ public final class SeleniumDriver extends BaseDriver {
   }
 
   @Override
-  public ChromiumAccessibilityTree accessibilityTree() {
+  protected ChromiumAccessibilityTree fetchAccessibilityTree() {
+    // Switch to default content to ensure we're at the top level for frame enumeration
     driver.switchTo().defaultContent();
+
+    // A new tab might take the foreground and leave the current one hidden.
+    driver.switchTo().window(driver.getWindowHandle());
+
     waitForPageToLoad();
 
     Map<String, Object> frameTreeResp = executeCdp("Page.getFrameTree", Map.of());

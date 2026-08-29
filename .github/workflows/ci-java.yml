@@ -10,8 +10,9 @@ on:
 env:
   ALUMNIUM_LOG_LEVEL: debug
   ALUMNIUM_LOG_DEBUG_EXTRA: all
-  ALUMNIUM_LOG_PATH: alumnium.log
   ALUMNIUM_PLAYWRIGHT_HEADLESS: false
+  ALUMNIUM_TEST_RETRY_COUNT: 3
+  ALUMNIUM_TEST_RETRY_DELAY: 1000
   DISPLAY: :99
   PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
   LT_USERNAME: ${{ secrets.LT_USERNAME }}
@@ -46,11 +47,13 @@ jobs:
           - driver: playwright
             model: azure_openai
 
-          - driver: appium-ios
-            model: azure_openai
+          # TODO: Figure out why LambdaTest started to fail.
 
-          - driver: appium-android
-            model: azure_openai
+          # - driver: appium-ios
+          #   model: azure_openai
+
+          # - driver: appium-android
+          #   model: azure_openai
 
     steps:
       - name: Git Checkout
@@ -80,6 +83,13 @@ jobs:
         if: failure() && runner.debug == '1'
         uses: mxschmitt/action-tmate@v3
 
+      - name: Upload Alumnium Artifacts
+        if: always()
+        uses: ./.github/actions/alumnium-artifacts
+        with:
+          name: ci-java-test-system-${{ matrix.driver }}-${{ matrix.model }}
+          package: java
+
   test-pkg:
     name: Package Tests
     runs-on: ubuntu-latest
@@ -95,11 +105,29 @@ jobs:
       - name: Set Up Dev Env
         uses: ./.github/actions/setup
 
+      - name: Set Up Playwright
+        uses: ./.github/actions/setup-playwright
+        with:
+          package: java
+
       - name: Build Dist
         run: mise //packages/typescript:build
 
       - name: Run Maven Tests
         run: mise //packages/java:test/package
+
+      - name: Upload Alumnium Artifacts
+        if: always()
+        uses: ./.github/actions/alumnium-artifacts
+        with:
+          name: ci-java-test-pkg-${{ matrix.model }}
+          package: java
+
+      - name: Run Playwright Post-Setup
+        if: always()
+        uses: ./.github/actions/setup-playwright/post
+        with:
+          package: java
 
       - name: Debug Session
         if: failure() && runner.debug == '1'

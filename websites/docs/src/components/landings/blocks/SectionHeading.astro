@@ -1,0 +1,32 @@
+---
+import { tt } from "#/copy";
+import type { SectionHeadingProps } from "./Section.types";
+
+type Props = SectionHeadingProps;
+
+const {
+  h,
+  t: { kicker, headline, subheadline },
+  align,
+  style,
+} = Astro.props;
+
+const H = `h${h}`;
+---
+
+<div
+  class:list={[
+    "heading",
+    align && "heading-align",
+    style === "enlarge" && "heading-enlarge",
+    style === "compact" && "heading-compact",
+  ]}
+>
+  {kicker && <p class="kicker">{kicker}</p>}
+
+  {headline && <H set:html={tt.md(headline, true)} />}
+
+  {subheadline && <p class="subheadline" set:html={tt.md(subheadline, true)} />}
+
+  <slot />
+</div>

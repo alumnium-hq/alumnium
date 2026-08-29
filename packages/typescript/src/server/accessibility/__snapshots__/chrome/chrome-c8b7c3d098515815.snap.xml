@@ -1,0 +1,33 @@
+<RootWebArea name="TodoMVC: Vue" id=1 focusable focused url="https://todomvc.com/examples/vue/dist/#/">
+  <complementary id=4>
+    <sectionheader id=5>
+      <heading id=6 level=3>Vue.js</heading>
+      <heading id=8 level=5>Example</heading>
+      <link id=10 focusable url="https://github.com/tastejs/todomvc/tree/gh-pages/examples/vue">Source</link>
+    </sectionheader>
+    <separator id=12 settable orientation="horizontal" />
+    <blockquote id=13>
+      <paragraph id=14>
+        <div id=15>“</div>
+        <div id=17>Vue is an approachable, progressive framework for building user interfaces. Components are authored as Single-File Components, with reactive state via the Composition API and `</div>
+        <div id=18>”</div>
+      </paragraph>
+    </blockquote>
+  </complementary>
+  <sectionheader id=21>
+    <link id=22 focusable url="https://todomvc.com/examples/vue/dist/#/">
+      <heading id=23 level=1>todos</heading>
+    </link>
+    <textbox name="What needs to be done?" id=25 focusable focused editable="plaintext" settable>
+      <div id=27 editable="plaintext">Buy milk</div>
+    </textbox>
+  </sectionheader>
+  <contentinfo id=31>
+    <paragraph id=32>Double-click to edit a todo</paragraph>
+    <paragraph id=34>Created by the TodoMVC Team</paragraph>
+    <paragraph id=36>
+      Part of
+      <link id=38 focusable url="http://todomvc.com/">TodoMVC</link>
+    </paragraph>
+  </contentinfo>
+</RootWebArea>

@@ -10,16 +10,20 @@ from appium.webdriver.webdriver import WebDriver as Appium
 from behave import fixture, use_fixture
 from behave.contrib.scenario_autoretry import patch_scenario_with_autoretry
 from playwright.sync_api import Page, sync_playwright
+from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.chrome.webdriver import WebDriver as ChromeDriver
 from selenium.webdriver.remote.webdriver import WebDriver as SeleniumWebDriver
 
 from alumnium import Alumni
 from alumnium.drivers.appium_driver import AppiumDriver
+from examples.test_threshold import get_pass_threshold, process_pass_threshold
 
 driver_name = getenv("ALUMNIUM_DRIVER", "selenium")
 headless = getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS", "true")
+selenium_browser_version = getenv("ALUMNIUM_SELENIUM_BROWSER_VERSION")
 model_label = getenv("ALUMNIUM_MODEL")
 run_model_name = f"ALUMNIUM_MODEL={model_label}" if model_label else "server-set model"
+get_pass_threshold()
 
 
 @fixture
@@ -34,7 +38,10 @@ def driver(context):
             yield context.driver
             browser_context.tracing.stop(path="reports/traces/behave.zip")
     elif driver_name == "selenium":
-        context.driver = ChromeDriver()
+        options = ChromeOptions()
+        if selenium_browser_version:
+            options.browser_version = selenium_browser_version
+        context.driver = ChromeDriver(options=options)
         yield context.driver
         context.driver.quit()
     elif driver_name == "appium-ios":
@@ -218,6 +225,7 @@ def alumnium(context):
 
 
 def before_all(context):
+    context.test_results = {"passed": 0, "failed": 0, "errors": 0}
     use_fixture(driver, context)
     use_fixture(alumnium, context)
 
@@ -234,8 +242,13 @@ def before_feature(_, feature):
 
 def after_scenario(context, scenario):
     if scenario.status == "passed":
+        context.test_results["passed"] += 1
         context.al.cache.save()
     else:
+        if scenario.hook_failed:
+            context.test_results["errors"] += 1
+        else:
+            context.test_results["failed"] += 1
         context.al.cache.discard()
 
     for formatter in context._runner.formatters:
@@ -267,3 +280,10 @@ def after_scenario(context, scenario):
             context.driver.install_app(context.app)
             context.driver.activate_app("com.example.android.architecture.blueprints.main")
             sleep(2)
+
+
+def after_all(context):
+    if context.aborted or context.test_results["errors"]:
+        return
+    threshold_status = process_pass_threshold(context.test_results["passed"], context.test_results["failed"])
+    context._runner.failed = threshold_status != 0

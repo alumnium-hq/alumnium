@@ -5,6 +5,7 @@ import { pythonicFormat } from "../../pythonic/pythonicFormat.ts";
 import { Telemetry } from "../../telemetry/Telemetry.ts";
 import type { LlmContext } from "../LlmContext.ts";
 import { BaseAgent } from "./BaseAgent.ts";
+import { txt } from "smollit";
 
 const { tracer, logger } = Telemetry.get(import.meta.url);
 const { span } = tracer.dec();
@@ -13,18 +14,16 @@ const { span } = tracer.dec();
  * Retrieved information.
  */
 export const RetrievedInformation = z.object({
-  explanation: z
-    .string()
-    .describe(
-      "Explanation how information was retrieved and why it's related to the requested information." +
-        "Always include the requested information and its value in the explanation.",
-    ),
-  value: z
-    .string()
-    .describe(
-      "The precise retrieved information value without additional data. If the information is not" +
-        "present in context, reply NOOP.",
-    ),
+  explanation: z.string().describe(txt`
+    Explanation how information was retrieved and why it's related to
+    the requested information. Always include the requested information and
+    its value in the explanation
+  `),
+
+  value: z.string().describe(txt`
+    The precise retrieved information value without additional data. If
+    the information is not present in context, reply NOOP.
+  `),
 });
 
 export type RetrievedInformation = z.infer<typeof RetrievedInformation>;
@@ -59,7 +58,6 @@ export class RetrieverAgent extends BaseAgent {
   ]);
 
   static readonly EXCLUDE_ATTRIBUTES = new Set(["id"]);
-  static readonly #LIST_SEPARATOR = "<SEP>";
 
   chain;
 
@@ -129,7 +127,7 @@ export class RetrieverAgent extends BaseAgent {
         [
           "system",
           pythonicFormat(this.prompts.system, {
-            separator: RetrieverAgent.#LIST_SEPARATOR,
+            separator: RetrieverAgent.#separatorSeq,
           }),
         ],
         ["human", humanMessages],
@@ -142,34 +140,39 @@ export class RetrieverAgent extends BaseAgent {
       Usage: response.usage,
     });
 
-    let value = (response.structured as RetrievedInformation).value;
-    // LLMs sometimes add separator to the start/end.
-    if (value.startsWith(RetrieverAgent.#LIST_SEPARATOR)) {
-      value = value.slice(RetrieverAgent.#LIST_SEPARATOR.length);
-    }
-    if (value.endsWith(RetrieverAgent.#LIST_SEPARATOR)) {
-      value = value.slice(0, -RetrieverAgent.#LIST_SEPARATOR.length);
-    }
-    value = value.trim();
-    // GPT-5 Nano sometimes replaces closing brace with something else
-    value = value.replace(
-      new RegExp(`${RetrieverAgent.#LIST_SEPARATOR.slice(0, -1)}.`, "g"),
-      RetrieverAgent.#LIST_SEPARATOR,
-    );
-    // Grok 4.1 Fast Reasoning sometimes use escaped tags
-    value = value.replace("&lt;SEP&gt;", RetrieverAgent.#LIST_SEPARATOR);
+    const info = response.structured as RetrievedInformation;
 
-    // Return raw string or list of strings
-    if (value.includes(RetrieverAgent.#LIST_SEPARATOR)) {
-      return [
-        (response.structured as RetrievedInformation).explanation,
-        value
-          .split(RetrieverAgent.#LIST_SEPARATOR)
-          .filter((item) => item)
-          .map((item) => item.trim()),
-      ];
-    } else {
-      return [(response.structured as RetrievedInformation).explanation, value];
-    }
+    return [info.explanation, this.#parseValue(info.value)];
+  }
+
+  static readonly #separatorSeq = "<SEP>";
+  static readonly #separatorSeqRe = new RegExp(
+    RegExp.escape(this.#separatorSeq),
+    "ig",
+  );
+  static readonly #separatorSeqVariantsRe = new RegExp(
+    [
+      // GPT-5 Nano sometimes replaces closing brace with something else
+      `${RegExp.escape(this.#separatorSeq.slice(0, -1))}.`,
+      // Grok 4.1 Fast Reasoning sometimes use escaped tags
+      RegExp.escape(`&lt;${this.#separatorSeq.slice(1, -1)}&gt;`),
+    ].join("|"),
+    "ig",
+  );
+
+  #parseValue(value: string): string | string[] {
+    const normalizedValue = value
+      // Normalize separator variants
+      .replace(
+        RetrieverAgent.#separatorSeqVariantsRe,
+        RetrieverAgent.#separatorSeq,
+      );
+
+    // Return as array of values if contains separator
+    const values = normalizedValue.split(RetrieverAgent.#separatorSeqRe);
+    if (values.length > 1)
+      return values.map((item) => item.trim()).filter((item) => item);
+
+    return normalizedValue.trim();
   }
 }

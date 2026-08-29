@@ -1,0 +1,19 @@
+<RootWebArea name="The Internet" id=1 focusable focused url="https://the-internet.herokuapp.com/typos">
+  <div id=6>
+    <link id=7 focusable url="https://github.com/tourdedave/the-internet">
+      <image name="Fork me on GitHub" id=8 url="https://the-internet.herokuapp.com/img/forkme_right_green_007200.png" />
+    </link>
+    <div id=10>
+      <heading id=11 level=3>Typos</heading>
+      <paragraph id=13>This example demonstrates a typo being introduced. It does it randomly on each page load.</paragraph>
+      <paragraph id=15>Sometimes you'll see a typo, other times you won't.</paragraph>
+    </div>
+  </div>
+  <div id=18>
+    <separator id=19 settable orientation="horizontal" />
+    <div id=20>
+      Powered by
+      <link id=22 focusable url="http://elementalselenium.com/">Elemental Selenium</link>
+    </div>
+  </div>
+</RootWebArea>

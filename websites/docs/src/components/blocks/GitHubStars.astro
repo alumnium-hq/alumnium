@@ -1,0 +1,25 @@
+---
+import githubMetadata from "#/data/github/metadata.json";
+
+const stars = githubMetadata.stars;
+---
+
+<github-stars>{stars}</github-stars>
+
+<script>
+  import { GitHubData } from "#/data/github";
+
+  class GitHubStars extends HTMLElement {
+    connectedCallback() {
+      GitHubData.fetchCommunity()
+        .then((community) => {
+          this.textContent = String(community.stars);
+        })
+        .catch(() => {});
+    }
+  }
+
+  if (!customElements.get("github-stars")) {
+    customElements.define("github-stars", GitHubStars);
+  }
+</script>

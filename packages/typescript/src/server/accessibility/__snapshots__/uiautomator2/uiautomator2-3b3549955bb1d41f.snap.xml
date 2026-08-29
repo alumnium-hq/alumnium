@@ -1,0 +1,37 @@
+<div id=1>
+  <WebView id=13 text="The Internet">
+    <div id=16 content-desc="Fork me on GitHub" clickable>
+      <Image id=17>Fork me on GitHub</Image>
+    </div>
+    <div id=18 resource-id="content">
+      <div id=19>Forgot Password</div>
+      <div id=20 resource-id="forgot_password">
+        <div id=21>
+          <div id=22>E-mail</div>
+          <EditText id=23 resource-id="email" clickable />
+        </div>
+        <Button id=24 resource-id="form_submit" clickable>Retrieve password</Button>
+      </div>
+    </div>
+    <div id=28>
+      <div id=29>Powered by</div>
+      <div id=30 content-desc="Elemental Selenium" clickable />
+    </div>
+  </WebView>
+  <div id=33 resource-id="toolbar_container">
+    <div id=34 resource-id="toolbar">
+      <ImageButton id=35 content-desc="Home" resource-id="home_button" clickable />
+      <div id=36 resource-id="location_bar">
+        <div id=37 resource-id="location_bar_status" clickable>
+          <ImageView id=40 content-desc="Connection is secure" resource-id="location_bar_status_icon" />
+        </div>
+        <EditText id=41 resource-id="url_bar" clickable>the-internet.herokuapp.com/forgot_password</EditText>
+      </div>
+      <div id=42 resource-id="toolbar_buttons">
+        <ImageButton id=43 content-desc="Switch or close tabs" resource-id="tab_switcher_button" clickable />
+        <ImageButton id=45 content-desc="More options" resource-id="menu_button" clickable />
+      </div>
+    </div>
+    <ImageView id=46 resource-id="toolbar_hairline" />
+  </div>
+</div>

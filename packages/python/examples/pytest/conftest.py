@@ -1,6 +1,10 @@
 from datetime import datetime
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from os import getenv
 from pathlib import Path
+from threading import Thread
+from time import monotonic, sleep
+from typing import NamedTuple
 
 from appium.options.android import UiAutomator2Options
 from appium.options.ios import XCUITestOptions
@@ -15,13 +19,17 @@ from selenium.webdriver.remote.webdriver import WebDriver as SeleniumWebDriver
 
 from alumnium import Alumni
 from alumnium.drivers.appium_driver import AppiumDriver
+from examples.test_threshold import get_pass_threshold, process_pass_threshold
 
 load_dotenv()
 
 driver_type = getenv("ALUMNIUM_DRIVER", "selenium")
 headless = getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS", "true")
+selenium_browser_version = getenv("ALUMNIUM_SELENIUM_BROWSER_VERSION")
 model_label = getenv("ALUMNIUM_MODEL")
 run_model_name = f"ALUMNIUM_MODEL={model_label}" if model_label else "server-set model"
+test_results = {"passed": 0, "failed": 0, "errors": 0}
+get_pass_threshold()
 
 
 @fixture(scope="session")
@@ -45,6 +53,8 @@ def driver():
                 "profile.password_manager_leak_detection": False,
             },
         )
+        if selenium_browser_version:
+            options.browser_version = selenium_browser_version
         driver = ChromeDriver(options=options)
         yield driver
     elif driver_type == "appium-ios":
@@ -190,6 +200,77 @@ def navigate(al):
     return __navigate
 
 
+class SlowTabPage(NamedTuple):
+    url: str
+    slow_tab_url: str
+
+
+@fixture
+def slow_tab_page():
+    """Serves a page whose button opens a tab that only navigates after a delay."""
+    opener = (
+        b"<title>Opener</title><h1>Opener</h1>"
+        b"<button onclick=\"window.open('/slow-tab', '_blank')\">Open Slow Tab</button>"
+    )
+    slow_tab = b"<title>Slow Tab</title><h1>Slow Tab</h1>"
+
+    class Handler(BaseHTTPRequestHandler):
+        def do_GET(self):
+            is_slow_tab = self.path == "/slow-tab"
+            if is_slow_tab:
+                sleep(2)
+
+            body = slow_tab if is_slow_tab else opener
+            self.send_response(200)
+            self.send_header("content-type", "text/html")
+            self.send_header("cache-control", "no-store")
+            self.send_header("content-length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+
+        def log_message(self, format, *args):
+            pass
+
+    # The slow tab blocks its own request, so it must not block the opener
+    server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+    Thread(target=server.serve_forever, daemon=True).start()
+
+    port = server.server_port
+    yield SlowTabPage(f"http://127.0.0.1:{port}/", f"http://127.0.0.1:{port}/slow-tab")
+
+    server.shutdown()
+    server.server_close()
+
+
+@fixture
+def wait_for_tab_count(driver):
+    def __wait_for_tab_count(count: int):
+        deadline = monotonic() + 10
+        while _tab_count(driver) < count:
+            if monotonic() > deadline:
+                raise AssertionError(f"Timed out waiting for {count} tabs to open")
+            _pause(driver)
+
+    return __wait_for_tab_count
+
+
+@fixture(autouse=True)
+def close_extra_tabs(al, driver):
+    yield
+    if isinstance(driver, Page):
+        al.driver.autoswitch_to_new_tab = True
+        for page in driver.context.pages:
+            if page is not driver:
+                page.close()
+    elif isinstance(driver, SeleniumWebDriver):
+        al.driver.autoswitch_to_new_tab = True
+        original, *extra = driver.window_handles
+        for handle in extra:
+            driver.switch_to.window(handle)
+            driver.close()
+        driver.switch_to.window(original)
+
+
 @fixture
 def execute_script(al):
     return lambda script: al.driver.execute_script(script)
@@ -233,3 +314,32 @@ def pytest_runtest_makereport(item):
             al.cache.save()
         else:
             al.cache.discard()
+
+        if report.passed:
+            test_results["passed"] += 1
+        elif report.failed:
+            test_results["failed"] += 1
+    elif report.failed:
+        test_results["errors"] += 1
+
+
+def pytest_sessionfinish(session, exitstatus):
+    if exitstatus != 1 or test_results["errors"]:
+        return
+    session.exitstatus = process_pass_threshold(test_results["passed"], test_results["failed"])
+
+
+def _tab_count(driver) -> int:
+    if isinstance(driver, Page):
+        return len(driver.context.pages)
+    elif isinstance(driver, SeleniumWebDriver):
+        return len(driver.window_handles)
+    else:
+        raise NotImplementedError("Tabs are not implemented in Appium yet")
+
+
+def _pause(driver):
+    if isinstance(driver, Page):
+        driver.wait_for_timeout(50)
+    else:
+        sleep(0.05)

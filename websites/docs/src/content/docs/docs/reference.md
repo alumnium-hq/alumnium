@@ -166,9 +166,9 @@ Sets the root directory for Alumnium's persistent file store (cache, artifacts, 
 
 Set to `false` to start Playwright in headed mode. Only used in the [MCP server][3]. Default is `true`.
 
-### `ALUMNIUM_PLAYWRIGHT_NEW_TAB_TIMEOUT`
+### `ALUMNIUM_SELENIUM_BROWSER_VERSION`
 
-Timeout in milliseconds when waiting for a new tab to open after interacting with elements using Playwright driver. Increase when Alumnium fails to detect a new tab. Default is 200.
+Sets the `browserVersion` capability for Selenium, e.g. `stable`. Selenium Manager then downloads a matching Chrome for Testing build instead of using the locally installed Chrome. Only used in the [MCP server][3].
 
 ### `ANTHROPIC_API_KEY`
 

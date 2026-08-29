@@ -4,6 +4,6 @@
   "description": "Test package for CommonJS",
   "type": "commonjs",
   "dependencies": {
-    "@playwright/test": "^1.59.1"
+    "@playwright/test": "*"
   }
 }

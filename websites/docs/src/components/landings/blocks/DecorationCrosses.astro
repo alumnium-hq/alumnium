@@ -1,0 +1,67 @@
+<div class="decoration-crosses">
+  <div class="decoration-cross-tl"></div>
+  <div class="decoration-cross-bl"></div>
+  <div class="decoration-cross-tr"></div>
+  <div class="decoration-cross-br"></div>
+</div>
+
+<style>
+  @reference "#/styles/global.css";
+
+  .decoration-crosses {
+    --cross-color: var(--color-accent-300);
+    --cross-size: 12px;
+    --cross-center-shift: calc(var(--cross-size) / -2);
+    --cross-collapse-shift: -0.5px;
+
+    @variant sm {
+      --cross-size: 18px;
+    }
+
+    @variant md {
+      --cross-size: 24px;
+    }
+  }
+
+  .decoration-cross-tl,
+  .decoration-cross-tr {
+    top: var(--cross-center-shift);
+  }
+
+  .decoration-cross-tr,
+  .decoration-cross-br {
+    right: var(--cross-collapse-shift);
+  }
+
+  .decoration-cross-bl,
+  .decoration-cross-br {
+    bottom: var(--cross-center-shift);
+  }
+
+  .decoration-cross-tl,
+  .decoration-cross-bl {
+    left: var(--cross-collapse-shift);
+  }
+
+  .decoration-cross-tl,
+  .decoration-cross-tr,
+  .decoration-cross-bl,
+  .decoration-cross-br {
+    @apply border-l;
+    height: var(--cross-size);
+
+    &,
+    &:after {
+      @apply absolute z-20;
+      border-color: var(--cross-color);
+    }
+
+    &:after {
+      @apply border-t;
+      content: "";
+      width: var(--cross-size);
+      left: var(--cross-center-shift);
+      top: calc(-1 * var(--cross-center-shift) + var(--cross-collapse-shift));
+    }
+  }
+</style>

@@ -1,0 +1,21 @@
+<div id=1>
+  <WebView id=13>
+    <div id=14>Internal Server Error</div>
+  </WebView>
+  <div id=16 resource-id="toolbar_container">
+    <div id=17 resource-id="toolbar">
+      <ImageButton id=18 content-desc="Home" resource-id="home_button" clickable />
+      <div id=19 resource-id="location_bar">
+        <div id=20 resource-id="location_bar_status" clickable>
+          <ImageView id=23 content-desc="Connection is secure" resource-id="location_bar_status_icon" />
+        </div>
+        <EditText id=24 resource-id="url_bar" clickable>the-internet.herokuapp.com/forgot_password</EditText>
+      </div>
+      <div id=25 resource-id="toolbar_buttons">
+        <ImageButton id=26 content-desc="Switch or close tabs" resource-id="tab_switcher_button" clickable />
+        <ImageButton id=28 content-desc="More options" resource-id="menu_button" clickable />
+      </div>
+    </div>
+    <ImageView id=29 resource-id="toolbar_hairline" />
+  </div>
+</div>

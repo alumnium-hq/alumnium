@@ -649,7 +649,9 @@ export namespace Tracer {
 
   export interface Span<Name extends SpanName> {
     attr<
-      Attrs extends Spans[Name] extends { Attrs: infer Attrs } ? Attrs : never,
+      Attrs extends (Spans[Name] extends { Attrs: infer Attrs }
+        ? Attrs
+        : never),
       Attr extends keyof Attrs,
     >(
       key: Attr,
@@ -657,9 +659,9 @@ export namespace Tracer {
     ): void;
 
     event: <
-      Events extends Spans[Name] extends { Events: object }
+      Events extends (Spans[Name] extends { Events: object }
         ? Spans[Name]["Events"]
-        : never,
+        : never),
       EventName extends keyof Events,
     >(
       name: EventName,
@@ -1075,7 +1077,11 @@ export abstract class Tracer {
       span.fail("Span not ended before flush");
     });
 
-    await provider.forceFlush();
+    await provider
+      .forceFlush()
+      // NOTE: Ignore errors so that the operation doesn't fail if the telemetry
+      // server is unreachable, i.e., when running tests.
+      .catch(() => {});
   }
 
   //#endregion

@@ -1,6 +1,9 @@
 import type { WebDriver } from "selenium-webdriver";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { createSeleniumDriver } from "./mcpDrivers.ts";
+
+import { Env } from "../Env.ts";
+import { FileStore } from "../FileStore/FileStore.ts";
+import { createPlaywrightDriver, createSeleniumDriver } from "./mcpDrivers.ts";
 
 const mocks = vi.hoisted(() => {
   class MockOptions {
@@ -21,6 +24,11 @@ const mocks = vi.hoisted(() => {
 
     setBinaryPath(path: string) {
       this.binaryPath = path;
+      return this;
+    }
+
+    setBrowserVersion(version: string) {
+      this.capabilities.browserVersion = version;
       return this;
     }
 
@@ -93,6 +101,170 @@ vi.mock("selenium-webdriver/chrome.js", () => ({
   },
 }));
 
+const playwrightMocks = vi.hoisted(() => {
+  function makeContext() {
+    return {
+      addCookies: vi.fn(async () => undefined),
+      grantPermissions: vi.fn(async () => undefined),
+      newPage: vi.fn(async () => ({})),
+      pages: vi.fn(() => []),
+      tracing: { start: vi.fn(async () => undefined) },
+    };
+  }
+
+  const newContextCalls: Record<string, unknown>[] = [];
+  const launchPersistentContextCalls: Record<string, unknown>[] = [];
+
+  const newContext = vi.fn(async (options: Record<string, unknown>) => {
+    newContextCalls.push(options);
+    return makeContext();
+  });
+
+  const launchPersistentContext = vi.fn(
+    async (_profileDir: string, options: Record<string, unknown>) => {
+      launchPersistentContextCalls.push(options);
+      return makeContext();
+    },
+  );
+
+  return {
+    devices: {
+      "Pixel 7": {
+        deviceScaleFactor: 2.625,
+        hasTouch: true,
+        isMobile: true,
+        userAgent:
+          "Mozilla/5.0 (Linux; Android 14; Pixel 7) Chrome/148 Mobile Safari/537.36",
+        viewport: { width: 412, height: 839 },
+      },
+    } as Record<string, unknown>,
+    launch: vi.fn(async () => ({ newContext })),
+    launchPersistentContext,
+    launchPersistentContextCalls,
+    newContext,
+    newContextCalls,
+  };
+});
+
+vi.mock("playwright-core", () => ({
+  chromium: {
+    launch: playwrightMocks.launch,
+    launchPersistentContext: playwrightMocks.launchPersistentContext,
+  },
+  devices: playwrightMocks.devices,
+}));
+
+vi.mock("../standalone/installPlaywrightBrowsers.ts", () => ({
+  ensurePlaywrightChromiumInstalled: vi.fn(async () => undefined),
+}));
+
+describe("createPlaywrightDriver", () => {
+  const artifactsStore = new FileStore("test-artifacts");
+
+  beforeEach(() => {
+    playwrightMocks.newContextCalls.length = 0;
+    playwrightMocks.launchPersistentContextCalls.length = 0;
+    vi.clearAllMocks();
+  });
+
+  it("resolves a named device into viewport/userAgent/isMobile/deviceScaleFactor/hasTouch", async () => {
+    await createPlaywrightDriver({}, artifactsStore, {
+      device: "Pixel 7",
+      recordVideos: false,
+    });
+
+    expect(playwrightMocks.newContextCalls[0]).toMatchObject({
+      deviceScaleFactor: 2.625,
+      hasTouch: true,
+      isMobile: true,
+      userAgent: expect.stringContaining("Pixel 7"),
+      viewport: { width: 412, height: 839 },
+    });
+  });
+
+  it("passes a device descriptor object through directly", async () => {
+    await createPlaywrightDriver({}, artifactsStore, {
+      device: {
+        deviceScaleFactor: 2,
+        hasTouch: true,
+        isMobile: true,
+        userAgent: "custom-descriptor-ua",
+        viewport: { width: 360, height: 800 },
+      },
+      recordVideos: false,
+    });
+
+    expect(playwrightMocks.newContextCalls[0]).toMatchObject({
+      deviceScaleFactor: 2,
+      hasTouch: true,
+      isMobile: true,
+      userAgent: "custom-descriptor-ua",
+      viewport: { width: 360, height: 800 },
+    });
+  });
+
+  it("ignores unrecognized fields on a device descriptor object", async () => {
+    await createPlaywrightDriver({}, artifactsStore, {
+      device: {
+        viewport: { width: 360, height: 800 },
+        // Fields real Playwright device JSON carries but that aren't emulation options.
+        defaultBrowserType: "webkit",
+        screen: { width: 360, height: 800 },
+      } as never,
+      recordVideos: false,
+    });
+
+    const options = playwrightMocks.newContextCalls[0];
+    expect(options?.viewport).toEqual({ width: 360, height: 800 });
+    expect(options).not.toHaveProperty("defaultBrowserType");
+    expect(options).not.toHaveProperty("screen");
+  });
+
+  it("lets an explicit userAgent override a named device's userAgent", async () => {
+    await createPlaywrightDriver({}, artifactsStore, {
+      device: "Pixel 7",
+      recordVideos: false,
+      userAgent: "custom-ua",
+    });
+
+    expect(playwrightMocks.newContextCalls[0]?.userAgent).toBe("custom-ua");
+    // isMobile stays device-derived — only userAgent was overridden explicitly.
+    expect(playwrightMocks.newContextCalls[0]?.isMobile).toBe(true);
+  });
+
+  it("throws a clear error for an unknown device name", async () => {
+    await expect(
+      createPlaywrightDriver({}, artifactsStore, {
+        device: "Pixle 7",
+        recordVideos: false,
+      }),
+    ).rejects.toThrow(/Unknown device/);
+  });
+
+  it("injects no viewport-related keys when neither device nor viewport is set", async () => {
+    await createPlaywrightDriver({}, artifactsStore, { recordVideos: false });
+
+    const options = playwrightMocks.newContextCalls[0];
+    expect(options).not.toHaveProperty("viewport");
+    expect(options).not.toHaveProperty("isMobile");
+    expect(options).not.toHaveProperty("deviceScaleFactor");
+    expect(options).not.toHaveProperty("hasTouch");
+  });
+
+  it("applies device options through a persistent context profile", async () => {
+    await createPlaywrightDriver({}, artifactsStore, {
+      device: "Pixel 7",
+      profileDir: "/tmp/profile",
+      recordVideos: false,
+    });
+
+    expect(playwrightMocks.launchPersistentContextCalls[0]).toMatchObject({
+      viewport: { width: 412, height: 839 },
+      isMobile: true,
+    });
+  });
+});
+
 describe("createSeleniumDriver", () => {
   beforeEach(() => {
     mocks.builders.length = 0;
@@ -102,6 +274,25 @@ describe("createSeleniumDriver", () => {
 
   afterEach(() => {
     vi.unstubAllEnvs();
+    Env.reset();
+  });
+
+  it("reads browser version from ALUMNIUM_SELENIUM_BROWSER_VERSION", async () => {
+    vi.stubEnv("ALUMNIUM_SELENIUM_BROWSER_VERSION", "stable");
+    Env.reset();
+
+    await createSeleniumDriver({}, null, {});
+
+    expect(mocks.options[0]?.capabilities.browserVersion).toBe("stable");
+  });
+
+  it("gives an explicit browserVersion capability precedence over the env var", async () => {
+    vi.stubEnv("ALUMNIUM_SELENIUM_BROWSER_VERSION", "stable");
+    Env.reset();
+
+    await createSeleniumDriver({ browserVersion: "beta" }, null, {});
+
+    expect(mocks.options[0]?.capabilities.browserVersion).toBe("beta");
   });
 
   it("reads proxy from http_proxy env var automatically", async () => {

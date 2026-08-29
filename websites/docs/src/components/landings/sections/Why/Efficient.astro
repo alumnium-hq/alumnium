@@ -1,0 +1,86 @@
+---
+import { tt } from "#/copy";
+import Section from "../../blocks/Section.astro";
+import SectionContent from "../../blocks/SectionContent.astro";
+
+const t = tt.landings.sections.efficient.en;
+---
+
+<Section heading={{ h: 2 }} t={t} cols={2} style="header" adjust continue>
+  <div class:list={["stats", `has-${t.stats.length}`]}>
+    <div class="stats-list">
+      {
+        t.stats.map((stat) => (
+          <div class:list={["stat", `is-${stat.id}`]}>
+            <div class="stat-value">{stat.value}</div>
+            <div class="stat-label">{stat.label}</div>
+          </div>
+        ))
+      }
+    </div>
+
+    {t.statsDisclaimer && <p class="stats-disclaimer">{t.statsDisclaimer}</p>}
+  </div>
+</Section>
+
+<Section style="compact">
+  <div class="section-points section-points-flex">
+    {t.points.map((point) => <SectionContent heading={{ h: 3 }} t={point} />)}
+  </div>
+</Section>
+
+<style>
+  @reference "#/styles/global.css";
+
+  .stats {
+    @apply flex flex-col gap-4 justify-end;
+  }
+
+  .stats-list {
+    @apply flex md:justify-center;
+  }
+
+  .stat {
+    @apply flex flex-col gap-2;
+  }
+
+  .stat-value {
+    @apply font-mono leading-none capsize;
+  }
+
+  .stat-label {
+    @apply text-accent-400 text-balance max-w-[8rem];
+  }
+
+  .stats.has-2 {
+    & .stats-list {
+      @apply gap-3 md:gap-10;
+    }
+
+    & .stat-value {
+      @apply text-3xl sm:text-4xl md:text-5xl;
+    }
+
+    & .stat-label {
+      @apply text-sm sm:text-ms;
+    }
+  }
+
+  .stats.has-3 {
+    & .stats-list {
+      @apply gap-6;
+    }
+
+    & .stat-value {
+      @apply text-4xl;
+    }
+
+    & .stat-label {
+      @apply text-sm;
+    }
+  }
+
+  .stats-disclaimer {
+    @apply text-sm text-accent-500 leading-none capsize;
+  }
+</style>

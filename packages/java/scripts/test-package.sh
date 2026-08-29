@@ -6,8 +6,11 @@ set -euo pipefail
 
 PKG_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 TEST_DIR="$PKG_DIR/test/maven"
+ALUMNIUM_TEST_RETRY_COUNT="${ALUMNIUM_TEST_RETRY_COUNT:-0}"
+ALUMNIUM_TEST_RETRY_DELAY="${ALUMNIUM_TEST_RETRY_DELAY:-1000}"
 
 ALUMNIUM_VERSION="$(grep "^version" "$PKG_DIR/build.gradle" | sed "s/.*= '//;s/'//")"
+PLAYWRIGHT_VERSION="$("$PKG_DIR/gradlew" -q printPlaywrightVersion)"
 
 echo -e "🚧 Running Maven package tests...\n"
 
@@ -18,13 +21,19 @@ ARCH="$(uname -m)"
 case "$OS" in
 linux) CLI_OS="linux" ;;
 darwin) CLI_OS="darwin" ;;
-*) echo "🔴 Unsupported OS: $OS"; exit 1 ;;
+*)
+	echo "🔴 Unsupported OS: $OS"
+	exit 1
+	;;
 esac
 
 case "$ARCH" in
 x86_64 | amd64) CLI_ARCH="x64" ;;
 aarch64 | arm64) CLI_ARCH="arm64" ;;
-*) echo "🔴 Unsupported arch: $ARCH"; exit 1 ;;
+*)
+	echo "🔴 Unsupported arch: $ARCH"
+	exit 1
+	;;
 esac
 
 CLI_TARGET="${CLI_OS}-${CLI_ARCH}"
@@ -47,6 +56,7 @@ fi
 cat >"$TEST_DIR/build.gradle" <<EOF
 plugins {
     id 'java'
+    id 'org.gradle.test-retry' version '1.6.2'
 }
 
 group = 'ai.alumnium.test'
@@ -66,7 +76,7 @@ repositories {
 dependencies {
     testImplementation 'ai.alumnium:alumnium:${ALUMNIUM_VERSION}'
     testRuntimeOnly 'ai.alumnium:alumnium-cli-${CLI_TARGET}:${ALUMNIUM_VERSION}'
-    testImplementation 'com.microsoft.playwright:playwright:1.60.0'
+    testImplementation 'com.microsoft.playwright:playwright:${PLAYWRIGHT_VERSION}'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testRuntimeOnly 'org.slf4j:slf4j-simple:2.0.16'
@@ -75,11 +85,19 @@ dependencies {
 tasks.register('installPlaywright', JavaExec) {
     classpath = sourceSets.test.runtimeClasspath
     mainClass = 'com.microsoft.playwright.CLI'
-    args = ['install', 'chromium', '--with-deps']
+    args = ['install', 'chromium']
 }
 
 tasks.withType(Test).configureEach {
     useJUnitPlatform()
+    retry {
+        maxRetries = Integer.parseInt(System.getenv().getOrDefault('ALUMNIUM_TEST_RETRY_COUNT', '0'))
+    }
+    beforeSuite {
+        if (it.parent == null && it.displayName.startsWith('Gradle Test Run :')) {
+            sleep(Long.parseLong(System.getenv().getOrDefault('ALUMNIUM_TEST_RETRY_DELAY', '1000')))
+        }
+    }
     testLogging {
         events 'passed', 'skipped', 'failed'
         showExceptions true
@@ -89,17 +107,14 @@ tasks.withType(Test).configureEach {
 }
 EOF
 
-# 4. Install Playwright browser
-echo -e "\n🌀 Installing Playwright browser\n"
-
+# 4. Prepare the matching Playwright driver without reinstalling OS dependencies
 cd "$TEST_DIR"
-"$PKG_DIR/gradlew" --no-daemon installPlaywright -q 2>/dev/null || \
-	echo "⚠️  Playwright browser install skipped (may already be installed)"
+"$PKG_DIR/gradlew" --no-daemon installPlaywright -q
 
 # 5. Run the smoke test
 echo -e "\n🌀 Running Maven smoke test\n"
 
-if test_output=$(ALUMNIUM_LOG_LEVEL=warning "$PKG_DIR/gradlew" --no-daemon test --rerun 2>&1); then
+if test_output=$(ALUMNIUM_LOG_LEVEL=warning fnox exec -- "$PKG_DIR/gradlew" --no-daemon test --rerun 2>&1); then
 	echo "🟢 Test OK: Tests executed successfully"
 else
 	echo -e "🔴 Test FAIL: Smoke test failed\n"

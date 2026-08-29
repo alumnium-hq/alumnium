@@ -1,6 +1,6 @@
-experimental_monorepo_root = true
+monorepo_root = true
 [monorepo]
-config_roots = [".", "packages/*", "websites/*", "telemetry"]
+config_roots = [".", "packages/*", "websites/*", "telemetry", "assets"]
 
 [tools]
 # TypeScript
@@ -12,7 +12,7 @@ python = "3.10.20"
 uv = "latest"
 
 # Tools
-fnox = "latest" # Secrets manager
+fnox = "latest"
 gh = "latest" # GitHub CLI
 ruff = "latest" # Python formatter
 shfmt = "latest" # .sh formatter
@@ -81,7 +81,14 @@ depends = [
 description = "Build all"
 
 [tasks."dev/cli"]
-run = [{ task = "//packages/typescript:dev/cli" }]
+usage = '''
+arg "[args]" var=#true default=""
+'''
+run = [
+  { task = "//packages/typescript:dev/cli", args = [
+    "{{usage.args | join(sep=' ')}}",
+  ] },
+]
 quiet = true
 raw = true
 
@@ -140,10 +147,10 @@ description = "Fix linting issues in all packages"
 depends = ["//packages/typescript:lint/fix", "//packages/python:lint/fix"]
 
 [tasks."types/ts"]
-run = "bun run types"
+run = "bun run tsc --build"
 
 [tasks."types/ts:watch"]
-run = "bun run types:watch"
+run = "bun run tsc --build --watch"
 
 [tasks."test/unit"]
 depends = [

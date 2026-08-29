@@ -1,7 +1,9 @@
-import { never } from "alwaysly";
 import fs from "node:fs";
 import path from "node:path";
+
+import { never } from "alwaysly";
 import z from "zod";
+
 import { Alumni } from "../../client/Alumni.ts";
 import { NativeClient } from "../../clients/NativeClient.ts";
 import { Driver } from "../../drivers/Driver.ts";
@@ -15,16 +17,33 @@ import { ScrollTool } from "../../tools/ScrollTool.ts";
 import { SwitchToNextTabTool } from "../../tools/SwitchToNextTabTool.ts";
 import { SwitchToPreviousTabTool } from "../../tools/SwitchToPreviousTabTool.ts";
 import { McpArtifactsStore } from "../McpArtifactsStore.ts";
+import { McpProfilesStore } from "../McpProfilesStore.ts";
+import { McpState } from "../McpState.ts";
 import {
   createAppiumDriver,
   createChromeDriver,
   type McpDriver,
 } from "../mcpDrivers.ts";
-import { McpProfilesStore } from "../McpProfilesStore.ts";
-import { McpState } from "../McpState.ts";
 import { McpTool } from "./McpTool.ts";
 
 const { tracer } = Telemetry.get(import.meta.url);
+
+/**
+ * Parses `alumnium:options.device` into either a Playwright device-catalog name (string) or a
+ * device-descriptor object (e.g. pasted directly from Playwright's own device list). Field-level
+ * validation of the object form happens downstream in `resolveDeviceOptions`.
+ */
+function parseDeviceOption(
+  value: unknown,
+): string | McpDriver.DeviceDescriptor | undefined {
+  if (typeof value === "string") {
+    return value;
+  }
+  if (typeof value !== "object" || value === null) {
+    return undefined;
+  }
+  return value as McpDriver.DeviceDescriptor;
+}
 
 /**
  * Start a new driver instance.
@@ -51,12 +70,12 @@ export const startMcpTool = McpTool.define("start", {
             - "baseUrl" (string) — URL to navigate to automatically after driver start, e.g. "https://example.com";
             - "changeAnalysis" (boolean, default true) — enable UI changes analysis agent;
             - "cookies" (array) — cookies to set, supported for Selenium and Playwright, e.g. [{"name": "session", "value": "abc123", "domain": ".example.com"}];
+            - "device" (string or object) — Playwright device emulation, Playwright only. Either the name of a built-in device preset, e.g. "Pixel 7", or a custom device-descriptor object with any of viewport/userAgent/deviceScaleFactor/isMobile/hasTouch, e.g. {"viewport": {"width": 600, "height": 1024}, "userAgent": "...", "deviceScaleFactor": 1, "isMobile": true, "hasTouch": true} — you can paste this straight from Playwright's own device list; unrecognized fields (e.g. "defaultBrowserType", "screen") are ignored. "userAgent" set below overrides the device's;
             - "excludeAttributes" (string[]) — accessibility attributes to exclude from the tree (e.g., ["src"]);
             - "executablePath" (string) — path to a custom Chrome executable;
             - "fullPageScreenshot" (boolean, default false) — capture full-page screenshots.
             - "headers" (object) — extra HTTP headers for every request, supported for Selenium and Playwright, e.g. {"Authorization": "Bearer token"};
             - "headless" (boolean, default false) — run browser headless, supported for Selenium and Playwright;
-            - "newTabTimeout" (number, default 200) — ms to wait for new tab detection, Playwright only;
             - "permissions" (string[]) — browser permissions to grant, Playwright only, e.g. ["camera"];
             - "planner" (boolean) — enable/disable planner agent;
             - "profile" (string) — name of a persistent browser profile; cookies, sessions, and storage are preserved across restarts in ~/.alumnium/profiles/{name}, e.g. "personal";
@@ -155,6 +174,8 @@ export const startMcpTool = McpTool.define("start", {
     const artifactsStore = new McpArtifactsStore(id);
     const profilesStore = new McpProfilesStore();
 
+    const device = parseDeviceOption(alumniumOptions["device"]);
+
     const driverOptions: McpDriver.DriverOptions = {
       ...(alumniumOptions["headers"] !== undefined && {
         headers: alumniumOptions["headers"] as McpDriver.Headers,
@@ -177,6 +198,7 @@ export const startMcpTool = McpTool.define("start", {
       ...(typeof alumniumOptions["userAgent"] === "string" && {
         userAgent: alumniumOptions["userAgent"],
       }),
+      ...(device !== undefined && { device }),
       ...(typeof alumniumOptions["proxy"] === "object" &&
         alumniumOptions["proxy"] !== null &&
         typeof (alumniumOptions["proxy"] as Record<string, unknown>)[
@@ -198,6 +220,7 @@ export const startMcpTool = McpTool.define("start", {
       "baseUrl",
       "changeAnalysis",
       "cookies",
+      "device",
       "excludeAttributes",
       "executablePath",
       "headers",

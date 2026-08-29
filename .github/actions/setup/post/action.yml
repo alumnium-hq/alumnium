@@ -1,4 +1,5 @@
 name: Dev Env Post-Setup
+description: Saves caches for the dev environment.
 
 inputs:
   python-cache:
@@ -34,8 +35,10 @@ runs:
         path: packages/python/.venv
         key: venv-${{ runner.os }}-${{ hashFiles('packages/python/uv.lock') }}
 
-    - name: Save Playwright Cache
+    - name: Save Gradle Cache
       uses: actions/cache/save@v5
       with:
-        path: ~/.cache/ms-playwright
-        key: playwright-${{ runner.os }}
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle', '**/*.gradle.kts', '**/gradle-wrapper.properties', '**/gradle.properties') }}

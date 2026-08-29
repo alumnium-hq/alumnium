@@ -1,0 +1,9 @@
+<RootWebArea name="#RQ100000000 - Sample | Alex K." id=1 focusable focused url="https://support-staging.example.com/requests/RQ100000000/orders/ABCDEFGHIJ">
+  <div id=747>
+    <LabelText id=748>Send money to</LabelText>
+    <combobox name="Send money to" value="Buyer" expanded="true">
+      <option name="Buyer" id=756 focusable selected />
+      <option name="Seller" id=757 focusable selected="false" />
+    </combobox>
+  </div>
+</RootWebArea>

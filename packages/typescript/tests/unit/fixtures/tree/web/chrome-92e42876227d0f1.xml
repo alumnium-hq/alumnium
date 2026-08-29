@@ -1,0 +1,93 @@
+<RootWebArea raw_id="1" backendDOMNodeId="1" nodeId="f0:1" ignored="false" name="Cross-Origin Test" focusable="true" url="file:///home/koss/code/alumnium.worktrees/chore-tree-samples/packages/python/examples/support/pages/cross_origin_iframe.html">
+  <none raw_id="2" backendDOMNodeId="3" nodeId="f0:3" ignored="true">
+    <none raw_id="3" backendDOMNodeId="6" nodeId="f0:6" ignored="true">
+      <heading raw_id="4" backendDOMNodeId="7" nodeId="f0:7" ignored="false" name="Main Page" level="1">
+        <StaticText raw_id="5" backendDOMNodeId="11" nodeId="f0:11" ignored="false" name="Main Page">
+          <InlineTextBox raw_id="6" nodeId="f0:-1000000002" ignored="false" name="Main Page"/>
+        </StaticText>
+      </heading>
+      <paragraph raw_id="7" backendDOMNodeId="8" nodeId="f0:8" ignored="false" name="">
+        <StaticText raw_id="8" backendDOMNodeId="12" nodeId="f0:12" ignored="false" name="This page embeds a real cross-origin iframe.">
+          <InlineTextBox raw_id="9" nodeId="f0:-1000000003" ignored="false" name="This page embeds a real cross-origin iframe."/>
+        </StaticText>
+      </paragraph>
+      <button raw_id="10" backendDOMNodeId="9" nodeId="f0:9" ignored="false" name="Main Page Button" invalid="false" focusable="true">
+        <StaticText raw_id="11" backendDOMNodeId="13" nodeId="f0:13" ignored="false" name="Main Page Button">
+          <InlineTextBox raw_id="12" nodeId="f0:-1000000004" ignored="false" name="Main Page Button"/>
+        </StaticText>
+      </button>
+      <heading raw_id="13" backendDOMNodeId="10" nodeId="f0:10" ignored="false" name="Cross-Origin Iframe Below:" level="2">
+        <StaticText raw_id="14" backendDOMNodeId="14" nodeId="f0:14" ignored="false" name="Cross-Origin Iframe Below:">
+          <InlineTextBox raw_id="15" nodeId="f0:-1000000005" ignored="false" name="Cross-Origin Iframe Below:"/>
+        </StaticText>
+      </heading>
+      <Iframe raw_id="16" backendDOMNodeId="2" nodeId="f0:2" ignored="false" name="">
+        <RootWebArea raw_id="17" backendDOMNodeId="188" nodeId="f1:188" ignored="false" name="Hands-On Selenium WebDriver with Java" focusable="true" focused="true" url="https://bonigarcia.dev/selenium-webdriver-java/submitted-form.html?my-text=testuser&amp;my-password=&amp;my-textarea=&amp;my-readonly=Readonly+input&amp;my-select=Open+this+select+menu&amp;my-datalist=&amp;my-file=&amp;my-check=on&amp;my-radio=on&amp;my-colors=%23563d7c&amp;my-date=&amp;my-range=5&amp;my-hidden=">
+          <none raw_id="18" backendDOMNodeId="190" nodeId="f1:190" ignored="true">
+            <none raw_id="19" backendDOMNodeId="200" nodeId="f1:200" ignored="true">
+              <main raw_id="20" backendDOMNodeId="201" nodeId="f1:201" ignored="false" name="">
+                <none raw_id="21" backendDOMNodeId="202" nodeId="f1:202" ignored="true">
+                  <none raw_id="22" backendDOMNodeId="203" nodeId="f1:203" ignored="true">
+                    <none raw_id="23" backendDOMNodeId="204" nodeId="f1:204" ignored="true">
+                      <heading raw_id="24" backendDOMNodeId="205" nodeId="f1:205" ignored="false" name="Hands-On Selenium WebDriver with Java" level="1">
+                        <StaticText raw_id="25" backendDOMNodeId="222" nodeId="f1:222" ignored="false" name="Hands-On Selenium WebDriver with Java">
+                          <InlineTextBox raw_id="26" nodeId="f1:-1000000028" ignored="false" name="Hands-On Selenium "/>
+                          <InlineTextBox raw_id="27" nodeId="f1:-1000000029" ignored="false" name="WebDriver with Java"/>
+                        </StaticText>
+                      </heading>
+                      <heading raw_id="28" backendDOMNodeId="206" nodeId="f1:206" ignored="false" name="Practice site" level="5">
+                        <StaticText raw_id="29" backendDOMNodeId="223" nodeId="f1:223" ignored="false" name="Practice site">
+                          <InlineTextBox raw_id="30" nodeId="f1:-1000000030" ignored="false" name="Practice site"/>
+                        </StaticText>
+                      </heading>
+                    </none>
+                    <generic raw_id="31" backendDOMNodeId="207" nodeId="f1:207" ignored="false" name="">
+                      <link raw_id="32" backendDOMNodeId="208" nodeId="f1:208" ignored="false" name="" focusable="true" url="https://github.com/bonigarcia/selenium-webdriver-java">
+                        <image raw_id="33" backendDOMNodeId="189" nodeId="f1:189" ignored="false" name="" url="https://bonigarcia.dev/selenium-webdriver-java/img/hands-on-icon.png"/>
+                      </link>
+                    </generic>
+                  </none>
+                  <none raw_id="34" backendDOMNodeId="209" nodeId="f1:209" ignored="true">
+                    <none raw_id="35" backendDOMNodeId="210" nodeId="f1:210" ignored="true">
+                      <separator raw_id="36" backendDOMNodeId="211" nodeId="f1:211" ignored="false" name="" settable="true" orientation="horizontal"/>
+                    </none>
+                  </none>
+                  <none raw_id="37" backendDOMNodeId="212" nodeId="f1:212" ignored="true">
+                    <none raw_id="38" backendDOMNodeId="213" nodeId="f1:213" ignored="true">
+                      <heading raw_id="39" backendDOMNodeId="214" nodeId="f1:214" ignored="false" name="Form submitted" level="1">
+                        <StaticText raw_id="40" backendDOMNodeId="224" nodeId="f1:224" ignored="false" name="Form submitted">
+                          <InlineTextBox raw_id="41" nodeId="f1:-1000000031" ignored="false" name="Form submitted"/>
+                        </StaticText>
+                      </heading>
+                    </none>
+                  </none>
+                  <none raw_id="42" backendDOMNodeId="215" nodeId="f1:215" ignored="true">
+                    <none raw_id="43" backendDOMNodeId="216" nodeId="f1:216" ignored="true">
+                      <paragraph raw_id="44" backendDOMNodeId="217" nodeId="f1:217" ignored="false" name="">
+                        <StaticText raw_id="45" backendDOMNodeId="225" nodeId="f1:225" ignored="false" name="Received!">
+                          <InlineTextBox raw_id="46" nodeId="f1:-1000000032" ignored="false" name="Received!"/>
+                        </StaticText>
+                      </paragraph>
+                    </none>
+                  </none>
+                </none>
+              </main>
+              <contentinfo raw_id="47" backendDOMNodeId="218" nodeId="f1:218" ignored="false" name="">
+                <generic raw_id="48" backendDOMNodeId="219" nodeId="f1:219" ignored="false" name="">
+                  <StaticText raw_id="49" backendDOMNodeId="226" nodeId="f1:226" ignored="false" name="Copyright © 2021-2026 ">
+                    <InlineTextBox raw_id="50" nodeId="f1:-1000000033" ignored="false" name="Copyright © 2021-2026 "/>
+                  </StaticText>
+                  <link raw_id="51" backendDOMNodeId="221" nodeId="f1:221" ignored="false" name="Boni García" focusable="true" url="https://bonigarcia.dev/">
+                    <StaticText raw_id="52" backendDOMNodeId="227" nodeId="f1:227" ignored="false" name="Boni García">
+                      <InlineTextBox raw_id="53" nodeId="f1:-1000000034" ignored="false" name="Boni García"/>
+                    </StaticText>
+                  </link>
+                </generic>
+              </contentinfo>
+            </none>
+          </none>
+        </RootWebArea>
+      </Iframe>
+    </none>
+  </none>
+</RootWebArea>

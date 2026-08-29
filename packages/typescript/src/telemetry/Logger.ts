@@ -1,17 +1,19 @@
 import { getFileSink } from "@logtape/file";
 import {
-  ansiColorFormatter,
   configure,
   dispose,
   disposeSync,
+  getAnsiColorFormatter,
   getConsoleSink,
   getLogger as logtapeGetLogger,
+  getTextFormatter,
   type Config as LogtapeConfig,
   type Sink,
 } from "@logtape/logtape";
 import { getOpenTelemetrySink } from "@logtape/otel";
 import * as fs from "node:fs/promises";
 import path from "node:path";
+import { inspect } from "node:util";
 import { Env } from "../Env.ts";
 import { GlobalFileStorePaths } from "../FileStore/GlobalFileStorePaths.ts";
 import { ensureDir } from "../utils/fs.ts";
@@ -34,6 +36,8 @@ export namespace Logger {
 
   export type Sinks = Record<string, Sink>;
 }
+
+const logPathTemplateVars = new Set<Env.Var>(["VITEST_WORKER_ID"]);
 
 export abstract class Logger {
   //#region API
@@ -127,6 +131,17 @@ export abstract class Logger {
   static #resolvePath(
     propsOrPathStr?: string | Logger.PathObj,
   ): string | undefined {
+    const path = this.#resolvePathStr(propsOrPathStr);
+    return path?.replace(/{{(\w+)}}/g, (matchStr, varName) =>
+      logPathTemplateVars.has(varName)
+        ? String(Env[varName as Env.Var] || "none")
+        : matchStr,
+    );
+  }
+
+  static #resolvePathStr(
+    propsOrPathStr?: string | Logger.PathObj,
+  ): string | undefined {
     const props: Logger.PathObj =
       typeof propsOrPathStr === "string"
         ? { path: propsOrPathStr }
@@ -154,7 +169,18 @@ export abstract class Logger {
       if (Env.ALUMNIUM_PRUNE_LOGS) await fs.rm(this.#path, { force: true });
     }
 
-    const consoleSink = getConsoleSink({ formatter: ansiColorFormatter });
+    const depth = Env.ALUMNIUM_LOG_OBJECTS_DEPTH;
+    const maxStringLength = Env.ALUMNIUM_LOG_MAX_STR_LENGTH;
+    const consoleSink = getConsoleSink({
+      formatter: getAnsiColorFormatter({
+        value: (value) =>
+          inspect(value, {
+            colors: true,
+            depth,
+            maxStringLength,
+          }),
+      }),
+    });
     const mainSinks: string[] = ["main"];
     const flushInterval = Env.ALUMNIUM_LOG_FLUSH_INTERVAL;
 
@@ -163,6 +189,9 @@ export abstract class Logger {
       main: this.#path
         ? getFileSink(this.#path, {
             bufferSize: Env.ALUMNIUM_LOG_BUFFER_SIZE,
+            formatter: getTextFormatter({
+              value: (value) => inspect(value, { depth, maxStringLength }),
+            }),
             flushInterval,
           })
         : consoleSink,

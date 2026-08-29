@@ -210,7 +210,17 @@ export class BaseAgent {
               timeout: MODEL_TIMEOUT_SEC * 1000,
               callbacks: [
                 {
-                  handleChatModelStart: (_llm, baseMessages) => {
+                  handleChatModelStart: (_llm, baseMessages, _, __, args) => {
+                    logger.debug(
+                      `Sending ${agentKind} agent chain request: {messages}`,
+                      {
+                        messages: Logger.debugExtra("langchain", baseMessages),
+                      },
+                    );
+                    logger.debug(`  -> Request args: {args}`, {
+                      args: Logger.debugExtra("langchain", args),
+                    });
+
                     contextPrompts.push(
                       ...baseMessages.map((baseMessage) =>
                         convertInputToPromptValue

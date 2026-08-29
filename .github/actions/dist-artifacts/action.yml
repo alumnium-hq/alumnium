@@ -1,4 +1,5 @@
 name: Upload Publish Artifacts
+description: Uploads artifacts for the release workflow.
 
 inputs:
   name:
@@ -29,7 +30,7 @@ runs:
   steps:
     - name: Upload npm Dist Artifacts
       if: inputs.npm == 'true'
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: dist-npm-${{ inputs.name }}
         path: |
@@ -37,7 +38,7 @@ runs:
 
     - name: Upload Pip Dist Artifacts
       if: inputs.pip == 'true'
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: dist-pip-${{ inputs.name }}
         path: |
@@ -46,7 +47,7 @@ runs:
 
     - name: Upload Bin Dist Artifacts
       if: inputs.bin == 'true'
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: dist-bin-${{ inputs.name }}
         path: |
@@ -54,7 +55,7 @@ runs:
 
     - name: Upload Attest Bundle
       if: inputs.attest-bundle-path != ''
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: attest-bundle-${{ inputs.name }}
         path: ${{ inputs.attest-bundle-path }}

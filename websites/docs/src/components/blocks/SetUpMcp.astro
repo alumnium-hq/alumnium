@@ -1,0 +1,29 @@
+---
+import Tabs from "./Tabs.astro";
+import HowTabContent from "./HowTabContent.astro";
+import { createHowTab } from "./howTabs";
+
+const tab = createHowTab<"set-up-mcp">();
+---
+
+<Tabs
+  items={[
+    tab("set-up-mcp-claude-code"),
+    tab("set-up-mcp-codex"),
+    tab("set-up-mcp-grok"),
+  ]}
+  active="set-up-mcp-claude-code"
+  style="code"
+>
+  <Fragment slot="set-up-mcp-claude-code">
+    <HowTabContent key="set-up-mcp-claude-code" />
+  </Fragment>
+
+  <Fragment slot="set-up-mcp-codex">
+    <HowTabContent key="set-up-mcp-codex" />
+  </Fragment>
+
+  <Fragment slot="set-up-mcp-grok">
+    <HowTabContent key="set-up-mcp-grok" />
+  </Fragment>
+</Tabs>

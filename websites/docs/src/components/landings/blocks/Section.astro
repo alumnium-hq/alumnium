@@ -1,0 +1,57 @@
+---
+import DecorationCrosses from "./DecorationCrosses.astro";
+import SectionContent from "./SectionContent.astro";
+import SectionExtra from "./SectionExtra.astro";
+import type { SectionProps } from "./Section.types";
+
+type Props = SectionProps;
+
+const {
+  cols,
+  span,
+  style,
+  align,
+  adjust,
+  continue: continueProp,
+  content: contentExtra,
+  extra,
+  ...contentProps
+} = Astro.props;
+---
+
+<div
+  class:list={[
+    "relative",
+    span && `is-span-${span}`,
+    continueProp && "has-continuation",
+  ]}
+>
+  <div
+    class:list={[
+      "section",
+      style === "compact" && "section-compact",
+      style === "header" && "section-header",
+      style === "tight" && "section-tight",
+      align && "section-align",
+      adjust && "section-adjust",
+      (!cols || cols === 1) && "section-cols-1",
+      cols === 2 && "section-cols-2",
+    ]}
+  >
+    {
+      "t" in contentProps && (
+        <SectionContent {...contentProps}>
+          {contentExtra ? (
+            <SectionExtra {...contentExtra} />
+          ) : (
+            <slot name="content" />
+          )}
+        </SectionContent>
+      )
+    }
+
+    {extra ? <SectionExtra {...extra} /> : <slot />}
+  </div>
+
+  <DecorationCrosses />
+</div>

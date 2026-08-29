@@ -1,20 +1,23 @@
-// TODO: Combine with the original interface is defined in packages/typescript/src/tools/BaseTool.ts
-export interface ToolCall {
-  name: string;
-  args: Record<string, unknown>;
-}
+import { always } from "alwaysly";
+import { Env } from "../../Env.ts";
+import type { ToolCall } from "../../tools/BaseTool.ts";
+import type { Tree } from "../../tree/Tree.ts";
+import { Xml } from "../../xml/Xml.ts";
+import { XmlRenderer } from "../../xml/XmlRenderer.ts";
+import { textContent } from "domutils";
+import { Logger } from "../../telemetry/Logger.ts";
+import { BaseAccessibilityTree } from "../../accessibility/BaseAccessibilityTree.ts";
+
+const logger = Logger.get(import.meta.url);
 
 export abstract class BaseServerAccessibilityTree {
+  //#region Id Mapping
+
   #simplifiedIdCounter = 0;
 
-  protected simplifiedToRawId: Record<string, number> = {};
+  protected simplifiedToRawId: Record<Tree.SimplifiedId, Tree.RawId> = {};
 
-  /**
-   * Convert tree to XML string, optionally excluding specified attributes.
-   */
-  abstract toXml(excludeAttrs?: Set<string>): string;
-
-  getRawId(simplifiedIdArg: unknown): number {
+  getRawId(simplifiedIdArg: unknown): Tree.RawId {
     const simplifiedId = this.#extractId(simplifiedIdArg);
     const rawId = this.simplifiedToRawId[simplifiedId];
     if (typeof rawId !== "number") {
@@ -22,6 +25,20 @@ export abstract class BaseServerAccessibilityTree {
     }
 
     return rawId;
+  }
+
+  // Gemini returns ids as floats
+  // Llama sometimes returns ids as strings or nested dicts
+  #extractId(id: unknown): Tree.SimplifiedId {
+    if (typeof id === "number") {
+      return Math.trunc(id) as Tree.SimplifiedId;
+    } else if (typeof id === "string") {
+      return +id as Tree.SimplifiedId;
+    } else if (typeof id === "object" && id && "value" in id) {
+      return this.#extractId(id.value);
+    }
+
+    throw new Error(`Cannot extract id from ${String(id)}`);
   }
 
   mapToolCallsToRawId(toolCalls: ToolCall[]): ToolCall[] {
@@ -47,22 +64,508 @@ export abstract class BaseServerAccessibilityTree {
     return mappedCalls;
   }
 
-  protected getNextId(): number {
-    this.#simplifiedIdCounter += 1;
-    return this.#simplifiedIdCounter;
-  }
+  //#endregion
 
-  // Gemini returns ids as floats
-  // Llama sometimes returns ids as strings or nested dicts
-  #extractId(id: unknown): number {
-    if (typeof id === "number") {
-      return Math.trunc(id);
-    } else if (typeof id === "string") {
-      return +id;
-    } else if (typeof id === "object" && id && "value" in id) {
-      return this.#extractId(id.value);
+  //#region Parsing
+
+  xmlNodeToTreeNode(xmlTag: Xml.Tag): Tree.Node {
+    const simplifiedId = this.getNextId();
+
+    const rawId = xmlTag.attribs.raw_id;
+    if (rawId) {
+      const rawIdInt = parseInt(rawId) as Tree.RawId;
+      this.simplifiedToRawId[simplifiedId] = rawIdInt;
     }
 
-    throw new Error(`Cannot extract id from ${String(id)}`);
+    const role = this.parseRole(xmlTag);
+
+    const attrs: Tree.NodeAttrs = {};
+    for (const [attrName, attrValue] of Object.entries(xmlTag.attribs)) {
+      const normalizedAttrValue = this.normalizeXmlAttr(attrName, attrValue);
+      if (
+        !normalizedAttrValue ||
+        (normalizedAttrValue === "false" &&
+          !this.preserveFalseAttrs.has(attrName)) ||
+        this.skipXmlAttr(role, attrName, normalizedAttrValue)
+      )
+        continue;
+      attrs[attrName] = normalizedAttrValue;
+    }
+
+    const children: Tree.Node[] = [];
+    for (const xmlChild of xmlTag.children) {
+      if (!Xml.isTag(xmlChild)) continue;
+      if (this.skipXmlNode(xmlChild)) continue;
+      children.push(this.xmlNodeToTreeNode(xmlChild));
+    }
+
+    return {
+      id: simplifiedId,
+      role,
+      name: this.parseName(role, xmlTag),
+      ignored: this.parseIgnored(xmlTag),
+      addressable: this.parseAddressable(xmlTag),
+      attrs,
+      children,
+    };
+  }
+
+  protected getNextId(): Tree.SimplifiedId {
+    this.#simplifiedIdCounter += 1;
+    return this.#simplifiedIdCounter as Tree.SimplifiedId;
+  }
+
+  protected abstract parseRole(xmlTag: Xml.Tag): string;
+
+  protected skipXmlNode(_xmlTag: Xml.Tag): boolean {
+    return false;
+  }
+
+  protected abstract parseName(
+    role: string,
+    xmlTag: Xml.Tag,
+  ): string | undefined;
+
+  protected abstract skipXmlAttr(
+    role: string,
+    attrName: string,
+    attrValue: string,
+  ): boolean;
+
+  protected normalizeXmlAttr(_attrName: string, attrValue: string): string {
+    return attrValue;
+  }
+
+  protected parseIgnored(xmlNode: Xml.Node): boolean {
+    const xmlTag = Xml.nodeAsTag(xmlNode);
+    // An element is considered "ignored" if it's not accessible.
+    // This aligns with ARIA principles where accessibility is key.
+    return xmlTag?.attribs.ignored === "true";
+  }
+
+  protected parseAddressable(_xmlTag: Xml.Tag): boolean {
+    return true;
+  }
+
+  //#endregion
+
+  //#region Rendering
+
+  /**
+   * Convert tree to XML string, optionally excluding specified attributes.
+   */
+  abstract toXml(excludeAttrs?: Set<string>): string;
+
+  protected renderXml(
+    roots: Tree.Node[],
+    options: BaseServerAccessibilityTree.TreeToXmlOptions,
+  ): string {
+    const xmlRoots: Xml.Tag[] = [];
+
+    for (const root of roots) {
+      const xmlRoot = this.#treeNodeToXmlTag(root, null, null, options);
+      if (!xmlRoot) continue;
+
+      xmlRoots.push(xmlRoot);
+
+      this.#pruneRedundantText(
+        xmlRoot,
+        this.redundantTextAttrs,
+        this.preserveNameRoles,
+      );
+
+      this.pruneBackendRedundantNodes(xmlRoot);
+      this.#trimGenericChildren(xmlRoot);
+    }
+
+    for (const xmlRoot of xmlRoots) this.#postTransform(xmlRoot);
+    for (const xmlRoot of xmlRoots)
+      this.#removeExcludedAttrs(xmlRoot, options.excludeAttrs);
+
+    return XmlRenderer.render(xmlRoots, {
+      tagAliases: Object.fromEntries(
+        Array.from(this.genericRoles, (role) => [role, "div"]),
+      ),
+      preserveFalseAttrs: this.renderPreserveFalseAttrs,
+      explicitTrueAttrs: this.explicitTrueAttrs,
+    });
+  }
+
+  protected genericRoles = new Set(["generic"]);
+
+  protected inlineTextRoles = new Set<string>();
+
+  protected ignoredRoles = new Set<string>();
+
+  protected unwrappedUnaddressableRoles = new Set<string>();
+
+  protected redundantTextAttrs = new Set(["name", "label"]);
+
+  protected preserveNameRoles = new Set<string>();
+
+  protected trimmingBorderRoles = new Set<string>();
+
+  protected trimmingBorderChildRoles = new Set<string>();
+
+  protected deduplicateAttrs = new Set<string>();
+
+  protected preserveFalseAttrs = new Set<string>();
+
+  protected get renderPreserveFalseAttrs(): ReadonlySet<string> {
+    return this.preserveFalseAttrs;
+  }
+
+  protected explicitTrueAttrs = new Set<string>();
+
+  protected abstract textContentAttr(role: string): string | undefined;
+
+  protected shouldTrimEmptyGeneric(_xmlTag: Xml.Tag): boolean {
+    return false;
+  }
+
+  protected shouldTrimEmptyNode(_xmlTag: Xml.Tag): boolean {
+    return false;
+  }
+
+  protected shouldPreserveTextOnlyGeneric(
+    _xmlTag: Xml.Tag,
+    _xmlParent: Xml.Tag,
+  ): boolean {
+    return false;
+  }
+
+  protected pruneBackendRedundantNodes(_xmlTag: Xml.Tag): void {}
+
+  protected postTransform(_xmlTag: Xml.Tag): void {}
+
+  protected isGenericRole(role: string): boolean {
+    return this.genericRoles.has(role);
+  }
+
+  protected genericAttrs = new Set(["id"]);
+
+  // Preserve source element boundaries when generic wrappers are unwrapped.
+  #sourceIdsByRenderedNode = new WeakMap<
+    Xml.Node,
+    Tree.SimplifiedId | string
+  >();
+
+  #textPromotedTags = new WeakSet<Xml.Tag>();
+
+  #unaddressableTags = new WeakSet<Xml.Tag>();
+
+  protected isRenderedAddressable(xmlTag: Xml.Tag): boolean {
+    return !this.#unaddressableTags.has(xmlTag);
+  }
+
+  #isGenericAttr(attrName: string): boolean {
+    return this.genericAttrs.has(attrName);
+  }
+
+  #hasNonGenericAttrs(xmlTag: Xml.Tag): boolean {
+    const attrNames = Object.keys(xmlTag.attribs);
+    return attrNames.some((attrName) => !this.#isGenericAttr(attrName));
+  }
+
+  #treeNodeToXmlTag(
+    node: Tree.Node,
+    xmlParent: Xml.Tag | null,
+    trimmingBorder: Xml.Tag | null,
+    options: BaseServerAccessibilityTree.TreeToXmlOptions,
+  ): Xml.Tag | null {
+    const { role, name = "", children } = node;
+    const { excludeAttrs } = options;
+
+    if (this.ignoredRoles.has(role)) return null;
+
+    if (this.inlineTextRoles.has(role) && xmlParent) {
+      if (name.trim()) {
+        const text = Xml.text(name);
+        if (!excludeAttrs.has("id") && node.addressable)
+          this.#sourceIdsByRenderedNode.set(text, node.id);
+        xmlParent.children.push(text);
+      }
+      return null;
+    }
+
+    const isGeneric = this.isGenericRole(role);
+    const xmlTag = Xml.tag(role);
+    if (!node.addressable) this.#unaddressableTags.add(xmlTag);
+
+    if (!excludeAttrs.has("name") && name) xmlTag.attribs.name = name;
+
+    if (!excludeAttrs.has("id") && node.addressable)
+      xmlTag.attribs.id = String(node.id);
+
+    for (const [attrName, attrValue] of Object.entries(node.attrs)) {
+      if (!excludeAttrs.has(attrName)) xmlTag.attribs[attrName] = attrValue;
+    }
+
+    this.#removeDuplicateAttrs(xmlTag);
+
+    const childTrimmingBorder = this.trimmingBorderRoles.has(xmlTag.tagName)
+      ? xmlTag
+      : isGeneric && children.length === 1
+        ? trimmingBorder
+        : null;
+    for (const child of children)
+      this.#treeNodeToXmlTag(child, xmlTag, childTrimmingBorder, options);
+
+    const textContentAttr = this.textContentAttr(role);
+    const textContentValue = textContentAttr
+      ? node.attrs[textContentAttr]
+      : undefined;
+    if (textContentValue && !xmlTag.children.length) {
+      const text = Xml.text(textContentValue);
+      if (!excludeAttrs.has("id"))
+        this.#sourceIdsByRenderedNode.set(text, node.id);
+      xmlTag.children.push(text);
+      this.#textPromotedTags.add(xmlTag);
+      delete xmlTag.attribs[textContentAttr!];
+    }
+
+    if (!xmlParent) return xmlTag;
+
+    const hasNonGenericAttrs = this.#hasNonGenericAttrs(xmlTag);
+
+    if (!node.addressable && this.unwrappedUnaddressableRoles.has(role)) {
+      const child = xmlTag.children[0];
+      if (child) this.#transferSourceId(xmlTag, child);
+      xmlParent.children.push(...xmlTag.children);
+      return null;
+    }
+
+    if (isGeneric) {
+      if (!xmlTag.children.length && !hasNonGenericAttrs) return null;
+
+      if (
+        xmlTag.children.length === 1 &&
+        !hasNonGenericAttrs &&
+        !this.#textPromotedTags.has(xmlTag) &&
+        !this.shouldPreserveTextOnlyGeneric(xmlTag, xmlParent) &&
+        !this.#isTextOnlyTrimmingBorderChild(xmlTag, trimmingBorder)
+      ) {
+        const child = xmlTag.children[0];
+        always(child);
+        this.#transferSourceId(xmlTag, child);
+        xmlParent.children.push(child);
+        return null;
+      }
+    }
+
+    xmlParent.children.push(xmlTag);
+    return null;
+  }
+
+  #isTextOnlyTrimmingBorderChild(
+    xmlTag: Xml.Tag,
+    trimmingBorder: Xml.Tag | null,
+  ): boolean {
+    const child = xmlTag.children[0];
+    return (
+      !!trimmingBorder &&
+      this.trimmingBorderChildRoles.has(xmlTag.tagName) &&
+      xmlTag.children.length === 1 &&
+      !!child &&
+      !!Xml.nodeAsText(child)
+    );
+  }
+
+  #trimGenericChildren(xmlParent: Xml.Tag): void {
+    const trimmedChildren = xmlParent.children.filter((xmlChild) => {
+      const xmlTag = Xml.nodeAsTag(xmlChild);
+      if (!xmlTag) return true;
+
+      this.#trimGenericChildren(xmlTag);
+      if (this.shouldTrimEmptyNode(xmlTag)) return false;
+      return !(
+        this.isGenericRole(xmlTag.tagName) &&
+        this.shouldTrimEmptyGeneric(xmlTag)
+      );
+    });
+    const hasMultipleChildren = trimmedChildren.length > 1;
+    const children = trimmedChildren.flatMap((xmlChild) => {
+      const xmlTag = Xml.nodeAsTag(xmlChild);
+      if (!xmlTag) return [xmlChild];
+
+      if (!this.isGenericRole(xmlTag.tagName)) return [xmlTag];
+      const trimmingBorder = this.trimmingBorderRoles.has(xmlParent.tagName)
+        ? xmlParent
+        : null;
+      if (this.#isTextOnlyTrimmingBorderChild(xmlTag, trimmingBorder))
+        return [xmlTag];
+
+      const hasTextChild = xmlTag.children.some((child) =>
+        Xml.nodeAsText(child),
+      );
+      const hasTagChild = xmlTag.children.some((child) => Xml.nodeAsTag(child));
+      if (
+        this.#hasNonGenericAttrs(xmlTag) ||
+        hasMultipleChildren ||
+        this.#textPromotedTags.has(xmlTag) ||
+        (hasTextChild && hasTagChild)
+      )
+        return [xmlTag];
+
+      const child = xmlTag.children[0];
+      if (child) this.#transferSourceId(xmlTag, child);
+      return xmlTag.children;
+    });
+
+    xmlParent.children = children.flatMap((child, index) => {
+      const text = Xml.nodeAsText(child);
+      if (!text) return [child];
+
+      const previous = children[index - 1];
+      const next = children[index + 1];
+      const hasAdjacentText =
+        (previous && Xml.nodeAsText(previous)) ||
+        (next && Xml.nodeAsText(next));
+      if (!hasAdjacentText) return [child];
+
+      const id = this.#sourceIdsByRenderedNode.get(child);
+      return [Xml.tag("generic", id ? { id: String(id) } : undefined, [text])];
+    });
+  }
+
+  #transferSourceId(xmlTag: Xml.Tag, child: Xml.Node): void {
+    if (xmlTag.attribs.id && !this.#sourceIdsByRenderedNode.has(child))
+      this.#sourceIdsByRenderedNode.set(child, xmlTag.attribs.id);
+  }
+
+  #postTransform(xmlTag: Xml.Tag): void {
+    for (const child of xmlTag.children) {
+      const childTag = Xml.nodeAsTag(child);
+      if (childTag) this.#postTransform(childTag);
+    }
+
+    this.postTransform(xmlTag);
+  }
+
+  #removeExcludedAttrs(xmlTag: Xml.Tag, excludeAttrs: Set<string>): void {
+    for (const attrName of excludeAttrs) delete xmlTag.attribs[attrName];
+    for (const child of xmlTag.children) {
+      const childTag = Xml.nodeAsTag(child);
+      if (childTag) this.#removeExcludedAttrs(childTag, excludeAttrs);
+    }
+  }
+
+  #removeDuplicateAttrs(xmlTag: Xml.Tag): void {
+    const values = new Set<string>();
+    const name = xmlTag.attribs.name;
+    if (name) values.add(name);
+
+    for (const attrName of this.deduplicateAttrs) {
+      const attrValue = xmlTag.attribs[attrName];
+      if (!attrValue) continue;
+      if (values.has(attrValue)) delete xmlTag.attribs[attrName];
+      else values.add(attrValue);
+    }
+  }
+
+  #pruneRedundantText(
+    xmlNode: Xml.ChildNode,
+    textAttrs: Set<string>,
+    preserveNameRoles: Set<string>,
+  ): string[] {
+    const xmlTag = Xml.nodeAsTag(xmlNode);
+
+    if (xmlTag && preserveNameRoles.has(xmlTag.tagName)) {
+      const descendantContent = xmlTag.children.flatMap((child) =>
+        this.#pruneRedundantText(child, textAttrs, preserveNameRoles),
+      );
+
+      return this.#getTexts(xmlNode, textAttrs).concat(descendantContent);
+    }
+
+    const nodeText = textContent(xmlNode);
+    if (xmlTag?.attribs.name && nodeText && xmlTag.attribs.name === nodeText)
+      delete xmlTag.attribs.name;
+
+    if (!xmlTag?.children.length) return this.#getTexts(xmlNode, textAttrs);
+
+    const descendantContent = xmlTag.children.flatMap((child) =>
+      this.#pruneRedundantText(child, textAttrs, preserveNameRoles),
+    );
+    descendantContent.sort((left, right) => right.length - left.length);
+
+    for (const content of descendantContent) {
+      for (const attrName of textAttrs) {
+        const attrValue = xmlTag.attribs[attrName];
+        if (!attrValue) continue;
+
+        const prunedValue = attrValue.replace(content, "").trim();
+        if (prunedValue) xmlTag.attribs[attrName] = prunedValue;
+        else delete xmlTag.attribs[attrName];
+      }
+    }
+
+    if (xmlTag.attribs.name)
+      descendantContent.push(...this.#getTexts(xmlNode, textAttrs));
+
+    return descendantContent;
+  }
+
+  #getTexts(xmlNode: Xml.ChildNode, textAttrs: Set<string>): string[] {
+    const texts = new Set<string>();
+    const xmlTag = Xml.nodeAsTag(xmlNode);
+
+    for (const attrName of textAttrs) {
+      const value = xmlTag?.attribs[attrName];
+      if (value) texts.add(value);
+    }
+
+    const xmlText = Xml.nodeAsText(xmlNode);
+    if (xmlText) texts.add(xmlText.data);
+
+    return Array.from(texts);
+  }
+
+  //#endregion
+
+  //#region Dev
+
+  #devCapturedTreeName?: BaseAccessibilityTree.SourceId;
+
+  protected async devCaptureTreeInput(
+    kind: string,
+    xml: string,
+  ): Promise<void> {
+    if (!Env.ALUMNIUM_DEV_CAPTURE_TREES) return;
+
+    this.#devCapturedTreeName =
+      BaseAccessibilityTree.devSourceIdForXml(xml) ||
+      BaseAccessibilityTree.sourceIdFor(kind, xml);
+
+    logger.debug("Capturing tree map {name}: {map}", {
+      name: this.#devCapturedTreeName,
+      map: this.simplifiedToRawId,
+    });
+
+    await this.#devWriteTree("in", xml);
+  }
+
+  protected async devCaptureTreeOutput(xml: string): Promise<void> {
+    if (!Env.ALUMNIUM_DEV_CAPTURE_TREES) return;
+
+    await this.#devWriteTree("out", xml);
+  }
+
+  async #devWriteTree(inOut: "in" | "out", xml: string): Promise<void> {
+    always(this.#devCapturedTreeName);
+
+    const name = `${this.#devCapturedTreeName}-${inOut}.xml`;
+
+    logger.debug(`Captured tree ${inOut} {name}`, { name });
+
+    await BaseAccessibilityTree.devTreesStore.writeFile(name, xml);
+  }
+
+  //#endregion
+}
+
+export namespace BaseServerAccessibilityTree {
+  export interface TreeToXmlOptions {
+    excludeAttrs: Set<string>;
   }
 }

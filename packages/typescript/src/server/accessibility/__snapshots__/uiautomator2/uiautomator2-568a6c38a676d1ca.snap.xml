@@ -1,0 +1,53 @@
+<div id=1>
+  <WebView id=13 text="TodoMVC: Vue">
+    <div id=14>
+      <div id=15>
+        <div id=16 content-desc="todos" clickable />
+        <EditText id=18 clickable />
+      </div>
+      <div id=19>
+        <CheckBox id=20 resource-id="toggle-all-input" checked clickable>❯ Toggle All Input</CheckBox>
+        <div id=21>❯</div>
+        <ListView id=22>
+          <CheckBox id=24 checked clickable />
+          <div id=25>Buy milk</div>
+          <Button id=26 clickable>×</Button>
+        </ListView>
+      </div>
+      <div id=27>
+        <div id=28>0</div>
+        <div id=29>items left</div>
+        <ListView id=30>
+          <div id=32 content-desc="All" clickable />
+          <div id=35 content-desc="Active" clickable />
+          <div id=38 content-desc="Completed" clickable />
+        </ListView>
+        <Button id=40 clickable>Clear completed</Button>
+      </div>
+    </div>
+    <div id=41>
+      <div id=42>Double-click to edit a todo</div>
+      <div id=43>Created by the TodoMVC Team</div>
+      <div id=44>
+        <div id=45>Part of</div>
+        <div id=46 content-desc="TodoMVC" clickable />
+      </div>
+    </div>
+  </WebView>
+  <div id=49 resource-id="toolbar_container">
+    <div id=50 resource-id="toolbar">
+      <ImageButton id=51 content-desc="Home" resource-id="home_button" clickable />
+      <div id=52 resource-id="location_bar">
+        <div id=53 resource-id="location_bar_status" clickable>
+          <ImageView id=56 content-desc="Connection is secure" resource-id="location_bar_status_icon" />
+        </div>
+        <EditText id=57 resource-id="url_bar" clickable>todomvc.com/examples/vue/dist/#/</EditText>
+      </div>
+      <div id=58 resource-id="toolbar_buttons">
+        <ImageButton id=59 content-desc="Switch or close tabs" resource-id="tab_switcher_button" clickable />
+        <ImageButton id=61 content-desc="More options" resource-id="menu_button" clickable />
+      </div>
+    </div>
+    <ImageView id=62 resource-id="toolbar_hairline" />
+  </div>
+</div>

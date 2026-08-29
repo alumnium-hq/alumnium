@@ -137,6 +137,10 @@
                                         "type": [
                                           {
                                             "kind": "undefined"
+                                          },
+                                          {
+                                            "kind": "string",
+                                            "literal": false
                                           }
                                         ]
                                       }
@@ -578,6 +582,26 @@
                                                 ]
                                               }
                                             ]
+                                          },
+                                          "content": {
+                                            "kind": "field",
+                                            "optional": true,
+                                            "type": [
+                                              {
+                                                "kind": "array",
+                                                "type": []
+                                              }
+                                            ]
+                                          },
+                                          "encrypted_content": {
+                                            "kind": "field",
+                                            "optional": true,
+                                            "type": [
+                                              {
+                                                "kind": "string",
+                                                "literal": false
+                                              }
+                                            ]
                                           }
                                         }
                                       }
@@ -808,6 +832,27 @@
                                           {
                                             "kind": "string",
                                             "literal": false
+                                          }
+                                        ]
+                                      },
+                                      "output_tokens_details": {
+                                        "kind": "field",
+                                        "optional": true,
+                                        "type": [
+                                          {
+                                            "kind": "object",
+                                            "properties": {
+                                              "thinking_tokens": {
+                                                "kind": "field",
+                                                "optional": false,
+                                                "type": [
+                                                  {
+                                                    "kind": "number",
+                                                    "literal": false
+                                                  }
+                                                ]
+                                              }
+                                            }
                                           }
                                         ]
                                       }
@@ -1457,6 +1502,26 @@
                                                     ]
                                                   }
                                                 ]
+                                              },
+                                              "content": {
+                                                "kind": "field",
+                                                "optional": true,
+                                                "type": [
+                                                  {
+                                                    "kind": "array",
+                                                    "type": []
+                                                  }
+                                                ]
+                                              },
+                                              "encrypted_content": {
+                                                "kind": "field",
+                                                "optional": true,
+                                                "type": [
+                                                  {
+                                                    "kind": "string",
+                                                    "literal": false
+                                                  }
+                                                ]
                                               }
                                             }
                                           },
@@ -1598,6 +1663,19 @@
                                                     "values": ["assistant"]
                                                   }
                                                 ]
+                                              },
+                                              "phase": {
+                                                "kind": "field",
+                                                "optional": true,
+                                                "type": [
+                                                  {
+                                                    "kind": "string",
+                                                    "literal": false
+                                                  },
+                                                  {
+                                                    "kind": "null"
+                                                  }
+                                                ]
                                               }
                                             }
                                           },
@@ -1663,6 +1741,24 @@
                                                   {
                                                     "kind": "string",
                                                     "literal": false
+                                                  }
+                                                ]
+                                              },
+                                              "caller": {
+                                                "kind": "field",
+                                                "optional": true,
+                                                "type": [
+                                                  {
+                                                    "kind": "null"
+                                                  }
+                                                ]
+                                              },
+                                              "namespace": {
+                                                "kind": "field",
+                                                "optional": true,
+                                                "type": [
+                                                  {
+                                                    "kind": "null"
                                                   }
                                                 ]
                                               }
@@ -2087,6 +2183,27 @@
                                           {
                                             "kind": "number",
                                             "literal": false
+                                          }
+                                        ]
+                                      },
+                                      "output_tokens_details": {
+                                        "kind": "field",
+                                        "optional": true,
+                                        "type": [
+                                          {
+                                            "kind": "object",
+                                            "properties": {
+                                              "thinking_tokens": {
+                                                "kind": "field",
+                                                "optional": false,
+                                                "type": [
+                                                  {
+                                                    "kind": "number",
+                                                    "literal": false
+                                                  }
+                                                ]
+                                              }
+                                            }
                                           }
                                         ]
                                       }

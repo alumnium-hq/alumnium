@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 512 512" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <rect id="Favicon-Mono" serif:id="Favicon Mono" x="0" y="-0" width="512" height="512" style="fill:none;"/>
+    <clipPath id="_clip1">
+        <rect x="0" y="-0" width="512" height="512"/>
+    </clipPath>
+    <g clip-path="url(#_clip1)">
+        <path d="M512,-0l0,512l-512,0l0,-512l512,-0Zm-121.124,430.955c-5.38,-0.861 -9.479,-2.953 -12.299,-6.276c-3.805,-4.485 -5.708,-11.39 -5.708,-20.715l0.129,-220.921l-40.444,-0.044l0,224.582c-0.033,11.849 2.278,22.126 6.932,30.831c4.653,8.705 11.469,15.402 20.448,20.09c3.588,1.874 7.501,3.373 11.739,4.498l19.201,-32.045Zm-270.452,-41.015l111.907,0l25.143,73.06l45.714,0l-101.071,-280l-51.108,0l-101.01,280l45.045,0l25.379,-73.06Zm99.661,-35.584l-87.3,0l16.871,-48.565c4.328,-12.937 9.039,-27.598 14.132,-43.982c3.738,-12.021 7.977,-26.035 12.717,-42.043c4.743,15.934 8.979,29.88 12.708,41.837c5.089,16.316 9.809,31.045 14.159,44.188l16.714,48.565Z" style="fill:#fff;"/>
+    </g>
+</svg>

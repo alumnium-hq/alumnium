@@ -4,14 +4,26 @@ run = "bun install"
 [tasks.clean]
 run = "rm -rf dist/ public/install.sh public/install.ps1"
 
+[tasks.check]
+run = "bun run astro-check"
+
 [tasks.build]
-run = '''
-bun run astro check
-bun run astro build
-'''
+run = "bun run astro build"
+
+[tasks."dev:build"]
+run = "fnox exec -- bun run astro preview"
+depends = ["build"]
 
 [tasks.dev]
-run = "bun run astro dev --host 0.0.0.0"
+run = "fnox exec -- bun run astro dev --host 0.0.0.0"
+
+[tasks.deploy]
+run = "fnox exec -- bun run wrangler deploy"
+depends = ["check", "build"]
+
+[tasks."deploy:dry-run"]
+run = "bun run wrangler deploy --dry-run"
+depends = ["build"]
 
 [tasks."generate/install-scripts"]
 run = "bun scripts/generate-install-scripts.ts"
@@ -22,3 +34,15 @@ sh public/install.sh
 expected=$(mise //packages/typescript:version)
 alumnium --version | grep -qF "$expected"
 '''
+
+[tasks."fetch/webvoyager"]
+run = '''
+curl https://raw.githubusercontent.com/steel-dev/leaderboard/refs/heads/main/src/data/webvoyager.json > \
+  ./src/data/webvoyager.json
+'''
+
+[tasks."fetch/asciinema"]
+run = "bun scripts/fetchAsciinemaMetadata.ts"
+
+[tasks."gen/types"]
+run = "bun wrangler types"

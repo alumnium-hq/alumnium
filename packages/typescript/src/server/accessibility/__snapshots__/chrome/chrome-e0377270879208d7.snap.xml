@@ -1,0 +1,14 @@
+<RootWebArea name="YouTube" id=1 focusable focused url="https://www.youtube.com/">
+  <banner id=8>
+    <div id=13>
+      <button name="Guide" id=15 focusable />
+      <link id=22 focusable url="https://www.youtube.com/">
+        <image id=25 />
+      </link>
+    </div>
+    <search id=28>
+      <combobox id=33 focusable editable="plaintext" settable autocomplete="list" expanded="true" />
+      <button name="Search" id=35 focusable />
+    </search>
+  </banner>
+</RootWebArea>

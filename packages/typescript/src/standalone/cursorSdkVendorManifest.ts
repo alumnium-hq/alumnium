@@ -3,7 +3,7 @@
 import type { CursorSdkVendorManifest } from "./cursorSdkManifest.ts";
 
 export const cursorSdkVendorManifest: CursorSdkVendorManifest = {
-  sdkVersion: "1.0.23",
+  sdkVersion: "1.0.30",
   packages: [
     {
       name: "@bufbuild/protobuf",
@@ -31,15 +31,15 @@ export const cursorSdkVendorManifest: CursorSdkVendorManifest = {
     },
     {
       name: "@cursor/sdk",
-      version: "1.0.23",
+      version: "1.0.30",
       integrity:
-        "sha512-VIh8oW89XXACUkQqB2N8TaU3A/y2jQieF++VC6QqIqKhKRKj7kd+pzeh43MXusuPpebtxtEzqvjaCLlc1xbYTQ==",
+        "sha512-s3gIXfTD3w8ys+KFE81JjjoiJcynkHsf/JCDyXrnbliIac3dkT59hwYZII3XhsT1DlXIfqg+YzSMru6w1CkZow==",
     },
     {
       name: "@cursor/sdk-darwin-arm64",
-      version: "1.0.23",
+      version: "1.0.30",
       integrity:
-        "sha512-HpltGkIDFG+XgsETJho0OiOvGLyMKqZKhh4uXtD3ZKZcgTtLvKgbbU8jVgEMa3qodtfwPz5lpwAjs5jM1zOt6w==",
+        "sha512-O0w2fLd6jxrvAUOJGsKBs8VSi5OojqqEOMFBzHTHS82wU/DX3ZlizK3czzCXxDKs3l8j/BVQwVCxP9jMFcf41Q==",
       os: "darwin",
       cpu: "arm64",
       bin: {
@@ -48,9 +48,9 @@ export const cursorSdkVendorManifest: CursorSdkVendorManifest = {
     },
     {
       name: "@cursor/sdk-darwin-x64",
-      version: "1.0.23",
+      version: "1.0.30",
       integrity:
-        "sha512-sjRQVhU7UL3kYSR9DzY+BAwa/iFdnPvTI3E62mIhj/2ey3LEnhIhotZQ9ymNJ0wA5BfhC7Be+JYcSMDyHxxr1g==",
+        "sha512-TdjreV7V6gtSKbUaXDarfE1735PES6uzLgLxp42E5kT6EXpjQhKsifdsYOMdsO/RBw166kya/XxG24L/FUfEHA==",
       os: "darwin",
       cpu: "x64",
       bin: {
@@ -59,9 +59,9 @@ export const cursorSdkVendorManifest: CursorSdkVendorManifest = {
     },
     {
       name: "@cursor/sdk-linux-arm64",
-      version: "1.0.23",
+      version: "1.0.30",
       integrity:
-        "sha512-RizTwZ2Hhhaq8bnF3yGUZWBUvLA+/lExlTAg/5Levc9f7hNoDZViIP3XaVWY/8yzPAxypeds8tWacVIaAA2/Ig==",
+        "sha512-1+bsmri6vJ2YuqL/SQ6QSx/ymu2eBzjGgT1bTgN47tCzxDgNOKacXtghpx4zdHM5AmOtT+aLXVVxXjStXmNtcA==",
       os: "linux",
       cpu: "arm64",
       bin: {
@@ -70,9 +70,9 @@ export const cursorSdkVendorManifest: CursorSdkVendorManifest = {
     },
     {
       name: "@cursor/sdk-linux-x64",
-      version: "1.0.23",
+      version: "1.0.30",
       integrity:
-        "sha512-s93WBbi4hrE/uisTrEfNNH1m18bwfO6wmmsnIYQ3W3gbGBriFM1ZeroHxj1F6paMDE7o/dfUeW22lQ72rRZrSA==",
+        "sha512-5TRAM1xNwVr0Lox2ay5U5h+VY1OeqJLgnS28da7mx+ZkmeAU+hzuUFq2/lcIqoJrp2qBRdUH5WzI44JNtjBKmg==",
       os: "linux",
       cpu: "x64",
       bin: {
@@ -81,9 +81,9 @@ export const cursorSdkVendorManifest: CursorSdkVendorManifest = {
     },
     {
       name: "@cursor/sdk-win32-x64",
-      version: "1.0.23",
+      version: "1.0.30",
       integrity:
-        "sha512-d1p1+tRJbNZTUqw8SPEW9OYtU02ynZysASDDvhpaEFtbPwGFUrez9sVbFHpbuXeOXL//H+faiHJanVFsUNfIZw==",
+        "sha512-kVjpWmLTFLL131TQm3ytz1HbAeyjBRAHMtr6vyLtbBMuLBb0la5igvt58Xi8mXwekymWXim1+rZj7ZYUO3K1rw==",
       os: "win32",
       cpu: "x64",
       bin: {

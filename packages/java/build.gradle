@@ -10,6 +10,7 @@ plugins {
     // Apply the java-library plugin for API and implementation separation.
     id 'java-library'
     id 'maven-publish'
+    id 'org.gradle.test-retry' version '1.6.2'
     id 'com.vanniktech.maven.publish' version '0.36.0'
     id 'com.diffplug.spotless' version '8.5.1'
 }
@@ -58,6 +59,13 @@ ext {
     slf4jVersion = '2.0.16'
 }
 
+tasks.register('printPlaywrightVersion') {
+    def version = playwrightVersion
+    doLast {
+        println version
+    }
+}
+
 dependencies {
     // JSON
     api "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
@@ -96,6 +104,20 @@ tasks.withType(JavaCompile).configureEach {
     ])
 }
 
+def testRetryCount = providers.environmentVariable('ALUMNIUM_TEST_RETRY_COUNT').orElse('0')
+def testRetryDelay = providers.environmentVariable('ALUMNIUM_TEST_RETRY_DELAY').orElse('1000')
+
+tasks.withType(Test).configureEach {
+    retry {
+        maxRetries = testRetryCount.get().toInteger()
+    }
+    beforeSuite { descriptor ->
+        if (descriptor.parent == null && descriptor.displayName.startsWith('Gradle Test Run :')) {
+            sleep(testRetryDelay.get().toLong())
+        }
+    }
+}
+
 testing {
     suites {
         test {
@@ -112,6 +134,55 @@ testing {
                     }
                 }
             }
+        }
+    }
+}
+
+def passThresholdResults = layout.buildDirectory.file('test-results/systemTest/pass-threshold.txt')
+def passThreshold = providers.environmentVariable('ALUMNIUM_TEST_PASS_THRESHOLD_PCT').orElse('100')
+
+tasks.register('systemTest', Test) {
+    description = 'Runs Java system tests.'
+    group = LifecycleBasePlugin.VERIFICATION_GROUP
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+    useJUnitPlatform()
+    filter {
+        includeTestsMatching 'ai.alumnium.system.*'
+    }
+    environment System.getenv()
+    environment 'ALUMNIUM_DRIVER', System.getenv('ALUMNIUM_DRIVER') ?: 'selenium'
+    environment 'ALUMNIUM_PLAYWRIGHT_HEADLESS', System.getenv('ALUMNIUM_PLAYWRIGHT_HEADLESS') ?: 'true'
+    environment 'ALUMNIUM_TEST_PASS_RESULTS_PATH', passThresholdResults.get().asFile.absolutePath
+    ignoreFailures = true
+    def gradleFailures = 0L
+    afterSuite { descriptor, result ->
+        if (descriptor.parent == null) {
+            gradleFailures = result.failedTestCount
+        }
+    }
+    doFirst {
+        passThresholdResults.get().asFile.delete()
+        PassThreshold.parse(passThreshold.get())
+    }
+    testLogging {
+        events 'passed', 'skipped', 'failed'
+    }
+    doLast {
+        def resultsFile = passThresholdResults.get().asFile
+        def results = resultsFile.exists() ? resultsFile.readLines().collect { it.substring(it.lastIndexOf('=') + 1) } : []
+        def passed = results.count { it == 'passed' }
+        def failed = results.count { it == 'failed' }
+        try {
+            PassThreshold.apply(
+                    passed,
+                    failed,
+                    gradleFailures > 0,
+                    PassThreshold.parse(passThreshold.get()),
+                    System.getenv('GITHUB_ACTIONS') == 'true'
+                    )
+        } catch (IllegalStateException error) {
+            throw new GradleException(error.message)
         }
     }
 }
@@ -204,11 +275,10 @@ publishing {
 tasks.register('installPlaywright', JavaExec) {
     classpath = sourceSets.test.runtimeClasspath
     mainClass = 'com.microsoft.playwright.CLI'
-    args = [
-        'install',
-        'chromium',
-        '--with-deps'
-    ]
+    args = ['install', 'chromium']
+    if (System.getProperty('os.name') == 'Linux' && file('/etc/debian_version').canRead()) {
+        args '--with-deps'
+    }
 }
 
 tasks.register('copyDriverScripts', Copy) {

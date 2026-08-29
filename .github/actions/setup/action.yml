@@ -1,10 +1,15 @@
 name: Setup Dev Env
+description: Sets up the dev environment.
 
 inputs:
   python-cache:
     required: false
     default: false
     description: "If to cache Python-specific artifacts, i.e., venv."
+
+  playwright:
+    required: false
+    description: "Set to install Playwright for specific "
 
 runs:
   using: "composite"
@@ -41,11 +46,14 @@ runs:
         key: venv-${{ runner.os }}-${{ hashFiles('packages/python/uv.lock') }}
         restore-keys: venv-${{ runner.os }}-
 
-    - name: Restore Playwright Cache
+    - name: Restore Gradle Cache
       uses: actions/cache/restore@v5
       with:
-        path: ~/.cache/ms-playwright
-        key: playwright-${{ runner.os }}
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle', '**/*.gradle.kts', '**/gradle-wrapper.properties', '**/gradle.properties') }}
+        restore-keys: gradle-${{ runner.os }}-
 
     - name: Cache Dist
       uses: actions/cache@v5
@@ -56,8 +64,4 @@ runs:
 
     - name: Install
       run: mise :install
-      shell: bash
-
-    - name: Install Playwright
-      run: mise :install/playwright
       shell: bash

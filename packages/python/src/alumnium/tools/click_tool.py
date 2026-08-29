@@ -6,7 +6,11 @@ from .upload_tool import UploadTool
 
 
 class ClickTool(BaseTool):
-    __doc__ = f"Click an element. NEVER use ClickTool to upload files - use {UploadTool.__name__} instead."
+    __doc__ = (
+        "Click an element."
+        " If the target element is a dropdown and is already expanded - you don't need to click it."
+        f" NEVER use ClickTool to upload files - use {UploadTool.__name__} instead."
+    )
 
     id: int = Field(description="Element identifier (ID)")
 

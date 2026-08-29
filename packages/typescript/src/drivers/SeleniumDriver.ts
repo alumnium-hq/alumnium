@@ -32,6 +32,7 @@ import { AppId } from "../AppId.ts";
 import { Env } from "../Env.ts";
 import { Telemetry } from "../telemetry/Telemetry.ts";
 import type { Tracer } from "../telemetry/Tracer.ts";
+import { TreeDevDrillError } from "../tree/dev/TreeDevDrillError.ts";
 import type { Driver } from "./Driver.ts";
 import {
   waiterScriptSource,
@@ -41,6 +42,7 @@ import type { ShadowRoot } from "selenium-webdriver/lib/webdriver.js";
 
 const { tracer, logger } = Telemetry.get(import.meta.url);
 const { span } = tracer.dec();
+const stateful = BaseDriver.stateful;
 
 interface CDPNode {
   nodeId: string;
@@ -74,7 +76,7 @@ const WAIT_FOR_SCRIPT = waitForScriptSource;
 export class SeleniumDriver extends BaseDriver {
   protected driver: ChromiumWebDriver;
   public platform: Driver.Platform = "chromium";
-  #autoswitchToNewTabEnabled = true;
+  public autoswitchToNewTab = true;
   #shadowChildToHostMap: Partial<Record<number, number>> = {};
   public fullPageScreenshot = Env.ALUMNIUM_FULL_PAGE_SCREENSHOT;
   public supportedTools: Set<ToolClass> = new Set([
@@ -92,9 +94,13 @@ export class SeleniumDriver extends BaseDriver {
   }
 
   @span("driver.get_accessibility_tree", spanAttrs)
-  async getAccessibilityTree(): Promise<BaseAccessibilityTree> {
+  protected async fetchAccessibilityTree(): Promise<BaseAccessibilityTree> {
     // Switch to default content to ensure we're at the top level for frame enumeration
     await this.driver.switchTo().defaultContent();
+
+    // A new tab might take the foreground and leave the current one hidden.
+    await this.driver.switchTo().window(await this.driver.getWindowHandle());
+
     logger.debug("Waiting for page to load before getting accessibility tree");
     await this.waitForPageToLoad();
     logger.debug("Page loaded, retrieving accessibility tree");
@@ -109,6 +115,13 @@ export class SeleniumDriver extends BaseDriver {
     const frameIds = this.getAllFrameIds(frameTree.frameTree);
     const mainFrameId = frameTree.frameTree.frame.id;
     logger.debug(`Found ${frameIds.length} frames`);
+
+    await this.executeCdpCommand("DOM.enable", {});
+    const domResponse = (await this.executeCdpCommand(
+      "DOM.getFlattenedDocument",
+      { depth: -1, pierce: true },
+    )) as { nodes: CDPDomNode[] };
+    const domNodes = domResponse.nodes || [];
 
     // Build mapping: frameId -> backendNodeId of the iframe element containing the frame
     const frameToIframeMap: Map<string, number> = new Map();
@@ -156,7 +169,15 @@ export class SeleniumDriver extends BaseDriver {
     logger.debug(`Total accessibility nodes collected: ${allNodes.length}`);
 
     try {
-      const shadowNodes = await this.buildShadowHierarcy();
+      const frameChainsByBackendId: Partial<Record<number, number[]>> = {};
+      for (const node of allNodes) {
+        if (node.backendDOMNodeId && node._frame_chain)
+          frameChainsByBackendId[node.backendDOMNodeId] = node._frame_chain;
+      }
+      const shadowNodes = await this.buildShadowHierarchy(
+        domNodes,
+        frameChainsByBackendId,
+      );
       allNodes.push(...shadowNodes);
       if (shadowNodes.length > 0) {
         logger.debug(`  -> Shadow DOM: ${shadowNodes.length} nodes added`);
@@ -170,8 +191,10 @@ export class SeleniumDriver extends BaseDriver {
     return new ChromiumAccessibilityTree({ nodes: allNodes });
   }
 
-  @span("driver.click", spanAttrs) async click(id: number): Promise<void> {
-    return this.#autoswitchToNewTab(async () => {
+  @span("driver.click", spanAttrs)
+  @stateful
+  async click(id: number): Promise<void> {
+    await this.#autoswitchToNewTabAction(async () => {
       const element = await this.findElement(id);
       try {
         const actions = this.driver.actions({ async: true });
@@ -188,6 +211,7 @@ export class SeleniumDriver extends BaseDriver {
   }
 
   @span("driver.drag_slider", spanAttrs)
+  @stateful
   async dragSlider(id: number, value: number): Promise<void> {
     const element = await this.findElement(id);
     await this.driver.executeScript(
@@ -200,6 +224,7 @@ export class SeleniumDriver extends BaseDriver {
   }
 
   @span("driver.drag_and_drop", spanAttrs)
+  @stateful
   async dragAndDrop(fromId: number, toId: number): Promise<void> {
     const actions = this.driver.actions({ async: true });
     await actions
@@ -208,14 +233,16 @@ export class SeleniumDriver extends BaseDriver {
   }
 
   @span("driver.hover", spanAttrs)
+  @stateful
   async hover(id: number): Promise<void> {
     const actions = this.driver.actions({ async: true });
     await actions.move({ origin: await this.findElement(id) }).perform();
   }
 
   @span("driver.press_key", spanAttrs)
+  @stateful
   pressKey(key: Keys.Key): Promise<void> {
-    return this.#autoswitchToNewTab(async () => {
+    return this.#autoswitchToNewTabAction(async () => {
       const keyMap: Record<Keys.Key, string> = {
         Backspace: SeleniumKey.BACK_SPACE,
         Enter: SeleniumKey.ENTER,
@@ -242,16 +269,19 @@ export class SeleniumDriver extends BaseDriver {
   }
 
   @span("driver.back", spanAttrs)
+  @stateful
   async back(): Promise<void> {
-    return this.driver.navigate().back();
+    await this.driver.navigate().back();
   }
 
   @span("driver.visit", spanAttrs)
+  @stateful
   async visit(url: string): Promise<void> {
-    return this.driver.get(url);
+    await this.driver.get(url);
   }
 
   @span("driver.scroll_to", spanAttrs)
+  @stateful
   async scrollTo(id: number): Promise<void> {
     const element = await this.findElement(id);
     await this.driver.executeScript("arguments[0].scrollIntoView();", element);
@@ -276,6 +306,7 @@ export class SeleniumDriver extends BaseDriver {
   }
 
   @span("driver.type", spanAttrs)
+  @stateful
   async type(id: number, text: string): Promise<void> {
     const element = await this.findElement(id);
     await element.clear();
@@ -283,6 +314,7 @@ export class SeleniumDriver extends BaseDriver {
   }
 
   @span("driver.upload", spanAttrs)
+  @stateful
   async upload(id: number, paths: string[]): Promise<void> {
     const element = await this.findElement(id);
     await element.sendKeys(paths.join("\n"));
@@ -351,6 +383,7 @@ export class SeleniumDriver extends BaseDriver {
   }
 
   @span("driver.execute_script", spanAttrs)
+  @stateful
   async executeScript(script: string): Promise<void> {
     await this.driver.executeScript(script);
   }
@@ -372,8 +405,8 @@ export class SeleniumDriver extends BaseDriver {
     const currentIndex = handles.indexOf(current);
     const nextIndex = (currentIndex + 1) % handles.length;
 
-    always(handles[nextIndex]);
-    await this.driver.switchTo().window(handles[nextIndex]);
+    await this.switchToTab(handles, nextIndex);
+    // TODO: Consider making these debug values lazy, so there's less overhead
     logger.debug(
       `Switched to next tab: ${await this.driver.getTitle()} (${await this.driver.getCurrentUrl()})`,
     );
@@ -388,14 +421,15 @@ export class SeleniumDriver extends BaseDriver {
     const currentIndex = handles.indexOf(current);
     const prevIndex = (currentIndex - 1 + handles.length) % handles.length;
 
-    always(handles[prevIndex]);
-    await this.driver.switchTo().window(handles[prevIndex]);
+    await this.switchToTab(handles, prevIndex);
+    // TODO: Consider making these debug values lazy, so there's less overhead
     logger.debug(
       `Switched to previous tab: ${await this.driver.getTitle()} (${await this.driver.getCurrentUrl()})`,
     );
   }
 
   @span("driver.wait", spanAttrs)
+  @stateful
   async wait(seconds: number): Promise<void> {
     const clampedSeconds = Math.max(1, Math.min(30, seconds));
     await new Promise((resolve) => setTimeout(resolve, clampedSeconds * 1000));
@@ -439,10 +473,19 @@ export class SeleniumDriver extends BaseDriver {
     }
   }
 
-  async #autoswitchToNewTab<Result>(
+  @stateful("switchToTab")
+  private async switchToTab(
+    handles: string[],
+    tabIndex: number,
+  ): Promise<void> {
+    always(handles[tabIndex]);
+    await this.driver.switchTo().window(handles[tabIndex]);
+  }
+
+  async #autoswitchToNewTabAction<Result>(
     fn: () => Promise<Result>,
   ): Promise<Result> {
-    if (!this.#autoswitchToNewTabEnabled) {
+    if (!this.autoswitchToNewTab) {
       return await fn();
     }
 
@@ -496,20 +539,36 @@ export class SeleniumDriver extends BaseDriver {
 
     const nodeId = nodeIds[0];
 
-    await this.executeCdpCommand("DOM.setAttributeValue", {
-      nodeId,
-      name: "data-alumnium-iframe-id",
-      value: String(iframeBackendNodeId),
-    });
+    let iframeElement: WebElement | undefined;
+    let set = false;
+    let failure: unknown;
+    try {
+      await this.executeCdpCommand("DOM.setAttributeValue", {
+        nodeId,
+        name: "data-alumnium-iframe-id",
+        value: String(iframeBackendNodeId),
+      });
+      set = true;
+      iframeElement = await this.driver.findElement(
+        By.css(`[data-alumnium-iframe-id='${iframeBackendNodeId}']`),
+      );
+    } catch (error) {
+      failure = error;
+    } finally {
+      if (set) {
+        try {
+          await this.executeCdpCommand("DOM.removeAttribute", {
+            nodeId,
+            name: "data-alumnium-iframe-id",
+          });
+        } catch (error) {
+          failure ??= error;
+        }
+      }
+    }
 
-    const iframeElement = await this.driver.findElement(
-      By.css(`[data-alumnium-iframe-id='${iframeBackendNodeId}']`),
-    );
-
-    await this.executeCdpCommand("DOM.removeAttribute", {
-      nodeId,
-      name: "data-alumnium-iframe-id",
-    });
+    if (failure) throw failure;
+    always(iframeElement);
 
     await this.driver.switchTo().frame(iframeElement);
     logger.debug(
@@ -616,27 +675,19 @@ export class SeleniumDriver extends BaseDriver {
     return hostElement.getShadowRoot();
   }
 
-  private async buildShadowHierarcy(): Promise<CDPNode[]> {
+  private async buildShadowHierarchy(
+    domNodes: CDPDomNode[],
+    frameChainsByBackendId: Partial<Record<number, number[]>>,
+  ): Promise<CDPNode[]> {
     const shadowNodes: CDPNode[] = [];
     const processedNodes = new Set<string>();
-
-    // Enable DOM domain for node operations
-    await this.executeCdpCommand("DOM.enable", {});
-
-    // Get all DOM nodes including shadow DOM content
-    const domResponse = (await this.executeCdpCommand(
-      "DOM.getFlattenedDocument",
-      { depth: -1, pierce: true },
-    )) as { nodes: CDPDomNode[] };
-
-    if (!domResponse.nodes) return shadowNodes;
 
     // Build maps from the DOM tree
     const nodeIdToBackendId: Record<number, number> = {};
     const parentIdMap: Record<number, number> = {};
     const shadowRootToHostBackendId: Record<number, number> = {};
 
-    for (const domNode of domResponse.nodes) {
+    for (const domNode of domNodes) {
       nodeIdToBackendId[domNode.nodeId] = domNode.backendNodeId;
       if (domNode.parentId !== undefined) {
         parentIdMap[domNode.nodeId] = domNode.parentId;
@@ -653,7 +704,7 @@ export class SeleniumDriver extends BaseDriver {
 
     // Build childBackendNodeId -> hostBackendNodeId map by walking parent chains
     this.#shadowChildToHostMap = {};
-    for (const domNode of domResponse.nodes) {
+    for (const domNode of domNodes) {
       const nodeBackendId = domNode.backendNodeId;
       let currentId: number | undefined = domNode.nodeId;
       while (currentId !== undefined) {
@@ -667,8 +718,9 @@ export class SeleniumDriver extends BaseDriver {
     }
 
     // Find shadow hosts and collect their accessibility nodes
-    for (const domNode of domResponse.nodes) {
+    for (const domNode of domNodes) {
       if (domNode.shadowRoots && domNode.shadowRoots.length > 0) {
+        const frameChain = frameChainsByBackendId[domNode.backendNodeId];
         try {
           const axResponse = (await this.executeCdpCommand(
             "Accessibility.queryAXTree",
@@ -681,6 +733,7 @@ export class SeleniumDriver extends BaseDriver {
               processedNodes.add(axNode.nodeId);
 
               axNode._is_shadow_dom = true;
+              if (frameChain) axNode._frame_chain = frameChain;
               if (!axNode.backendDOMNodeId) {
                 const backendId =
                   nodeIdToBackendId[Number.parseInt(axNode.nodeId)];
@@ -697,6 +750,7 @@ export class SeleniumDriver extends BaseDriver {
                     String(childId),
                     processedNodes,
                     nodeIdToBackendId,
+                    frameChain,
                   );
                   shadowNodes.push(...childNodes);
                 }
@@ -716,6 +770,7 @@ export class SeleniumDriver extends BaseDriver {
     nodeId: string,
     processedNodes: Set<string>,
     nodeIdToBackendId: Record<number, number>,
+    frameChain?: number[],
   ): Promise<CDPNode[]> {
     const nodes: CDPNode[] = [];
 
@@ -731,6 +786,7 @@ export class SeleniumDriver extends BaseDriver {
       if (response.nodes) {
         for (const node of response.nodes) {
           node._is_shadow_dom = true;
+          if (frameChain) node._frame_chain = frameChain;
 
           if (!node.backendDOMNodeId) {
             const backendId = nodeIdToBackendId[Number.parseInt(node.nodeId)];
@@ -747,6 +803,7 @@ export class SeleniumDriver extends BaseDriver {
                 String(childId),
                 processedNodes,
                 nodeIdToBackendId,
+                frameChain,
               );
               nodes.push(...childNodes);
             }
@@ -759,6 +816,90 @@ export class SeleniumDriver extends BaseDriver {
 
     return nodes;
   }
+
+  //#region Dev
+
+  protected override async devDrillProbeTree(
+    tree: BaseAccessibilityTree,
+    rawId: number,
+  ): Promise<number> {
+    let accessibilityElement;
+    try {
+      accessibilityElement = tree.elementById(rawId);
+    } catch (error) {
+      throw new TreeDevDrillError("resolve", error);
+    }
+
+    const backendNodeId = accessibilityElement.backendNodeId;
+    if (backendNodeId === undefined) {
+      throw new TreeDevDrillError(
+        "resolve",
+        new Error(`Element with raw_id=${rawId} has no backend node ID`),
+      );
+    }
+
+    const attribute = "data-alumnium-drill";
+    let nodeId: number | undefined;
+    let set = false;
+    let failure: unknown;
+    try {
+      const frameChain = accessibilityElement.frameChain;
+      if (frameChain?.length) await this.switchToFrameChain(frameChain);
+      else await this.driver.switchTo().defaultContent();
+
+      await this.executeCdpCommand("DOM.enable", {});
+      await this.executeCdpCommand("DOM.getFlattenedDocument", {});
+      const response = (await this.executeCdpCommand(
+        "DOM.pushNodesByBackendIdsToFrontend",
+        { backendNodeIds: [backendNodeId] },
+      )) as { nodeIds: number[] };
+      nodeId = response.nodeIds[0];
+      if (!nodeId) {
+        throw new TreeDevDrillError(
+          "resolve",
+          new Error(`No frontend node for backend node ID ${backendNodeId}`),
+          backendNodeId,
+        );
+      }
+
+      try {
+        await this.executeCdpCommand("DOM.setAttributeValue", {
+          nodeId,
+          name: attribute,
+          value: crypto.randomUUID(),
+        });
+        set = true;
+      } catch (error) {
+        throw new TreeDevDrillError("probe", error, backendNodeId);
+      }
+    } catch (error) {
+      failure =
+        error instanceof TreeDevDrillError
+          ? error
+          : new TreeDevDrillError("resolve", error, backendNodeId);
+    } finally {
+      if (set && nodeId) {
+        try {
+          await this.executeCdpCommand("DOM.removeAttribute", {
+            nodeId,
+            name: attribute,
+          });
+        } catch (error) {
+          failure ??= new TreeDevDrillError("probe", error, backendNodeId);
+        }
+      }
+      try {
+        await this.driver.switchTo().defaultContent();
+      } catch (error) {
+        failure ??= new TreeDevDrillError("resolve", error, backendNodeId);
+      }
+    }
+
+    if (failure) throw failure;
+    return backendNodeId;
+  }
+
+  //#endregion
 }
 
 function spanAttrs(this: SeleniumDriver): Tracer.SpansDriverAttrs {

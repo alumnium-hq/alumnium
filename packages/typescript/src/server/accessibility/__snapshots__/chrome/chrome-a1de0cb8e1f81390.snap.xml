@@ -1,0 +1,48 @@
+<RootWebArea name="The Internet" id=1 focusable focused url="https://the-internet.herokuapp.com/dynamic_content">
+  <div id=6>
+    <link id=7 focusable url="https://github.com/tourdedave/the-internet">
+      <image name="Fork me on GitHub" id=8 url="https://the-internet.herokuapp.com/img/forkme_right_green_007200.png" />
+    </link>
+    <div id=10>
+      <heading id=11 level=3>Dynamic Content</heading>
+      <paragraph id=13>This example demonstrates the ever-evolving nature of content by loading new text and images on each page refresh.</paragraph>
+      <paragraph id=15>
+        To make some of the content static append
+        <code id=17>?with_content=static</code>
+        or
+        <link id=20 focusable url="https://the-internet.herokuapp.com/dynamic_content?with_content=static">click here</link>
+        .
+      </paragraph>
+      <separator id=23 settable orientation="horizontal" />
+      <LineBreak id=24 />
+      <LineBreak id=25 />
+      <div id=27>
+        <div id=28>
+          <image id=30 url="https://the-internet.herokuapp.com/img/avatars/Original-Facebook-Geek-Profile-Avatar-7.jpg" />
+          <div id=31>Temporibus quia eum ipsum delectus alias aperiam occaecati omnis voluptatem fugit facere vero ut qui neque labore eos atque consequatur qui reprehenderit adipisci deleniti totam ea qui aliquid ut sapiente nostrum quasi voluptas dignissimos quia.</div>
+        </div>
+        <LineBreak id=33 />
+        <LineBreak id=34 />
+        <div id=35>
+          <image id=37 url="https://the-internet.herokuapp.com/img/avatars/Original-Facebook-Geek-Profile-Avatar-7.jpg" />
+          <div id=38>Eos labore rem qui et dolore est necessitatibus at blanditiis corrupti hic et sed id distinctio rerum sed a dolorum cum veniam eius optio cumque laboriosam eaque quibusdam quisquam consequatur error voluptate ut accusantium.</div>
+        </div>
+        <LineBreak id=40 />
+        <LineBreak id=41 />
+        <div id=42>
+          <image id=44 url="https://the-internet.herokuapp.com/img/avatars/Original-Facebook-Geek-Profile-Avatar-7.jpg" />
+          <div id=45>Sunt ut placeat rerum reprehenderit sed voluptas incidunt occaecati voluptas facilis veniam autem voluptas quis veritatis eligendi sapiente id soluta explicabo voluptatem consectetur tenetur at accusantium et excepturi et aut quos ut.</div>
+        </div>
+        <LineBreak id=47 />
+        <LineBreak id=48 />
+      </div>
+    </div>
+  </div>
+  <div id=50>
+    <separator id=51 settable orientation="horizontal" />
+    <div id=52>
+      Powered by
+      <link id=54 focusable url="http://elementalselenium.com/">Elemental Selenium</link>
+    </div>
+  </div>
+</RootWebArea>

@@ -1,0 +1,81 @@
+<Application name="Safari" id=1>
+  <Window id=2>
+    <div name="SafariWindow?View=Narrow&amp;BarsKeptMinimized=false&amp;UUID=22EF9D86-B658-4063-9AA0-90A6B50B4BEC&amp;UsingLoweredBar=true&amp;IsSecure=true&amp;IsTabBarAvailable=false" id=12>
+      <ScrollView id=19>
+        <div name="TabDocument?IsLoadedUsingDesktopUserAgent=false&amp;InReaderMode=false&amp;UUID=02185351-127F-4127-B0D1-5F875A2B6EA1&amp;IsPrivate=false&amp;IsPageLoaded=true&amp;ProcessID=40171" id=20>
+          <WebView name="WebView" id=21>
+            <WebView id=22>
+              <WebView id=24>
+                <div name=": Vue" id=28>
+                  <div name="complementary" id=29>
+                    <div name="section header" id=30>
+                      <div id=31 value=3>Vue.js</div>
+                      <div id=33 value=5>Example</div>
+                      <Link id=35>Source</Link>
+                    </div>
+                    <div name="separator" id=37 />
+                    <div id=38>
+                      <div id=39>“</div>
+                      <div id=40>Vue is an approachable, progressive framework for building user interfaces. Components are authored as Single-File Components, with reactive state via the Composition API and `</div>
+                      <div id=41>”</div>
+                    </div>
+                  </div>
+                  <div name="section header" id=42>
+                    <Link id=43>
+                      <Link id=44 value=1>todos</Link>
+                    </Link>
+                    <TextField id=46 value="What needs to be done?" />
+                  </div>
+                  <div name="content information" id=47>
+                    <div id=49>Double-click to edit a todo</div>
+                    <div id=51>Created by the TodoMVC Team</div>
+                    <div id=52>
+                      <div id=53>Part of</div>
+                      <Link id=54>TodoMVC</Link>
+                    </div>
+                  </div>
+                </div>
+              </WebView>
+              <div name="Vertical scroll bar, 1 page" id=57 value="0 %" />
+              <div name="Horizontal scroll bar, 1 page" id=59 value="0 %" />
+              <div name="Vertical scroll bar, 1 page" id=61 value="0 %" />
+              <div name="Horizontal scroll bar, 1 page" id=63 value="0 %" />
+            </WebView>
+          </WebView>
+        </div>
+        <div name="Horizontal scroll bar, 1 page" id=65 value="0 %" />
+        <div name="Horizontal scroll bar, 1 page" id=67 value="0 %" />
+      </ScrollView>
+      <div name="CapsuleViewController" id=69>
+        <Button name="BackButton" id=81 label="Back" />
+        <div name="CapsuleNavigationBar?isSelected=true&amp;isDistractionControlOverlayUp=false" id=85>
+          <Button name="PageFormatMenuButton" id=86 label="Page Menu" />
+          <TextField name="TabBarItemTitle" id=88 value="‎todomvc.com" label="Address" />
+          <Button name="ReloadButton" id=89 label="refresh" />
+        </div>
+        <Button name="MoreMenuButton" id=92 label="More" />
+      </div>
+    </div>
+    <div id=97>
+      <div name="PopoverDismissRegion" id=98 label="dismiss pop-up" />
+      <Popover id=99>
+        <Image id=100 />
+        <div name="TipView" id=116>
+          <ScrollView id=117>
+            <div id=118>
+              <div id=119>View Bookmarks, Share Menu and Open Tabs</div>
+              <div id=120>
+                You can now view these items in the  menu.
+                You can change this at any time in Safari settings.
+              </div>
+            </div>
+            <div name="Vertical scroll bar, 1 page" id=121 value="0 %" />
+            <div name="Vertical scroll bar, 1 page" id=123 value="0 %" />
+          </ScrollView>
+          <Button name="xmark.circle.fill" id=125 label="Close" />
+        </div>
+      </Popover>
+    </div>
+  </Window>
+  <Window id=126 />
+</Application>

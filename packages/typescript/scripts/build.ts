@@ -2,6 +2,7 @@
 
 // This script builds the Alumnium for multiple target platforms using Bun.
 
+import { always } from "alwaysly";
 import { $, type BunPlugin } from "bun";
 import { snakeCase } from "case-anything";
 import fs from "node:fs/promises";
@@ -332,7 +333,9 @@ const standaloneEmbeddedAssetPlugin: BunPlugin = {
 await main();
 
 async function main() {
-  console.log(`🚧 Building Alumnium ${ALUMNIUM_VERSION}...`);
+  const commitSha = await getCommitSha();
+
+  console.log(`🚧 Building Alumnium ${ALUMNIUM_VERSION}+${commitSha}...`);
 
   //#region Clean up
 
@@ -395,6 +398,7 @@ async function main() {
             standaloneEmbeddedAssetPlugin,
           ],
           define: {
+            BUILD_COMMIT_SHA: JSON.stringify(commitSha),
             SINGLE_FILE_EXECUTABLE: "true",
           },
         });
@@ -459,7 +463,7 @@ async function main() {
             format: "esm",
           }),
 
-          $`cd ${PKG_DIR} && bun tsgo --project tsconfig.build.json`,
+          $`cd ${PKG_DIR} && bun tsc --project tsconfig.build.json`,
 
           copyAssets(CORE_PKG_ASSETS, DIST_NPM_MAIN_PKG_DIR),
         ]);
@@ -839,7 +843,7 @@ function ruffFormat(dir: string) {
 }
 
 function oxfmtFormat(dir: string) {
-  return $`bun oxfmt .`.cwd(dir).quiet();
+  return $`bun oxfmt **/*`.cwd(dir).quiet();
 }
 
 function pyprojectsortFormat(dir: string) {
@@ -888,6 +892,18 @@ function getPipWheelTagTarget(platform: TargetPlatform): string {
 
 function getPipModuleName(pkgName: string) {
   return snakeCase(pkgName);
+}
+
+async function getCommitSha(): Promise<string> {
+  const [revParse, status] = await Promise.all([
+    $`git rev-parse --short HEAD`.cwd(REPO_ROOT_DIR).quiet().text(),
+    $`git status --porcelain`.cwd(REPO_ROOT_DIR).quiet().text(),
+  ]);
+
+  const sha = revParse.trim();
+  always(sha);
+
+  return status.trim() ? `${sha}-dirty` : sha;
 }
 
 function cwdRelPath(absPath: string) {

@@ -92,6 +92,10 @@ class ChromiumAccessibilityTree(BaseAccessibilityTree):
         if "name" in node and "value" in node["name"]:
             elem.set("name", node["name"]["value"])
 
+        # Add value as attribute if present
+        if "value" in node and isinstance(node["value"], dict) and "value" in node["value"]:
+            elem.set("value", self._to_str(node["value"]["value"]))
+
         # Add properties as attributes
         if "properties" in node:
             for prop in node["properties"]:
@@ -115,7 +119,7 @@ class ChromiumAccessibilityTree(BaseAccessibilityTree):
         # Inline iframe content: if this element is an iframe, add its child trees
         backend_node_id = node.get("backendDOMNodeId")
         if backend_node_id and backend_node_id in iframe_children:
-            for child_root in iframe_children[backend_node_id]:
+            for child_root in iframe_children.pop(backend_node_id):
                 child_elem = self._node_to_xml(child_root, node_lookup, iframe_children)
                 elem.append(child_elem)
 

@@ -1,0 +1,92 @@
+---
+import Author from "./Author.astro";
+import FormattedDate from "./FormattedDate.astro";
+import Tags from "./Tags.astro";
+
+interface Props {
+  title: string;
+  date: Date;
+  style?: "post" | "list" | "preview";
+  author: {
+    name: string;
+    image: string;
+  };
+  tags?: string[];
+}
+
+const { title, style, date, author, tags } = Astro.props;
+
+const H = style === "post" ? "h1" : "h3";
+---
+
+<div
+  class:list={[
+    "relative not-content overflow-hidden",
+    style === "list" && "sm:aspect-video rounded-xl",
+    style === "preview" ? "rounded-xl" : "pattern-canvas-content",
+  ]}
+>
+  {
+    style === "preview" && (
+      <div class="pointer-events-none absolute left-0 top-0 right-0 bottom-0 rounded-[inherit] mix-blend-soft-light ring ring-inset ring-white inset-1" />
+    )
+  }
+
+  <div
+    class:list={[
+      "bg-linear-to-b from-canvas/0 to-content-dark/80 w-full h-full px-2",
+      style === "preview"
+        ? "py-8 flex sm:px-4 md:px-5"
+        : [
+            "flex flex-col items-center justify-end pt-20 sm:px-10 pb-4 sm:pb-10",
+            style === "post" ? "sm:pt-40" : "sm:pt-4",
+          ],
+    ]}
+  >
+    <div
+      class:list={[
+        "gap-5 flex flex-col max-w-5xl",
+        style === "preview" && "justify-between",
+      ]}
+    >
+      <H
+        class:list={[
+          "font-bold font-display text-white leading-snug text-center text-balance",
+          (!style || style === "list") && "sm:text-[2rem] md:text-[2.5rem]",
+          style === "post" && "sm:text-[3rem]",
+          style === "preview" && "text-lg sm:text-xl md:text-2xl md:text-xl",
+        ]}
+        id={style === "post" ? "_top" : undefined}
+      >
+        {title}
+      </H>
+
+      <div class="flex flex-col gap-3 items-center text-center">
+        <div class="flex flex-col gap-2">
+          <div class:list={["text-gray-200", style === "preview" && "text-xs"]}>
+            <Author
+              prefix="Published by"
+              author={author}
+              size={style === "preview" ? "sm" : "md"}
+            />
+          </div>
+
+          <div
+            class:list={[
+              "text-accent-200/50 leading-none capsize",
+              style === "preview" && "text-xs",
+            ]}
+          >
+            <FormattedDate date={date} />
+          </div>
+        </div>
+
+        <Tags
+          tags={tags}
+          style="pattern"
+          size={style === "preview" ? "sm" : "md"}
+        />
+      </div>
+    </div>
+  </div>
+</div>

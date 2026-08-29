@@ -1,0 +1,46 @@
+---
+import Comparison from "../Comparison/Comparison.astro";
+import How from "../How/How.astro";
+import Scale from "../Scale/Scale.astro";
+import NeedMore from "../NeedMore/NeedMore.astro";
+import Supersection from "../../blocks/Supersection.astro";
+import AiTests from "../AiTests/AiTests.astro";
+import Features from "../Features.astro";
+import Faq from "../Faq.astro";
+import Why from "../Why/Why.astro";
+import Nav from "./Nav.astro";
+import { tt } from "#/copy";
+import BlogLatest from "../BlogLatest.astro";
+import DecorationLine from "../../blocks/DecorationLine.astro";
+
+const t = tt.landings.supersections.en;
+
+const supersections = {
+  how: { link: t.how, Section: How },
+  why: { link: t.why, Section: Why },
+  "ai-tests": { link: t.aiTests, Section: AiTests },
+  features: { link: t.features, Section: Features },
+  scale: { link: t.scale, Section: Scale },
+  comparison: { link: t.comparison, Section: Comparison },
+  "need-more": { link: t.needMore, Section: NeedMore },
+  faq: { link: t.faq, Section: Faq },
+};
+---
+
+<Nav supersections={supersections} />
+
+<section class="supersections is-shaded">
+  {
+    Object.entries(supersections).map(([id, { Section }], idx) => (
+      <Supersection id={id} shaded edge={idx === 0 && "top"}>
+        <Section />
+      </Supersection>
+    ))
+  }
+
+  <Supersection shaded>
+    <BlogLatest />
+  </Supersection>
+
+  <DecorationLine pos="bottom" edge />
+</section>

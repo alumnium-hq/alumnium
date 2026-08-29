@@ -1,21 +1,18 @@
 import { Alumni, AppiumDriver, Model, type Element } from "alumnium";
 import { never } from "alwaysly";
+import { createServer } from "node:http";
+import type { AddressInfo } from "node:net";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
 import type { Locator, Page } from "playwright-core";
-import { Builder, WebDriver, WebElement } from "selenium-webdriver";
+import { Builder, WebElement, type WebDriver } from "selenium-webdriver";
 import { Options } from "selenium-webdriver/chrome.js";
-import { afterAll, inject, it as vitestIt } from "vitest";
+import { inject, it as vitestIt } from "vitest";
 import { attach, type Browser } from "webdriverio";
 import { Driver } from "../../src/drivers/Driver.ts";
 import { Env } from "../../src/Env.ts";
-import { Tracer } from "../../src/telemetry/Tracer.ts";
-
-// Make sure to flush the telemetry data after all tests are done.
-afterAll(() => {
-  return Tracer.flush();
-});
+import { sleep } from "../../src/utils/timers.ts";
 
 export namespace Setup {
   export interface Helpers {
@@ -23,6 +20,13 @@ export namespace Setup {
     navigate: (url: string) => Promise<void>;
     type: (element: Element | undefined, text: string) => Promise<void>;
     click: (element: Element | undefined) => Promise<void>;
+    serveSlowTabPage: () => Promise<Setup.SlowTabPage>;
+    waitForTabCount: (count: number) => Promise<void>;
+  }
+
+  export interface SlowTabPage {
+    url: string;
+    slowTabUrl: string;
   }
 }
 
@@ -49,14 +53,13 @@ export async function useSetup(props: useSetup.Props): Promise<Setup> {
   const driver = await createDriver(driverId);
   const isAppiumDriver = Driver.isAppium(driverId);
 
-  const $ = createHelpers(driverId, driver);
-
   const options: Alumni.Options = {
     ...props.options,
     url: Env.ALUMNIUM_SERVER_URL,
   };
 
   const al = new Alumni(driver, options);
+  const $ = createHelpers(driverId, driver, al, onTestFinished);
 
   if (isAppiumDriver) {
     (al.driver as AppiumDriver).delay = 0.1;
@@ -90,6 +93,8 @@ async function createDriver(driverId: Driver.Id): Promise<Alumni.Driver> {
           password_manager_leak_detection: false,
         },
       });
+      const browserVersion = Env.ALUMNIUM_SELENIUM_BROWSER_VERSION;
+      if (browserVersion) options.setBrowserVersion(browserVersion);
       return new Builder()
         .forBrowser("chrome")
         .setChromeOptions(options)
@@ -130,7 +135,26 @@ async function createDriver(driverId: Driver.Id): Promise<Alumni.Driver> {
 function createHelpers(
   driverId: Driver.Id,
   driver: Alumni.Driver,
+  al: Alumni,
+  onTestFinished: useSetup.Props["onTestFinished"],
 ): Setup.Helpers {
+  async function tabCount(): Promise<number> {
+    switch (driverId) {
+      case "selenium":
+        return (await (driver as WebDriver).getAllWindowHandles()).length;
+
+      case "playwright":
+        return (driver as Page).context().pages().length;
+
+      case "appium-ios":
+      case "appium-android":
+        throw new Error("Tabs are not implemented in Appium yet");
+
+      default:
+        never();
+    }
+  }
+
   const $: Setup.Helpers = {
     resolveUrl(url: string): string {
       if (url.startsWith("http")) {
@@ -147,22 +171,51 @@ function createHelpers(
     },
 
     async navigate(url: string) {
-      switch (driverId) {
-        case "selenium":
-          await (driver as WebDriver).get($.resolveUrl(url));
-          return;
+      await al.driver.visit($.resolveUrl(url));
+    },
 
-        case "playwright":
-          await (driver as Page).goto($.resolveUrl(url));
-          return;
+    async serveSlowTabPage() {
+      const server = createServer((request, response) => {
+        const isSlowTab = request.url === "/slow-tab";
+        const send = () => {
+          response.writeHead(200, {
+            "content-type": "text/html",
+            "cache-control": "no-store",
+          });
+          response.end(
+            isSlowTab
+              ? "<title>Slow Tab</title><h1>Slow Tab</h1>"
+              : `<title>Opener</title><h1>Opener</h1>
+                 <button onclick="window.open('/slow-tab', '_blank')">Open Slow Tab</button>`,
+          );
+        };
 
-        case "appium-ios":
-        case "appium-android":
-          await (driver as Browser).url($.resolveUrl(url));
-          return;
+        if (isSlowTab) setTimeout(send, 2000);
+        else send();
+      });
 
-        default:
-          driverId satisfies never;
+      await new Promise<void>((resolve) =>
+        server.listen(0, "127.0.0.1", resolve),
+      );
+      onTestFinished(() => {
+        server.closeAllConnections();
+        server.close();
+      });
+
+      const { port } = server.address() as AddressInfo;
+      return {
+        url: `http://127.0.0.1:${port}/`,
+        slowTabUrl: `http://127.0.0.1:${port}/slow-tab`,
+      };
+    },
+
+    async waitForTabCount(count: number) {
+      const deadline = Date.now() + 10_000;
+      while ((await tabCount()) < count) {
+        if (Date.now() > deadline) {
+          throw new Error(`Timed out waiting for ${count} tabs to open`);
+        }
+        await sleep(50);
       }
     },
 

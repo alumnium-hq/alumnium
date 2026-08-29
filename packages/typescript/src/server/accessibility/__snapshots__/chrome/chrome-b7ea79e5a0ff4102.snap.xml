@@ -1,0 +1,68 @@
+<RootWebArea name="TodoMVC: Vue" id=1 focusable focused url="https://todomvc.com/examples/vue/dist/#/">
+  <complementary id=4>
+    <sectionheader id=5>
+      <heading id=6 level=3>Vue.js</heading>
+      <heading id=8 level=5>Example</heading>
+      <link id=10 focusable url="https://github.com/tastejs/todomvc/tree/gh-pages/examples/vue">Source</link>
+    </sectionheader>
+    <separator id=12 settable orientation="horizontal" />
+    <blockquote id=13>
+      <paragraph id=14>
+        <div id=15>“</div>
+        <div id=17>Vue is an approachable, progressive framework for building user interfaces. Components are authored as Single-File Components, with reactive state via the Composition API and `</div>
+        <div id=18>”</div>
+      </paragraph>
+    </blockquote>
+  </complementary>
+  <div id=20>
+    <sectionheader id=21>
+      <link id=22 focusable url="https://todomvc.com/examples/vue/dist/#/">
+        <heading id=23 level=1>todos</heading>
+      </link>
+      <textbox name="What needs to be done?" id=25 focusable editable="plaintext" settable />
+    </sectionheader>
+    <main id=28>
+      <div id=29>
+        <checkbox name="❯ Toggle All Input" id=30 focusable checked="false" />
+        <div id=32>❯</div>
+      </div>
+      <list id=35>
+        <listitem id=36 level=1>
+          <checkbox id=38 focusable focused checked />
+          <LabelText id=39>Buy milk</LabelText>
+          <button id=41 focusable>×</button>
+        </listitem>
+        <listitem id=44 level=1>
+          <checkbox id=46 focusable checked="false" />
+          <LabelText id=47>Buy bread</LabelText>
+        </listitem>
+      </list>
+    </main>
+    <sectionfooter id=49>
+      <div id=50>
+        <strong id=51>1</strong>
+        item left
+      </div>
+      <list id=54>
+        <listitem id=55 level=1>
+          <link id=56 focusable url="https://todomvc.com/examples/vue/dist/#/">All</link>
+        </listitem>
+        <listitem id=58 level=1>
+          <link id=59 focusable url="https://todomvc.com/examples/vue/dist/#/active">Active</link>
+        </listitem>
+        <listitem id=61 level=1>
+          <link id=62 focusable url="https://todomvc.com/examples/vue/dist/#/completed">Completed</link>
+        </listitem>
+      </list>
+      <button id=64 focusable>Clear completed</button>
+    </sectionfooter>
+  </div>
+  <contentinfo id=66>
+    <paragraph id=67>Double-click to edit a todo</paragraph>
+    <paragraph id=69>Created by the TodoMVC Team</paragraph>
+    <paragraph id=71>
+      Part of
+      <link id=73 focusable url="http://todomvc.com/">TodoMVC</link>
+    </paragraph>
+  </contentinfo>
+</RootWebArea>

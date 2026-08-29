@@ -67,7 +67,7 @@ public final class AppiumDriver extends BaseDriver {
   }
 
   @Override
-  public BaseAccessibilityTree accessibilityTree() {
+  protected BaseAccessibilityTree fetchAccessibilityTree() {
     ensureNativeContext();
     sleep(delay);
     if (doubleFetchPageSource) {

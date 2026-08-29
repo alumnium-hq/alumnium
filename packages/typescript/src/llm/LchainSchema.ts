@@ -13,7 +13,7 @@ export abstract class LchainSchema {
     type: z.literal("text"),
     text: z.string(),
     annotations: z.array(z.unknown()).exactOptional(),
-    phase: z.undefined().exactOptional(),
+    phase: z.union([z.undefined(), z.string()]).exactOptional(),
   });
 
   static MessageFunctionCallData = z.object({
@@ -83,6 +83,8 @@ export abstract class LchainSchema {
     id: z.string(),
     type: z.literal("reasoning"),
     summary: z.array(this.ReasoningSummary),
+    content: z.array(z.unknown()).exactOptional(),
+    encrypted_content: z.string().exactOptional(),
   });
 
   static MessageDataAdditionalKwargsReasoning = z.discriminatedUnion("type", [
@@ -94,6 +96,10 @@ export abstract class LchainSchema {
     ephemeral_1h_input_tokens: z.number(),
   });
 
+  static MessageDataAdditionalKwargsUsageOutputTokensDetails = z.object({
+    thinking_tokens: z.number(),
+  });
+
   static MessageDataAdditionalKwargsUsage = z.object({
     input_tokens: z.number(),
     cache_creation_input_tokens: z.number(),
@@ -102,6 +108,8 @@ export abstract class LchainSchema {
     output_tokens: z.number(),
     service_tier: z.union([z.literal("standard"), z.string()]),
     inference_geo: z.string(),
+    output_tokens_details:
+      this.MessageDataAdditionalKwargsUsageOutputTokensDetails.exactOptional(),
   });
 
   static FunctionCallFunction = z.object({
@@ -222,6 +230,7 @@ export abstract class LchainSchema {
     status: z.union([z.literal("completed"), z.string()]),
     content: z.array(this.MetadataOutput),
     role: z.union([z.literal("assistant"), z.string()]),
+    phase: z.union([z.string(), z.null()]).exactOptional(),
   });
 
   static OutputFunctionCall = z.object({
@@ -231,6 +240,8 @@ export abstract class LchainSchema {
     arguments: z.string(),
     call_id: z.string(),
     name: z.string(),
+    caller: z.null().exactOptional(),
+    namespace: z.null().exactOptional(),
   });
 
   static ResponseMetadataOutputItem = z.discriminatedUnion("type", [
@@ -277,6 +288,8 @@ export abstract class LchainSchema {
     cost_in_usd_ticks: z.number().exactOptional(),
     cacheReadInputTokens: z.number().exactOptional(),
     cacheWriteInputTokens: z.number().exactOptional(),
+    output_tokens_details:
+      this.MessageDataAdditionalKwargsUsageOutputTokensDetails.exactOptional(),
   });
 
   static ResponseMetadataMetrics = z.object({ latencyMs: z.number() });
@@ -443,6 +456,10 @@ export namespace LchainSchema {
 
   export type MessageDataAdditionalKwargsUsageCacheCreation = z.infer<
     typeof LchainSchema.MessageDataAdditionalKwargsUsageCacheCreation
+  >;
+
+  export type MessageDataAdditionalKwargsUsageOutputTokensDetails = z.infer<
+    typeof LchainSchema.MessageDataAdditionalKwargsUsageOutputTokensDetails
   >;
 
   export type MessageDataAdditionalKwargsUsage = z.infer<

@@ -64,15 +64,6 @@ public class Area {
   }
 
   /**
-   * Scope the accessibility tree to the area. Used for all client requests.
-   *
-   * @return the scoped accessibility tree
-   */
-  private BaseAccessibilityTree scopedTree() {
-    return driver.accessibilityTree().scopeToArea(id);
-  }
-
-  /**
    * Act on the area.
    *
    * @param goal the goal to act on
@@ -81,13 +72,15 @@ public class Area {
   public DoResult act(String goal) {
     return Retry.execute(
         () -> {
-          PlanResult response = client.planActions(goal, scopedTree().toStr(), driver.app());
+          driver.setAccessibilityTree(accessibilityTree);
+
+          PlanResult response = client.planActions(goal, accessibilityTree.toStr(), driver.app());
           String explanation = response.explanation();
           List<String> steps = response.steps();
           List<DoStep> executedSteps = new ArrayList<>();
           for (String step : steps) {
             ActionResult actionResult =
-                client.executeAction(goal, step, scopedTree().toStr(), driver.app());
+                client.executeAction(goal, step, accessibilityTree.toStr(), driver.app());
 
             if (explanation.equals(goal)) {
               explanation = actionResult.explanation();
@@ -127,11 +120,11 @@ public class Area {
           HttpClient.RetrieveResult result =
               client.retrieve(
                   "Is the following true or false - " + statement,
-                  scopedTree().toStr(),
-                  this.driver.title(),
-                  this.driver.url(),
-                  vision ? this.driver.screenshot() : null,
-                  this.driver.app());
+                  accessibilityTree.toStr(),
+                  driver.title(),
+                  driver.url(),
+                  vision ? driver.screenshot() : null,
+                  driver.app());
 
           if (!Boolean.TRUE.equals(result.result().boxedValue())) {
             throw new AssertionError(result.explanation());
@@ -164,11 +157,11 @@ public class Area {
           HttpClient.RetrieveResult result =
               client.retrieve(
                   data,
-                  scopedTree().toStr(),
-                  this.driver.title(),
-                  this.driver.url(),
-                  vision ? this.driver.screenshot() : null,
-                  this.driver.app());
+                  accessibilityTree.toStr(),
+                  driver.title(),
+                  driver.url(),
+                  vision ? driver.screenshot() : null,
+                  driver.app());
 
           return result.result().toObject();
         });
@@ -183,9 +176,10 @@ public class Area {
   public Object find(String description) {
     return Retry.execute(
         () -> {
+          driver.setAccessibilityTree(accessibilityTree);
           FindElementResult response =
-              client.findElement(description, scopedTree().toStr(), this.driver.app());
-          return this.driver.findElement(response.id());
+              client.findElement(description, accessibilityTree.toStr(), driver.app());
+          return driver.findElement(response.id());
         });
   }
 }

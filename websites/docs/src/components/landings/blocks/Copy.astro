@@ -1,0 +1,11 @@
+---
+import { tt } from "#/copy";
+
+export interface Props {
+  t: string;
+}
+
+const { t } = Astro.props;
+---
+
+<div class="copy" set:html={tt.md(t)} />

@@ -1,0 +1,43 @@
+---
+import type { TtLandings } from "#/copy/landings";
+import Section from "./Section.astro";
+import SectionPoints from "./SectionPoints.astro";
+
+interface Props {
+  t: TtLandings.Bento;
+}
+
+const { t } = Astro.props;
+---
+
+<div class:list={["bento", `bento-cols-${t.cols}`]}>
+  {
+    t.items.map((item) => {
+      const baseProps = {
+        heading: item.heading || t.heading,
+        style: item.style || t.style,
+        span: item.span,
+        continue: item.continue,
+      };
+
+      if ("en" in item.content) {
+        return (
+          <Section
+            {...baseProps}
+            t={item.content.en}
+            content={item.content.extra}
+            cols={item.cols}
+            adjust={item.adjust}
+            extra={item.extra}
+          />
+        );
+      }
+
+      switch (item.content.kind) {
+        case "points": {
+          return <SectionPoints {...baseProps} content={item.content} />;
+        }
+      }
+    })
+  }
+</div>

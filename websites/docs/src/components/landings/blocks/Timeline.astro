@@ -1,0 +1,380 @@
+---
+import SectionContent from "./SectionContent.astro";
+import type { SectionContentProps } from "./Section.types";
+
+export interface Props {
+  id?: string;
+  items: Timeline.Item[];
+  cols?: 1 | 2;
+  style?: "left" | "center";
+}
+
+export namespace Timeline {
+  export interface ItemBare {
+    id: string;
+    style?: "compact" | "header";
+  }
+
+  export type Item = ItemBare | ItemContentful;
+
+  export interface ItemContentful extends ItemBare, SectionContentProps {}
+}
+
+const { id: timelineId, items: itemsProp, cols, style } = Astro.props;
+
+const items = await Promise.all(
+  itemsProp.map(async (item) => ({
+    ...item,
+    content: Astro.slots.has(item.id)
+      ? await Astro.slots.render(item.id)
+      : null,
+  })),
+);
+---
+
+<landing-timeline
+  class:list={[
+    "timeline",
+    (!cols || cols === 1) && "is-cols-1",
+    cols === 2 && "is-cols-2",
+    (!style || style === "left") && "is-left",
+    style === "center" && "is-center",
+  ]}
+>
+  {
+    () => {
+      const lastIdx = items.length - 1;
+
+      const headerItem = items.find((item) => item.style === "header");
+      const headerContent = headerItem?.content || "";
+
+      return items.map((item, idx) => {
+        const { id, content, style: itemStyle, ...contentProps } = item;
+        const combinedContent =
+          item === headerItem ? content : headerContent + content || "";
+        return (
+          <>
+            {itemStyle === "header" && (
+              <div class="timeline-item-sentinel w-full " />
+            )}
+
+            <div
+              id={timelineId ? `${timelineId}-${id}` : id}
+              class:list={[
+                "timeline-item",
+                itemStyle === "compact" && "is-compact",
+                itemStyle === "header" && "is-header",
+                idx === 0 && "is-first",
+                idx === lastIdx && "is-last",
+              ]}
+              data-timeline-item-style={itemStyle || "basic"}
+            >
+              {"t" in contentProps && (
+                <div class="timeline-heading">
+                  {style === "center" && <div />}
+                  <SectionContent {...contentProps} />
+                </div>
+              )}
+
+              {content && (
+                <div class="timeline-slot" set:html={combinedContent} />
+              )}
+            </div>
+          </>
+        );
+      });
+    }
+  }
+
+  <div class="timeline-line"></div>
+</landing-timeline>
+
+<script>
+  class Timeline extends HTMLElement {
+    connectedCallback() {
+      const headerQuery = "[data-timeline-item-style=header]";
+      const headerEls = this.querySelectorAll(headerQuery);
+
+      headerEls.forEach((headerEl) => {
+        const sentinelEl = prevSibling(headerEl, ".timeline-item-sentinel");
+        if (!sentinelEl) return;
+
+        const observer = new IntersectionObserver(
+          ([e]) =>
+            headerEl.classList.toggle("has-stuck", e.intersectionRatio < 1),
+          { threshold: 1 },
+        );
+
+        observer.observe(sentinelEl);
+      });
+    }
+  }
+
+  customElements.define("landing-timeline", Timeline);
+
+  function prevSibling(element: Element, selector: string) {
+    let sibling = element.previousElementSibling;
+
+    while (sibling) {
+      if (sibling.matches(selector)) return sibling;
+      sibling = sibling.previousElementSibling;
+    }
+
+    return null;
+  }
+</script>
+
+<style>
+  @reference "#/styles/global.css";
+
+  .timeline {
+    --timeline-stroke: 1px;
+    --timeline-header-top: calc(
+      var(--sl-nav-height) + var(--landing-nav-height)
+    );
+    /* √2 = 1.4142 */
+    --timeline-item-decoration-size-rotated: calc(
+      var(--timeline-item-decoration-size) * 1.4142
+    );
+    --timeline-item-decoration-vertical-offset: calc(
+      (
+          var(--timeline-item-decoration-size-rotated) -
+            var(--timeline-item-decoration-size)
+        ) /
+        2
+    );
+
+    --timeline-x-left: 0%;
+    --timeline-x-center: calc(50% - var(--timeline-stroke) / 2);
+
+    @apply relative;
+
+    --timeline-item-decoration-size: 8px;
+
+    @variant md {
+      --timeline-item-decoration-size: 12px;
+    }
+  }
+
+  .timeline.is-cols-2 {
+    &.is-center .timeline-heading,
+    & .timeline-slot {
+      @apply grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-8;
+    }
+
+    &.is-center .timeline-heading > :first-child {
+      @apply hidden md:block;
+    }
+
+    & .timeline-item.is-header {
+      @apply hidden md:block;
+    }
+
+    & .timeline-item:not(.is-header) .timeline-slot {
+      & > :global(*) {
+        &:nth-child(odd) {
+          order: 1;
+        }
+
+        &:nth-child(even) {
+          order: 2;
+
+          @variant md {
+            order: 1;
+          }
+        }
+
+        &:nth-child(1) {
+          @apply mt-2;
+        }
+
+        &:nth-child(2) {
+          @apply mt-4;
+        }
+      }
+    }
+  }
+
+  @utility timeline-left {
+    & > * {
+      @apply pl-3 md:pl-6 lg:pl-8;
+    }
+  }
+
+  @utility timeline-center {
+    & > * {
+      @apply pl-0 lg:pl-0;
+    }
+  }
+
+  .timeline.is-left {
+    --timeline-x: var(--timeline-x-left);
+    @apply timeline-left;
+  }
+
+  .timeline.is-center {
+    --timeline-x: var(--timeline-x-left);
+    @apply timeline-left;
+
+    @variant md {
+      --timeline-x: var(--timeline-x-center);
+      @apply timeline-center;
+    }
+  }
+
+  .timeline {
+    @apply block relative pb-(--timeline-item-decoration-size);
+
+    &:after,
+    & > .timeline-item:before {
+      @apply content-[""] block absolute size-(--timeline-item-decoration-size) border-accent-400 rotate-45;
+    }
+
+    &:after,
+    & > .timeline-item.is-first:before,
+    & > .timeline-item.is-first + *:before {
+      @apply border-r border-b bottom-[calc(var(--timeline-item-decoration-size)/-2+var(--timeline-stroke)/2)];
+      border-bottom-width: var(--timeline-stroke);
+      border-right-width: var(--timeline-stroke);
+    }
+
+    & > .timeline-item.is-first + *:before {
+      @apply border-t-0 border-l-0;
+    }
+
+    &:after {
+      left: calc(
+        var(--timeline-x) - var(--timeline-item-decoration-size) / 2 +
+          var(--timeline-stroke) / 2
+      );
+    }
+
+    & > .timeline-item:before {
+      @apply bg-canvas;
+    }
+
+    & > .timeline-item:not(.is-first):not(.is-first + *):before {
+      @apply border;
+      border-width: var(--timeline-stroke);
+    }
+
+    & > .timeline-item.is-first + *:before {
+      @variant md {
+        @apply border;
+        border-width: var(--timeline-stroke);
+      }
+    }
+  }
+
+  .timeline-item-sentinel {
+    @apply pointer-events-none absolute;
+    height: var(--timeline-header-top);
+    margin-top: calc(-1 * var(--timeline-header-top) - 1px);
+  }
+
+  .timeline-item {
+    @apply relative py-4 md:py-[3rem];
+
+    &.is-compact {
+      @apply -mb-8;
+    }
+
+    &.is-header {
+      @apply sticky z-30 md:-mb-8 pointer-events-none;
+      top: var(--timeline-header-top);
+
+      &.has-stuck {
+        --timeline-item-stuck-padding: 0.5rem;
+        --timeline-item-stuck-slot-shift-outer: 1rem;
+        --timeline-item-stuck-slot-shift-inner: 0.4rem;
+
+        & .timeline-slot {
+          & > :global(*) {
+            @apply bg-canvas/60 relative z-20 backdrop-blur-sm py-(--timeline-item-stuck-padding);
+
+            &:first-child {
+              @apply -mr-(--timeline-item-stuck-slot-shift-inner) pr-(--timeline-item-stuck-slot-shift-inner) -ml-(--timeline-item-stuck-slot-shift-outer) pl-(--timeline-item-stuck-slot-shift-outer);
+            }
+
+            &:last-child {
+              @apply -ml-(--timeline-item-stuck-slot-shift-inner) pl-(--timeline-item-stuck-slot-shift-inner) -mr-(--timeline-item-stuck-slot-shift-outer) pr-(--timeline-item-stuck-slot-shift-outer);
+            }
+          }
+        }
+
+        &:before {
+          @apply z-30 mt-(--timeline-item-stuck-padding);
+        }
+
+        &:after {
+          @apply content-[""] absolute bg-canvas w-(--timeline-item-decoration-size-rotated) top-0 z-20;
+          left: calc(
+            var(--timeline-x) - var(--timeline-item-decoration-size-rotated) /
+              2 + var(--timeline-stroke)
+          );
+          height: calc(
+            var(--timeline-item-decoration-size-rotated) / 2 +
+              var(--timeline-item-stuck-padding) -
+              var(--timeline-item-decoration-vertical-offset)
+          );
+        }
+      }
+    }
+
+    &:not(.is-header) {
+      & > .timeline-slot > :global(.timeline-header) {
+        @apply md:hidden;
+      }
+    }
+
+    &:before {
+      @apply top-[1rem] md:top-[calc(3rem+var(--timeline-item-decoration-vertical-offset)/2)] z-20;
+      left: calc(
+        var(--timeline-x) - var(--timeline-item-decoration-size) / 2 +
+          var(--timeline-stroke) / 2
+      );
+    }
+
+    &.is-first {
+      @apply pt-0;
+
+      &:before {
+        @apply top-0;
+      }
+    }
+
+    &.is-first + * {
+      @apply pt-0 md:pt-[3rem];
+
+      &:before {
+        @apply top-0 md:top-[3rem];
+      }
+    }
+
+    &.is-last {
+      @apply pb-0;
+    }
+  }
+
+  .timeline-slot {
+    @apply pointer-events-auto;
+  }
+
+  .timeline-line {
+    @apply absolute border-l border-accent-600;
+    top: calc(
+      var(--timeline-item-decoration-size-rotated) -
+        var(--timeline-item-decoration-vertical-offset)
+    );
+    left: var(--timeline-x);
+    bottom: calc(
+      var(--timeline-item-decoration-size-rotated) / -2 +
+        var(--timeline-item-decoration-vertical-offset)
+    );
+    border-left-width: var(--timeline-stroke);
+  }
+
+  .timeline-item {
+    @apply flex flex-col gap-4 sm:gap-6 md:gap-6;
+  }
+</style>

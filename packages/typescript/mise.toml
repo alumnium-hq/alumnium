@@ -2,8 +2,8 @@
 run = []
 
 [tasks."install/playwright"]
-run = "bun run playwright install chromium --with-deps"
-# NOTE: It prompts for sudo to install OS dependencies
+run = "bun run playwright install chromium $PLAYWRIGHT_INSTALL_DEPS_ARG"
+# NOTE: On Debian-compatible Linux, it prompts for sudo to install OS dependencies.
 raw = true
 
 [tasks.clean]
@@ -26,6 +26,7 @@ sources = [
   "*.md",
 ]
 outputs = ["dist/**/*"]
+tools = { java = "21" }
 
 [tasks."build/generate"]
 run = { task = "build/generate:bundles" }
@@ -53,7 +54,10 @@ run = "./scripts/publish.sh"
 depends = "build"
 
 [tasks."dev/cli"]
-run = "fnox exec  -- bun ./src/cli/bin.ts"
+usage = '''
+arg "[args]" var=#true
+'''
+run = "fnox exec  -- bun ./src/cli/bin.ts {{usage.args | join(sep=' ')}}"
 quiet = true
 raw = true
 
@@ -88,28 +92,52 @@ arg "<driver>" help="Driver to use for system tests" {
   choices "selenium" "playwright" "appium-ios" "appium-android"
   default "selenium"
 }
+arg "[test]" help="System test to run" default=""
 '''
-run = "ALUMNIUM_DRIVER={{usage.driver}} ./scripts/test-system.sh"
+run = "ALUMNIUM_DRIVER={{usage.driver}} ALUMNIUM_TEST_ARG={{usage.test}} ./scripts/test-system.sh"
 
 [tasks."test/system:all"]
+usage = '''
+arg "[test]" help="System test to run" default=""
+'''
 run = [
-  { task = "test/system:selenium" },
-  { task = "test/system:playwright" },
-  { task = "test/system:appium-ios" },
-  { task = "test/system:appium-android" },
+  { task = "test/system:selenium", args = [
+    "{{usage.test}}",
+  ] },
+  { task = "test/system:playwright", args = [
+    "{{usage.test}}",
+  ] },
+  { task = "test/system:appium-ios", args = [
+    "{{usage.test}}",
+  ] },
+  { task = "test/system:appium-android", args = [
+    "{{usage.test}}",
+  ] },
 ]
 
 [tasks."test/system:selenium"]
-run = [{ task = "test/system selenium" }]
+usage = '''
+arg "[test]" help="System test to run" default=""
+'''
+run = [{ task = "test/system", args = ["selenium", "{{usage.test}}"] }]
 
 [tasks."test/system:playwright"]
-run = [{ task = "test/system playwright" }]
+usage = '''
+arg "[test]" help="System test to run" default=""
+'''
+run = [{ task = "test/system", args = ["playwright", "{{usage.test}}"] }]
 
 [tasks."test/system:appium-ios"]
-run = [{ task = "test/system appium-ios" }]
+usage = '''
+arg "[test]" help="System test to run" default=""
+'''
+run = [{ task = "test/system", args = ["appium-ios", "{{usage.test}}"] }]
 
 [tasks."test/system:appium-android"]
-run = [{ task = "test/system appium-android" }]
+usage = '''
+arg "[test]" help="System test to run" default=""
+'''
+run = [{ task = "test/system", args = ["appium-android", "{{usage.test}}"] }]
 
 [tasks."test/waiter"]
 usage = '''
@@ -219,6 +247,7 @@ run = { task = "test/cache", args = ["xai"] }
 
 [tasks."test/package"]
 run = "./scripts/test-package.sh"
+tools = { pnpm = "latest" }
 
 [tasks.eval]
 run = "fnox exec -- bun evalite"
@@ -276,3 +305,7 @@ description = "Generates LchainSchema from scanned types. See docs/contributing/
 run = '''
 mise :generate/types-scan-schema:class ./src/llm/Lchain.serialized.types-scan.json LchainSchema > ./src/llm/LchainSchema.ts
 '''
+
+[tasks."bench/tree-tokens"]
+description = "Benchmarks tree tokens."
+run = "bun scripts/report-tree-tokens.ts"

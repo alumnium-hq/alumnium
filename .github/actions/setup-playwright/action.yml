@@ -1,0 +1,21 @@
+name: Setup Playwright
+description: Sets up Playwright
+
+inputs:
+  package:
+    required: true
+    description: "Package to install Playwright for (typescript, python, java)."
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: Restore Playwright Cache
+      uses: actions/cache/restore@v5
+      with:
+        path: ~/.cache/ms-playwright
+        key: playwright-${{ runner.os }}-${{ inputs.package }}
+
+    - name: Install Playwright Browsers
+      run: mise //packages/${{ inputs.package }}:install/playwright
+      shell: bash

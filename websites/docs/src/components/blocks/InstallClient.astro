@@ -1,0 +1,49 @@
+---
+import Tabs from "./Tabs.astro";
+import HowTabContent from "./HowTabContent.astro";
+import { createHowTab } from "./howTabs";
+
+const tab = createHowTab<"install-client">();
+---
+
+<Tabs
+  items={[
+    tab("install-client-npm", ["npm", "pnpm", "yarn", "bun"]),
+    tab("install-client-pip", ["pip", "uv"]),
+    tab("install-client-java", ["gradle", "mvn"]),
+  ]}
+  active="install-client-npm-npm"
+  style="code"
+>
+  <Fragment slot="install-client-npm-npm">
+    <HowTabContent key="install-client-npm-npm" />
+  </Fragment>
+
+  <Fragment slot="install-client-npm-pnpm">
+    <HowTabContent key="install-client-npm-pnpm" />
+  </Fragment>
+
+  <Fragment slot="install-client-npm-yarn">
+    <HowTabContent key="install-client-npm-yarn" />
+  </Fragment>
+
+  <Fragment slot="install-client-npm-bun">
+    <HowTabContent key="install-client-npm-bun" />
+  </Fragment>
+
+  <Fragment slot="install-client-pip-pip">
+    <HowTabContent key="install-client-pip-pip" />
+  </Fragment>
+
+  <Fragment slot="install-client-pip-uv">
+    <HowTabContent key="install-client-pip-uv" />
+  </Fragment>
+
+  <Fragment slot="install-client-java-gradle">
+    <HowTabContent key="install-client-java-gradle" />
+  </Fragment>
+
+  <Fragment slot="install-client-java-mvn">
+    <HowTabContent key="install-client-java-mvn" />
+  </Fragment>
+</Tabs>

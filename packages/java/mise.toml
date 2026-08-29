@@ -3,7 +3,7 @@ java = "21"
 
 [tasks."install/playwright"]
 run = "./gradlew installPlaywright"
-# NOTE: It prompts for sudo to install OS dependencies
+# NOTE: On Debian-compatible Linux, it prompts for sudo to install OS dependencies.
 raw = true
 
 [tasks.build]
@@ -43,20 +43,33 @@ arg "<driver>" help="Driver to use for system tests" {
   choices "selenium" "playwright" "appium-ios" "appium-android"
   default "selenium"
 }
+arg "[test]" help="System test to run" default=""
 '''
-run = "ALUMNIUM_DRIVER={{usage.driver}} ./gradlew clean test --tests 'ai.alumnium.system.*' --rerun-tasks"
+run = "ALUMNIUM_DRIVER={{usage.driver}} ALUMNIUM_TEST_ARG={{usage.test}} ./scripts/test-system.sh"
 
 [tasks."test/system:playwright"]
-run = [{ task = "test/system playwright" }]
+usage = '''
+arg "[test]" help="System test to run" default=""
+'''
+run = [{ task = "test/system", args = ["playwright", "{{usage.test}}"] }]
 
 [tasks."test/system:selenium"]
-run = [{ task = "test/system selenium" }]
+usage = '''
+arg "[test]" help="System test to run" default=""
+'''
+run = [{ task = "test/system", args = ["selenium", "{{usage.test}}"] }]
 
 [tasks."test/system:appium-ios"]
-run = [{ task = "test/system appium-ios" }]
+usage = '''
+arg "[test]" help="System test to run" default=""
+'''
+run = [{ task = "test/system", args = ["appium-ios", "{{usage.test}}"] }]
 
 [tasks."test/system:appium-android"]
-run = [{ task = "test/system appium-android" }]
+usage = '''
+arg "[test]" help="System test to run" default=""
+'''
+run = [{ task = "test/system", args = ["appium-android", "{{usage.test}}"] }]
 
 [tasks."test/package"]
 run = "./scripts/test-package.sh"

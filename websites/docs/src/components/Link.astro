@@ -1,0 +1,72 @@
+---
+import type { TtLinks } from "#/copy/links";
+import Icon from "#/components/Icon.astro";
+import type { IconProp } from "#/components/Icon.types";
+
+export type Props = LinkPropsBasic | LinkPropsTranslated;
+
+export interface LinkPropsBase {
+  class?: string;
+  icon?: IconProp<{ pos?: "before" | "after" | undefined }> | undefined;
+}
+
+export interface LinkPropsBasic extends LinkPropsBase {
+  href: string;
+  label?: string | undefined;
+}
+
+export interface LinkPropsTranslated extends LinkPropsBase {
+  t: TtLinks.Link;
+}
+
+const { class: className } = Astro.props;
+const { href, label, icon } = normalizeProps(Astro.props);
+
+const iconPos = icon && typeof icon === "object" && icon.pos;
+
+const isExternal = !href.startsWith("/");
+
+const badge = Astro.slots.has("badge")
+  ? await Astro.slots.render("badge")
+  : null;
+
+function normalizeProps(props: Props): LinkPropsBasic {
+  if ("t" in props) {
+    const { t, ...restProps } = props;
+    const { href, label } = props.t;
+    return { ...restProps, href, label: label.en };
+  }
+
+  return props;
+}
+---
+
+<a
+  href={href}
+  class:list={["link", className]}
+  target={isExternal ? "_blank" : undefined}
+  rel={isExternal ? "noopener noreferrer" : undefined}
+>
+  {icon && (!iconPos || iconPos === "before") && <Icon prop={icon} />}
+
+  <slot><span class="link-label">{label}</span></slot>
+
+  {badge && <span class="badge" set:html={badge} />}
+
+  {icon && iconPos === "after" && <Icon prop={icon} />}
+</a>
+
+<style>
+  @reference "#/styles/global.css";
+
+  .link {
+    @apply text-accent-400 no-underline hover:text-accent-100 inline-flex gap-1.5 items-center;
+  }
+
+  :global(.links-scope) {
+    &:global(.is-highlight-external) {
+      /* TODO: Come up with a better name and implement it. The idea is to have
+         a context where all external links are highlighted or have an icon. */
+    }
+  }
+</style>

@@ -1,0 +1,58 @@
+<Application name="Safari" id=1>
+  <Window id=2>
+    <div name="SafariWindow?ViewNarrow&amp;BarsKeptMinimized=false&amp;UUID=FAD3-4E0-8848-F5DD4EFFCC&amp;UsingLoweredBar=true&amp;IsSecure=true&amp;IsTabBarAvailable=false" id=11>
+      <ScrollView id=18>
+        <div name="TabDocument?IsLoadedUsingDesktopUserAgentfalse&amp;InReaderMode=false&amp;UUID=A7B7ADA-4B7-8-9D51A084C8&amp;IsPrivate=false&amp;IsPageLoaded=true&amp;ProcessID=44812" id=19>
+          <WebView name="WebView" id=20>
+            <WebView id=21>
+              <WebView id=23>
+                <div id=28>
+                  <div id=30>Dark Mode</div>
+                  <Link id=32>Calculator</Link>
+                  <Link id=37>SB</Link>
+                </div>
+                <TextField id=39 value="8÷" />
+                <Button name="C" id=40 />
+                <Button name="(" id=41 />
+                <Button name=")" id=42 />
+                <Button name="÷" id=43 />
+                <Button name=7 id=44 />
+                <Button name=8 id=45 />
+                <Button name=9 id=46 />
+                <Button name="×" id=47 />
+                <Button name=4 id=48 />
+                <Button name=5 id=49 />
+                <Button name=6 id=50 />
+                <Button name="-" id=51 />
+                <Button name=1 id=52 />
+                <Button name=2 id=53 />
+                <Button name=3 id=54 />
+                <Button name="+" id=55 />
+                <Button name="←" id=56 />
+                <Button name=0 id=57 />
+                <Button name="." id=58 />
+                <Button name="=" id=59 />
+              </WebView>
+              <div name="Vertical scroll bar, 1 page" id=61 value="0 %" />
+              <div name="Horizontal scroll bar, 1 page" id=63 value="0 %" />
+              <div name="Vertical scroll bar, 1 page" id=65 value="0 %" />
+              <div name="Horizontal scroll bar, 1 page" id=67 value="0 %" />
+            </WebView>
+          </WebView>
+        </div>
+        <div name="Horizontal scroll bar, 1 page" id=69 value="0 %" />
+        <div name="Horizontal scroll bar, 1 page" id=71 value="0 %" />
+      </ScrollView>
+      <div name="CapsuleViewController" id=73>
+        <Button name="BackButton" id=85 label="Back" />
+        <div name="CapsuleNavigationBar?isSelected=true&amp;isDistractionControlOverlayUp=false" id=89>
+          <Button name="PageFormatMenuButton" id=90 label="Page Menu" />
+          <TextField name="TabBarItemTitle" id=92 value="‎seleniumbase.io" label="Address" />
+          <Button name="ReloadButton" id=93 label="refresh" />
+        </div>
+        <Button name="MoreMenuButton" id=96 label="More" />
+      </div>
+    </div>
+  </Window>
+  <Window id=101 />
+</Application>

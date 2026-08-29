@@ -1,4 +1,4 @@
-import { xxh64Str } from "smolxxh/str";
+import { xxh64Str } from "@js-fns/xxhash/str";
 import { Logger } from "../../../telemetry/Logger.ts";
 import type { PlannerAgent } from "../../agents/PlannerAgent.ts";
 import { BaseAgentElementsCache } from "./BaseAgentElementsCache.ts";

@@ -1,0 +1,254 @@
+---
+import DecorationLine from "./DecorationLine.astro";
+
+export interface Props {
+  id?: string;
+  shaded?: boolean;
+  bg?: "shaded" | "highlighted";
+  edge?: "top" | "bottom" | false;
+}
+
+const { id, shaded, bg, edge } = Astro.props;
+---
+
+<landing-supersection id={id} class="supersection-wrapper">
+  <DecorationLine edge={!!edge} />
+
+  <div data-sentinel="top"></div>
+
+  <div
+    class:list={[
+      "supersection",
+      shaded && "is-shaded",
+      bg === "shaded" && "is-shaded",
+      bg === "highlighted" && "is-highlighted",
+    ]}
+  >
+    <div class="supersection-inner">
+      <div class="supersection-content">
+        <slot />
+      </div>
+    </div>
+  </div>
+
+  <div data-sentinel="bottom"></div>
+</landing-supersection>
+
+<script>
+  class Supersection extends HTMLElement {
+    connectedCallback() {
+      const { id } = this;
+      if (!this.id) return;
+
+      const sentinels = this.querySelectorAll("[data-sentinel");
+      const topSentinel = sentinels?.[0];
+      const bottomSentinel = sentinels?.[sentinels.length - 1];
+
+      function sendEvent(eventKind: string) {
+        document.body.dispatchEvent(
+          new CustomEvent(`landing-supersection-${eventKind}`, {
+            detail: { id },
+          }),
+        );
+      }
+
+      const enter = () => sendEvent("enter");
+      const leave = () => sendEvent("leave");
+
+      type Edge = "top" | "bottom";
+
+      interface State {
+        section: SectionState;
+        top: SentinelState;
+        bottom: SentinelState;
+      }
+
+      type SectionState = "on" | "off";
+
+      type SentinelState = "off" | "on" | SentinelMotionState;
+
+      type SentinelMotionState = "enter" | "leave";
+
+      const state: State = {
+        section: "off",
+        top: "off",
+        bottom: "off",
+      };
+
+      function setSectionState(newState: SectionState) {
+        const prevState = state.section;
+        state.section = newState;
+
+        if (prevState === "on" && newState !== "on") {
+          setSentinelState("top", "off");
+          setSentinelState("bottom", "off");
+          leave();
+        }
+      }
+
+      function setSentinelState(kind: Edge, newState: SentinelState) {
+        const wereAnySentinelsOn = state.top === "on" || state.bottom === "on";
+
+        state[kind] = newState;
+        if (newState === "on" && !wereAnySentinelsOn) {
+          enter();
+        }
+      }
+
+      interface InsideViewportStateChange {
+        kind: Edge;
+      }
+
+      function processInsideViewportStateChange(
+        change: InsideViewportStateChange,
+      ) {
+        const { kind } = change;
+        const curSentinelState = state[kind];
+
+        if (curSentinelState !== "on") {
+          return setSentinelState(kind, "on");
+        }
+      }
+
+      interface OutsideViewportStateChange {
+        kind: Edge;
+        edge: Edge;
+        motionState: SentinelMotionState;
+      }
+
+      function processOutsideViewportStateChange(
+        change: OutsideViewportStateChange,
+      ) {
+        const { kind, edge, motionState } = change;
+        const curSentinelState = state[kind];
+
+        switch (edge) {
+          case "top":
+            switch (motionState) {
+              // Sentinels enters the viewport
+              case "enter":
+                if (curSentinelState === "off") {
+                  return setSentinelState(kind, "enter");
+                } else if (curSentinelState === "on") {
+                  return setSentinelState(kind, "leave");
+                }
+                return;
+
+              // Sentinel leaves the viewport
+              case "leave":
+                if (curSentinelState === "enter" || curSentinelState === "on") {
+                  return setSentinelState(kind, "leave");
+                }
+                return;
+
+              default:
+                motionState satisfies never;
+            }
+
+          case "bottom":
+            switch (motionState) {
+              // Sentinels enters the viewport
+              case "enter":
+                if (curSentinelState === "on") {
+                  return setSentinelState(kind, "leave");
+                } else if (curSentinelState === "off") {
+                  return setSentinelState(kind, "enter");
+                }
+                return;
+
+              // Sentinel leaves the viewport
+              case "leave":
+                if (
+                  kind === "bottom" &&
+                  (curSentinelState === "on" || curSentinelState === "enter")
+                ) {
+                  return setSentinelState(kind, "leave");
+                }
+                return;
+
+              default:
+                motionState satisfies never;
+            }
+        }
+      }
+
+      const sentinelObserver = new IntersectionObserver(
+        ([entry]) => {
+          if (!(entry.target instanceof HTMLElement)) return;
+
+          const kind: Edge =
+            entry.target.dataset.sentinel === "top" ? "top" : "bottom";
+
+          // Is sentinel full in the viewport?
+          const inViewport = entry.intersectionRatio === 1;
+
+          // Process state change when the sentinel is fully in the viewport
+          if (inViewport)
+            return processInsideViewportStateChange({
+              kind,
+            });
+
+          // Not in the viewport
+
+          // Detect viewport edge
+          const edge = entry.boundingClientRect.y <= 0 ? "top" : "bottom";
+
+          // Detect motion state
+          const motionState: SentinelMotionState = entry.isIntersecting
+            ? "enter"
+            : "leave";
+
+          // Process state change when the sentinel is outside the viewport
+          processOutsideViewportStateChange({
+            kind,
+            edge,
+            motionState,
+          });
+        },
+        { root: null, threshold: [0, 1] },
+      );
+
+      sentinelObserver.observe(topSentinel);
+      sentinelObserver.observe(bottomSentinel);
+
+      const sectionObserver = new IntersectionObserver(
+        ([entry]) => {
+          const curState = state.section;
+          const isOff = entry.intersectionRatio === 0;
+          const newState = isOff ? "off" : "on";
+
+          if (curState !== newState) {
+            return setSectionState(newState);
+          }
+        },
+        { root: null, threshold: [0, 1] },
+      );
+
+      sectionObserver.observe(this);
+    }
+  }
+
+  customElements.define("landing-supersection", Supersection);
+</script>
+
+<style>
+  @reference "#/styles/global.css";
+
+  .supersection-wrapper {
+    @apply block relative;
+  }
+
+  [data-sentinel] {
+    @apply absolute left-0 right-0 pointer-events-none;
+    /* margin-top: calc(-1 * var(--timeline-header-top) - 1px); */
+    height: min(40vh, 100%);
+  }
+
+  [data-sentinel="top"] {
+    @apply top-0;
+  }
+
+  [data-sentinel="bottom"] {
+    @apply bottom-0;
+  }
+</style>

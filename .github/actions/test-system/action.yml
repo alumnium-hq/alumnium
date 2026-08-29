@@ -4,7 +4,7 @@ description: Run system tests for a given package, driver, and model.
 inputs:
   package:
     required: true
-    description: "Package to test (typescript, python)."
+    description: "Package to test (typescript, python, java)."
 
   driver:
     required: true
@@ -21,6 +21,12 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Set Up Playwright
+      uses: ./.github/actions/setup-playwright
+      if: inputs.driver == 'playwright'
+      with:
+        package: ${{ inputs.package }}
+
     - name: Restore Alumnium Cache
       uses: actions/cache/restore@v5
       with:
@@ -36,6 +42,13 @@ runs:
     - name: System Tests
       run: mise //packages/${{ inputs.package }}:test/system:${{ inputs.driver }}
       shell: bash
+      env:
+        ALUMNIUM_TEST_PASS_THRESHOLD_PCT: 93
+        ALUMNIUM_LOG_DEBUG_EXTRA: all
+        ALUMNIUM_LOG_OBJECTS_DEPTH: false
+        ALUMNIUM_LOG_MAX_STR_LENGTH: false
+        ALUMNIUM_DEV_CAPTURE_TREES: true
+        ALUMNIUM_TEST_MAX_CONCURRENCY: 1
 
     - name: Save Alumnium Cache
       if: always()
@@ -44,11 +57,8 @@ runs:
         path: packages/${{ inputs.package }}/.alumnium/cache/
         key: alumnium-cache-v4-${{ inputs.package }}-${{ inputs.driver }}-${{ inputs.model }}-${{ inputs.sha }}
 
-    - name: Upload Alumnium Artifacts
-      if: always()
-      uses: actions/upload-artifact@v6
+    - name: Run Playwright Post-Setup
+      uses: ./.github/actions/setup-playwright/post
+      if: inputs.driver == 'playwright'
       with:
-        name: ci-${{ inputs.package }}-${{ inputs.driver }}-${{ inputs.model }}
-        path: |
-          packages/${{ inputs.package }}/.alumnium/logs/*.log
-          packages/${{ inputs.package }}/.alumnium/cache/
+        package: ${{ inputs.package }}

@@ -1,7 +1,7 @@
 import { execSync } from "node:child_process";
 import ansi from "picocolors";
-import { canonize } from "smolcanon";
-import { xxh32Str } from "smolxxh/str";
+import { canonize } from "@js-fns/canon";
+import { xxh32Str } from "@js-fns/xxhash/str";
 import z from "zod";
 import { Driver } from "./drivers/Driver.ts";
 import { Model } from "./Model.ts";
@@ -13,6 +13,7 @@ import {
   pathString,
 } from "./utils/schema.ts";
 import { maskString } from "./utils/string.ts";
+import os from "node:os";
 
 export namespace Env {
   export type VarsRecord = Record<string, unknown>;
@@ -21,6 +22,8 @@ export namespace Env {
     vars: VarsRecord;
     valid: boolean;
   }
+
+  export type Var = keyof typeof Env;
 }
 
 const secrets = new Set();
@@ -85,6 +88,28 @@ export const Env = {
     return envVar(
       "ALUMNIUM_LOG_DEBUG_EXTRA",
       arrayString(LoggerSchema.DebugExtra).default([]),
+    );
+  },
+
+  get ALUMNIUM_LOG_OBJECTS_DEPTH() {
+    const defaultValue = 4;
+    return envVar(
+      "ALUMNIUM_LOG_OBJECTS_DEPTH",
+      z.union([
+        z.stringbool().transform((val) => (val ? defaultValue : Infinity)),
+        z.coerce.number().default(defaultValue),
+      ]),
+    );
+  },
+
+  get ALUMNIUM_LOG_MAX_STR_LENGTH() {
+    const defaultValue = 10_000;
+    return envVar(
+      "ALUMNIUM_LOG_MAX_STR_LENGTH",
+      z.union([
+        z.stringbool().transform((val) => (val ? defaultValue : Infinity)),
+        z.coerce.number().default(defaultValue),
+      ]),
     );
   },
 
@@ -192,10 +217,36 @@ export const Env = {
     return envVar("ALUMNIUM_PLAYWRIGHT_HEADLESS", z.stringbool().default(true));
   },
 
-  get ALUMNIUM_PLAYWRIGHT_NEW_TAB_TIMEOUT() {
+  get ALUMNIUM_SELENIUM_BROWSER_VERSION() {
     return envVar(
-      "ALUMNIUM_PLAYWRIGHT_NEW_TAB_TIMEOUT",
-      z.coerce.number().default(200),
+      "ALUMNIUM_SELENIUM_BROWSER_VERSION",
+      z.string().nonempty().optional(),
+    );
+  },
+
+  get ALUMNIUM_TEST_MAX_CONCURRENCY() {
+    const defaultValue = 4;
+    const cpusCount = os.cpus().length;
+    return envVar(
+      "ALUMNIUM_TEST_MAX_CONCURRENCY",
+      z.union([
+        z.stringbool().transform((val) => (val ? defaultValue : cpusCount)),
+        z.coerce.number().min(1).max(cpusCount).default(defaultValue),
+      ]),
+    );
+  },
+
+  get ALUMNIUM_TEST_RETRY_COUNT() {
+    return envVar(
+      "ALUMNIUM_TEST_RETRY_COUNT",
+      z.coerce.number().int().nonnegative().default(0),
+    );
+  },
+
+  get ALUMNIUM_TEST_RETRY_DELAY() {
+    return envVar(
+      "ALUMNIUM_TEST_RETRY_DELAY",
+      z.coerce.number().int().nonnegative().default(1000),
     );
   },
 
@@ -206,8 +257,69 @@ export const Env = {
     );
   },
 
+  get ALUMNIUM_DEV_CAPTURE_TREES() {
+    return envVar("ALUMNIUM_DEV_CAPTURE_TREES", z.stringbool().default(false));
+  },
+
+  get ALUMNIUM_DEV_DRILL_TEST_TREES() {
+    return envVar(
+      "ALUMNIUM_DEV_DRILL_TEST_TREES",
+      z.stringbool().default(false),
+    );
+  },
+
+  get ALUMNIUM_TEST_PASS_THRESHOLD_PCT() {
+    return envVar(
+      "ALUMNIUM_TEST_PASS_THRESHOLD_PCT",
+      z.coerce.number().min(0).max(100).default(100),
+    );
+  },
+
   get ALUMNIUM_EVAL_TRIAL_COUNT() {
     return envVar("ALUMNIUM_EVAL_TRIAL_COUNT", z.coerce.number().default(25));
+  },
+
+  get ALUMNIUM_EVAL_RUN_TIMEOUT_MIN() {
+    return envVar(
+      "ALUMNIUM_EVAL_RUN_TIMEOUT_MIN",
+      z.coerce.number().default(20),
+    );
+  },
+
+  get ALUMNIUM_EVAL_MAX_CONCURRENCY() {
+    return envVar(
+      "ALUMNIUM_EVAL_MAX_CONCURRENCY",
+      z.coerce.number().default(10),
+    );
+  },
+
+  get ALUMNIUM_EVAL_SESSION_NAME() {
+    return envVar("ALUMNIUM_EVAL_SESSION_NAME", pathString().optional());
+  },
+
+  get ALUMNIUM_EVAL_SESSION_PATH() {
+    return envVar("ALUMNIUM_EVAL_SESSION_PATH", pathString().optional());
+  },
+
+  get ALUMNIUM_EVAL_SESSION_TRIM_INPUT() {
+    return envVar(
+      "ALUMNIUM_EVAL_SESSION_TRIM_INPUT",
+      z
+        .string()
+        .default("100")
+        .transform((value): number | false =>
+          value === "false"
+            ? false
+            : z.coerce.number().int().nonnegative().parse(value),
+        ),
+    );
+  },
+
+  get ALUMNIUM_EVAL_THRESHOLD_PCT() {
+    return envVar(
+      "ALUMNIUM_EVAL_THRESHOLD_PCT",
+      z.coerce.number().min(0).max(100).default(95),
+    );
   },
 
   get ANTHROPIC_API_KEY() {
@@ -310,6 +422,10 @@ export const Env = {
 
   get GITHUB_ACTIONS() {
     return envVar("GITHUB_ACTIONS", z.stringbool().default(false));
+  },
+
+  get VITEST_WORKER_ID() {
+    return envVar("VITEST_WORKER_ID", z.coerce.number().optional());
   },
 
   reset(): void {
