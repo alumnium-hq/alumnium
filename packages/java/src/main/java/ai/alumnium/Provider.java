@@ -12,7 +12,6 @@ public enum Provider {
   CODEX("codex"),
   CURSOR("cursor"),
   DEEPSEEK("deepseek"),
-  GITHUB("github"),
   GOOGLE("google"),
   MISTRALAI("mistralai"),
   OLLAMA("ollama"),

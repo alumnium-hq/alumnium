@@ -117,7 +117,6 @@ Select AI provider and model to use.
 | codex         | gpt-5.4-mini                                | OpenAI models via ChatGPT Plus/Pro OAuth.                                |
 | cursor        | composer-2.5                                | Cursor models via Cursor Agents SDK (local runtime).                     |
 | deepseek      | deepseek-reasoner                           | DeepSeek Platform.                                                       |
-| github        | gpt-4o-mini                                 | GitHub Models API.                                                       |
 | google        | gemini-3.1-flash-lite                       | Google AI Studio API.                                                    |
 | mistralai     | mistral-medium-2505                         | Mistral AI Studio API.                                                   |
 | ollama        | qwen3.6:35b                                 | Local model inference with Ollama.                                       |
@@ -240,7 +239,7 @@ Sets the URL for Ollama models if you host them externally on a server.
 
 ### `OPENAI_API_KEY`
 
-API key used when `ALUMNIUM_MODEL` is set to `openai` (or `github`, which authenticates with a GitHub personal access token via this variable).
+API key used when `ALUMNIUM_MODEL` is set to `openai`.
 
 ### `OPENAI_CUSTOM_URL`
 

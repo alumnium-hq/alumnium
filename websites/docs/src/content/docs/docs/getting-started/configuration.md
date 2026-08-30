@@ -8,7 +8,6 @@ Alumnium needs access to an AI model to work. The following models are supported
 | Provider                | Model                   |
 | ----------------------- | ----------------------- |
 | [Anthropic][1]          | Claude 4.5 Haiku        |
-| [GitHub][20]            | GPT-4o Mini             |
 | [Google][2]             | Gemini 3.1 Flash Lite   |
 | [OpenAI][3] _(default)_ | GPT-5 Nano              |
 | [Codex][22]             | GPT-5.4 Mini            |
@@ -21,7 +20,7 @@ Alumnium needs access to an AI model to work. The following models are supported
 These models were chosen because they provide the best balance between intelligence, performance, and cost. Most models now support reasoning capabilities for improved accuracy and decision-making in test automation.
 
 :::tip[Trying out?]
-[Google][7] and [GitHub][21] provide free-of-charge plans in many regions, which are convenient for experimenting. Alumnium automatically retries the requests when hitting rate limits on the free plans.
+[Google][7] provides a free-of-charge plan in many regions, which is convenient for experimenting. Alumnium automatically retries the requests when hitting rate limits on the free plan.
 :::
 
 ## Anthropic
@@ -34,18 +33,6 @@ To use Anthropic as an AI provider in Alumnium:
 ```bash
 export ALUMNIUM_MODEL="anthropic"
 export ANTHROPIC_API_KEY="sk-ant-..."
-```
-
-## GitHub
-
-To use GitHub Models AI provider with OpenAI in Alumnium:
-
-1. Get the [personal access token][21].
-2. Export the following environment variables before running tests:
-
-```bash
-export ALUMNIUM_MODEL="github"
-export OPENAI_API_KEY="github_pat_..."
 ```
 
 ## Google
@@ -211,8 +198,6 @@ Read next to learn how to write tests!
 [17]: https://docs.mistral.ai/getting-started/quickstart#account-setup
 [18]: https://x.ai
 [19]: https://x.ai/api
-[20]: https://docs.github.com/en/github-models
-[21]: https://docs.github.com/en/github-models/use-github-models/prototyping-with-ai-models#experimenting-with-ai-models-using-the-api
 [22]: https://github.com/openai/codex
 [23]: https://litterbox.catbox.moe
 [24]: https://cursor.com/docs/cloud-agent
