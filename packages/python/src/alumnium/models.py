@@ -11,7 +11,6 @@ class Provider(Enum):
     CODEX = "codex"
     CURSOR = "cursor"
     DEEPSEEK = "deepseek"
-    GITHUB = "github"
     GOOGLE = "google"
     MISTRALAI = "mistralai"
     OLLAMA = "ollama"
@@ -29,7 +28,6 @@ class Name:
         Provider.CODEX: "gpt-5.4-mini",
         Provider.CURSOR: "composer-2.5",
         Provider.DEEPSEEK: "deepseek-reasoner",
-        Provider.GITHUB: "gpt-4o-mini",
         Provider.GOOGLE: "gemini-3.1-flash-lite",
         Provider.MISTRALAI: "mistral-medium-2505",
         Provider.OLLAMA: "qwen3.6",
@@ -51,9 +49,6 @@ class Model:
     @staticmethod
     def from_env() -> "Model | None":
         provider, *name = getenv("ALUMNIUM_MODEL", "").lower().split("/", maxsplit=1)
-        if not provider and getenv("GITHUB_ACTIONS"):
-            provider = "github"
-
         if not provider:
             return None
 

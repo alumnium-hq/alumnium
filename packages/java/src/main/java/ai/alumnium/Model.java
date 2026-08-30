@@ -30,8 +30,7 @@ public final class Model {
 
   /**
    * The process-default model, derived from {@code ALUMNIUM_MODEL} (format: {@code provider/name}).
-   * Falls back to {@link Provider#GITHUB} when running under GitHub Actions. Returns {@code null}
-   * when neither is set.
+   * Returns {@code null} when it is not set.
    */
   public static Model current() {
     return current;
@@ -64,18 +63,10 @@ public final class Model {
 
   /**
    * Resolves the default model from environment variables. Mirrors Python's {@code
-   * Model.from_env()}: parses {@code ALUMNIUM_MODEL} when set, otherwise uses {@link
-   * Provider#GITHUB} under GitHub Actions, otherwise returns {@code null}.
+   * Model.from_env()}: parses {@code ALUMNIUM_MODEL} when set, otherwise returns {@code null}.
    */
   private static Model fromEnv() {
-    Model fromConfig = fromString(Config.MODEL);
-    if (fromConfig != null) {
-      return fromConfig;
-    }
-    if (System.getenv("GITHUB_ACTIONS") != null) {
-      return new Model(Provider.GITHUB, null);
-    }
-    return null;
+    return fromString(Config.MODEL);
   }
 
   static final class Names {
@@ -91,7 +82,6 @@ public final class Model {
             Map.entry(Provider.CODEX, "gpt-5.4-mini"),
             Map.entry(Provider.CURSOR, "composer-2.5"),
             Map.entry(Provider.DEEPSEEK, "deepseek-reasoner"),
-            Map.entry(Provider.GITHUB, "gpt-4o-mini"),
             Map.entry(Provider.GOOGLE, "gemini-3.1-flash-lite"),
             Map.entry(Provider.MISTRALAI, "mistral-medium-2505"),
             Map.entry(Provider.OLLAMA, "qwen3.6"),

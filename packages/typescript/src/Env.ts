@@ -153,10 +153,7 @@ export const Env = {
         ])
         .optional()
         .transform((val): Model => {
-          const defaultProvider: Model.Provider = Env.GITHUB_ACTIONS
-            ? "github"
-            : "openai";
-          return Model.parse(typeof val === "string" ? val : defaultProvider);
+          return Model.parse(typeof val === "string" ? val : "openai");
         }),
     );
   },

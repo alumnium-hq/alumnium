@@ -58,8 +58,6 @@ export class LlmFactory {
         return LlmFactory.createDeepSeekLlm(model, cache);
       case "google":
         return LlmFactory.createGoogleLlm(model, cache);
-      case "github":
-        return LlmFactory.createGithubLlm(model, cache);
       case "mistralai":
         return LlmFactory.createMistralAiLlm(model, cache);
       case "ollama":
@@ -272,18 +270,6 @@ export class LlmFactory {
         cache,
       });
     }
-  }
-
-  static createGithubLlm(model: Model, cache: BaseCache): BaseChatModel {
-    logger.debug(`Creating Github LLM with model ${model.name}`);
-
-    return new ChatOpenAI({
-      model: model.name,
-      ...apiKeyField(Env.OPENAI_API_KEY),
-      configuration: { baseURL: "https://models.github.ai/inference" },
-      temperature: 0,
-      cache,
-    });
   }
 
   static createMistralAiLlm(model: Model, cache: BaseCache): BaseChatModel {
