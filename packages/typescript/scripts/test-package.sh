@@ -22,9 +22,8 @@ DIST_DIR="$PKG_DIR/dist"
 DIST_NPM_DIR="$DIST_DIR/npm"
 FIXTURES_DIR="$PKG_DIR/tests/npm"
 FNOX_CONFIG="$REPO_ROOT/fnox.toml"
-PLAYWRIGHT_VERSION="$(bun -e \
-	'console.log(require("./packages/typescript/node_modules/playwright/package.json").version)' \
-	--cwd "$REPO_ROOT")"
+PLAYWRIGHT_VERSION="$(PKG_DIR="$PKG_DIR" bun -e \
+	'console.log(require(`${process.env.PKG_DIR}/node_modules/playwright/package.json`).version)')"
 
 # The CLI ships as a platform-specific package; `alumnium --version` loads its
 # prebuilt binary. Install the tarball matching the host so the binary resolves.
@@ -57,6 +56,9 @@ if [ -z "$ALUMNIUM_TARBALL" ] || [ -z "$CLI_TARBALL" ]; then
 	exit 1
 fi
 
+ALUMNIUM_PKG_NAME="alumnium"
+CLI_PKG_NAME="@alumnium/cli-$HOST_OS-$HOST_ARCH"
+
 MODULES=(esm cjs)
 
 WORK_ROOT="$(mktemp -d)"
@@ -71,26 +73,37 @@ for module in "${MODULES[@]}"; do
 	mkdir -p "$work_dir"
 
 	# Stage only the fixture's source files (not its in-repo node_modules). The
-	# fixture declares just its registry dependencies; the freshly built
-	# `alumnium` and its CLI are installed below from tarballs, so the committed
-	# package.json stays free of repo-relative paths.
-	cp "$FIXTURES_DIR/$module/package.json" \
-		"$FIXTURES_DIR/$module/example.spec.js" \
+	# package.json is generated below rather than copied so it can pin the exact
+	# Playwright version and reference the freshly built `alumnium`/CLI tarballs
+	# by absolute path — repo-relative paths that must never be committed.
+	cp "$FIXTURES_DIR/$module/example.spec.js" \
 		"$FIXTURES_DIR/$module/pnpm-workspace.yaml" \
 		"$work_dir/"
 
 	cd "$work_dir"
 
-	# Install the fixture's registry deps plus the freshly built `alumnium` and
-	# its host CLI from tarballs (`pnpm add` runs a full install, so
-	# @playwright/test from package.json is installed too).
-	if pnpm_output=$(pnpm add --save-exact \
-		"@playwright/test@$PLAYWRIGHT_VERSION" \
-		"$ALUMNIUM_TARBALL" \
-		"$CLI_TARBALL" 2>&1); then
+	case "$module" in
+	esm) module_type="module" ;;
+	*) module_type="commonjs" ;;
+	esac
+
+	cat >package.json <<EOF
+{
+  "name": "@alumnium/test-npm-$module",
+  "private": true,
+  "type": "$module_type",
+  "dependencies": {
+    "@playwright/test": "$PLAYWRIGHT_VERSION",
+    "$ALUMNIUM_PKG_NAME": "file:$ALUMNIUM_TARBALL",
+    "$CLI_PKG_NAME": "file:$CLI_TARBALL"
+  }
+}
+EOF
+
+	if pnpm_output=$(pnpm install 2>&1); then
 		echo "🟢 Package OK: dependencies installed successfully"
 	else
-		echo -e "🔴 Package FAIL: 'pnpm add' failed\n"
+		echo -e "🔴 Package FAIL: 'pnpm install' failed\n"
 		echo "--- Output ------------------------------------------"
 		echo "$pnpm_output"
 		echo "-----------------------------------------------------"

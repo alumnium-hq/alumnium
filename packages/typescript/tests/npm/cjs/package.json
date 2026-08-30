@@ -1,9 +1,0 @@
-{
-  "name": "@alumnium/test-npm-cjs",
-  "private": true,
-  "description": "Test package for CommonJS",
-  "type": "commonjs",
-  "dependencies": {
-    "@playwright/test": "*"
-  }
-}
