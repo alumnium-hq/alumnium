@@ -166,7 +166,7 @@ public class Area {
 
           Data value = result.result();
           if (value == null || value.isNoop()) {
-            return new Data.StringData(result.explanation());
+            return result.explanation();
           }
           return value.toObject();
         });
