@@ -1,9 +1,0 @@
-{
-  "name": "@alumnium/test-npm-esm",
-  "private": true,
-  "description": "Test package for ESM",
-  "type": "module",
-  "dependencies": {
-    "@playwright/test": "*"
-  }
-}
