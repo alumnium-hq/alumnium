@@ -56,6 +56,13 @@ export namespace Alumni {
     excludeAttributes?: string[] | undefined;
     allowlistDomains?: string[] | undefined;
     denylistDomains?: string[] | undefined;
+    /**
+     * Absolute local filesystem path prefixes that `file://` navigation may reference,
+     * overriding the always-on `file://` denylist for exactly those paths. SDK-only: never wire
+     * this up to a remote-facing surface (e.g. the MCP `start` tool's `alumnium:options`) —
+     * see `NavigationPolicy.Options.allowedFilePaths` for why.
+     */
+    allowedFilePaths?: string[] | undefined;
   }
 
   export interface VisionOptions {
@@ -108,6 +115,7 @@ export class Alumni {
     this.driver.navigationPolicy = NavigationPolicy.create({
       allowlistDomains: options.allowlistDomains,
       denylistDomains: options.denylistDomains,
+      allowedFilePaths: options.allowedFilePaths,
     });
 
     for (const tool of new Set([

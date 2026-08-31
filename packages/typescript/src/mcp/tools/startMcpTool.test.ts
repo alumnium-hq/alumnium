@@ -1,4 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
+import {
+  NavigationBlockedError,
+  NavigationPolicy,
+} from "../../NavigationPolicy.ts";
+import { McpState } from "../McpState.ts";
 import { createAppiumDriver, createChromeDriver } from "../mcpDrivers.ts";
 import { startMcpTool } from "./startMcpTool.ts";
 
@@ -52,5 +57,41 @@ describe("startMcpTool", () => {
         capabilities: JSON.stringify({ platformName: "chrome" }),
       }),
     ).rejects.toThrow("createChromeDriver should not have been called");
+  });
+
+  it("excludes alumnium:options.navigationPolicy from the driverSettings passthrough", async () => {
+    // A minimal fake WebdriverIO Browser (recognized by Alumni's constructor via truthy
+    // `.capabilities`/`.getPageSource`) — avoids the real Playwright/Selenium construction path,
+    // which needs a live browser context.
+    const fakeBrowser = {
+      capabilities: { platformName: "android" },
+      getPageSource: () => {},
+    } as any;
+    vi.mocked(createChromeDriver).mockImplementationOnce(
+      () => fakeBrowser as any,
+    );
+
+    try {
+      const result = await startMcpTool.execute({
+        capabilities: JSON.stringify({
+          platformName: "chrome",
+          "alumnium:options": {
+            // If this reached the generic driverSettings passthrough, it would overwrite the
+            // real policy with this no-op stand-in, silently neutralizing SSRF protection.
+            navigationPolicy: { check: () => {} },
+          },
+        }),
+      });
+
+      const { id } = JSON.parse((result[0] as { text: string }).text);
+      const al = McpState.getDriverAlumni(id);
+
+      expect(al.driver.navigationPolicy).toBeInstanceOf(NavigationPolicy);
+      expect(() =>
+        al.driver.navigationPolicy.check("http://169.254.169.254/"),
+      ).toThrow(NavigationBlockedError);
+    } finally {
+      McpState.clear();
+    }
   });
 });

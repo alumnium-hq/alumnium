@@ -251,6 +251,11 @@ export const startMcpTool = McpTool.define("start", {
       "executablePath",
       "headers",
       "headless",
+      // Excluded so no MCP caller can neutralize the enforced domain policy by passing
+      // "alumnium:options": {"navigationPolicy": {...}} through the generic driverSettings
+      // passthrough below (navigationPolicy is a public BaseDriver field, so "key in al.driver"
+      // would otherwise let this reflection assignment silently overwrite it).
+      "navigationPolicy",
       "permissions",
       "planner",
       "proxy",

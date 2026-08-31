@@ -1,3 +1,5 @@
+import path from "node:path";
+
 /**
  * Built-in SSRF-protection denylist patterns enforced on every session, with no opt-in and no
  * opt-out — scoped to addresses that are never a legitimate manual test-navigation target (cloud
@@ -25,15 +27,15 @@ export const LOCKDOWN_LOOPBACK_DENYLIST_PATTERNS: string[] = [
   "^\\[?::1\\]?$", // IPv6 loopback
 ];
 
-type PolicyField = "allowlistDomains" | "denylistDomains";
+type PolicyField = "allowlistDomains" | "denylistDomains" | "allowedFilePaths";
 
 /**
- * Thrown by {@link NavigationPolicy.create} when a caller-supplied pattern string fails to
- * compile as a regular expression.
+ * Thrown by {@link NavigationPolicy.create} when a caller-supplied pattern or path fails
+ * validation (an invalid regex, or a non-absolute `allowedFilePaths` entry).
  */
 export class NavigationPolicyConfigError extends Error {
-  constructor(field: PolicyField, pattern: string, cause: unknown) {
-    super(`Invalid regex pattern "${pattern}" in ${field}: ${cause}`);
+  constructor(field: PolicyField, value: string, cause: unknown) {
+    super(`Invalid ${field} entry "${value}": ${cause}`);
     this.name = "NavigationPolicyConfigError";
     if (Error.captureStackTrace) {
       Error.captureStackTrace(this, NavigationPolicyConfigError);
@@ -84,10 +86,19 @@ function unwrapIPv4MappedIPv6(hostname: string): string | null {
   return null;
 }
 
-function compilePatterns(patterns: string[], field: PolicyField): RegExp[] {
+interface CompiledPattern {
+  /** Original pattern text, for human-readable error messages (RegExp#source auto-escapes "/"). */
+  pattern: string;
+  regex: RegExp;
+}
+
+function compilePatterns(
+  patterns: string[],
+  field: PolicyField,
+): CompiledPattern[] {
   return patterns.map((pattern) => {
     try {
-      return new RegExp(pattern, "i");
+      return { pattern, regex: new RegExp(pattern, "i") };
     } catch (error) {
       throw new NavigationPolicyConfigError(field, pattern, error);
     }
@@ -95,11 +106,29 @@ function compilePatterns(patterns: string[], field: PolicyField): RegExp[] {
 }
 
 function matchesAny(
-  patterns: RegExp[],
+  patterns: CompiledPattern[],
   haystacks: string[],
-): RegExp | undefined {
+): CompiledPattern | undefined {
   return patterns.find((pattern) =>
-    haystacks.some((haystack) => pattern.test(haystack)),
+    haystacks.some((haystack) => pattern.regex.test(haystack)),
+  );
+}
+
+/**
+ * Whether `url` is a `file://` URL whose (decoded, `..`/`.`-collapsed) path is exactly one of
+ * `allowedFilePaths` or nested under one. Used as a hard override in {@link
+ * NavigationPolicy.evaluate}, ahead of the denylist/allowlist logic — see that method's doc for
+ * why this is safe to expose only via direct SDK options, never MCP's `start` tool.
+ */
+function isAllowedFilePath(url: string, allowedFilePaths: string[]): boolean {
+  if (allowedFilePaths.length === 0) return false;
+
+  const parsed = URL.parse(url);
+  if (!parsed || parsed.protocol !== "file:") return false;
+
+  const normalized = path.posix.normalize(decodeURIComponent(parsed.pathname));
+  return allowedFilePaths.some(
+    (prefix) => normalized === prefix || normalized.startsWith(`${prefix}/`),
   );
 }
 
@@ -107,6 +136,15 @@ export namespace NavigationPolicy {
   export interface Options {
     allowlistDomains?: string[] | undefined;
     denylistDomains?: string[] | undefined;
+    /**
+     * Absolute local filesystem path prefixes that `file://` navigation may reference,
+     * overriding the always-on `file://` denylist for exactly those paths. Deliberately not a
+     * field of `startMcpTool`'s `alumnium:options` schema — only code that directly constructs
+     * an `Alumni`/`Area` instance can set this, never a remote MCP `start` caller, a `do()` goal
+     * string, or a webpage's content. Intended for embedders (like this repo's own system tests)
+     * that need to load local HTML fixtures.
+     */
+    allowedFilePaths?: string[] | undefined;
   }
 
   export interface Evaluation {
@@ -130,24 +168,41 @@ export namespace NavigationPolicy {
  *   approved host from under a broader deny wildcard. Anything that doesn't match the allowlist
  *   is blocked either way (default-deny); the denylist (now including
  *   {@link LOCKDOWN_LOOPBACK_DENYLIST_PATTERNS}) only supplies a more specific block reason.
+ *
+ * `allowedFilePaths` is checked before either mode's logic, as a hard override scoped to
+ * `file://` URLs only (see {@link isAllowedFilePath}).
  */
 export class NavigationPolicy {
-  private readonly allowlist: RegExp[];
-  private readonly denylist: RegExp[];
+  private readonly allowlist: CompiledPattern[];
+  private readonly denylist: CompiledPattern[];
   private readonly lockdown: boolean;
+  private readonly allowedFilePaths: string[];
 
   private constructor(
-    allowlist: RegExp[],
-    denylist: RegExp[],
+    allowlist: CompiledPattern[],
+    denylist: CompiledPattern[],
     lockdown: boolean,
+    allowedFilePaths: string[],
   ) {
     this.allowlist = allowlist;
     this.denylist = denylist;
     this.lockdown = lockdown;
+    this.allowedFilePaths = allowedFilePaths;
   }
 
   static create(options: NavigationPolicy.Options): NavigationPolicy {
     const lockdown = !!options.allowlistDomains?.length;
+
+    const allowedFilePaths = (options.allowedFilePaths ?? []).map((entry) => {
+      if (!path.posix.isAbsolute(entry)) {
+        throw new NavigationPolicyConfigError(
+          "allowedFilePaths",
+          entry,
+          "must be an absolute path",
+        );
+      }
+      return path.posix.normalize(entry);
+    });
 
     return new NavigationPolicy(
       compilePatterns(options.allowlistDomains ?? [], "allowlistDomains"),
@@ -160,10 +215,15 @@ export class NavigationPolicy {
         "denylistDomains",
       ),
       lockdown,
+      allowedFilePaths,
     );
   }
 
   evaluate(url: string): NavigationPolicy.Evaluation {
+    if (isAllowedFilePath(url, this.allowedFilePaths)) {
+      return { allowed: true };
+    }
+
     const hostname = extractHostname(url);
     const fullUrl = url.toLowerCase();
     // Unwrap an IPv4-mapped IPv6 literal (e.g. the WHATWG URL parser's canonical
@@ -182,7 +242,7 @@ export class NavigationPolicy {
     if (denyMatch) {
       return {
         allowed: false,
-        reason: `matches denylist pattern "${denyMatch.source}"`,
+        reason: `matches denylist pattern "${denyMatch.pattern}"`,
       };
     }
 

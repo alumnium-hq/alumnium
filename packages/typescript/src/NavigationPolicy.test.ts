@@ -186,6 +186,64 @@ describe(NavigationPolicy, () => {
     });
   });
 
+  describe("allowedFilePaths", () => {
+    it("throws NavigationPolicyConfigError on a non-absolute entry", () => {
+      expect(() =>
+        NavigationPolicy.create({ allowedFilePaths: ["relative/pages"] }),
+      ).toThrow(NavigationPolicyConfigError);
+    });
+
+    it("allows a file:// URL under the prefix in open mode", () => {
+      const p = NavigationPolicy.create({
+        allowedFilePaths: ["/repo/pages"],
+      });
+      expect(p.evaluate("file:///repo/pages/login.html")).toEqual({
+        allowed: true,
+      });
+    });
+
+    it("allows a file:// URL under the prefix in lockdown mode too", () => {
+      const p = NavigationPolicy.create({
+        allowlistDomains: ["(^|\\.)airbnb\\.com$"],
+        allowedFilePaths: ["/repo/pages"],
+      });
+      expect(p.evaluate("file:///repo/pages/login.html")).toEqual({
+        allowed: true,
+      });
+    });
+
+    it("still blocks a file:// URL outside any configured prefix", () => {
+      const p = NavigationPolicy.create({
+        allowedFilePaths: ["/repo/pages"],
+      });
+      expect(p.evaluate("file:///tmp/secrets.json").allowed).toBe(false);
+    });
+
+    it("still blocks a ..-traversal attempt that normalizes outside the prefix", () => {
+      const p = NavigationPolicy.create({
+        allowedFilePaths: ["/repo/pages"],
+      });
+      expect(p.evaluate("file:///repo/pages/../../etc/passwd").allowed).toBe(
+        false,
+      );
+    });
+
+    it("does not treat a same-prefix-string sibling directory as allowed", () => {
+      const p = NavigationPolicy.create({
+        allowedFilePaths: ["/repo/pages"],
+      });
+      expect(p.evaluate("file:///repo/pages-evil/x.html").allowed).toBe(false);
+    });
+
+    it("does not affect non-file:// URLs", () => {
+      const p = NavigationPolicy.create({
+        allowlistDomains: ["(^|\\.)airbnb\\.com$"],
+        allowedFilePaths: ["/repo/pages"],
+      });
+      expect(p.evaluate("https://evil.example.com").allowed).toBe(false);
+    });
+  });
+
   describe("check", () => {
     const policy = () =>
       NavigationPolicy.create({ allowlistDomains: ["(^|\\.)airbnb\\.com$"] });
