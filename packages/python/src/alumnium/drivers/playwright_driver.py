@@ -111,19 +111,23 @@ class PlaywrightDriver(BaseDriver):
                 element.locator("xpath=ancestor::select").select_option(value)
         else:
             with self._autoswitch_to_new_tab():
+                self._scroll_element_into_center(element)
                 element.click(force=True)
 
     def drag_slider(self, id: int, value: float):
         element = self.find_element(id)
+        self._scroll_element_into_center(element)
         element.fill(f"{value:g}")
 
     def drag_and_drop(self, from_id: int, to_id: int):
         from_element = self.find_element(from_id)
         to_element = self.find_element(to_id)
+        self._scroll_element_into_center(from_element)
         from_element.drag_to(to_element)
 
     def hover(self, id: int):
         element = self.find_element(id)
+        self._scroll_element_into_center(element)
         element.hover()
 
     def press_key(self, key: Key):
@@ -145,7 +149,7 @@ class PlaywrightDriver(BaseDriver):
 
     def scroll_to(self, id: int):
         element = self.find_element(id)
-        element.scroll_into_view_if_needed()
+        self._scroll_element_into_center(element)
 
     @property
     def title(self) -> str:
@@ -153,6 +157,7 @@ class PlaywrightDriver(BaseDriver):
 
     def type(self, id: int, text: str):
         element = self.find_element(id)
+        self._scroll_element_into_center(element)
         element.fill(text)
 
     def upload(self, id: int, paths: list[str]):
@@ -210,6 +215,9 @@ class PlaywrightDriver(BaseDriver):
 
     def print_to_pdf(self, filepath: str):
         self.page.pdf(path=filepath)
+
+    def _scroll_element_into_center(self, element: Locator):
+        element.evaluate("el => el.scrollIntoView({block: 'center'})")
 
     def _wait_for_page_to_load(self):
         logger.debug("Waiting for page to finish loading:")

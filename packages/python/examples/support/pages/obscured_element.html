@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Obscured Element Test Page</title>
+    <style>
+      body {
+        margin: 0;
+      }
+      /* Both bars are tall enough to cover an element scrolled to the very top
+         or the very bottom edge of the viewport. */
+      #header,
+      #footer {
+        position: fixed;
+        left: 0;
+        right: 0;
+        height: 30vh;
+        background: #333;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      #header {
+        top: 0;
+      }
+      #footer {
+        bottom: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="header" onclick="clicked('header')">Sticky Header</div>
+
+    <!-- The button is inside the viewport from the start, so drivers see no
+         reason to scroll, but the sticky footer covers it and swallows the
+         click. Only scrolling it to the center of the viewport uncovers it. -->
+    <div style="height: 80vh"></div>
+    <button id="target" onclick="clicked('button')">Click Me</button>
+    <p id="status">Status: nothing clicked</p>
+    <div style="height: 120vh"></div>
+
+    <div id="footer" onclick="clicked('footer')">Sticky Footer</div>
+
+    <script>
+      function clicked(what) {
+        document.getElementById("status").textContent =
+          `Status: ${what} clicked`;
+      }
+    </script>
+  </body>
+</html>

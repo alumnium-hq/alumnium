@@ -136,23 +136,34 @@ public final class PlaywrightDriver extends BaseDriver {
       Locator parentSelect = element.locator("xpath=ancestor::select");
       autoswitchToNewTabAction(() -> parentSelect.selectOption(String.valueOf(value)));
     } else {
-      autoswitchToNewTabAction(() -> element.click(new Locator.ClickOptions().setForce(true)));
+      autoswitchToNewTabAction(
+          () -> {
+            scrollElementIntoCenter(element);
+            element.click(new Locator.ClickOptions().setForce(true));
+          });
     }
   }
 
   @Override
   public void dragSlider(int id, double value) {
-    findElement(id).fill(stripTrailingZeros(value));
+    Locator element = findElement(id);
+    scrollElementIntoCenter(element);
+    element.fill(stripTrailingZeros(value));
   }
 
   @Override
   public void dragAndDrop(int fromId, int toId) {
-    findElement(fromId).dragTo(findElement(toId));
+    Locator fromElement = findElement(fromId);
+    Locator toElement = findElement(toId);
+    scrollElementIntoCenter(fromElement);
+    fromElement.dragTo(toElement);
   }
 
   @Override
   public void hover(int id) {
-    findElement(id).hover();
+    Locator element = findElement(id);
+    scrollElementIntoCenter(element);
+    element.hover();
   }
 
   @Override
@@ -183,7 +194,7 @@ public final class PlaywrightDriver extends BaseDriver {
 
   @Override
   public void scrollTo(int id) {
-    findElement(id).scrollIntoViewIfNeeded();
+    scrollElementIntoCenter(findElement(id));
   }
 
   @Override
@@ -193,7 +204,9 @@ public final class PlaywrightDriver extends BaseDriver {
 
   @Override
   public void type(int id, String text) {
-    findElement(id).fill(text);
+    Locator element = findElement(id);
+    scrollElementIntoCenter(element);
+    element.fill(text);
   }
 
   @Override
@@ -289,6 +302,10 @@ public final class PlaywrightDriver extends BaseDriver {
 
   // endregion
   // region Internals
+
+  private void scrollElementIntoCenter(Locator element) {
+    element.evaluate("el => el.scrollIntoView({block: 'center'})");
+  }
 
   private void initCDPSession() {
     oopifFrames.clear();

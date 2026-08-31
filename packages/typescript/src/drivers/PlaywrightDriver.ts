@@ -61,6 +61,14 @@ interface CDPFrameTree {
   frameTree: CDPFrameInfo;
 }
 
+interface HTMLElement {
+  tagName: string;
+  value: string;
+  scrollIntoView: (options: {
+    block: "start" | "center" | "end" | "nearest";
+  }) => void;
+}
+
 const CONTEXT_WAS_DESTROYED_ERROR = "Execution context was destroyed";
 
 const WAITER_SCRIPT = waiterScriptSource; // await readScript("waiter.js");
@@ -304,16 +312,15 @@ export class PlaywrightDriver extends BaseDriver {
   @stateful
   async click(id: number): Promise<void> {
     const element = await this.findElement(id);
-    const tagName = await element.evaluate(
-      (el: { tagName: string }) => el.tagName,
-    );
+    const tagName = await element.evaluate((el: HTMLElement) => el.tagName);
     if (tagName?.toLowerCase() === "option") {
-      const value = await element.evaluate((el: { value: string }) => el.value);
+      const value = await element.evaluate((el: HTMLElement) => el.value);
       await this.autoswitchToNewTabAction(async () => {
         await element.locator("xpath=ancestor::select").selectOption(value);
       });
     } else {
       await this.autoswitchToNewTabAction(async () => {
+        await this.#scrollElementIntoCenter(element);
         await element.click({ force: true });
       });
     }
@@ -323,6 +330,7 @@ export class PlaywrightDriver extends BaseDriver {
   @stateful
   async dragSlider(id: number, value: number): Promise<void> {
     const element = await this.findElement(id);
+    await this.#scrollElementIntoCenter(element);
     await element.fill(String(value));
   }
 
@@ -331,6 +339,7 @@ export class PlaywrightDriver extends BaseDriver {
   async dragAndDrop(fromId: number, toId: number): Promise<void> {
     const fromElement = await this.findElement(fromId);
     const toElement = await this.findElement(toId);
+    await this.#scrollElementIntoCenter(fromElement);
     await fromElement.dragTo(toElement);
   }
 
@@ -338,6 +347,7 @@ export class PlaywrightDriver extends BaseDriver {
   @stateful
   async hover(id: number): Promise<void> {
     const element = await this.findElement(id);
+    await this.#scrollElementIntoCenter(element);
     await element.hover();
   }
 
@@ -377,7 +387,7 @@ export class PlaywrightDriver extends BaseDriver {
   @stateful
   async scrollTo(id: number): Promise<void> {
     const element = await this.findElement(id);
-    await element.scrollIntoViewIfNeeded();
+    await this.#scrollElementIntoCenter(element);
   }
 
   @span("driver.screenshot", spanAttrs)
@@ -399,6 +409,7 @@ export class PlaywrightDriver extends BaseDriver {
   @stateful
   async type(id: number, text: string): Promise<void> {
     const element = await this.findElement(id);
+    await this.#scrollElementIntoCenter(element);
     await element.fill(text);
   }
 
@@ -465,6 +476,12 @@ export class PlaywrightDriver extends BaseDriver {
     // TODO: We need to remove the attribute after we are done with the element,
     // but Playwright locator is lazy and we cannot guarantee when it is safe to do so.
     return frame.locator(`css=[data-alumnium-id='${backendNodeId}']`);
+  }
+
+  async #scrollElementIntoCenter(element: Locator): Promise<void> {
+    await element.evaluate((el: HTMLElement) => {
+      el.scrollIntoView({ block: "center" });
+    });
   }
 
   private isOopifFrame(frame: Frame): boolean {
