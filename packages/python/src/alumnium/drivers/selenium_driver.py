@@ -132,6 +132,7 @@ class SeleniumDriver(BaseDriver):
     @_autoswitch_to_new_tab
     def click(self, id: int):
         element = self.find_element(id)
+        self._scroll_element_into_center(element)
         try:
             ActionChains(self.driver).move_to_element(element).click().perform()
         except ElementNotInteractableException:
@@ -140,6 +141,7 @@ class SeleniumDriver(BaseDriver):
 
     def drag_slider(self, id: int, value: float):
         element = self.find_element(id)
+        self._scroll_element_into_center(element)
         self.driver.execute_script(
             "arguments[0].value = arguments[1];"
             "arguments[0].dispatchEvent(new Event('input', {bubbles: true}));"
@@ -149,15 +151,17 @@ class SeleniumDriver(BaseDriver):
         )
 
     def drag_and_drop(self, from_id: int, to_id: int):
+        from_element = self.find_element(from_id)
+        to_element = self.find_element(to_id)
+        self._scroll_element_into_center(from_element)
         actions = ActionChains(self.driver)
-        actions.drag_and_drop(
-            self.find_element(from_id),
-            self.find_element(to_id),
-        ).perform()
+        actions.drag_and_drop(from_element, to_element).perform()
 
     def hover(self, id: int):
+        element = self.find_element(id)
+        self._scroll_element_into_center(element)
         actions = ActionChains(self.driver)
-        actions.move_to_element(self.find_element(id)).perform()
+        actions.move_to_element(element).perform()
 
     @_autoswitch_to_new_tab
     def press_key(self, key: Key):
@@ -197,7 +201,7 @@ class SeleniumDriver(BaseDriver):
 
     def scroll_to(self, id: int):
         element = self.find_element(id)
-        self.driver.execute_script("arguments[0].scrollIntoView();", element)
+        self._scroll_element_into_center(element)
 
     @property
     def title(self) -> str:
@@ -205,6 +209,7 @@ class SeleniumDriver(BaseDriver):
 
     def type(self, id: int, text: str):
         element = self.find_element(id)
+        self._scroll_element_into_center(element)
         element.clear()
         element.send_keys(text)
 
@@ -266,6 +271,9 @@ class SeleniumDriver(BaseDriver):
         # needs to remain in its frame context for subsequent operations (click, type, etc.)
 
         return element
+
+    def _scroll_element_into_center(self, element: WebElement):
+        self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", element)
 
     def _switch_to_frame_chain(self, frame_chain: list[int]):
         """Switch through a chain of nested iframes."""

@@ -196,6 +196,7 @@ export class SeleniumDriver extends BaseDriver {
   async click(id: number): Promise<void> {
     await this.#autoswitchToNewTabAction(async () => {
       const element = await this.findElement(id);
+      await this.#scrollElementIntoCenter(element);
       try {
         const actions = this.driver.actions({ async: true });
         await actions.move({ origin: element }).click().perform();
@@ -214,6 +215,7 @@ export class SeleniumDriver extends BaseDriver {
   @stateful
   async dragSlider(id: number, value: number): Promise<void> {
     const element = await this.findElement(id);
+    await this.#scrollElementIntoCenter(element);
     await this.driver.executeScript(
       "arguments[0].value = arguments[1];" +
         "arguments[0].dispatchEvent(new Event('input', {bubbles: true}));" +
@@ -226,17 +228,20 @@ export class SeleniumDriver extends BaseDriver {
   @span("driver.drag_and_drop", spanAttrs)
   @stateful
   async dragAndDrop(fromId: number, toId: number): Promise<void> {
+    const fromElement = await this.findElement(fromId);
+    const toElement = await this.findElement(toId);
+    await this.#scrollElementIntoCenter(fromElement);
     const actions = this.driver.actions({ async: true });
-    await actions
-      .dragAndDrop(await this.findElement(fromId), await this.findElement(toId))
-      .perform();
+    await actions.dragAndDrop(fromElement, toElement).perform();
   }
 
   @span("driver.hover", spanAttrs)
   @stateful
   async hover(id: number): Promise<void> {
+    const element = await this.findElement(id);
+    await this.#scrollElementIntoCenter(element);
     const actions = this.driver.actions({ async: true });
-    await actions.move({ origin: await this.findElement(id) }).perform();
+    await actions.move({ origin: element }).perform();
   }
 
   @span("driver.press_key", spanAttrs)
@@ -284,7 +289,7 @@ export class SeleniumDriver extends BaseDriver {
   @stateful
   async scrollTo(id: number): Promise<void> {
     const element = await this.findElement(id);
-    await this.driver.executeScript("arguments[0].scrollIntoView();", element);
+    await this.#scrollElementIntoCenter(element);
   }
 
   @span("driver.screenshot", spanAttrs)
@@ -309,6 +314,7 @@ export class SeleniumDriver extends BaseDriver {
   @stateful
   async type(id: number, text: string): Promise<void> {
     const element = await this.findElement(id);
+    await this.#scrollElementIntoCenter(element);
     await element.clear();
     await element.sendKeys(text);
   }
@@ -438,6 +444,13 @@ export class SeleniumDriver extends BaseDriver {
   @span("driver.wait_for_selector", spanAttrs)
   async waitForSelector(): Promise<void> {
     throw new Error("waitForSelector not supported for this driver");
+  }
+
+  async #scrollElementIntoCenter(element: WebElement): Promise<void> {
+    await this.driver.executeScript(
+      "arguments[0].scrollIntoView({block: 'center'});",
+      element,
+    );
   }
 
   @span("driver.internal.cdp_command", (cmd) => ({

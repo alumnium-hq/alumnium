@@ -140,6 +140,7 @@ public final class SeleniumDriver extends BaseDriver {
     withTabAutoswitch(
         () -> {
           WebElement element = findElement(id);
+          scrollElementIntoCenter(element);
           try {
             new Actions(driver).moveToElement(element).click().perform();
           } catch (RuntimeException e) {
@@ -151,6 +152,7 @@ public final class SeleniumDriver extends BaseDriver {
   @Override
   public void dragSlider(int id, double value) {
     WebElement element = findElement(id);
+    scrollElementIntoCenter(element);
     ((JavascriptExecutor) driver)
         .executeScript(
             "arguments[0].value = arguments[1];arguments[0].dispatchEvent(new"
@@ -162,12 +164,17 @@ public final class SeleniumDriver extends BaseDriver {
 
   @Override
   public void dragAndDrop(int fromId, int toId) {
-    new Actions(driver).dragAndDrop(findElement(fromId), findElement(toId)).perform();
+    WebElement fromElement = findElement(fromId);
+    WebElement toElement = findElement(toId);
+    scrollElementIntoCenter(fromElement);
+    new Actions(driver).dragAndDrop(fromElement, toElement).perform();
   }
 
   @Override
   public void hover(int id) {
-    new Actions(driver).moveToElement(findElement(id)).perform();
+    WebElement element = findElement(id);
+    scrollElementIntoCenter(element);
+    new Actions(driver).moveToElement(element).perform();
   }
 
   @Override
@@ -214,7 +221,7 @@ public final class SeleniumDriver extends BaseDriver {
 
   @Override
   public void scrollTo(int id) {
-    ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();", findElement(id));
+    scrollElementIntoCenter(findElement(id));
   }
 
   @Override
@@ -225,6 +232,7 @@ public final class SeleniumDriver extends BaseDriver {
   @Override
   public void type(int id, String text) {
     WebElement element = findElement(id);
+    scrollElementIntoCenter(element);
     element.clear();
     element.sendKeys(text);
   }
@@ -333,6 +341,11 @@ public final class SeleniumDriver extends BaseDriver {
 
   // endregion
   // region Internals
+
+  private void scrollElementIntoCenter(WebElement element) {
+    ((JavascriptExecutor) driver)
+        .executeScript("arguments[0].scrollIntoView({block: 'center'});", element);
+  }
 
   private void switchToFrameChain(List<Integer> chain) {
     driver.switchTo().defaultContent();
