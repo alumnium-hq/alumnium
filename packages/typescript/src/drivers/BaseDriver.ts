@@ -1,6 +1,7 @@
 import type { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.ts";
 import { AppId } from "../AppId.ts";
 import { Env } from "../Env.ts";
+import { NavigationPolicy } from "../NavigationPolicy.ts";
 import { Logger } from "../telemetry/Logger.ts";
 import type { ToolClass } from "../tools/BaseTool.ts";
 import { TreeDevDrill } from "../tree/dev/TreeDevDrill.ts";
@@ -16,6 +17,13 @@ export abstract class BaseDriver {
   abstract platform: Driver.Platform;
   abstract supportedTools: Set<ToolClass>;
   protected abstract fetchAccessibilityTree(): Promise<BaseAccessibilityTree>;
+
+  /**
+   * Domain allowlist/denylist enforced against navigation targets. Every driver gets one by
+   * default (see {@link NavigationPolicy.create}) so baseline SSRF protection applies
+   * unconditionally, even to a driver constructed directly rather than via `Alumni`.
+   */
+  navigationPolicy: NavigationPolicy = NavigationPolicy.create({});
 
   #cachedAccessibilityTree: BaseAccessibilityTree | null = null;
 

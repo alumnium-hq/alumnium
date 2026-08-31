@@ -7,6 +7,7 @@ import z from "zod";
 import { Alumni } from "../../client/Alumni.ts";
 import { NativeClient } from "../../clients/NativeClient.ts";
 import { Driver } from "../../drivers/Driver.ts";
+import { NavigationPolicy } from "../../NavigationPolicy.ts";
 import { Telemetry } from "../../telemetry/Telemetry.ts";
 import { DragSliderTool } from "../../tools/DragSliderTool.ts";
 import { ExecuteJavascriptTool } from "../../tools/ExecuteJavascriptTool.ts";
@@ -66,9 +67,11 @@ export const startMcpTool = McpTool.define("start", {
           Top-level options:
 
           Alumnium-specific options go in "alumnium:options":
+            - "allowlistDomains" (string[]) — regex patterns (case-insensitive, matched against the hostname or full URL) of domains do() is allowed to navigate to. When non-empty, activates full lockdown: every navigation (explicit navigate, links, redirects, back/forward, tab switches) is checked, and a URL that doesn't match is blocked (default-deny), including loopback addresses (localhost/127.0.0.1/[::1]/0.0.0.0). When omitted, sessions are still protected by Alumnium's always-on denylist below — this only adds the stricter default-deny gate;
             - "autoswitchToNewTab" (boolean, default true) — auto-switch to newly opened tabs;
             - "baseUrl" (string) — URL to navigate to automatically after driver start, e.g. "https://example.com";
             - "changeAnalysis" (boolean, default true) — enable UI changes analysis agent;
+            - "denylistDomains" (string[]) — additional regex/literal patterns to block, merged with Alumnium's built-in SSRF-protection denylist and always enforced, even without "allowlistDomains". The built-in denylist always blocks cloud metadata/link-local IPs (e.g. 169.254.169.254), IPv6 link-local, and file:// — this cannot be disabled. Loopback addresses (localhost/127.0.0.1/[::1]/0.0.0.0) are only added to the denylist once "allowlistDomains" is set (otherwise they're left open, since they're the common target for testing a locally-running app). When "allowlistDomains" is set, a match there always overrides a "denylistDomains" match;
             - "cookies" (array) — cookies to set, supported for Selenium and Playwright, e.g. [{"name": "session", "value": "abc123", "domain": ".example.com"}];
             - "device" (string or object) — Playwright device emulation, Playwright only. Either the name of a built-in device preset, e.g. "Pixel 7", or a custom device-descriptor object with any of viewport/userAgent/deviceScaleFactor/isMobile/hasTouch, e.g. {"viewport": {"width": 600, "height": 1024}, "userAgent": "...", "deviceScaleFactor": 1, "isMobile": true, "hasTouch": true} — you can paste this straight from Playwright's own device list; unrecognized fields (e.g. "defaultBrowserType", "screen") are ignored. "userAgent" set below overrides the device's;
             - "excludeAttributes" (string[]) — accessibility attributes to exclude from the tree (e.g., ["src"]);
@@ -164,6 +167,27 @@ export const startMcpTool = McpTool.define("start", {
           (value): value is string => typeof value === "string",
         )
       : undefined;
+    const allowlistDomains = Array.isArray(alumniumOptions["allowlistDomains"])
+      ? alumniumOptions["allowlistDomains"].filter(
+          (value): value is string => typeof value === "string",
+        )
+      : undefined;
+    const denylistDomains = Array.isArray(alumniumOptions["denylistDomains"])
+      ? alumniumOptions["denylistDomains"].filter(
+          (value): value is string => typeof value === "string",
+        )
+      : undefined;
+
+    // Validate the domain policy immediately, before a browser/Appium process is spawned below —
+    // NavigationPolicy.create() throws on a malformed pattern; the result is discarded here and
+    // rebuilt (cheaply) inside `new Alumni()`.
+    try {
+      NavigationPolicy.create({ allowlistDomains, denylistDomains });
+    } catch (error) {
+      const message = `Invalid domain policy configuration: ${error}`;
+      logger.error(message);
+      throw new Error(message);
+    }
 
     // Generate driver ID from current directory and timestamp
     const cwdName = path.basename(process.cwd());
@@ -217,9 +241,11 @@ export const startMcpTool = McpTool.define("start", {
     };
 
     const alumniumOptionsNonDriverKeys = new Set([
+      "allowlistDomains",
       "baseUrl",
       "changeAnalysis",
       "cookies",
+      "denylistDomains",
       "device",
       "excludeAttributes",
       "executablePath",
@@ -304,6 +330,8 @@ export const startMcpTool = McpTool.define("start", {
       planner,
       changeAnalysis,
       excludeAttributes,
+      allowlistDomains,
+      denylistDomains,
     });
 
     const client = al.client;
