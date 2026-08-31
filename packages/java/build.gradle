@@ -16,7 +16,7 @@ plugins {
 }
 
 group   = 'ai.alumnium'
-version = '0.21.0'
+version = '0.22.0-alpha.1'
 
 java {
     toolchain {
