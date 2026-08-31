@@ -32,6 +32,21 @@ export abstract class McpState {
   private static cleanupAllPromise: Promise<void> | null = null;
 
   /**
+   * Generate a unique driver ID from the given base by appending an
+   * incrementing `-N` suffix (starting at 1) until an unregistered ID is found.
+   * This keeps concurrent starts in the same second from colliding.
+   */
+  static generateDriverId(base: string): string {
+    let suffix = 1;
+    let id = `${base}-${suffix}`;
+    while (this.drivers[id]) {
+      suffix++;
+      id = `${base}-${suffix}`;
+    }
+    return id;
+  }
+
+  /**
    * Register a new driver instance.
    */
   static registerDriver(

@@ -168,7 +168,7 @@ export const startMcpTool = McpTool.define("start", {
     // Generate driver ID from current directory and timestamp
     const cwdName = path.basename(process.cwd());
     const timestamp = Math.floor(Date.now() / 1000);
-    const id = `${cwdName}-${timestamp}`;
+    const id = McpState.generateDriverId(`${cwdName}-${timestamp}`);
 
     // Create directories
     const artifactsStore = new McpArtifactsStore(id);
