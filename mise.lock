@@ -297,7 +297,7 @@ url = "https://github.com/ollama/ollama/releases/download/v0.23.1/ollama-windows
 url_api = "https://api.github.com/repos/ollama/ollama/releases/assets/412948775"
 
 [[tools.oxfmt]]
-version = "0.48.0"
+version = "0.65.0"
 backend = "npm:oxfmt"
 
 [[tools."pipx:pyprojectsort"]]
