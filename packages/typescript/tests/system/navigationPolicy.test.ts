@@ -24,6 +24,13 @@ const fixturesDir = path.resolve(
 // asserting anything about page structure/content.
 const ALLOWED_REAL_URL = "https://example.com/";
 
+// A `file://` target (rather than e.g. a cloud-metadata IP) for hook #2's "blocked" cases —
+// it's always-on-denylisted in both modes just the same, but resolves synchronously with no
+// network I/O. A non-routable address like 169.254.169.254 leaves the browser hanging on a
+// TCP connect() that never resolves, which then races the test's `al.quit()` teardown and
+// throws an unrelated, unhandled CDP "target destroyed" error.
+const BLOCKED_HOOK2_TARGET = "file:///etc/hostname";
+
 function targetPageUrl(to: string): string {
   return `file://${fixturesDir}/navigation_target_page.html?to=${encodeURIComponent(to)}`;
 }
@@ -223,9 +230,7 @@ describe("NavigationPolicy", () => {
       }) => {
         const { al } = await setup(options);
 
-        await al.driver.visit(
-          targetPageUrl("http://169.254.169.254/latest/meta-data"),
-        );
+        await al.driver.visit(targetPageUrl(BLOCKED_HOOK2_TARGET));
 
         await expect(al.do("click on 'Redirect Here' button")).rejects.toThrow(
           NavigationBlockedError,
@@ -233,7 +238,7 @@ describe("NavigationPolicy", () => {
 
         // Post-invoke means the click already fired and the redirect already started —
         // unlike the pre-navigation hook above, the URL DOES reflect the blocked target here.
-        expect(await al.driver.url()).toContain("169.254.169.254");
+        expect(await al.driver.url()).toBe(BLOCKED_HOOK2_TARGET);
       });
     }
 
@@ -257,14 +262,12 @@ describe("NavigationPolicy", () => {
     }) => {
       const { al } = await setup();
 
-      await al.driver.visit(
-        targetPageUrl("http://169.254.169.254/latest/meta-data"),
-      );
+      await al.driver.visit(targetPageUrl(BLOCKED_HOOK2_TARGET));
 
       await expect(al.do("click on 'Open Tab Here' button")).rejects.toThrow(
         NavigationBlockedError,
       );
-      expect(await al.driver.url()).toContain("169.254.169.254");
+      expect(await al.driver.url()).toBe(BLOCKED_HOOK2_TARGET);
     });
 
     it("a click that opens a new tab pointed at an allowed target succeeds", async ({
