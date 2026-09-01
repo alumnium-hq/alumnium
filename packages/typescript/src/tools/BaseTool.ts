@@ -29,7 +29,7 @@ export abstract class BaseTool {
     if (driver.platform == "chromium") {
       driver.navigationPolicy.check(await driver.url());
     }
-      
+
     const argsStr = Object.entries(toolArgs)
       .map(([k, v]) => `${k}='${String(v)}'`)
       .join(", ");
