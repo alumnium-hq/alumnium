@@ -67,7 +67,7 @@ export const startMcpTool = McpTool.define("start", {
           Top-level options:
 
           Alumnium-specific options go in "alumnium:options":
-            - "allowlistDomains" (string[]) — regex patterns (case-insensitive, matched against the hostname or full URL) of domains do() is allowed to navigate to. When non-empty, activates full lockdown: every navigation (explicit navigate, links, redirects, back/forward, tab switches) is checked, and a URL that doesn't match is blocked (default-deny), including loopback addresses (localhost/127.0.0.1/[::1]/0.0.0.0). When omitted, sessions are still protected by Alumnium's always-on denylist below — this only adds the stricter default-deny gate;
+            - "allowlistDomains" (string[]) — regex patterns matched against the URL. When non-empty, do() blocks any navigation that doesn't match the patterns.
             - "autoswitchToNewTab" (boolean, default true) — auto-switch to newly opened tabs;
             - "baseUrl" (string) — URL to navigate to automatically after driver start, e.g. "https://example.com";
             - "changeAnalysis" (boolean, default true) — enable UI changes analysis agent;
