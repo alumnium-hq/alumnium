@@ -28,6 +28,7 @@ export abstract class BaseDriver {
   #cachedAccessibilityTree: BaseAccessibilityTree | null = null;
 
   async getAccessibilityTree(): Promise<BaseAccessibilityTree> {
+    this.navigationPolicy.check(await this.url());
     this.#cachedAccessibilityTree ??= await this.fetchAccessibilityTree();
     return this.#cachedAccessibilityTree;
   }

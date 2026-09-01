@@ -26,8 +26,10 @@ export abstract class BaseTool {
     const tool = new ToolClass(toolArgs);
     await tool.invoke(driver);
 
-    driver.navigationPolicy.check(await driver.url());
-
+    if (driver.platform == "chromium") {
+      driver.navigationPolicy.check(await driver.url());
+    }
+      
     const argsStr = Object.entries(toolArgs)
       .map(([k, v]) => `${k}='${String(v)}'`)
       .join(", ");
