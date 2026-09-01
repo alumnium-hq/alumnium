@@ -4,10 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import type { Alumni } from "alumnium";
 import { describe } from "vitest";
-import {
-  NavigationBlockedError,
-  NavigationPolicyConfigError,
-} from "../../src/NavigationPolicy.ts";
+import { NavigationBlockedError } from "../../src/NavigationPolicy.ts";
 import { baseIt } from "./helpers.ts";
 
 // Real-browser wiring tests for NavigationPolicy. The exhaustive rule matrix (every
@@ -210,14 +207,12 @@ describe("NavigationPolicy", () => {
       expect(await al.driver.title()).toBe("Local Target");
     });
 
-    it("throws NavigationPolicyConfigError at construction for a non-absolute allowedFilePaths entry", async ({
-      expect,
-      setup,
-    }) => {
-      await expect(
-        setup({ allowedFilePaths: ["relative/pages"] }),
-      ).rejects.toThrow(NavigationPolicyConfigError);
-    });
+    // A non-absolute `allowedFilePaths` entry throwing `NavigationPolicyConfigError` at
+    // construction is exhaustively covered (with zero fixture setup needed) by
+    // `NavigationPolicy.test.ts`'s unit suite. It can't be exercised here: `useSetup()`
+    // unconditionally overwrites `allowedFilePaths` with the fixture directory it needs for
+    // every other test in this file, so a custom value passed via `setup(options)` never
+    // reaches `NavigationPolicy.create()`.
   });
 
   describe("hook #2: post-invoke check (BaseTool.executeToolCall)", () => {
