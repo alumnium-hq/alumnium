@@ -282,6 +282,7 @@ export class SeleniumDriver extends BaseDriver {
   @span("driver.visit", spanAttrs)
   @stateful
   async visit(url: string): Promise<void> {
+    this.navigationPolicy.check(url);
     await this.driver.get(url);
   }
 

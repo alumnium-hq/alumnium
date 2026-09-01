@@ -53,9 +53,14 @@ export async function useSetup(props: useSetup.Props): Promise<Setup> {
   const driver = await createDriver(driverId);
   const isAppiumDriver = Driver.isAppium(driverId);
 
+  const dirname = path.dirname(fileURLToPath(import.meta.url));
+
   const options: Alumni.Options = {
     ...props.options,
     url: Env.ALUMNIUM_SERVER_URL,
+    allowedFilePaths: [
+      path.resolve(dirname, "../../../python/examples/support/pages"),
+    ],
   };
 
   const al = new Alumni(driver, options);

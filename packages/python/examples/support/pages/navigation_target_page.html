@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Navigation Target Page</title>
+  </head>
+  <body>
+    <h1>Navigation Target Page</h1>
+    <p>Used to test the navigation domain policy's post-invoke hook.</p>
+
+    <button id="redirect-btn" onclick="redirect()">Redirect Here</button>
+    <button id="open-tab-btn" onclick="openTab()">Open Tab Here</button>
+
+    <script>
+      function target() {
+        return new URL(location.href).searchParams.get("to");
+      }
+
+      function redirect() {
+        location.href = target();
+      }
+
+      function openTab() {
+        window.open(target(), "_blank");
+      }
+    </script>
+  </body>
+</html>

@@ -114,6 +114,10 @@ export class PlaywrightDriver extends BaseDriver {
     this.page = page;
     this.watchContextOf(page);
     this.cdpSessionReady = this.initCDPSession();
+    // Nothing awaits this on every path (e.g. a blocked navigation never reaches
+    // fetchAccessibilityTree(), which is where it's normally awaited) — the extra catch only
+    // silences the unhandled rejection warning if the page/context closes mid-setup.
+    this.cdpSessionReady.catch(() => {});
   }
 
   private watchContextOf(page: Page): void {
@@ -380,6 +384,7 @@ export class PlaywrightDriver extends BaseDriver {
   @span("driver.visit", spanAttrs)
   @stateful
   async visit(url: string): Promise<void> {
+    this.navigationPolicy.check(url);
     await this.page.goto(url);
   }
 

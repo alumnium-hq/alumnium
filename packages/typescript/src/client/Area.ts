@@ -2,6 +2,7 @@ import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.ts
 import { Client } from "../clients/Client.ts";
 import type { Data } from "../clients/typecasting.ts";
 import { BaseDriver, type Element } from "../drivers/index.ts";
+import { NavigationBlockedError } from "../NavigationPolicy.ts";
 import { Telemetry } from "../telemetry/Telemetry.ts";
 import type { Tracer } from "../telemetry/Tracer.ts";
 import { BaseTool, type ToolClass } from "../tools/BaseTool.ts";
@@ -39,51 +40,54 @@ export class Area {
 
   @span("alumni.do", spanAttrs)
   async do(goal: string): Promise<DoResult> {
-    return retry(async () => {
-      const app = await this.driver.app();
-      this.driver.setAccessibilityTree(this.accessibilityTree);
+    return retry(
+      { doRetry: (error) => !(error instanceof NavigationBlockedError) },
+      async () => {
+        const app = await this.driver.app();
+        this.driver.setAccessibilityTree(this.accessibilityTree);
 
-      const { explanation, steps } = await this.client.planActions({
-        goal,
-        accessibilityTree: this.accessibilityTree.toStr(),
-        app,
-      });
+        const { explanation, steps } = await this.client.planActions({
+          goal,
+          accessibilityTree: this.accessibilityTree.toStr(),
+          app,
+        });
 
-      let finalExplanation = explanation;
-      const executedSteps: DoStep[] = [];
-      for (const step of steps) {
-        const { explanation: actorExplanation, actions } =
-          await this.client.executeAction({
-            goal,
-            step,
-            accessibilityTree: this.accessibilityTree.toStr(),
-            app,
-          });
+        let finalExplanation = explanation;
+        const executedSteps: DoStep[] = [];
+        for (const step of steps) {
+          const { explanation: actorExplanation, actions } =
+            await this.client.executeAction({
+              goal,
+              step,
+              accessibilityTree: this.accessibilityTree.toStr(),
+              app,
+            });
 
-        // When planner is off, explanation is just the goal — replace with actor's reasoning.
-        if (finalExplanation === goal) {
-          finalExplanation = actorExplanation;
+          // When planner is off, explanation is just the goal — replace with actor's reasoning.
+          if (finalExplanation === goal) {
+            finalExplanation = actorExplanation;
+          }
+
+          const calledTools: string[] = [];
+          for (const toolCall of actions) {
+            const calledTool = await BaseTool.executeToolCall(
+              toolCall,
+              this.tools,
+              this.driver,
+            );
+            calledTools.push(calledTool);
+          }
+
+          executedSteps.push({ name: step, tools: calledTools });
         }
 
-        const calledTools: string[] = [];
-        for (const toolCall of actions) {
-          const calledTool = await BaseTool.executeToolCall(
-            toolCall,
-            this.tools,
-            this.driver,
-          );
-          calledTools.push(calledTool);
-        }
-
-        executedSteps.push({ name: step, tools: calledTools });
-      }
-
-      return {
-        explanation: finalExplanation,
-        steps: executedSteps,
-        changes: "",
-      };
-    });
+        return {
+          explanation: finalExplanation,
+          steps: executedSteps,
+          changes: "",
+        };
+      },
+    );
   }
 
   @span("alumni.check", (_, options) => ({
