@@ -18,17 +18,11 @@ export abstract class BaseDriver {
   abstract supportedTools: Set<ToolClass>;
   protected abstract fetchAccessibilityTree(): Promise<BaseAccessibilityTree>;
 
-  /**
-   * Domain allowlist/denylist enforced against navigation targets. Every driver gets one by
-   * default (see {@link NavigationPolicy.create}) so baseline SSRF protection applies
-   * unconditionally, even to a driver constructed directly rather than via `Alumni`.
-   */
   navigationPolicy: NavigationPolicy = NavigationPolicy.create({});
-
   #cachedAccessibilityTree: BaseAccessibilityTree | null = null;
 
   async getAccessibilityTree(): Promise<BaseAccessibilityTree> {
-    this.navigationPolicy.check(await this.url());
+    await this.checkNavigationPolicy();
     this.#cachedAccessibilityTree ??= await this.fetchAccessibilityTree();
     return this.#cachedAccessibilityTree;
   }
@@ -61,6 +55,7 @@ export abstract class BaseDriver {
   abstract wait(seconds: number): Promise<void>;
   abstract waitForSelector(selector: string, timeout?: number): Promise<void>;
   abstract printToPdf(filepath: string): Promise<void>;
+  abstract checkNavigationPolicy(url?: string): void | Promise<void>;
 
   //#region Stateful
 

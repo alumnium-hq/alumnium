@@ -181,6 +181,7 @@ describe(BaseDriver, () => {
       printToPdf(): Promise<void> {
         throw new Error("Not implemented");
       }
+      checkNavigationPolicy(): void {}
     }
   });
 });
