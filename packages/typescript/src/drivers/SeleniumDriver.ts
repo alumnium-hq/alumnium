@@ -282,7 +282,7 @@ export class SeleniumDriver extends BaseDriver {
   @span("driver.visit", spanAttrs)
   @stateful
   async visit(url: string): Promise<void> {
-    this.navigationPolicy.check(url);
+    await this.checkNavigationPolicy(url);
     await this.driver.get(url);
   }
 
@@ -452,6 +452,11 @@ export class SeleniumDriver extends BaseDriver {
       "arguments[0].scrollIntoView({block: 'center'});",
       element,
     );
+  }
+
+  async checkNavigationPolicy(url?: string): Promise<void> {
+    const currentUrl = url ?? (await this.url());
+    this.navigationPolicy.check(currentUrl);
   }
 
   @span("driver.internal.cdp_command", (cmd) => ({

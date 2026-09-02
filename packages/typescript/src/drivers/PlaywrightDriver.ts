@@ -384,7 +384,7 @@ export class PlaywrightDriver extends BaseDriver {
   @span("driver.visit", spanAttrs)
   @stateful
   async visit(url: string): Promise<void> {
-    this.navigationPolicy.check(url);
+    await this.checkNavigationPolicy(url);
     await this.page.goto(url);
   }
 
@@ -676,6 +676,11 @@ export class PlaywrightDriver extends BaseDriver {
   @stateful
   async grantPermissions(permissions: string[]): Promise<void> {
     await this.page.context().grantPermissions(permissions);
+  }
+
+  async checkNavigationPolicy(url?: string): Promise<void> {
+    const currentUrl = url ?? (await this.url());
+    this.navigationPolicy.check(currentUrl);
   }
 
   @span("driver.wait_for_page_to_load", spanAttrs)

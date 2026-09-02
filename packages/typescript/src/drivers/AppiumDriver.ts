@@ -132,7 +132,7 @@ export class AppiumDriver extends BaseDriver {
   @span("driver.visit", spanAttrs)
   @stateful
   async visit(url: string): Promise<void> {
-    this.navigationPolicy.check(url);
+    this.checkNavigationPolicy(url);
     await this.driver.url(url);
   }
 
@@ -239,6 +239,11 @@ export class AppiumDriver extends BaseDriver {
   @span("driver.print_to_pdf", spanAttrs)
   async printToPdf(): Promise<void> {
     throw new Error("Printing to PDF not supported for this driver");
+  }
+
+  checkNavigationPolicy(_url?: string): void {
+    // Appium doesn't expose URL in native context, so we can't check navigation policy here.
+    // No-op until we figure out fast and reliable way to switch to webview context.
   }
 
   private async ensureNativeAppContext(): Promise<void> {
