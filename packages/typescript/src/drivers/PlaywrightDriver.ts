@@ -91,7 +91,7 @@ export class PlaywrightDriver extends BaseDriver {
   private watchedContexts: Set<BrowserContext> = new Set();
   private previousPage: Page | undefined;
   private pendingWindowOpen = false;
-  private cdpSessionReady: Promise<void>;
+  #cdpSessionReady!: Promise<void>;
 
   // frameId → url for OOPIF frames tracked via Target.attachedToTarget events
   private oopifFrameIds: Map<string, string> = new Map();
@@ -113,11 +113,7 @@ export class PlaywrightDriver extends BaseDriver {
     super();
     this.page = page;
     this.watchContextOf(page);
-    this.cdpSessionReady = this.initCDPSession();
-    // Nothing awaits this on every path (e.g. a blocked navigation never reaches
-    // fetchAccessibilityTree(), which is where it's normally awaited) — the extra catch only
-    // silences the unhandled rejection warning if the page/context closes mid-setup.
-    this.cdpSessionReady.catch(() => {});
+    this.#startCDPSession();
   }
 
   private watchContextOf(page: Page): void {
@@ -151,14 +147,16 @@ export class PlaywrightDriver extends BaseDriver {
     this.page = previous;
     this.previousPage = undefined;
     this.resetAccessibilityTree();
-
-    // The handler cannot await, so hand the new session to whoever needs it
-    // next. The extra catch only silences the unhandled rejection warning.
-    this.cdpSessionReady = this.initCDPSession();
-    this.cdpSessionReady.catch(() => {});
+    this.#startCDPSession(); // Handler must not await
   }
 
-  private async initCDPSession(): Promise<void> {
+  #startCDPSession(): void {
+    this.#cdpSessionReady = this.#initCDPSession().catch((error) => {
+      logger.info(`Failed to initialize CDP session: ${String(error)}`);
+    });
+  }
+
+  async #initCDPSession(): Promise<void> {
     this.oopifFrameIds.clear();
     this.oopifFrames.clear();
 
@@ -259,7 +257,7 @@ export class PlaywrightDriver extends BaseDriver {
   @span("driver.get_accessibility_tree", spanAttrs)
   protected async fetchAccessibilityTree(): Promise<BaseAccessibilityTree> {
     await this.switchToNewTab();
-    await this.cdpSessionReady;
+    await this.#cdpSessionReady;
     await this.waitForPageToLoad();
 
     const frameTree = (await this.client.send(
@@ -740,15 +738,13 @@ export class PlaywrightDriver extends BaseDriver {
   }
 
   private async activatePage(page: Page): Promise<void> {
-    // Let a session setup that is still in flight finish.
-    await this.cdpSessionReady.catch(() => {});
-
+    await this.#cdpSessionReady;
     if (page !== this.page) this.previousPage = this.page;
     this.page = page;
     this.watchContextOf(page);
     this.resetAccessibilityTree();
-    this.cdpSessionReady = this.initCDPSession();
-    await this.cdpSessionReady;
+    this.#startCDPSession();
+    await this.#cdpSessionReady;
   }
 
   private async openTabs(): Promise<Page[]> {
