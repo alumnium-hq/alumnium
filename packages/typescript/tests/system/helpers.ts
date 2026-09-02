@@ -1,6 +1,6 @@
 import { Alumni, AppiumDriver, Model, type Element } from "alumnium";
 import { never } from "alwaysly";
-import { createServer } from "node:http";
+import { createServer, type RequestListener } from "node:http";
 import type { AddressInfo } from "node:net";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -14,14 +14,24 @@ import { Driver } from "../../src/drivers/Driver.ts";
 import { Env } from "../../src/Env.ts";
 import { sleep } from "../../src/utils/timers.ts";
 
+const localTargetPage: RequestListener = (_request, response) => {
+  response.writeHead(200, { "content-type": "text/html" });
+  response.end("<title>Local Target</title><h1>Local Target</h1>");
+};
+
 export namespace Setup {
   export interface Helpers {
     resolveUrl: (url: string) => string;
     navigate: (url: string) => Promise<void>;
     type: (element: Element | undefined, text: string) => Promise<void>;
     click: (element: Element | undefined) => Promise<void>;
+    serve: (handler?: RequestListener) => Promise<Setup.LocalServer>;
     serveSlowTabPage: () => Promise<Setup.SlowTabPage>;
     waitForTabCount: (count: number) => Promise<void>;
+  }
+
+  export interface LocalServer {
+    url: string;
   }
 
   export interface SlowTabPage {
@@ -58,9 +68,12 @@ export async function useSetup(props: useSetup.Props): Promise<Setup> {
   const options: Alumni.Options = {
     ...props.options,
     url: Env.ALUMNIUM_SERVER_URL,
-    allowedFilePaths: [
-      path.resolve(dirname, "../../../python/examples/support/pages"),
-    ],
+    navigationPolicy: {
+      ...props.options?.navigationPolicy,
+      allowedFilePaths: [
+        path.resolve(dirname, "../../../python/examples/support/pages"),
+      ],
+    },
   };
 
   const al = new Alumni(driver, options);
@@ -162,7 +175,7 @@ function createHelpers(
 
   const $: Setup.Helpers = {
     resolveUrl(url: string): string {
-      if (url.startsWith("http")) {
+      if (URL.canParse(url)) {
         return url;
       } else {
         const dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -179,8 +192,22 @@ function createHelpers(
       await al.driver.visit($.resolveUrl(url));
     },
 
+    async serve(handler: RequestListener = localTargetPage) {
+      const server = createServer(handler);
+      await new Promise<void>((resolve) =>
+        server.listen(0, "127.0.0.1", resolve),
+      );
+      onTestFinished(() => {
+        server.closeAllConnections();
+        server.close();
+      });
+
+      const { port } = server.address() as AddressInfo;
+      return { url: `http://127.0.0.1:${port}/` };
+    },
+
     async serveSlowTabPage() {
-      const server = createServer((request, response) => {
+      const { url } = await $.serve((request, response) => {
         const isSlowTab = request.url === "/slow-tab";
         const send = () => {
           response.writeHead(200, {
@@ -199,19 +226,7 @@ function createHelpers(
         else send();
       });
 
-      await new Promise<void>((resolve) =>
-        server.listen(0, "127.0.0.1", resolve),
-      );
-      onTestFinished(() => {
-        server.closeAllConnections();
-        server.close();
-      });
-
-      const { port } = server.address() as AddressInfo;
-      return {
-        url: `http://127.0.0.1:${port}/`,
-        slowTabUrl: `http://127.0.0.1:${port}/slow-tab`,
-      };
+      return { url, slowTabUrl: `${url}slow-tab` };
     },
 
     async waitForTabCount(count: number) {
