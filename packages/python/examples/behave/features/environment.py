@@ -225,7 +225,7 @@ def alumnium(context):
 
 
 def before_all(context):
-    context.test_results = {"passed": 0, "failed": 0, "errors": 0}
+    context.scenario_results = {}
     use_fixture(driver, context)
     use_fixture(alumnium, context)
 
@@ -241,14 +241,12 @@ def before_feature(_, feature):
 
 
 def after_scenario(context, scenario):
+    scenario_key = (scenario.filename, scenario.line)
     if scenario.status == "passed":
-        context.test_results["passed"] += 1
+        context.scenario_results[scenario_key] = "passed"
         context.al.cache.save()
     else:
-        if scenario.hook_failed:
-            context.test_results["errors"] += 1
-        else:
-            context.test_results["failed"] += 1
+        context.scenario_results[scenario_key] = "error" if scenario.hook_failed else "failed"
         context.al.cache.discard()
 
     for formatter in context._runner.formatters:
@@ -283,7 +281,8 @@ def after_scenario(context, scenario):
 
 
 def after_all(context):
-    if context.aborted or context.test_results["errors"]:
+    results = list(context.scenario_results.values())
+    if context.aborted or "error" in results:
         return
-    threshold_status = process_pass_threshold(context.test_results["passed"], context.test_results["failed"])
+    threshold_status = process_pass_threshold(results.count("passed"), results.count("failed"))
     context._runner.failed = threshold_status != 0
