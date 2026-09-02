@@ -155,10 +155,13 @@ tasks.register('systemTest', Test) {
     environment 'ALUMNIUM_PLAYWRIGHT_HEADLESS', System.getenv('ALUMNIUM_PLAYWRIGHT_HEADLESS') ?: 'true'
     environment 'ALUMNIUM_TEST_PASS_RESULTS_PATH', passThresholdResults.get().asFile.absolutePath
     ignoreFailures = true
-    def gradleFailures = 0L
+    def lastResults = [:]
+    afterTest { descriptor, result ->
+        lastResults["${descriptor.className}#${descriptor.name}"] = result.resultType
+    }
     afterSuite { descriptor, result ->
-        if (descriptor.parent == null) {
-            gradleFailures = result.failedTestCount
+        if (descriptor.className != null) {
+            lastResults[descriptor.className] = result.resultType
         }
     }
     doFirst {
@@ -177,7 +180,7 @@ tasks.register('systemTest', Test) {
             PassThreshold.apply(
                     passed,
                     failed,
-                    gradleFailures > 0,
+                    lastResults.values().any { it == TestResult.ResultType.FAILURE },
                     PassThreshold.parse(passThreshold.get()),
                     System.getenv('GITHUB_ACTIONS') == 'true'
                     )

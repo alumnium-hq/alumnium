@@ -315,6 +315,9 @@ def pytest_runtest_makereport(item):
         else:
             al.cache.discard()
 
+
+def pytest_runtest_logreport(report):
+    if report.when == "call":
         if report.passed:
             test_results["passed"] += 1
         elif report.failed:
