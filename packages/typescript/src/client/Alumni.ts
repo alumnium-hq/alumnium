@@ -17,10 +17,7 @@ import {
 import { Env } from "../Env.ts";
 import { LlmUsageStats } from "../llm/llmSchema.ts";
 import { Model } from "../Model.ts";
-import {
-  NavigationBlockedError,
-  NavigationPolicy,
-} from "../NavigationPolicy.ts";
+import { NavigationPolicy } from "../NavigationPolicy.ts";
 import { Telemetry } from "../telemetry/Telemetry.ts";
 import type { Tracer } from "../telemetry/Tracer.ts";
 import { BaseTool, type ToolClass } from "../tools/BaseTool.ts";
@@ -54,15 +51,7 @@ export namespace Alumni {
     planner?: boolean | undefined;
     changeAnalysis?: boolean | undefined;
     excludeAttributes?: string[] | undefined;
-    allowlistDomains?: string[] | undefined;
-    denylistDomains?: string[] | undefined;
-    /**
-     * Absolute local filesystem path prefixes that `file://` navigation may reference,
-     * overriding the always-on `file://` denylist for exactly those paths. SDK-only: never wire
-     * this up to a remote-facing surface (e.g. the MCP `start` tool's `alumnium:options`) —
-     * see `NavigationPolicy.Options.allowedFilePaths` for why.
-     */
-    allowedFilePaths?: string[] | undefined;
+    navigationPolicy?: NavigationPolicy.Options | undefined;
   }
 
   export interface VisionOptions {
@@ -112,11 +101,9 @@ export class Alumni {
       throw new Error(`Unsupported driver type '${typeof driver}'`);
     }
 
-    this.driver.navigationPolicy = NavigationPolicy.create({
-      allowlistDomains: options.allowlistDomains,
-      denylistDomains: options.denylistDomains,
-      allowedFilePaths: options.allowedFilePaths,
-    });
+    this.driver.navigationPolicy = NavigationPolicy.create(
+      options.navigationPolicy ?? {},
+    );
 
     for (const tool of new Set([
       ...this.driver.supportedTools,
@@ -166,80 +153,76 @@ export class Alumni {
 
   @span("alumni.do", spanAttrs)
   async do(goal: string): Promise<DoResult> {
-    return retry(
-      { doRetry: (error) => !(error instanceof NavigationBlockedError) },
-      async () => {
-        const app = await this.driver.app();
+    return retry(async () => {
+      const app = await this.driver.app();
 
-        this.driver.resetAccessibilityTree();
-        const initialAccessibilityTree =
-          await this.driver.getAccessibilityTree();
-        const beforeTree = this.changeAnalysis
-          ? initialAccessibilityTree.toStr()
-          : null;
-        const beforeUrl = this.changeAnalysis ? await this.driver.url() : null;
-        const { explanation, steps } = await this.client.planActions({
-          goal,
-          accessibilityTree: initialAccessibilityTree.toStr(),
-          app,
-        });
+      this.driver.resetAccessibilityTree();
+      const initialAccessibilityTree = await this.driver.getAccessibilityTree();
+      const beforeTree = this.changeAnalysis
+        ? initialAccessibilityTree.toStr()
+        : null;
+      const beforeUrl = this.changeAnalysis ? await this.driver.url() : null;
+      const { explanation, steps } = await this.client.planActions({
+        goal,
+        accessibilityTree: initialAccessibilityTree.toStr(),
+        app,
+      });
 
-        let finalExplanation = explanation;
-        const executedSteps: DoStep[] = [];
-        for (let idx = 0; idx < steps.length; idx++) {
-          const step = steps[idx];
-          always(step);
+      let finalExplanation = explanation;
+      const executedSteps: DoStep[] = [];
+      for (let idx = 0; idx < steps.length; idx++) {
+        const step = steps[idx];
+        always(step);
 
-          // Use initial tree for first step, fresh tree for subsequent steps.
-          if (idx > 0) this.driver.resetAccessibilityTree();
-          const accessibilityTree = await this.driver.getAccessibilityTree();
-          const { explanation: actorExplanation, actions } =
-            await this.client.executeAction({
-              goal,
-              step,
-              accessibilityTree: accessibilityTree.toStr(),
-              app,
-            });
-
-          // When planner is off, explanation is just the goal — replace with actor's reasoning.
-          if (finalExplanation === goal) {
-            finalExplanation = actorExplanation;
-          }
-
-          const calledTools: string[] = [];
-          for (const toolCall of actions) {
-            const calledTool = await BaseTool.executeToolCall(
-              toolCall,
-              this.tools,
-              this.driver,
-            );
-            calledTools.push(calledTool);
-          }
-
-          executedSteps.push({ name: step, tools: calledTools });
-        }
-
-        let changes = "";
-        if (this.changeAnalysis && executedSteps.length > 0) {
-          this.driver.resetAccessibilityTree();
-          changes = await this.client.analyzeChanges({
-            beforeAccessibilityTree: beforeTree!,
-            beforeUrl: beforeUrl!,
-            afterAccessibilityTree: (
-              await this.driver.getAccessibilityTree()
-            ).toStr(),
-            afterUrl: await this.driver.url(),
+        // Use initial tree for first step, fresh tree for subsequent steps.
+        if (idx > 0) this.driver.resetAccessibilityTree();
+        const accessibilityTree = await this.driver.getAccessibilityTree();
+        const { explanation: actorExplanation, actions } =
+          await this.client.executeAction({
+            goal,
+            step,
+            accessibilityTree: accessibilityTree.toStr(),
             app,
           });
+
+        // When planner is off, explanation is just the goal — replace with actor's reasoning.
+        if (finalExplanation === goal) {
+          finalExplanation = actorExplanation;
         }
 
-        return {
-          explanation: finalExplanation,
-          steps: executedSteps,
-          changes,
-        };
-      },
-    );
+        const calledTools: string[] = [];
+        for (const toolCall of actions) {
+          const calledTool = await BaseTool.executeToolCall(
+            toolCall,
+            this.tools,
+            this.driver,
+          );
+          calledTools.push(calledTool);
+        }
+
+        executedSteps.push({ name: step, tools: calledTools });
+      }
+
+      let changes = "";
+      if (this.changeAnalysis && executedSteps.length > 0) {
+        this.driver.resetAccessibilityTree();
+        changes = await this.client.analyzeChanges({
+          beforeAccessibilityTree: beforeTree!,
+          beforeUrl: beforeUrl!,
+          afterAccessibilityTree: (
+            await this.driver.getAccessibilityTree()
+          ).toStr(),
+          afterUrl: await this.driver.url(),
+          app,
+        });
+      }
+
+      return {
+        explanation: finalExplanation,
+        steps: executedSteps,
+        changes,
+      };
+    });
   }
 
   @span("alumni.check", (_, options) => ({

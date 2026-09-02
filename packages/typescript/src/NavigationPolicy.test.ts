@@ -1,7 +1,5 @@
 import { describe, expect, it } from "vitest";
 import {
-  ALWAYS_ON_DENYLIST_PATTERNS,
-  LOCKDOWN_LOOPBACK_DENYLIST_PATTERNS,
   NavigationBlockedError,
   NavigationPolicy,
   NavigationPolicyConfigError,
@@ -13,26 +11,26 @@ describe(NavigationPolicy, () => {
       expect(NavigationPolicy.create({})).toBeInstanceOf(NavigationPolicy);
     });
 
-    it("returns a real instance when allowlistDomains is empty", () => {
-      expect(NavigationPolicy.create({ allowlistDomains: [] })).toBeInstanceOf(
+    it("returns a real instance when allowedDomains is empty", () => {
+      expect(NavigationPolicy.create({ allowedDomains: [] })).toBeInstanceOf(
         NavigationPolicy,
       );
     });
 
     it("throws NavigationPolicyConfigError on an invalid allowlist pattern", () => {
       expect(() =>
-        NavigationPolicy.create({ allowlistDomains: ["(unterminated"] }),
+        NavigationPolicy.create({ allowedDomains: ["(unterminated"] }),
       ).toThrow(NavigationPolicyConfigError);
     });
 
-    it("throws NavigationPolicyConfigError on an invalid denylist pattern, even without allowlistDomains", () => {
+    it("throws NavigationPolicyConfigError on an invalid denylist pattern, even without allowedDomains", () => {
       expect(() =>
-        NavigationPolicy.create({ denylistDomains: ["(unterminated"] }),
+        NavigationPolicy.create({ deniedDomains: ["(unterminated"] }),
       ).toThrow(NavigationPolicyConfigError);
     });
   });
 
-  describe("open mode (no allowlistDomains)", () => {
+  describe("open mode (no allowedDomains)", () => {
     const policy = () => NavigationPolicy.create({});
 
     it("allows an arbitrary domain", () => {
@@ -75,19 +73,19 @@ describe(NavigationPolicy, () => {
       );
     });
 
-    it("enforces caller-supplied denylistDomains even without allowlistDomains", () => {
+    it("enforces caller-supplied deniedDomains even without allowedDomains", () => {
       const p = NavigationPolicy.create({
-        denylistDomains: ["(^|\\.)a\\.musta\\.ch$"],
+        deniedDomains: ["(^|\\.)a\\.musta\\.ch$"],
       });
       expect(p.evaluate("https://ci.a.musta.ch").allowed).toBe(false);
     });
   });
 
-  describe("lockdown mode (allowlistDomains set)", () => {
+  describe("lockdown mode (allowedDomains set)", () => {
     const policy = () =>
       NavigationPolicy.create({
-        allowlistDomains: ["(^|\\.)airbnb\\.com$"],
-        denylistDomains: ["(^|\\.)a\\.musta\\.ch$"],
+        allowedDomains: ["(^|\\.)airbnb\\.com$"],
+        deniedDomains: ["(^|\\.)a\\.musta\\.ch$"],
       });
 
     it("allows a hostname matching the allowlist", () => {
@@ -114,11 +112,8 @@ describe(NavigationPolicy, () => {
 
     it("lets an explicit allowlist match override a broader denylist match", () => {
       const p = NavigationPolicy.create({
-        allowlistDomains: [
-          "(^|\\.)airbnb\\.com$",
-          "(^|\\.)ci\\.a\\.musta\\.ch$",
-        ],
-        denylistDomains: ["(^|\\.)a\\.musta\\.ch$"],
+        allowedDomains: ["(^|\\.)airbnb\\.com$", "(^|\\.)ci\\.a\\.musta\\.ch$"],
+        deniedDomains: ["(^|\\.)a\\.musta\\.ch$"],
       });
       expect(p.evaluate("https://ci.a.musta.ch")).toEqual({ allowed: true });
     });
@@ -130,7 +125,7 @@ describe(NavigationPolicy, () => {
       );
     });
 
-    it("blocks loopback addresses once allowlistDomains is set", () => {
+    it("blocks loopback addresses once allowedDomains is set", () => {
       expect(policy().evaluate("http://127.0.0.1/").allowed).toBe(false);
       expect(policy().evaluate("http://localhost:3000/").allowed).toBe(false);
       expect(policy().evaluate("http://[::1]/").allowed).toBe(false);
@@ -141,9 +136,9 @@ describe(NavigationPolicy, () => {
       expect(policy().evaluate("https://WWW.AIRBNB.COM/").allowed).toBe(true);
     });
 
-    it("blocks the built-in denylist even with no custom denylistDomains", () => {
+    it("blocks the built-in denylist even with no custom deniedDomains", () => {
       const p = NavigationPolicy.create({
-        allowlistDomains: ["(^|\\.)airbnb\\.com$"],
+        allowedDomains: ["(^|\\.)airbnb\\.com$"],
       });
       expect(
         p.evaluate("http://169.254.169.254/latest/meta-data").allowed,
@@ -177,13 +172,6 @@ describe(NavigationPolicy, () => {
         expect(() => policy().evaluate("http://[2001:db8::1]/")).not.toThrow();
       });
     });
-
-    it.each([
-      ...ALWAYS_ON_DENYLIST_PATTERNS,
-      ...LOCKDOWN_LOOPBACK_DENYLIST_PATTERNS,
-    ])("built-in pattern %s is a valid regex", (pattern: string) => {
-      expect(() => new RegExp(pattern, "i")).not.toThrow();
-    });
   });
 
   describe("allowedFilePaths", () => {
@@ -204,7 +192,7 @@ describe(NavigationPolicy, () => {
 
     it("allows a file:// URL under the prefix in lockdown mode too", () => {
       const p = NavigationPolicy.create({
-        allowlistDomains: ["(^|\\.)airbnb\\.com$"],
+        allowedDomains: ["(^|\\.)airbnb\\.com$"],
         allowedFilePaths: ["/repo/pages"],
       });
       expect(p.evaluate("file:///repo/pages/login.html")).toEqual({
@@ -237,7 +225,7 @@ describe(NavigationPolicy, () => {
 
     it("does not affect non-file:// URLs", () => {
       const p = NavigationPolicy.create({
-        allowlistDomains: ["(^|\\.)airbnb\\.com$"],
+        allowedDomains: ["(^|\\.)airbnb\\.com$"],
         allowedFilePaths: ["/repo/pages"],
       });
       expect(p.evaluate("https://evil.example.com").allowed).toBe(false);
@@ -246,7 +234,7 @@ describe(NavigationPolicy, () => {
 
   describe("check", () => {
     const policy = () =>
-      NavigationPolicy.create({ allowlistDomains: ["(^|\\.)airbnb\\.com$"] });
+      NavigationPolicy.create({ allowedDomains: ["(^|\\.)airbnb\\.com$"] });
 
     it("no-ops on an empty URL", () => {
       expect(() => policy().check("")).not.toThrow();

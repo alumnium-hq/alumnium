@@ -47,11 +47,31 @@ function parseDeviceOption(
 }
 
 /**
+ * Parses `alumnium:options.navigationPolicy` into `NavigationPolicy.Options`, keeping only the
+ * domain fields without `allowedFilePaths`.
+ */
+function parseNavigationPolicyOption(value: unknown): NavigationPolicy.Options {
+  if (typeof value !== "object" || value === null) {
+    return {};
+  }
+  const record = value as Record<string, unknown>;
+  const stringArray = (entry: unknown): string[] | undefined =>
+    Array.isArray(entry)
+      ? entry.filter((item): item is string => typeof item === "string")
+      : undefined;
+
+  return {
+    allowedDomains: stringArray(record["allowedDomains"]),
+    deniedDomains: stringArray(record["deniedDomains"]),
+  };
+}
+
+/**
  * Start a new driver instance.
  */
 export const startMcpTool = McpTool.define("start", {
   description:
-    "Initialize a browser driver for automated testing. Returns an id for use in other calls.",
+    "Initialize a session (browser, simulator, etc.) for automated testing. Returns an id for use in other calls.",
 
   inputSchema: z.object({
     capabilities: z.string().describe(
@@ -67,11 +87,9 @@ export const startMcpTool = McpTool.define("start", {
           Top-level options:
 
           Alumnium-specific options go in "alumnium:options":
-            - "allowlistDomains" (string[]) — regex patterns matched against the URL. When non-empty, do() blocks any navigation that doesn't match the patterns.
             - "autoswitchToNewTab" (boolean, default true) — auto-switch to newly opened tabs;
             - "baseUrl" (string) — URL to navigate to automatically after driver start, e.g. "https://example.com";
             - "changeAnalysis" (boolean, default true) — enable UI changes analysis agent;
-            - "denylistDomains" (string[]) — regex patterns matched against the URL. When non-empty, do() blocks any navigation that matches the patterns.
             - "cookies" (array) — cookies to set, supported for Selenium and Playwright, e.g. [{"name": "session", "value": "abc123", "domain": ".example.com"}];
             - "device" (string or object) — Playwright device emulation, Playwright only. Either the name of a built-in device preset, e.g. "Pixel 7", or a custom device-descriptor object with any of viewport/userAgent/deviceScaleFactor/isMobile/hasTouch, e.g. {"viewport": {"width": 600, "height": 1024}, "userAgent": "...", "deviceScaleFactor": 1, "isMobile": true, "hasTouch": true} — you can paste this straight from Playwright's own device list; unrecognized fields (e.g. "defaultBrowserType", "screen") are ignored. "userAgent" set below overrides the device's;
             - "excludeAttributes" (string[]) — accessibility attributes to exclude from the tree (e.g., ["src"]);
@@ -79,6 +97,7 @@ export const startMcpTool = McpTool.define("start", {
             - "fullPageScreenshot" (boolean, default false) — capture full-page screenshots.
             - "headers" (object) — extra HTTP headers for every request, supported for Selenium and Playwright, e.g. {"Authorization": "Bearer token"};
             - "headless" (boolean, default false) — run browser headless, supported for Selenium and Playwright;
+            - "navigationPolicy" (object) — domain allowlist/denylist for navigation, e.g. {"allowedDomains": ["(^|\\.)example\\.com$"], "deniedDomains": ["internal"]}. Both fields are string[] of case-insensitive regex patterns matched against the hostname and full URL. When "allowedDomains" is non-empty, only matching URLs are allowed; otherwise everything is allowed except "deniedDomains" matches. Link-local/metadata IPs and file:// are always blocked;
             - "permissions" (string[]) — browser permissions to grant, Playwright only, e.g. ["camera"];
             - "planner" (boolean) — enable/disable planner agent;
             - "profile" (string) — name of a persistent browser profile; cookies, sessions, and storage are preserved across restarts in ~/.alumnium/profiles/{name}, e.g. "personal";
@@ -167,22 +186,15 @@ export const startMcpTool = McpTool.define("start", {
           (value): value is string => typeof value === "string",
         )
       : undefined;
-    const allowlistDomains = Array.isArray(alumniumOptions["allowlistDomains"])
-      ? alumniumOptions["allowlistDomains"].filter(
-          (value): value is string => typeof value === "string",
-        )
-      : undefined;
-    const denylistDomains = Array.isArray(alumniumOptions["denylistDomains"])
-      ? alumniumOptions["denylistDomains"].filter(
-          (value): value is string => typeof value === "string",
-        )
-      : undefined;
+    const navigationPolicy = parseNavigationPolicyOption(
+      alumniumOptions["navigationPolicy"],
+    );
 
     // Validate the domain policy immediately, before a browser/Appium process is spawned below —
     // NavigationPolicy.create() throws on a malformed pattern; the result is discarded here and
     // rebuilt (cheaply) inside `new Alumni()`.
     try {
-      NavigationPolicy.create({ allowlistDomains, denylistDomains });
+      NavigationPolicy.create(navigationPolicy ?? {});
     } catch (error) {
       const message = `Invalid domain policy configuration: ${error}`;
       logger.error(message);
@@ -241,20 +253,14 @@ export const startMcpTool = McpTool.define("start", {
     };
 
     const alumniumOptionsNonDriverKeys = new Set([
-      "allowlistDomains",
       "baseUrl",
       "changeAnalysis",
       "cookies",
-      "denylistDomains",
       "device",
       "excludeAttributes",
       "executablePath",
       "headers",
       "headless",
-      // Excluded so no MCP caller can neutralize the enforced domain policy by passing
-      // "alumnium:options": {"navigationPolicy": {...}} through the generic driverSettings
-      // passthrough below (navigationPolicy is a public BaseDriver field, so "key in al.driver"
-      // would otherwise let this reflection assignment silently overwrite it).
       "navigationPolicy",
       "permissions",
       "planner",
@@ -335,8 +341,7 @@ export const startMcpTool = McpTool.define("start", {
       planner,
       changeAnalysis,
       excludeAttributes,
-      allowlistDomains,
-      denylistDomains,
+      navigationPolicy,
     });
 
     const client = al.client;
