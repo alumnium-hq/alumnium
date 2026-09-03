@@ -17,9 +17,27 @@
 
 Alumnium is an AI-native library and MCP for end-to-end testing. It builds upon the existing test automation ecosystem and simplifies interactions with applications, providing more robust mechanisms for verifying assertions. It works with Appium, Playwright, or Selenium and gives you [state-of-the-art][7] capabilities.
 
-https://github.com/user-attachments/assets/b1a548c0-f1e1-4ffe-bec9-d814770ba2ae
+https://github.com/user-attachments/assets/461050ba-f219-4ae2-bf5c-65faeb12b77e
 
 ## Installation
+
+### MCP
+
+```sh
+curl -LsSf https://alumnium.ai/install.sh | sh
+# then add to your agent
+claude mcp add alumnium --env OPENAI_API_KEY=... -- alumnium mcp
+```
+
+### Java
+
+```groovy
+dependencies {
+  testImplementation 'ai.alumnium:alumnium:0.21.0'
+  testRuntimeOnly    'ai.alumnium:alumnium-cli-darwin-arm64:0.21.0'
+  // Add other platforms as needed
+}
+```
 
 ### Python
 
@@ -33,19 +51,33 @@ pip install alumnium
 npm install alumnium
 ```
 
-### MCP
-
-```bash
-# Using npx:
-claude mcp add alumnium --env OPENAI_API_KEY=... -- npx alumnium mcp
-
-# Using uvx:
-claude mcp add alumnium --env OPENAI_API_KEY=... -- uvx alumnium mcp
-```
-
 Refer to [documentation][8] for installation details on other MCP clients.
 
 ## Quick Start
+
+### MCP
+
+1. Run your agent (Claude Code).
+2. Tell it to open the URL and test your application.
+
+### Java
+
+```java
+import ai.alumnium.Alumni;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+class AlumniumTest {
+    public static void main(String...args) {
+        ChromeDriver driver = new ChromeDriver();
+        Alumni alumni = new Alumni(driver);
+        driver.get("https://search.brave.com");
+        alumni.act("type 'selenium' into the search field, then press 'Enter'");
+        alumni.check("page title contains selenium");
+        alumni.check("search results contain selenium.dev");
+        alumni.quit();
+    }
+}
+```
 
 ### Python
 
@@ -88,31 +120,7 @@ console.assert((await al.get("atomic number")) === 34);
 await al.quit();
 ```
 
-### Java
-
-```java
-import ai.alumnium.Alumni;
-import org.openqa.selenium.chrome.ChromeDriver;
-
-class AlumniumTest {
-    public static void main(String...args) {
-        ChromeDriver driver = new ChromeDriver();
-        Alumni alumni = new Alumni(driver);
-        driver.get("https://search.brave.com");
-        alumni.act("type 'selenium' into the search field, then press 'Enter'");
-        alumni.check("page title contains selenium");
-        alumni.check("search results contain selenium.dev");
-        alumni.quit();
-    }
-}
-```
-
-Check out [documentation][1] and more [Python][2] and [TypeScript][6] examples!
-
-### MCP
-
-1. Run your agent (Claude Code).
-2. Tell it to open the URL and test your application.
+Check out [documentation][1] and more [Java][9], [Python][2] and [TypeScript][6] examples.
 
 ## Contributing
 
@@ -132,3 +140,4 @@ Alumnium is a member of the [TestMu AI][5] Open Source Program, which supports t
 [6]: packages/typescript/examples/
 [7]: https://alumnium.ai/blog/webvoyager-benchmark/
 [8]: https://alumnium.ai/docs/guides/mcp/
+[9]: packages/java/src/test/java/ai/alumnium/system
