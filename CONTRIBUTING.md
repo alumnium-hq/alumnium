@@ -199,6 +199,7 @@ If you're new to open-source or AI-powered testing:
 1. Try running the demo and experimenting with the Alumnium API. Use the REPL (`poetry run python -i demo.py`) to explore functionality.
 2. Start with documentation improvements or simple bug fixes. Check out the [**good first issue**][7] label.
 3. Ask questions on GitHub, [Discord][8] or [Slack][9].
+4. Found a security issue? Please follow our [Security Policy][10] instead of opening a public issue.
 
 ## Recognition
 
@@ -217,5 +218,6 @@ Thank you for joining us in paving the road towards AI-powered test automation. 
 [7]: https://github.com/alumnium-hq/alumnium/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22good%20first%20issue%22
 [8]: https://discord.gg/45hYBf3U
 [9]: https://seleniumhq.slack.com/channels/alumnium
+[10]: ./SECURITY.md
 [mise]: https://mise.jdx.dev/
 [mise-install]: https://mise.jdx.dev/installing-mise.html
