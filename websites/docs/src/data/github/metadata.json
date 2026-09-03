@@ -139,8 +139,134 @@
   ],
   "releases": [
     {
-      "version": "0.21.0",
+      "version": "0.22.0",
       "latest": true,
+      "artifacts": [
+        {
+          "name": "alumnium-0.22.0-darwin-arm64",
+          "size": 107900194
+        },
+        {
+          "name": "alumnium-0.22.0-darwin-x64",
+          "size": 112771584
+        },
+        {
+          "name": "alumnium-0.22.0-linux-arm64",
+          "size": 145885504
+        },
+        {
+          "name": "alumnium-0.22.0-linux-x64",
+          "size": 146336064
+        },
+        {
+          "name": "alumnium-0.22.0-py3-none-any.whl",
+          "size": 52616
+        },
+        {
+          "name": "alumnium-0.22.0-sources.jar",
+          "size": 53550
+        },
+        {
+          "name": "alumnium-0.22.0-windows-arm64.exe",
+          "size": 159001088
+        },
+        {
+          "name": "alumnium-0.22.0-windows-x64.exe",
+          "size": 162167296
+        },
+        {
+          "name": "alumnium-0.22.0.jar",
+          "size": 134357
+        },
+        {
+          "name": "alumnium-0.22.0.tar.gz",
+          "size": 33410
+        },
+        {
+          "name": "alumnium-0.22.0.tgz",
+          "size": 514904
+        },
+        {
+          "name": "alumnium-cli-darwin-arm64-0.22.0.jar",
+          "size": 36792158
+        },
+        {
+          "name": "alumnium-cli-darwin-arm64-0.22.0.tgz",
+          "size": 36561610
+        },
+        {
+          "name": "alumnium-cli-darwin-x64-0.22.0.jar",
+          "size": 38895276
+        },
+        {
+          "name": "alumnium-cli-darwin-x64-0.22.0.tgz",
+          "size": 38634191
+        },
+        {
+          "name": "alumnium-cli-linux-arm64-0.22.0.jar",
+          "size": 52141830
+        },
+        {
+          "name": "alumnium-cli-linux-arm64-0.22.0.tgz",
+          "size": 51778477
+        },
+        {
+          "name": "alumnium-cli-linux-x64-0.22.0.jar",
+          "size": 52483436
+        },
+        {
+          "name": "alumnium-cli-linux-x64-0.22.0.tgz",
+          "size": 52154671
+        },
+        {
+          "name": "alumnium-cli-windows-arm64-0.22.0.jar",
+          "size": 53501316
+        },
+        {
+          "name": "alumnium-cli-windows-arm64-0.22.0.tgz",
+          "size": 53179678
+        },
+        {
+          "name": "alumnium-cli-windows-x64-0.22.0.jar",
+          "size": 55432311
+        },
+        {
+          "name": "alumnium-cli-windows-x64-0.22.0.tgz",
+          "size": 55097091
+        },
+        {
+          "name": "alumnium_cli-0.22.0-py3-none-macosx_10_9_x86_64.whl",
+          "size": 38895117
+        },
+        {
+          "name": "alumnium_cli-0.22.0-py3-none-macosx_11_0_arm64.whl",
+          "size": 36791990
+        },
+        {
+          "name": "alumnium_cli-0.22.0-py3-none-manylinux_2_28_aarch64.whl",
+          "size": 52141669
+        },
+        {
+          "name": "alumnium_cli-0.22.0-py3-none-manylinux_2_28_x86_64.whl",
+          "size": 52483283
+        },
+        {
+          "name": "alumnium_cli-0.22.0-py3-none-win_amd64.whl",
+          "size": 55432143
+        },
+        {
+          "name": "alumnium_cli-0.22.0-py3-none-win_arm64.whl",
+          "size": 53501140
+        },
+        {
+          "name": "alumnium_cli-0.22.0.tar.gz",
+          "size": 2704
+        }
+      ]
+    },
+    {
+      "version": "0.21.0",
+      "latest": false,
       "artifacts": [
         {
           "name": "alumnium-0.21.0-darwin-arm64",

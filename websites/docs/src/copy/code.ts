@@ -153,8 +153,8 @@ export const ttCode = {
     lang: "java",
     code: lit`
       dependencies {
-        testImplementation 'ai.alumnium:alumnium:0.21.0'
-        testRuntimeOnly    'ai.alumnium:alumnium-cli-darwin-arm64:0.21.0'
+        testImplementation 'ai.alumnium:alumnium:0.22.0'
+        testRuntimeOnly    'ai.alumnium:alumnium-cli-darwin-arm64:0.22.0'
         // Add other platforms as needed
       }`,
     meta: "version",
@@ -169,13 +169,13 @@ export const ttCode = {
         <dependency>
           <groupId>ai.alumnium</groupId>
           <artifactId>alumnium</artifactId>
-          <version>0.21.0</version>
+          <version>0.22.0</version>
           <scope>test</scope>
         </dependency>
         <dependency>
           <groupId>ai.alumnium</groupId>
           <artifactId>alumnium-cli-darwin-arm64</artifactId>
-          <version>0.21.0</version>
+          <version>0.22.0</version>
           <scope>test</scope>
         </dependency>
         <!-- Add other platforms as needed -->
