@@ -1,18 +1,88 @@
 name: CI
 on:
-  pull_request_target:
+  pull_request:
   push:
     branches:
       - main
-      - "ci-**"
-      - "ci/**"
   schedule:
     - cron: 0 0 * * *
   workflow_dispatch:
+    inputs:
+      pr:
+        description: >-
+          Pull request number to test instead of the selected branch. Use this to run
+          the full suite (with secrets) against a fork PR after reviewing its changes.
+        type: string
+        required: false
+        default: ""
+      eval:
+        description: Run agent evaluations
+        type: boolean
+        default: true
+      java:
+        description: Run Java client tests
+        type: boolean
+        default: true
+      typescript:
+        description: Run TypeScript client tests
+        type: boolean
+        default: true
+      python:
+        description: Run Python client tests
+        type: boolean
+        default: true
+      appium-android:
+        description: Run Appium (Android) driver tests
+        type: boolean
+        default: false
+      appium-ios:
+        description: Run Appium (iOS) driver tests
+        type: boolean
+        default: false
+      playwright:
+        description: Run Playwright driver tests
+        type: boolean
+        default: true
+      selenium:
+        description: Run Selenium driver tests
+        type: boolean
+        default: true
+      azure_openai:
+        description: Test on Azure OpenAI provider
+        type: boolean
+        default: true
+      anthropic:
+        description: Test on Anthropic provider
+        type: boolean
+        default: false
+      cursor:
+        description: Test on Cursor provider
+        type: boolean
+        default: false
+      deepseek:
+        description: Test on DeepSeek provider
+        type: boolean
+        default: false
+      google:
+        description: Test on Google provider
+        type: boolean
+        default: false
+      mistralai:
+        description: Test on MistralAI provider
+        type: boolean
+        default: false
+      openai:
+        description: Test on OpenAI provider
+        type: boolean
+        default: false
+      xai:
+        description: Test on xAI provider
+        type: boolean
+        default: false
 
 concurrency:
-  group: ci-${{ github.event.pull_request.head.ref || github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request_target' }}
+  group: ci-${{ inputs.pr || github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:
   ALUMNIUM_LOG_DEBUG_EXTRA: all
@@ -21,24 +91,30 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
+    outputs:
+      sha: ${{ steps.params.outputs.sha }}
+      drivers: ${{ steps.params.outputs.drivers }}
+      models: ${{ steps.params.outputs.models }}
+      run-eval: ${{ steps.params.outputs.run-eval }}
+      run-java: ${{ steps.params.outputs.run-java }}
+      run-python: ${{ steps.params.outputs.run-python }}
+      run-typescript: ${{ steps.params.outputs.run-typescript }}
 
     permissions:
       contents: read
-      # NOTE: Needed for cache save
-      actions: write
-
-    # Prevent running the workflow for PRs from ci/ or ci- branches, since those
-    # trigger the workflow on branch push events.
-    if: >
-      github.event_name != 'pull_request_target'
-        || (!startsWith(github.event.pull_request.head.ref, 'ci/')
-          && !startsWith(github.event.pull_request.head.ref, 'ci-'))
+      pull-requests: read
 
     steps:
       - name: Git Checkout
         uses: actions/checkout@v6
         with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          ref: ${{ inputs.pr && format('refs/pull/{0}/merge', inputs.pr) || github.sha }}
+
+      - name: Preflight
+        id: params
+        uses: ./.github/actions/preflight
+        with:
+          workflow-inputs: ${{ toJSON(inputs) }}
 
       - name: Set Up Dev Env
         uses: ./.github/actions/setup
@@ -89,95 +165,45 @@ jobs:
         if: failure() && runner.debug == '1'
         uses: mxschmitt/action-tmate@v3
 
-  preflight:
-    name: Preflight
-
-    runs-on: ubuntu-latest
-    outputs:
-      permitted: ${{ steps.check-access.outputs.require-result }}
-      ignore-changes: ${{ github.event_name == 'push' }}
-      java-changed: ${{ steps.changed-files.outputs.java_any_changed }}
-      python-changed: ${{ steps.changed-files.outputs.python_any_changed }}
-      typescript-changed: ${{ steps.changed-files.outputs.typescript_any_changed }}
-
-    permissions:
-      contents: read
-
-    # Prevent running the workflow for PRs from ci/ or ci- branches, since those
-    # trigger the workflow on branch push events.
-    if: >
-      github.event_name != 'pull_request_target'
-        || (!startsWith(github.event.pull_request.head.ref, 'ci/')
-          && !startsWith(github.event.pull_request.head.ref, 'ci-'))
-
-    steps:
-      - name: Git Checkout
-        uses: actions/checkout@v6
-        with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
-
-      - name: Check Access
-        id: check-access
-        uses: actions-cool/check-user-permission@v2
-        with:
-          require: write
-          username: ${{ github.triggering_actor }}
-
-      - name: Determine Changed Files
-        id: changed-files
-        uses: tj-actions/changed-files@22103cc46bda19c2b464ffe86db46df6922fd323 # v47.0.5
-        with:
-          files_yaml: |
-            java:
-              - packages/java/**
-            python:
-              - packages/python/**
-            typescript:
-              - packages/typescript/**
-
   eval:
     name: Eval
-    needs: preflight
+    needs: test
     secrets: inherit
-    if: needs.preflight.outputs.permitted == 'true'
+    if: needs.test.outputs.run-eval == 'true'
     uses: ./.github/workflows/ci-eval.yml
     with:
-      sha: ${{ github.event.pull_request.head.sha || github.sha }}
+      sha: ${{ needs.test.outputs.sha }}
+      models: ${{ needs.test.outputs.models }}
 
   java:
     name: Java
-    needs: preflight
+    needs: test
     secrets: inherit
-    if: >
-      needs.preflight.outputs.permitted == 'true'
-        && (needs.preflight.outputs.ignore-changes == 'true'
-          || needs.preflight.outputs.typescript-changed == 'true'
-          || needs.preflight.outputs.java-changed == 'true')
+    if: needs.test.outputs.run-java == 'true'
     uses: ./.github/workflows/ci-java.yml
     with:
-      sha: ${{ github.event.pull_request.head.sha || github.sha }}
+      sha: ${{ needs.test.outputs.sha }}
+      models: ${{ needs.test.outputs.models }}
+      drivers: ${{ needs.test.outputs.drivers }}
 
   python:
     name: Python
-    needs: preflight
+    needs: test
     secrets: inherit
-    if: >
-      needs.preflight.outputs.permitted == 'true'
-        && (needs.preflight.outputs.ignore-changes == 'true'
-          || needs.preflight.outputs.typescript-changed == 'true'
-          || needs.preflight.outputs.python-changed == 'true')
+    if: needs.test.outputs.run-python == 'true'
     uses: ./.github/workflows/ci-python.yml
     with:
-      sha: ${{ github.event.pull_request.head.sha || github.sha }}
+      sha: ${{ needs.test.outputs.sha }}
+      models: ${{ needs.test.outputs.models }}
+      drivers: ${{ needs.test.outputs.drivers }}
 
   typescript:
     name: TypeScript
-    needs: preflight
+    needs: test
     secrets: inherit
-    if: >
-      needs.preflight.outputs.permitted == 'true'
-        && (needs.preflight.outputs.ignore-changes == 'true'
-          || needs.preflight.outputs.typescript-changed == 'true')
+    if: needs.test.outputs.run-typescript == 'true'
     uses: ./.github/workflows/ci-typescript.yml
     with:
-      sha: ${{ github.event.pull_request.head.sha || github.sha }}
+      sha: ${{ needs.test.outputs.sha }}
+      models: ${{ needs.test.outputs.models }}
+      drivers: ${{ needs.test.outputs.drivers }}
