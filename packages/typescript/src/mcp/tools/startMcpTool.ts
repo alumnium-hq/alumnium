@@ -95,7 +95,7 @@ export const startMcpTool = McpTool.define("start", {
             - "excludeAttributes" (string[]) — accessibility attributes to exclude from the tree (e.g., ["src"]);
             - "executablePath" (string) — path to a custom Chrome executable;
             - "fullPageScreenshot" (boolean, default false) — capture full-page screenshots.
-            - "headers" (object) — extra HTTP headers for every request, supported for Selenium and Playwright, e.g. {"Authorization": "Bearer token"};
+            - "headers" (object) — extra HTTP headers, supported for Selenium and Playwright. A string value is sent with every request, e.g. {"Authorization": "Bearer token"}; an object value is sent only to hosts matching the key, e.g. {".example.com": {"X-Feature": "on"}};
             - "headless" (boolean, default false) — run browser headless, supported for Selenium and Playwright;
             - "navigationPolicy" (object) — domain allowlist/denylist for navigation, e.g. {"allowedDomains": ["(^|\\.)example\\.com$"], "deniedDomains": ["internal"]}. Both fields are string[] of case-insensitive regex patterns matched against the hostname and full URL. When "allowedDomains" is non-empty, only matching URLs are allowed; otherwise everything is allowed except "deniedDomains" matches. Link-local/metadata IPs and file:// are always blocked;
             - "permissions" (string[]) — browser permissions to grant, Playwright only, e.g. ["camera"];

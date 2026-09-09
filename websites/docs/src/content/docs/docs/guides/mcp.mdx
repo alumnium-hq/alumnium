@@ -201,7 +201,12 @@ Pass `alumnium:options` in capabilities to configure Alumnium and driver behavio
     ],
     "excludeAttributes": ["url"],
     "executablePath": "/Applications/Arc.app/Contents/MacOS/Arc",
-    "headers": { "Authorization": "Bearer token" },
+    "headers": {
+      "Authorization": "Bearer token",
+      ".example.com": {
+        "X-Feature": "on"
+      }
+    },
     "headless": true,
     "planner": false,
     "profile": "work"
@@ -220,7 +225,7 @@ Pass `alumnium:options` in capabilities to configure Alumnium and driver behavio
 | `excludeAttributes`       | Array of accessibility tree attributes to exclude. Reduces tree size on large pages.                                                                               |
 | `executablePath`          | Path to a custom Chrome/Chromium executable (e.g. Arc, Brave). Selenium and Playwright only.                                                                       |
 | `fullPageScreenshot`      | Capture full-page screenshots instead of viewport-only. Default is `false`.                                                                                        |
-| `headers`                 | Custom HTTP headers for all browser requests. Selenium and Playwright only.                                                                                        |
+| `headers`                 | Custom HTTP headers. A string value is sent with every request (Selenium and Playwright). An object value is sent only to hosts matching the key, e.g. `".example.com"` for the domain and its subdomains or `"app.example.com"` for one host (Playwright only). Scope headers when the page embeds third-party origins whose CORS preflight would reject them. |
 | `headless`                | Run browser in headless mode. Selenium and Playwright only. Default is `false`.                                                                                    |
 | `hideKeyboardAfterTyping` | Dismiss the on-screen keyboard after typing. Appium only. Default is `false`.                                                                                      |
 | `permissions`             | Browser permissions to grant (e.g. `["geolocation"]`). Playwright only.                                                                                            |

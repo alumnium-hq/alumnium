@@ -27,7 +27,7 @@ export namespace McpDriver {
   type PlaywrightCookie = Parameters<BrowserContext["addCookies"]>[0][number];
 
   export type Cookies = PlaywrightCookie[];
-  export type Headers = Record<string, string>;
+  export type Headers = Record<string, string | Record<string, string>>;
 
   export interface Capabilities {
     "appium:settings"?: Record<string, unknown> | undefined;
@@ -71,6 +71,45 @@ export namespace McpDriver {
   }
 
   export type WebdriverioProps = Parameters<typeof remoteWebdriverio>[0];
+}
+
+interface SplitHeaders {
+  global: Record<string, string>;
+  scoped: Record<string, Record<string, string>>;
+}
+
+export function splitHeaders(headers: McpDriver.Headers): SplitHeaders {
+  const result: SplitHeaders = { global: {}, scoped: {} };
+  for (const [key, value] of Object.entries(headers)) {
+    if (typeof value === "string") {
+      result.global[key] = value;
+    } else {
+      result.scoped[key] = value;
+    }
+  }
+  return result;
+}
+
+export function hostMatchesDomain(hostname: string, domain: string): boolean {
+  const host = hostname.toLowerCase();
+  const target = domain.toLowerCase();
+  if (target.startsWith(".")) {
+    return host === target.slice(1) || host.endsWith(target);
+  }
+  return host === target;
+}
+
+export function scopedHeadersFor(
+  scoped: SplitHeaders["scoped"],
+  url: URL,
+): Record<string, string> {
+  let result: Record<string, string> = {};
+  for (const [domain, headers] of Object.entries(scoped)) {
+    if (hostMatchesDomain(url.hostname, domain)) {
+      result = { ...result, ...headers };
+    }
+  }
+  return result;
 }
 
 export function createChromeDriver(
@@ -117,7 +156,11 @@ export async function createPlaywrightDriver(
     `Creating Playwright driver (headless=${headless}, profile=${profileDir ?? "none"})`,
   );
 
-  if (headers) {
+  const { global: globalHeaders, scoped: scopedHeaders } =
+    splitHeaders(headers);
+  const hasScopedHeaders = Object.keys(scopedHeaders).length > 0;
+
+  if (Object.keys(headers).length) {
     logger.debug("Setting extra HTTP headers: {headers}", { headers });
   }
 
@@ -132,7 +175,7 @@ export async function createPlaywrightDriver(
       headless,
       ...deviceOptions,
       ...(videosDir ? { recordVideo: { dir: videosDir } } : {}),
-      extraHTTPHeaders: headers,
+      extraHTTPHeaders: globalHeaders,
       ...(executablePath ? { executablePath } : {}),
       ...(proxy ? { proxy } : {}),
     });
@@ -145,8 +188,21 @@ export async function createPlaywrightDriver(
     context = await browser.newContext({
       ...deviceOptions,
       ...(videosDir ? { recordVideo: { dir: videosDir } } : {}),
-      extraHTTPHeaders: headers,
+      extraHTTPHeaders: globalHeaders,
     });
+  }
+
+  if (hasScopedHeaders) {
+    await context.route(
+      (url) => Object.keys(scopedHeadersFor(scopedHeaders, url)).length > 0,
+      (route) =>
+        route.fallback({
+          headers: {
+            ...route.request().headers(),
+            ...scopedHeadersFor(scopedHeaders, new URL(route.request().url())),
+          },
+        }),
+    );
   }
 
   await context.tracing.start({
@@ -198,6 +254,14 @@ export async function createSeleniumDriver(
     proxy: explicitProxy,
     userAgent,
   } = driverOptions;
+
+  const { global: globalHeaders, scoped: scopedHeaders } =
+    splitHeaders(headers);
+  if (Object.keys(scopedHeaders).length) {
+    throw new Error(
+      `Domain-scoped headers (${Object.keys(scopedHeaders).join(", ")}) are only supported by the Playwright driver (ALUMNIUM_DRIVER=playwright)`,
+    );
+  }
 
   const proxy = explicitProxy ?? proxyFromEnv() ?? undefined;
 
@@ -283,16 +347,18 @@ export async function createSeleniumDriver(
   const cdp: McpDriver.SeleniumCdpConnection =
     await driver.createCDPConnection("page");
 
-  if (Object.keys(headers).length || cookies?.length) {
+  if (Object.keys(globalHeaders).length || cookies?.length) {
     await cdp.send("Network.enable", {});
   }
 
   const cdpPromises: Promise<unknown>[] = [];
-  if (Object.keys(headers).length) {
+  if (Object.keys(globalHeaders).length) {
     logger.debug("Setting extra HTTP headers: {headerNames}", {
-      headerNames: Object.keys(headers),
+      headerNames: Object.keys(globalHeaders),
     });
-    cdpPromises.push(cdp.send("Network.setExtraHTTPHeaders", { headers }));
+    cdpPromises.push(
+      cdp.send("Network.setExtraHTTPHeaders", { headers: globalHeaders }),
+    );
   }
 
   if (cookies?.length) {

@@ -102,12 +102,23 @@ vi.mock("selenium-webdriver/chrome.js", () => ({
 }));
 
 const playwrightMocks = vi.hoisted(() => {
+  type RouteHandler = (route: {
+    fallback: (overrides: { headers: Record<string, string> }) => Promise<void>;
+    request: () => { headers: () => Record<string, string>; url: () => string };
+  }) => Promise<void>;
+  type RouteCall = [(url: URL) => boolean, RouteHandler];
+
+  const routeCalls: RouteCall[] = [];
+
   function makeContext() {
     return {
       addCookies: vi.fn(async () => undefined),
       grantPermissions: vi.fn(async () => undefined),
       newPage: vi.fn(async () => ({})),
       pages: vi.fn(() => []),
+      route: vi.fn(async (...call: RouteCall) => {
+        routeCalls.push(call);
+      }),
       tracing: { start: vi.fn(async () => undefined) },
     };
   }
@@ -143,6 +154,7 @@ const playwrightMocks = vi.hoisted(() => {
     launchPersistentContextCalls,
     newContext,
     newContextCalls,
+    routeCalls,
   };
 });
 
@@ -164,7 +176,56 @@ describe("createPlaywrightDriver", () => {
   beforeEach(() => {
     playwrightMocks.newContextCalls.length = 0;
     playwrightMocks.launchPersistentContextCalls.length = 0;
+    playwrightMocks.routeCalls.length = 0;
     vi.clearAllMocks();
+  });
+
+  it("sends string-valued headers with every request", async () => {
+    await createPlaywrightDriver({}, artifactsStore, {
+      headers: { "X-Custom": "1" },
+      recordVideos: false,
+    });
+
+    expect(playwrightMocks.newContextCalls[0]?.extraHTTPHeaders).toEqual({
+      "X-Custom": "1",
+    });
+    expect(playwrightMocks.routeCalls).toHaveLength(0);
+  });
+
+  it("sends object-valued headers only to hosts matching their domain key", async () => {
+    await createPlaywrightDriver({}, artifactsStore, {
+      headers: {
+        Authorization: "Bearer token",
+        ".example.com": { "X-Feature": "on" },
+        "api.other.dev": { "X-Api": "1" },
+      },
+      recordVideos: false,
+    });
+
+    expect(playwrightMocks.newContextCalls[0]?.extraHTTPHeaders).toEqual({
+      Authorization: "Bearer token",
+    });
+    expect(playwrightMocks.routeCalls).toHaveLength(1);
+
+    const [matcher, handler] = playwrightMocks.routeCalls[0]!;
+    expect(matcher(new URL("https://example.com/"))).toBe(true);
+    expect(matcher(new URL("https://app.EXAMPLE.com/api"))).toBe(true);
+    expect(matcher(new URL("https://api.other.dev/v1"))).toBe(true);
+    expect(matcher(new URL("https://www.api.other.dev/v1"))).toBe(false);
+    expect(matcher(new URL("https://notexample.com/"))).toBe(false);
+    expect(matcher(new URL("https://api.third-party.cloud/v2"))).toBe(false);
+
+    const fallback = vi.fn(async () => undefined);
+    await handler({
+      fallback,
+      request: () => ({
+        headers: () => ({ accept: "application/json" }),
+        url: () => "https://app.example.com/api",
+      }),
+    });
+    expect(fallback).toHaveBeenCalledWith({
+      headers: { accept: "application/json", "X-Feature": "on" },
+    });
   });
 
   it("resolves a named device into viewport/userAgent/isMobile/deviceScaleFactor/hasTouch", async () => {
