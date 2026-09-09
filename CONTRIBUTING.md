@@ -176,6 +176,27 @@ For local development, you may need to configure the following environment varia
 5. **Maintain API parity** - If adding features to one package, consider implementing them in both Python and TypeScript.
 6. **Submit your PR** with a clear description of what it accomplishes.
 
+### 6. Continuous Integration
+
+Every pull request runs build, formatting, lint, type and unit checks. System tests and agent
+evaluations also run automatically for pull requests opened from branches in this repository,
+using the `azure_openai` provider only. Pull requests from forks do not receive API keys, so
+their system tests are skipped until a maintainer runs them explicitly (see below).
+
+Maintainers can run the full suite manually from the _Actions_ tab or with the GitHub CLI:
+
+```bash
+# Run system tests for a fork pull request after reviewing its changes
+gh workflow run ci.yml -f pr=123
+
+# Run against specific providers and clients (every provider, driver and client is a checkbox input)
+gh workflow run ci.yml -f google=true -f anthropic=true -f typescript=false -f java=false -f selenium=false -f eval=false
+```
+
+Only `azure_openai` is checked by default. Every provider from `packages/typescript/src/Model.ts` is
+available, but only some have credentials configured in CI (azure_openai, anthropic, aws_anthropic,
+aws_meta, deepseek, google, mistralai, openai); the others will fail until secrets are added.
+
 ## AI-First Testing Philosophy
 
 As contributors to an AI-powered testing tool, we value:

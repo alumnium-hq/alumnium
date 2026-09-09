@@ -1,11 +1,20 @@
 name: TypeScript
 on:
-  workflow_dispatch:
   workflow_call:
     inputs:
       sha:
         required: true
         type: string
+      drivers:
+        description: JSON array of drivers to run system tests with.
+        required: false
+        type: string
+        default: '["playwright", "selenium"]'
+      models:
+        description: JSON array of model providers to test with.
+        required: false
+        type: string
+        default: '["azure_openai"]'
 
 env:
   ALUMNIUM_LOG_LEVEL: debug
@@ -19,13 +28,17 @@ env:
   ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
   AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
   AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+  AZURE_FOUNDRY_API_KEY: ${{ secrets.AZURE_FOUNDRY_API_KEY }}
+  AZURE_FOUNDRY_API_VERSION: ${{ secrets.AZURE_FOUNDRY_API_VERSION }}
   AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
   AZURE_OPENAI_API_VERSION: ${{ secrets.AZURE_OPENAI_API_VERSION }}
   AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
+  CURSOR_API_KEY: ${{ secrets.CURSOR_API_KEY }}
   DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
   GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
   MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
   OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
 
 jobs:
   test-system:
@@ -39,20 +52,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - driver: selenium
-            model: azure_openai
-
-          - driver: playwright
-            model: azure_openai
-
-          - driver: playwright
-            model: google
-
-          # TODO: Figure out why LambdaTest started to fail.
-
-          # - driver: appium-ios
-          #   model: azure_openai
+        driver: ${{ fromJSON(inputs.drivers) }}
+        model: ${{ fromJSON(inputs.models) }}
 
     steps:
       - name: Git Checkout
@@ -122,7 +123,7 @@ jobs:
         if: always()
         uses: ./.github/actions/alumnium-artifacts
         with:
-          name: ci-typescript-test-pkg-${{ matrix.model }}
+          name: ci-typescript-test-pkg
           package: typescript
 
       - name: Run Playwright Post-Setup

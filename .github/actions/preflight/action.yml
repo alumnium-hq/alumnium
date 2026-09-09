@@ -1,0 +1,47 @@
+name: Preflight
+description: Resolves the commit, providers, drivers and workflows the CI run should use.
+
+inputs:
+  workflow-inputs:
+    required: true
+    description: JSON object of the workflow_dispatch inputs, i.e. toJSON(inputs).
+
+outputs:
+  sha:
+    value: ${{ steps.preflight.outputs.sha }}
+    description: Commit SHA to check out in downstream workflows.
+
+  drivers:
+    value: ${{ steps.preflight.outputs.drivers }}
+    description: JSON array of drivers to run system tests with.
+
+  models:
+    value: ${{ steps.preflight.outputs.models }}
+    description: JSON array of model providers to test with.
+
+  run-eval:
+    value: ${{ steps.preflight.outputs.run-eval }}
+    description: Whether to run agent evaluations.
+
+  run-java:
+    value: ${{ steps.preflight.outputs.run-java }}
+    description: Whether to run the Java client workflow.
+
+  run-python:
+    value: ${{ steps.preflight.outputs.run-python }}
+    description: Whether to run the Python client workflow.
+
+  run-typescript:
+    value: ${{ steps.preflight.outputs.run-typescript }}
+    description: Whether to run the TypeScript client workflow.
+
+runs:
+  using: composite
+  steps:
+    - id: preflight
+      uses: actions/github-script@v8
+      with:
+        script: |
+          const workflowInputs = ${{ toJSON(inputs.workflow-inputs) }};
+          const Preflight = require("${{ github.action_path }}/preflight.js");
+          await new Preflight({ context, github, core, workflowInputs, }).run();
