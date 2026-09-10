@@ -52,18 +52,19 @@ export class Session {
   model: Model;
   platform: Driver.Platform;
   tools: ToolDefinition[];
-  llm: BaseChatModel;
+  #llm: BaseChatModel | undefined;
+  #llmContext: LlmContext;
   cache: ServerCache;
   planner: boolean;
   excludeAttributes: Set<string>;
   #context: SessionContext;
 
-  actorAgent: ActorAgent;
-  plannerAgent: PlannerAgent;
-  retrieverAgent: RetrieverAgent;
-  areaAgent: AreaAgent;
-  locatorAgent: LocatorAgent;
-  changesAnalyzerAgent: ChangesAnalyzerAgent;
+  #actorAgent: ActorAgent | undefined;
+  #plannerAgent: PlannerAgent | undefined;
+  #retrieverAgent: RetrieverAgent | undefined;
+  #areaAgent: AreaAgent | undefined;
+  #locatorAgent: LocatorAgent | undefined;
+  #changesAnalyzerAgent: ChangesAnalyzerAgent | undefined;
 
   constructor(props: Session.Props) {
     const { sessionId, model, platform, app, tools } = props;
@@ -74,32 +75,69 @@ export class Session {
     this.planner = props.planner ?? true;
     this.excludeAttributes = props.excludeAttributes ?? new Set();
     this.#context = new SessionContext({ app, sessionId });
-    const llmContext = new LlmContext(model);
+    this.#llmContext = new LlmContext(model);
 
-    this.cache = CacheFactory.createCache(this.#context, llmContext, model);
+    this.cache = CacheFactory.createCache(
+      this.#context,
+      this.#llmContext,
+      model,
+    );
 
     // TODO: When assigning cache via `props.llm.cache` it doesn't work properly
     // find a way to make it work or expose option to create cache via `Alumni`.
     if (props.llm) {
       props.llm.cache = this.cache;
     }
-    this.llm = props.llm ?? LlmFactory.createLlm(this.model, this.cache);
-
-    this.actorAgent = new ActorAgent(llmContext, this.llm, this.tools);
-    this.plannerAgent = new PlannerAgent(
-      llmContext,
-      this.llm,
-      this.tools.map((schema) => schema.function.name),
-    );
-
-    this.retrieverAgent = new RetrieverAgent(llmContext, this.llm);
-    this.areaAgent = new AreaAgent(llmContext, this.llm);
-    this.locatorAgent = new LocatorAgent(llmContext, this.llm);
-    this.changesAnalyzerAgent = new ChangesAnalyzerAgent(llmContext, this.llm);
+    this.#llm = props.llm;
 
     logger.info(
       `Created session ${sessionId} with model ${model.provider}/${model.name} and platform ${platform}`,
     );
+  }
+
+  get llm(): BaseChatModel {
+    return (this.#llm ??= LlmFactory.createLlm(this.model, this.cache));
+  }
+
+  get actorAgent(): ActorAgent {
+    return (this.#actorAgent ??= new ActorAgent(
+      this.#llmContext,
+      this.llm,
+      this.tools,
+    ));
+  }
+
+  get plannerAgent(): PlannerAgent {
+    return (this.#plannerAgent ??= new PlannerAgent(
+      this.#llmContext,
+      this.llm,
+      this.tools.map((schema) => schema.function.name),
+    ));
+  }
+
+  get retrieverAgent(): RetrieverAgent {
+    return (this.#retrieverAgent ??= new RetrieverAgent(
+      this.#llmContext,
+      this.llm,
+    ));
+  }
+
+  get areaAgent(): AreaAgent {
+    return (this.#areaAgent ??= new AreaAgent(this.#llmContext, this.llm));
+  }
+
+  get locatorAgent(): LocatorAgent {
+    return (this.#locatorAgent ??= new LocatorAgent(
+      this.#llmContext,
+      this.llm,
+    ));
+  }
+
+  get changesAnalyzerAgent(): ChangesAnalyzerAgent {
+    return (this.#changesAnalyzerAgent ??= new ChangesAnalyzerAgent(
+      this.#llmContext,
+      this.llm,
+    ));
   }
 
   updateContext(props: SessionContext.UpdateProps): void {
@@ -126,15 +164,17 @@ export class Session {
     };
 
     const agents = [
-      this.plannerAgent,
-      this.actorAgent,
-      this.retrieverAgent,
-      this.areaAgent,
-      this.locatorAgent,
-      this.changesAnalyzerAgent,
+      this.#plannerAgent,
+      this.#actorAgent,
+      this.#retrieverAgent,
+      this.#areaAgent,
+      this.#locatorAgent,
+      this.#changesAnalyzerAgent,
     ];
 
     agents.forEach((agent) => {
+      if (!agent) return;
+
       (Object.keys(usageStats.total) as (keyof LlmUsage)[]).forEach((key) => {
         usageStats.total[key] += agent.usage[key];
       });
