@@ -4,8 +4,11 @@
  * coding agents.
  */
 
+import { directMcpTools } from "./tools/directMcpTools.ts";
+
 import { McpServer as Server } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import type { McpMode } from "./McpMode.ts";
 import { ALUMNIUM_VERSION } from "../package.ts";
 import { Logger } from "../telemetry/Logger.ts";
 import { checkMcpTool } from "./tools/checkMcpTool.ts";
@@ -18,7 +21,7 @@ import { waitMcpTool } from "./tools/waitMcpTool.ts";
 
 const logger = Logger.get(import.meta.url);
 
-const MCP_TOOLS = [
+const AGENTIC_MCP_TOOLS = [
   checkMcpTool,
   doMcpTool,
   fetchAccessibilityTreeMcpTool,
@@ -28,23 +31,37 @@ const MCP_TOOLS = [
   waitMcpTool,
 ];
 
+const DIRECT_MCP_TOOLS = [
+  startMcpTool,
+  stopMcpTool,
+  fetchAccessibilityTreeMcpTool,
+  ...directMcpTools,
+];
+
+export namespace McpServer {
+  export interface Props {
+    mode?: McpMode;
+  }
+}
+
 /**
  * MCP Server that wraps Alumnium functionality for AI agents.
  */
 export class McpServer {
   #server: Server;
 
-  constructor() {
+  constructor({ mode = "agentic" }: McpServer.Props = {}) {
     this.#server = new Server({ name: "alumnium", version: ALUMNIUM_VERSION });
-    this.#registerTools();
+    this.#registerTools(mode);
     logger.info("MCP server initialized");
   }
 
   /**
    * Register all MCP tools.
    */
-  #registerTools() {
-    MCP_TOOLS.forEach((toolDef) => {
+  #registerTools(mode: McpMode) {
+    const tools = mode === "direct" ? DIRECT_MCP_TOOLS : AGENTIC_MCP_TOOLS;
+    tools.forEach((toolDef) => {
       const { name, description, inputSchema, execute } = toolDef;
       this.#server.registerTool(
         toolDef.name,
@@ -56,6 +73,7 @@ export class McpServer {
           } catch (error) {
             logger.error(`Error executing tool ${name}: {error}`, { error });
             return {
+              isError: true,
               content: [
                 { type: "text" as const, text: `Error: ${String(error)}` },
               ],
@@ -66,9 +84,6 @@ export class McpServer {
     });
   }
 
-  /**
-   * Run the MCP server using stdio transport.
-   */
   async run(): Promise<void> {
     logger.info("Starting MCP server with stdio transport");
     const transport = new StdioServerTransport();

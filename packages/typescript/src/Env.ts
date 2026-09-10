@@ -4,6 +4,7 @@ import { canonize } from "@js-fns/canon";
 import { xxh32Str } from "@js-fns/xxhash/str";
 import z from "zod";
 import { Driver } from "./drivers/Driver.ts";
+import { McpMode } from "./mcp/McpMode.ts";
 import { Model } from "./Model.ts";
 import { LoggerSchema } from "./telemetry/LoggerSchema.ts";
 import {
@@ -156,6 +157,10 @@ export const Env = {
           return Model.parse(typeof val === "string" ? val : "openai");
         }),
     );
+  },
+
+  get ALUMNIUM_MCP_MODE() {
+    return envVar("ALUMNIUM_MCP_MODE", McpMode.default("agentic"));
   },
 
   get ALUMNIUM_MCP_RECORD_VIDEOS() {
