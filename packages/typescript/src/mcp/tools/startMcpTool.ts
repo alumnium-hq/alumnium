@@ -5,7 +5,6 @@ import { never } from "alwaysly";
 import z from "zod";
 
 import { Alumni } from "../../client/Alumni.ts";
-import { NativeClient } from "../../clients/NativeClient.ts";
 import { Driver } from "../../drivers/Driver.ts";
 import { NavigationPolicy } from "../../NavigationPolicy.ts";
 import { Telemetry } from "../../telemetry/Telemetry.ts";
@@ -344,13 +343,6 @@ export const startMcpTool = McpTool.define("start", {
       navigationPolicy,
     });
 
-    const client = al.client;
-    if (!(client instanceof NativeClient)) {
-      const message = "Expected client to be an instance of NativeClient";
-      logger.error(message);
-      throw new Error(message);
-    }
-
     // Apply driver options to Alumnium driver
     if (Object.keys(driverSettings).length) {
       logger.debug(`Applying driver options: {driverSettings}`, {
@@ -359,7 +351,7 @@ export const startMcpTool = McpTool.define("start", {
       for (const [key, value] of Object.entries(driverSettings)) {
         if (key in al.driver) {
           try {
-            // @ts-expect-error
+            // @ts-expect-error -- Driver settings are applied dynamically by name.
             al.driver[key] = value;
             logger.debug(`Set driver option ${key}={value}`, { value });
           } catch (error) {
