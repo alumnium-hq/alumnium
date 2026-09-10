@@ -1,0 +1,58 @@
+---
+title: Agentic Mode
+description: Automate applications with natural language using Alumnium's agentic MCP tools.
+---
+
+Agentic mode lets your coding agent delegate automation goals to Alumnium. Alumnium uses an LLM to interpret commands, choose actions, verify application state, and retrieve data. This allows to significantly reduce the context usage of the coding agent at the cost of slower execution.
+
+## Setup
+
+Agentic mode is the default. Follow the [setup instructions](/docs/mcp/overview#setup) and configure an [AI provider](/docs/getting-started/configuration).
+
+## Tools
+
+In agentic mode, the MCP Server exposes Alumnium's core automation capabilities:
+
+| Tool                                | Description                                                                    |
+| ----------------------------------- | ------------------------------------------------------------------------------ |
+| [`start`](/docs/mcp/overview#start) | Initialize browser/mobile drivers with Appium/Selenium/Playwright capabilities |
+| [`stop`](/docs/mcp/overview#stop)   | Cleanup resources and retrieve token usage statistics                          |
+| `do`                                | Execute natural language automation commands                                   |
+| `check`                             | Verify statements about the current page state with optional vision support    |
+| `get`                               | Extract data from pages using natural language descriptions                    |
+| `wait`                              | Wait a fixed duration or until a natural language condition is met             |
+| `fetch_accessibility_tree`          | Debug page structure with raw accessibility tree                               |
+
+### `do`
+
+Perform [actions][6] in the application using natural language commands and return summary of the performed steps. Alumnium automatically captures screenshot upon completion and stores it in the artifacts directory.
+
+### `check`
+
+[Verify][7] application state and run assertions using natural language commands. Returns the result of the check along with explanation the verification was evaluated. Alumnium automatically captures screenshot upon completion and stores it in the artifacts directory.
+
+### `get`
+
+[Extract][8] data from the application based on natural language descriptions. If data is not found, returns explanation why it can't be retrieved. Alumnium automatically captures screenshot upon completion and stores it in the artifacts directory.
+
+### `wait`
+
+Wait for a fixed duration or until a natural language condition is met. Pass a number (1–30) to wait that many seconds, or a string condition (e.g. `"user is logged in"`) to poll with AI-powered verification until it becomes true or a timeout is reached.
+
+### `fetch_accessibility_tree`
+
+Returns the raw accessibility tree of the current page as XML. Useful for debugging when `do`, `check`, or `get` behave unexpectedly — inspect the tree to verify element visibility, roles, and attributes.
+
+[1]: https://modelcontextprotocol.io
+[2]: https://docs.astral.sh/uv/
+[3]: https://docs.astral.sh/uv/getting-started/installation/
+[4]: /docs/getting-started/configuration
+[5]: /docs/guides/caching
+[6]: /docs/guides/actions
+[7]: /docs/guides/verifications
+[8]: /docs/guides/retrievals
+[9]: https://appium.io/docs/en/2.0/guides/settings/
+[10]: https://github.com/openai/codex
+[11]: /docs/getting-started/configuration#codex
+[12]: https://cursor.com/docs/cloud-agent
+[13]: /docs/getting-started/configuration#cursor
