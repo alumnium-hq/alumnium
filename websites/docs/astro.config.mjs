@@ -148,10 +148,14 @@ export default defineConfig({
               label: "Self-hosting LLMs",
               slug: "docs/guides/self-hosting",
             },
-            {
-              label: "MCP",
-              slug: "docs/guides/mcp",
-            },
+          ],
+        },
+        {
+          label: "MCP",
+          items: [
+            { label: "Overview", slug: "docs/mcp/overview" },
+            { label: "Agentic Mode", slug: "docs/mcp/agentic-mode" },
+            { label: "Direct Mode", slug: "docs/mcp/direct-mode" },
           ],
         },
         {
@@ -188,5 +192,6 @@ export default defineConfig({
   redirects: {
     "/docs/getting-started/writing-first-test":
       "/docs/writing-first-test/selenium",
+    "/docs/guides/mcp": "/docs/mcp/overview",
   },
 });
