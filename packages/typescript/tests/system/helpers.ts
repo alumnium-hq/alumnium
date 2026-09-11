@@ -1,4 +1,11 @@
-import { Alumni, AppiumDriver, Model, type Element } from "alumnium";
+import {
+  Alumni,
+  AppiumDriver,
+  MaestroDriver,
+  MaestroSession,
+  Model,
+  type Element,
+} from "alumnium";
 import { never } from "alwaysly";
 import { createServer, type RequestListener } from "node:http";
 import type { AddressInfo } from "node:net";
@@ -46,7 +53,7 @@ export interface Setup {
   al: Alumni;
   $: Setup.Helpers;
   driverId: Driver.Id;
-  isAppiumDriver: boolean;
+  isMobile: boolean;
   model: Model;
 }
 
@@ -62,7 +69,6 @@ export async function useSetup(props: useSetup.Props): Promise<Setup> {
 
   const driverId = Env.ALUMNIUM_DRIVER;
   const driver = await createDriver(driverId);
-  const isAppiumDriver = Driver.isAppium(driverId);
 
   const dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -80,11 +86,18 @@ export async function useSetup(props: useSetup.Props): Promise<Setup> {
   const al = new Alumni(driver, options);
   const $ = createHelpers(driverId, driver, al, onTestFinished);
 
-  if (isAppiumDriver) {
+  if (Driver.isAppium(driverId)) {
     (al.driver as AppiumDriver).delay = 0.1;
   }
 
+  if (Driver.isMaestro(driverId)) {
+    const maestroDriver = al.driver as MaestroDriver;
+    const isAndroid = inject("maestroOs") === "android";
+    maestroDriver.delay = isAndroid ? 2 : 0.5;
+  }
+
   const model = await al.model();
+  const isMobile = Driver.isMobile(driverId);
 
   onTestFinished(async (ctx) => {
     const passed = ctx.task.result?.state === "pass";
@@ -101,7 +114,7 @@ export async function useSetup(props: useSetup.Props): Promise<Setup> {
     await al.quit();
   });
 
-  return { driver, driverId, isAppiumDriver, al, $, model };
+  return { driver, driverId, isMobile, al, $, model };
 }
 
 async function createDriver(driverId: Driver.Id): Promise<Alumni.Driver> {
@@ -149,6 +162,15 @@ async function createDriver(driverId: Driver.Id): Promise<Alumni.Driver> {
 
     case "appium-android": {
       throw new Error("Unimplemented");
+    }
+
+    case "maestro": {
+      const session = await MaestroSession.start({
+        appId: inject("maestroAppId"),
+        deviceId: inject("maestroDeviceId"),
+      });
+      await session.launchApp({ clearState: true });
+      return session;
     }
 
     default:
@@ -263,6 +285,9 @@ function createHelpers(
         case "appium-android":
           return (element as WebdriverIO.Element).setValue(text);
 
+        case "maestro":
+          throw new Error("Maestro has no element handles");
+
         default:
           driverId satisfies never;
       }
@@ -279,6 +304,9 @@ function createHelpers(
         case "appium-ios":
         case "appium-android":
           return (element as WebdriverIO.Element).click();
+
+        case "maestro":
+          throw new Error("Maestro has no element handles");
 
         default:
           driverId satisfies never;

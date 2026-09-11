@@ -28,10 +28,10 @@ describe("File Upload", () => {
   const it = baseIt.override("setup", async ({ setup, skip }) => {
     return async (options) => {
       const result = await setup(options);
-      const { isAppiumDriver } = result;
+      const { isMobile } = result;
 
       // File upload is not implemented in Appium yet
-      if (isAppiumDriver) skip("File upload is not implemented in Appium yet");
+      if (isMobile) skip("File upload is not implemented in Appium yet");
 
       return result;
     };

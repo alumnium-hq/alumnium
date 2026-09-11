@@ -139,6 +139,14 @@ arg "[test]" help="System test to run" default=""
 '''
 run = [{ task = "test/system", args = ["appium-android", "{{usage.test}}"] }]
 
+# TODO: update for a new format
+[tasks."test/system:maestro"]
+run = '''
+ALUMNIUM_DRIVER=maestro \
+ALUMNIUM_TEST_VITEST_ARGS="${ALUMNIUM_TEST_VITEST_ARGS:-tests/system/todo.app.test.ts}" \
+./scripts/test-system.sh
+'''
+
 [tasks."test/waiter"]
 usage = '''
 arg "<driver>" help="Driver to use for waiter tests" {

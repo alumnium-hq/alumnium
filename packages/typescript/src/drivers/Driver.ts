@@ -51,9 +51,14 @@ export abstract class Driver {
     }
   }, this.AppiumPlatformStrict);
 
+  static maestroPlatform = "maestro" as const;
+
+  static MaestroPlatform = z.literal(this.maestroPlatform);
+
   static PlatformStrict = z.enum([
     this.chromiumPlatform,
     ...this.appiumPlatforms,
+    this.maestroPlatform,
   ]);
 
   static Platform = z.preprocess((val) => {
@@ -74,18 +79,35 @@ export abstract class Driver {
 
   static AppiumKind = z.literal(this.appiumKind);
 
-  static kinds = [...this.chromiumKinds, this.appiumKind] as const;
+  static maestroKind = "maestro" as const;
+
+  static MaestroKind = z.literal(this.maestroKind);
+
+  static kinds = [
+    ...this.chromiumKinds,
+    this.appiumKind,
+    this.maestroKind,
+  ] as const;
 
   static Kind = z.enum(this.kinds).default("selenium");
 
   static Id = z
     .union([
       this.ChromiumKind,
+      this.MaestroKind,
       z.templateLiteral([this.AppiumKind, "-", this.AppiumOs]),
     ])
     .default("selenium");
 
   static isAppium(kind: Driver.Id): boolean {
     return kind.startsWith("appium");
+  }
+
+  static isMaestro(kind: Driver.Id): boolean {
+    return kind === this.maestroKind;
+  }
+
+  static isMobile(kind: Driver.Id): boolean {
+    return this.isAppium(kind) || this.isMaestro(kind);
   }
 }

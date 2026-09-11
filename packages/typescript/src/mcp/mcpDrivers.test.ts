@@ -3,7 +3,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { Env } from "../Env.ts";
 import { FileStore } from "../FileStore/FileStore.ts";
-import { createPlaywrightDriver, createSeleniumDriver } from "./mcpDrivers.ts";
+import {
+  createMobileDriver,
+  createPlaywrightDriver,
+  createSeleniumDriver,
+} from "./mcpDrivers.ts";
 
 const mocks = vi.hoisted(() => {
   class MockOptions {
@@ -82,6 +86,26 @@ const mocks = vi.hoisted(() => {
     options: [] as MockOptions[],
   };
 });
+
+const mobileMocks = vi.hoisted(() => {
+  const launchApp = vi.fn(async (_options: { clearState: boolean }) => {});
+  const maestroStart = vi.fn(async (props: Record<string, unknown>) => ({
+    props,
+    launchApp,
+  }));
+  const updateSettings = vi.fn(async () => {});
+  const remote = vi.fn(async (options: { capabilities: unknown }) => ({
+    capabilities: options.capabilities,
+    updateSettings,
+  }));
+  return { launchApp, maestroStart, remote, updateSettings };
+});
+
+vi.mock("webdriverio", () => ({ remote: mobileMocks.remote }));
+
+vi.mock("../drivers/MaestroSession.ts", () => ({
+  MaestroSession: { start: mobileMocks.maestroStart },
+}));
 
 vi.mock("selenium-webdriver", () => ({
   Builder: class extends mocks.MockBuilder {
@@ -402,5 +426,219 @@ describe("createSeleniumDriver", () => {
       ]),
     );
     expect(mocks.builders[0]?.chromeOptions).toBe(mocks.options[0]);
+  });
+});
+
+describe("Appium capability translation", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.stubEnv("ALUMNIUM_DRIVER", "appium-ios");
+    Env.reset();
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    Env.reset();
+  });
+
+  async function translated(
+    platform: "xcuitest" | "uiautomator2",
+    capabilities: Record<string, unknown>,
+    options: Parameters<typeof createMobileDriver>[3],
+  ): Promise<Record<string, unknown>> {
+    await createMobileDriver(platform, capabilities, null, options);
+    return mobileMocks.remote.mock.calls[0]![0].capabilities as Record<
+      string,
+      unknown
+    >;
+  }
+
+  it("sends an app reference to appium:app instead of an identifier capability", async () => {
+    for (const app of [
+      "/Users/me/build/TodoList.app",
+      "TodoList.apk",
+      "lt://APP10160422151774312193564972",
+      "https://cdn.example.com/builds/app.ipa",
+    ]) {
+      vi.clearAllMocks();
+      expect(await translated("xcuitest", {}, { app })).toEqual({
+        "appium:app": app,
+      });
+    }
+  });
+
+  it("translates an installed app's identifier to the platform's app capability", async () => {
+    expect(
+      await translated("xcuitest", {}, { app: "com.example.app" }),
+    ).toEqual({ "appium:bundleId": "com.example.app" });
+
+    vi.clearAllMocks();
+    expect(
+      await translated("uiautomator2", {}, { app: "com.example.app" }),
+    ).toEqual({ "appium:appPackage": "com.example.app" });
+  });
+
+  it("translates deviceId and appReset", async () => {
+    expect(
+      await translated("xcuitest", {}, { deviceId: "UDID-1", appReset: true }),
+    ).toEqual({
+      "appium:udid": "UDID-1",
+      "appium:fullReset": true,
+      "appium:noReset": false,
+    });
+  });
+
+  it("translates appArguments and appEnvironment into processArguments", async () => {
+    expect(
+      await translated(
+        "xcuitest",
+        {},
+        {
+          appArguments: ["-UITesting"],
+          appEnvironment: { API_URL: "https://staging.example.com" },
+        },
+      ),
+    ).toEqual({
+      "appium:processArguments": {
+        args: ["-UITesting"],
+        env: { API_URL: "https://staging.example.com" },
+      },
+    });
+  });
+
+  it("leaves capabilities alone when no option is given", async () => {
+    expect(await translated("xcuitest", { "appium:udid": "keep" }, {})).toEqual(
+      { "appium:udid": "keep" },
+    );
+  });
+
+  it("lets an option override a conflicting capability", async () => {
+    const capabilities = await translated(
+      "xcuitest",
+      { "appium:bundleId": "com.old.app" },
+      { app: "com.new.app" },
+    );
+    expect(capabilities["appium:bundleId"]).toBe("com.new.app");
+  });
+});
+
+describe("createMobileDriver", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    Env.reset();
+  });
+
+  it("drives Appium with translated capabilities by default", async () => {
+    vi.stubEnv("ALUMNIUM_DRIVER", "appium-ios");
+    Env.reset();
+
+    await createMobileDriver("xcuitest", { platformName: "ios" }, null, {
+      app: "com.example.app",
+      deviceId: "UDID-1",
+      appReset: true,
+    });
+
+    expect(mobileMocks.maestroStart).not.toHaveBeenCalled();
+    expect(mobileMocks.remote).toHaveBeenCalledOnce();
+    expect(mobileMocks.remote.mock.calls[0]![0].capabilities).toEqual({
+      platformName: "ios",
+      "appium:bundleId": "com.example.app",
+      "appium:udid": "UDID-1",
+      "appium:fullReset": true,
+      "appium:noReset": false,
+    });
+  });
+
+  it("drives Maestro from the shared options when ALUMNIUM_DRIVER=maestro", async () => {
+    vi.stubEnv("ALUMNIUM_DRIVER", "maestro");
+    Env.reset();
+
+    await createMobileDriver("xcuitest", { platformName: "ios" }, null, {
+      app: "com.example.app",
+      deviceId: "UDID-1",
+      appReset: true,
+    });
+
+    expect(mobileMocks.remote).not.toHaveBeenCalled();
+    expect(mobileMocks.maestroStart).toHaveBeenCalledOnce();
+    expect(mobileMocks.maestroStart.mock.calls[0]![0]).toMatchObject({
+      appId: "com.example.app",
+      deviceId: "UDID-1",
+    });
+    expect(mobileMocks.launchApp).toHaveBeenCalledWith({ clearState: true });
+  });
+
+  it("launches Maestro without clearing state unless appReset is set", async () => {
+    vi.stubEnv("ALUMNIUM_DRIVER", "maestro");
+    Env.reset();
+
+    await createMobileDriver("xcuitest", {}, null, {
+      app: "com.example.app",
+    });
+
+    expect(mobileMocks.maestroStart.mock.calls[0]![0]).not.toHaveProperty(
+      "deviceId",
+    );
+    expect(mobileMocks.launchApp).toHaveBeenCalledWith({ clearState: false });
+  });
+
+  it("passes appArguments and appEnvironment to Maestro's launch", async () => {
+    vi.stubEnv("ALUMNIUM_DRIVER", "maestro");
+    Env.reset();
+
+    await createMobileDriver("xcuitest", {}, null, {
+      app: "com.example.app",
+      appArguments: ["-UITesting"],
+      appEnvironment: { API_URL: "https://staging.example.com" },
+    });
+
+    expect(mobileMocks.maestroStart.mock.calls[0]![0]).toMatchObject({
+      launchArgs: ["-UITesting"],
+      launchEnv: { API_URL: "https://staging.example.com" },
+    });
+  });
+
+  it("passes an identifier to Maestro as its appId", async () => {
+    vi.stubEnv("ALUMNIUM_DRIVER", "maestro");
+    Env.reset();
+
+    await createMobileDriver("xcuitest", {}, null, {
+      app: "com.example.app",
+    });
+
+    expect(mobileMocks.maestroStart.mock.calls[0]![0]).toMatchObject({
+      appId: "com.example.app",
+    });
+  });
+
+  it("refuses an app reference for Maestro, which cannot install", async () => {
+    vi.stubEnv("ALUMNIUM_DRIVER", "maestro");
+    Env.reset();
+
+    await expect(
+      createMobileDriver("xcuitest", {}, null, {
+        app: "/tmp/TodoList.app",
+      }),
+    ).rejects.toThrow(/cannot install/);
+    expect(mobileMocks.maestroStart).not.toHaveBeenCalled();
+  });
+
+  it("requires app for Maestro", async () => {
+    vi.stubEnv("ALUMNIUM_DRIVER", "maestro");
+    Env.reset();
+
+    await expect(
+      createMobileDriver(
+        "xcuitest",
+        { "appium:bundleId": "com.example.app" },
+        null,
+        {},
+      ),
+    ).rejects.toThrow(/App must be specified/);
+    expect(mobileMocks.maestroStart).not.toHaveBeenCalled();
   });
 });

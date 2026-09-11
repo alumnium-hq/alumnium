@@ -20,8 +20,8 @@ describe("NavigationPolicy", () => {
   const it = baseIt.override("setup", async ({ setup, skip }) => {
     return async (options) => {
       const result = await setup(options);
-      if (result.isAppiumDriver)
-        skip("Navigation policy is verified for browsers only, not Appium");
+      if (result.isMobile)
+        skip("Navigation policy is verified for browsers only, not mobile");
       return result;
     };
   });

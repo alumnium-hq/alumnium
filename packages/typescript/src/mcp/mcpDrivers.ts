@@ -2,6 +2,7 @@
  * Driver factory functions for different platforms.
  */
 
+import { existsSync } from "node:fs";
 import type { BrowserContext, Page } from "playwright-core";
 import { chromium, devices } from "playwright-core";
 import { Builder, type WebDriver } from "selenium-webdriver";
@@ -12,6 +13,7 @@ import {
 } from "webdriverio";
 
 import type { Driver } from "../drivers/Driver.ts";
+import { MaestroSession } from "../drivers/MaestroSession.ts";
 import { Env } from "../Env.ts";
 import { FileStore } from "../FileStore/FileStore.ts";
 import { ensurePlaywrightChromiumInstalled } from "../standalone/installPlaywrightBrowsers.ts";
@@ -21,13 +23,26 @@ import { proxyFromEnv } from "./proxyFromEnv.ts";
 
 const logger = Logger.get(import.meta.url);
 
-export type McpDriver = Page | WebDriver | WebdriverIoBrowser;
+export type McpDriver = Page | WebDriver | WebdriverIoBrowser | MaestroSession;
 
 export namespace McpDriver {
   type PlaywrightCookie = Parameters<BrowserContext["addCookies"]>[0][number];
 
   export type Cookies = PlaywrightCookie[];
   export type Headers = Record<string, string | Record<string, string>>;
+
+  export interface MobileOptions {
+    /**
+     * The mobile app to run. Either an identifier of an installed app — an iOS bundle id or an
+     * Android package name — or, for Appium, a reference to an app to install: a local `.app`/
+     * `.apk`/`.ipa` path, a URL, or a cloud id such as `lt://…`.
+     */
+    app?: string | undefined;
+    appArguments?: string[] | undefined;
+    appEnvironment?: Record<string, string> | undefined;
+    appReset?: boolean | undefined;
+    deviceId?: string | undefined;
+  }
 
   export interface Capabilities {
     "appium:settings"?: Record<string, unknown> | undefined;
@@ -370,6 +385,125 @@ export async function createSeleniumDriver(
 
   logger.debug("Selenium driver created successfully");
   return driver;
+}
+
+/**
+ * Create a mobile driver from capabilities.
+ */
+export async function createMobileDriver(
+  platform: Driver.AppiumPlatform,
+  capabilities: McpDriver.Capabilities,
+  serverUrl: string | null | undefined,
+  mobileOptions: McpDriver.MobileOptions = {},
+): Promise<McpDriver> {
+  const driverKind = Env.ALUMNIUM_DRIVER;
+  logger.info(`Creating mobile driver for ${platform} using ${driverKind}`);
+  if (driverKind === "maestro") {
+    return createMaestroDriver(platform, mobileOptions);
+  } else {
+    translateToAppiumCapabilities(platform, capabilities, mobileOptions);
+    return createAppiumDriver(platform, capabilities, serverUrl);
+  }
+}
+
+function translateToAppiumCapabilities(
+  platform: Driver.AppiumPlatform,
+  capabilities: McpDriver.Capabilities,
+  {
+    app,
+    deviceId,
+    appReset,
+    appArguments,
+    appEnvironment,
+  }: McpDriver.MobileOptions,
+): void {
+  const translated: [key: string, value: unknown][] = [];
+  if (app !== undefined) {
+    // An installable goes to `appium:app`; an identifier names an app already on the device.
+    const key = isAppReference(app)
+      ? "appium:app"
+      : platform === "xcuitest"
+        ? "appium:bundleId"
+        : "appium:appPackage";
+    translated.push([key, app]);
+  }
+
+  if (deviceId !== undefined) translated.push(["appium:udid", deviceId]);
+  if (appReset !== undefined) {
+    translated.push(["appium:noReset", !appReset]);
+    translated.push(["appium:fullReset", appReset]);
+  }
+
+  if (appArguments !== undefined || appEnvironment !== undefined) {
+    const processArgs: { args?: string[]; env?: Record<string, string> } = {};
+    if (appArguments !== undefined) {
+      processArgs.args = appArguments;
+    }
+    if (appEnvironment !== undefined) {
+      processArgs.env = appEnvironment;
+    }
+    translated.push(["appium:processArguments", processArgs]);
+  }
+
+  for (const [key, value] of translated) {
+    capabilities[key] = value;
+  }
+}
+
+function isAppReference(application: string): boolean {
+  return (
+    existsSync(application) ||
+    /[\\/]/.test(application) ||
+    /^[a-z][a-z0-9+.-]*:\/\//i.test(application) ||
+    /\.(apk|aab|ipa|zip)$/i.test(application)
+  );
+}
+
+/**
+ * Create Maestro driver from capabilities.
+ */
+export async function createMaestroDriver(
+  platform: Driver.AppiumPlatform,
+  {
+    app,
+    deviceId,
+    appReset,
+    appArguments,
+    appEnvironment,
+  }: McpDriver.MobileOptions,
+): Promise<MaestroSession> {
+  if (app === undefined) {
+    throw new Error("App must be specified");
+  }
+
+  // Maestro drives installed apps only; a path or URL here would become a meaningless flow header.
+  if (isAppReference(app)) {
+    throw new Error(
+      `Maestro cannot install apps. "app" must be the bundle id or package name of an installed app, not a path or URL: ${app}`,
+    );
+  }
+
+  logger.info(
+    `Creating Maestro driver for ${platform} (app=${app}, device=${deviceId ?? "first connected"})`,
+  );
+
+  const session = await MaestroSession.start({
+    appId: app,
+    ...(appArguments !== undefined && { launchArgs: appArguments }),
+    ...(appEnvironment !== undefined && { launchEnv: appEnvironment }),
+    // Which device to drive is per-session state; unset means Maestro's first connected device.
+    ...(deviceId !== undefined && { deviceId }),
+    ...(Env.ALUMNIUM_MAESTRO_PATH !== undefined && {
+      executablePath: Env.ALUMNIUM_MAESTRO_PATH,
+    }),
+  });
+
+  // Maestro acts on whatever is on screen, so the app has to be brought up explicitly.
+  const clearState = appReset === true;
+  logger.info(`Launching ${app} (clearState=${clearState})`);
+  await session.launchApp({ clearState });
+
+  return session;
 }
 
 /**
