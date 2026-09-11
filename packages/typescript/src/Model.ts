@@ -33,7 +33,7 @@ const defaultModels: Record<Model.Provider, string> = {
   anthropic: "claude-haiku-4-5-20251001",
   aws_anthropic: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
   aws_meta: "us.meta.llama4-maverick-17b-instruct-v1:0",
-  codex: "gpt-5.4-mini",
+  codex: "gpt-5.6-luna",
   cursor: "composer-2.5",
   deepseek: "deepseek-reasoner",
   google: "gemini-3.1-flash-lite",
