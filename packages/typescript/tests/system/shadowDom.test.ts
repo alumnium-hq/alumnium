@@ -5,10 +5,9 @@ describe("Shadow DOM", () => {
   const it = baseIt.override("setup", async ({ setup, skip }) => {
     return async (options) => {
       const result = await setup(options);
-      const { isAppiumDriver } = result;
+      const { isMobile } = result;
 
-      if (isAppiumDriver)
-        skip("Shadow DOM support is not implemented in Appium yet");
+      if (isMobile) skip("Shadow DOM support is not implemented in Appium yet");
 
       return result;
     };

@@ -6,10 +6,10 @@ describe("Drag Slider", () => {
   const it = baseIt.override("setup", async ({ setup, skip }) => {
     return async (options) => {
       const result = await setup(options);
-      const { isAppiumDriver } = result;
+      const { isMobile } = result;
 
       // Drag slider is not implemented in Appium yet
-      if (isAppiumDriver) skip("Drag slider is not implemented in Appium yet");
+      if (isMobile) skip("Drag slider is not implemented in Appium yet");
 
       return result;
     };

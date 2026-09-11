@@ -1,0 +1,369 @@
+{
+  "ui_schema": {
+    "platform": "android",
+    "abbreviations": {
+      "b": "bounds",
+      "txt": "text",
+      "rid": "resource-id",
+      "a11y": "content-desc",
+      "hint": "hintText",
+      "cls": "class",
+      "scroll": "scrollable",
+      "c": "children"
+    },
+    "defaults": {
+      "enabled": true,
+      "clickable": false,
+      "focused": false,
+      "selected": false,
+      "checked": false,
+      "scrollable": false,
+      "txt": "",
+      "hint": "",
+      "rid": "",
+      "a11y": "",
+      "cls": ""
+    }
+  },
+  "elements": [
+    {
+      "enabled": false,
+      "c": [
+        {
+          "b": "[0,0][1080,63]",
+          "cls": "android.widget.FrameLayout",
+          "c": [
+            {
+              "b": "[0,0][1080,63]",
+              "rid": "com.android.systemui:id/status_bar_launch_animation_container",
+              "cls": "android.widget.FrameLayout"
+            },
+            {
+              "b": "[0,0][1080,63]",
+              "rid": "com.android.systemui:id/status_bar_container",
+              "cls": "android.widget.FrameLayout",
+              "c": [
+                {
+                  "b": "[0,0][1080,63]",
+                  "rid": "com.android.systemui:id/status_bar",
+                  "cls": "android.widget.FrameLayout",
+                  "c": [
+                    {
+                      "b": "[0,0][1027,63]",
+                      "rid": "com.android.systemui:id/status_bar_contents",
+                      "cls": "android.widget.LinearLayout",
+                      "c": [
+                        {
+                          "b": "[11,0][513,63]",
+                          "rid": "com.android.systemui:id/status_bar_start_side_container",
+                          "cls": "android.widget.FrameLayout",
+                          "c": [
+                            {
+                              "b": "[11,0][231,63]",
+                              "rid": "com.android.systemui:id/status_bar_start_side_content",
+                              "cls": "android.widget.FrameLayout",
+                              "c": [
+                                {
+                                  "b": "[11,0][231,63]",
+                                  "rid": "com.android.systemui:id/status_bar_start_side_except_heads_up",
+                                  "cls": "android.widget.LinearLayout",
+                                  "c": [
+                                    {
+                                      "b": "[11,10][115,53]",
+                                      "a11y": "8:17 AM",
+                                      "txt": "8:17",
+                                      "rid": "com.android.systemui:id/clock",
+                                      "cls": "android.widget.TextView"
+                                    },
+                                    {
+                                      "b": "[115,0][231,63]",
+                                      "rid": "com.android.systemui:id/notification_icon_area",
+                                      "cls": "android.widget.FrameLayout",
+                                      "c": [
+                                        {
+                                          "b": "[115,0][231,63]",
+                                          "rid": "com.android.systemui:id/notificationIcons",
+                                          "cls": "android.view.ViewGroup",
+                                          "c": [
+                                            {
+                                              "b": "[115,0][173,63]",
+                                              "a11y": "Security & privacy notification: ",
+                                              "cls": "android.widget.ImageView"
+                                            },
+                                            {
+                                              "b": "[173,0][231,63]",
+                                              "a11y": "Android System notification: ",
+                                              "cls": "android.widget.ImageView"
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "b": "[513,0][1016,63]",
+                          "rid": "com.android.systemui:id/status_bar_end_side_container",
+                          "cls": "android.widget.FrameLayout",
+                          "c": [
+                            {
+                              "b": "[876,0][1016,63]",
+                              "rid": "com.android.systemui:id/status_bar_end_side_content",
+                              "cls": "android.widget.LinearLayout",
+                              "c": [
+                                {
+                                  "b": "[876,2][1016,60]",
+                                  "rid": "com.android.systemui:id/system_icons",
+                                  "cls": "android.widget.LinearLayout",
+                                  "c": [
+                                    {
+                                      "b": "[884,2][985,60]",
+                                      "rid": "com.android.systemui:id/statusIcons",
+                                      "cls": "android.widget.LinearLayout",
+                                      "c": [
+                                        {
+                                          "b": "[884,2][930,60]",
+                                          "rid": "com.android.systemui:id/wifi_combo",
+                                          "cls": "android.widget.FrameLayout",
+                                          "c": [
+                                            {
+                                              "b": "[891,2][930,60]",
+                                              "rid": "com.android.systemui:id/wifi_group",
+                                              "cls": "android.widget.LinearLayout",
+                                              "c": [
+                                                {
+                                                  "b": "[891,11][930,50]",
+                                                  "rid": "com.android.systemui:id/wifi_combo",
+                                                  "cls": "android.widget.FrameLayout",
+                                                  "c": [
+                                                    {
+                                                      "b": "[891,11][930,50]",
+                                                      "a11y": "Wifi signal full.",
+                                                      "rid": "com.android.systemui:id/wifi_signal",
+                                                      "cls": "android.widget.ImageView"
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "b": "[930,2][969,60]",
+                                          "a11y": "T-Mobile, one bar.",
+                                          "rid": "com.android.systemui:id/mobile_combo",
+                                          "cls": "android.widget.FrameLayout",
+                                          "c": [
+                                            {
+                                              "b": "[930,2][969,60]",
+                                              "rid": "com.android.systemui:id/mobile_group",
+                                              "cls": "android.widget.LinearLayout",
+                                              "c": [
+                                                {
+                                                  "b": "[930,11][969,50]",
+                                                  "cls": "android.widget.FrameLayout",
+                                                  "c": [
+                                                    {
+                                                      "b": "[930,11][969,50]",
+                                                      "rid": "com.android.systemui:id/mobile_signal",
+                                                      "cls": "android.widget.ImageView"
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "b": "[985,14][1005,48]",
+                                      "a11y": "Battery 100 percent.",
+                                      "rid": "com.android.systemui:id/battery",
+                                      "cls": "android.widget.LinearLayout",
+                                      "c": [
+                                        {
+                                          "b": "[985,14][1005,48]",
+                                          "cls": "android.widget.ImageView"
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "b": "[0,0][1080,2400]",
+          "cls": "android.widget.FrameLayout",
+          "c": [
+            {
+              "b": "[0,0][1080,2400]",
+              "cls": "android.widget.LinearLayout",
+              "c": [
+                {
+                  "b": "[0,0][1080,2400]",
+                  "rid": "android:id/content",
+                  "cls": "android.widget.FrameLayout",
+                  "c": [
+                    {
+                      "b": "[0,0][1080,2400]",
+                      "cls": "androidx.compose.ui.platform.ComposeView",
+                      "c": [
+                        {
+                          "b": "[0,0][1080,2400]",
+                          "cls": "android.view.View",
+                          "c": [
+                            {
+                              "b": "[0,0][1080,2400]",
+                              "cls": "android.view.View",
+                              "c": [
+                                {
+                                  "b": "[63,273][317,357]",
+                                  "txt": "All Tasks",
+                                  "cls": "android.widget.TextView"
+                                },
+                                {
+                                  "b": "[42,399][1038,567]",
+                                  "cls": "android.view.View",
+                                  "c": [
+                                    {
+                                      "b": "[84,420][996,546]",
+                                      "cls": "android.view.View",
+                                      "clickable": true,
+                                      "c": [
+                                        {
+                                          "b": "[85,421][211,547]",
+                                          "cls": "android.widget.CheckBox",
+                                          "clickable": true
+                                        },
+                                        {
+                                          "b": "[252,441][489,525]",
+                                          "txt": "Buy milk",
+                                          "cls": "android.widget.TextView"
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "b": "[0,0][1080,231]",
+                                  "cls": "android.view.View",
+                                  "c": [
+                                    {
+                                      "b": "[12,85][138,211]",
+                                      "cls": "android.view.View",
+                                      "clickable": true,
+                                      "c": [
+                                        {
+                                          "b": "[43,116][106,179]",
+                                          "a11y": "Open Drawer",
+                                          "cls": "android.view.View"
+                                        },
+                                        {
+                                          "b": "[22,95][127,200]",
+                                          "cls": "android.widget.Button"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "b": "[148,110][278,184]",
+                                      "txt": "Todo",
+                                      "cls": "android.widget.TextView"
+                                    },
+                                    {
+                                      "b": "[818,85][944,211]",
+                                      "cls": "android.view.View",
+                                      "clickable": true,
+                                      "c": [
+                                        {
+                                          "b": "[849,116][912,179]",
+                                          "a11y": "Filter",
+                                          "cls": "android.view.View"
+                                        },
+                                        {
+                                          "b": "[828,95][933,200]",
+                                          "cls": "android.widget.Button"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "b": "[944,85][1070,211]",
+                                      "cls": "android.view.View",
+                                      "clickable": true,
+                                      "c": [
+                                        {
+                                          "b": "[975,116][1038,179]",
+                                          "a11y": "More",
+                                          "cls": "android.view.View"
+                                        },
+                                        {
+                                          "b": "[954,95][1059,200]",
+                                          "cls": "android.widget.Button"
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "b": "[0,1979][1080,2169]",
+                                  "cls": "android.view.View",
+                                  "c": [
+                                    {
+                                      "b": "[32,2011][1048,2137]",
+                                      "cls": "android.view.View",
+                                      "c": [
+                                        {
+                                          "b": "[74,2047][264,2100]",
+                                          "txt": "Task added",
+                                          "cls": "android.widget.TextView"
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "b": "[913,2170][1039,2296]",
+                                  "cls": "android.view.View",
+                                  "clickable": true,
+                                  "c": [
+                                    {
+                                      "b": "[944,2201][1007,2264]",
+                                      "a11y": "New Task",
+                                      "cls": "android.view.View"
+                                    },
+                                    {
+                                      "b": "[923,2180][1028,2285]",
+                                      "cls": "android.widget.Button"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
