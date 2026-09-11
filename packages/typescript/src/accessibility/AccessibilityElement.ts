@@ -10,6 +10,7 @@ export interface AccessibilityElement {
   androidText?: string | undefined;
   androidContentDesc?: string | undefined;
   androidBounds?: string | undefined;
+  maestroBounds?: string | undefined;
   frame?: object | undefined;
   frameChain?: number[] | undefined; // For Selenium: chain of iframe backendNodeIds from root to element's frame
 }

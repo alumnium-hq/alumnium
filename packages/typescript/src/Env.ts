@@ -143,6 +143,10 @@ export const Env = {
     );
   },
 
+  get ALUMNIUM_MAESTRO_PATH() {
+    return envVar("ALUMNIUM_MAESTRO_PATH", z.string().optional());
+  },
+
   get ALUMNIUM_MODEL() {
     return envVar(
       "ALUMNIUM_MODEL",

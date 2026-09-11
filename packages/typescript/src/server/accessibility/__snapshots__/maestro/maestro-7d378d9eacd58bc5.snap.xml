@@ -1,0 +1,26 @@
+<div name="Do Stuf" id=1>
+  <div id=8 resource-id="Todo List📝">
+    <div id=9>
+      <div id=11>Edit</div>
+    </div>
+    <div id=12>
+      <div id=14>Add</div>
+    </div>
+    <div id=15>Todo List📝</div>
+  </div>
+  <div id=20>
+    <div id=27>
+      <div id=28 resource-id="circle">circle</div>
+      <div id=29>Buy milk</div>
+    </div>
+    <div name="Vertical scroll bar, 1 page" id=30 text="0%" />
+    <div name="Vertical scroll bar, 1 page" id=32 text="0%" />
+  </div>
+</div>
+<div id=37 />
+<div id=38>
+  <div id=41>10:36</div>
+  <div id=44 text="No signal">Cellular</div>
+  <div name="SSID, 3 of 3 Wi-Fi bars" id=45 resource-id="3 of 3 Wi-Fi bars" />
+  <div id=46 text="Not charging">100% battery power</div>
+</div>

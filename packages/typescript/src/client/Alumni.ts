@@ -11,6 +11,8 @@ import {
   AppiumDriver,
   BaseDriver,
   type Element,
+  MaestroDriver,
+  MaestroSession,
   PlaywrightDriver,
   SeleniumDriver,
 } from "../drivers/index.ts";
@@ -41,7 +43,7 @@ export type AlumniOptions = Alumni.Options;
 export type VisionOptions = Alumni.VisionOptions;
 
 export namespace Alumni {
-  export type Driver = WebDriver | Page | Browser;
+  export type Driver = WebDriver | Page | Browser | MaestroSession;
 
   export interface Options {
     url?: string | undefined;
@@ -87,7 +89,9 @@ export class Alumni {
     this.llm = options.llm;
 
     // Wrap driver or use directly if already wrapped
-    if (driver instanceof WebDriver) {
+    if (driver instanceof MaestroSession) {
+      this.driver = new MaestroDriver(driver);
+    } else if (driver instanceof WebDriver) {
       this.driver = new SeleniumDriver(driver);
     } else if ((driver as Page).context) {
       this.driver = new PlaywrightDriver(driver as Page);
