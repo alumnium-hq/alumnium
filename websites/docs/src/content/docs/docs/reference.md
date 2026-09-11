@@ -114,7 +114,7 @@ Select AI provider and model to use.
 | azure_openai  | gpt-5-nano                                  | Self-hosted Azure OpenAI API. Recommended model version is _2025-08-07_. |
 | aws_anthropic | us.anthropic.claude-haiku-4-5-20251001-v1:0 | Serverless Amazon Bedrock API.                                           |
 | aws_meta      | us.meta.llama4-maverick-17b-instruct-v1:0   | Serverless Amazon Bedrock API.                                           |
-| codex         | gpt-5.4-mini                                | OpenAI models via ChatGPT Plus/Pro OAuth.                                |
+| codex         | gpt-5.6-luna                                | OpenAI models via ChatGPT Plus/Pro OAuth.                                |
 | cursor        | composer-2.5                                | Cursor models via Cursor Agents SDK (local runtime).                     |
 | deepseek      | deepseek-reasoner                           | DeepSeek Platform.                                                       |
 | google        | gemini-3.1-flash-lite                       | Google AI Studio API.                                                    |

@@ -25,7 +25,7 @@ class Name:
         Provider.ANTHROPIC: "claude-haiku-4-5-20251001",
         Provider.AWS_ANTHROPIC: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
         Provider.AWS_META: "us.meta.llama4-maverick-17b-instruct-v1:0",
-        Provider.CODEX: "gpt-5.4-mini",
+        Provider.CODEX: "gpt-5.6-luna",
         Provider.CURSOR: "composer-2.5",
         Provider.DEEPSEEK: "deepseek-reasoner",
         Provider.GOOGLE: "gemini-3.1-flash-lite",
