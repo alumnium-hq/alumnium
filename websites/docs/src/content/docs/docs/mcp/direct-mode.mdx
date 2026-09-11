@@ -1,0 +1,59 @@
+---
+title: Direct Mode
+description: Control browsers and mobile applications through Alumnium's direct MCP tools without extra LLM calls.
+---
+
+Direct mode lets your coding agent control the drivers directly. The agent reads the accessibility tree, chooses elements, and calls individual actions. Alumnium does not initialize an LLM and requires no model credentials. This allows for faster execution at the cost of increased context usage of the coding agent.
+
+## Setup
+
+Use the [setup instructions](/docs/mcp/overview#setup), append `--mode direct` to the server arguments, and omit model environment variables such as `OPENAI_API_KEY`.
+
+## Tools
+
+Direct mode exposes all 19 tools below.
+
+| Tool                                | Arguments                                | Description                                                                                                  |
+| ----------------------------------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| [`start`](/docs/mcp/overview#start) | `capabilities`                           | Initialize a browser or mobile session. Pass capabilities as a JSON string or a path to a JSON file.         |
+| [`stop`](/docs/mcp/overview#stop)   | `id`, `save_cache`                       | Close the session and clean up driver resources. Returns the artifacts directory and token usage statistics. |
+| `fetch_accessibility_tree`          | `id`                                     | Read the current accessibility tree as XML and obtain element IDs for actions.                               |
+| `click`                             | `id`, `element_id`                       | Click an element.                                                                                            |
+| `type`                              | `id`, `element_id`, `text`               | Focus an element, clear its contents, and type text.                                                         |
+| `press_key`                         | `id`, `key`                              | Press a keyboard key.                                                                                        |
+| `hover`                             | `id`, `element_id`                       | Hover over an element.                                                                                       |
+| `upload`                            | `id`, `element_id`, `paths`              | Click a file chooser button and upload files from an array of absolute paths.                                |
+| `drag_and_drop`                     | `id`, `from_element_id`, `to_element_id` | Drag one element onto another.                                                                               |
+| `drag_slider`                       | `id`, `element_id`, `value`              | Set a slider to the desired value.                                                                           |
+| `scroll`                            | `id`, `element_id`                       | Scroll to an element.                                                                                        |
+| `navigate_to_url`                   | `id`, `url`                              | Navigate to a URL.                                                                                           |
+| `navigate_back`                     | `id`                                     | Go back in browser history.                                                                                  |
+| `switch_to_next_tab`                | `id`                                     | Switch to the next browser tab.                                                                              |
+| `switch_to_previous_tab`            | `id`                                     | Switch to the previous browser tab.                                                                          |
+| `execute_javascript`                | `id`, `script`                           | Execute JavaScript in the browser context.                                                                   |
+| `print_to_pdf`                      | `id`, `filepath`                         | Save the current page as a PDF file.                                                                         |
+
+Driver support still applies. Browser-specific actions such as JavaScript execution are not available in native mobile contexts.
+
+Unlike [Agentic Mode](/docs/mcp/agentic-mode), direct mode does not expose `do`, `get`, or `check`.
+
+## Working with Element IDs
+
+Call `fetch_accessibility_tree` before using an element ID. Actions use `element_id`, `from_element_id`, and `to_element_id` to distinguish element IDs from the session `id`. Fetch a new tree after each action before using element IDs again.
+
+For example, start a session and use its returned `id` in subsequent calls:
+
+```typescript
+start({ capabilities: '{"platformName": "chrome"' });
+navigate_to_url({ id: "<session-id>", url: "https://example.com" });
+
+fetch_accessibility_tree({ id: "<session-id>" });
+click({ id: "<session-id>", element_id: 12 });
+
+fetch_accessibility_tree({ id: "<session-id>" });
+type({ id: "<session-id>", element_id: 8, text: "hello" });
+
+stop({ id: "<session-id>" });
+```
+
+Use the actual element IDs returned by each tree. Separate sessions can target Chrome, iOS, or Android.

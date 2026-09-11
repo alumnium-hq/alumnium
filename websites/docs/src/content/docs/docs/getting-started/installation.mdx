@@ -10,6 +10,9 @@ import { Tabs, TabItem } from "@astrojs/starlight/components";
 
 Alumnium for Java requires JDK 21+ and is distributed via [Maven Central](https://central.sonatype.com/artifact/ai.alumnium/alumnium).
 
+<Tabs>
+  <TabItem label="Gradle">
+
 To install, add the library to your Gradle build along with a CLI artifact that matches your host platform.
 
 ```groovy title="build.gradle"
@@ -19,7 +22,10 @@ dependencies {
 }
 ```
 
-Or, if you're using maven, add this to your pom.xml
+  </TabItem>
+  <TabItem label="Maven">
+
+To install, add the library to your `pom.xml` with a CLI artifact that matches your host platform.
 
 ```xml title="pom.xml"
 <dependencies>
@@ -37,6 +43,9 @@ Or, if you're using maven, add this to your pom.xml
   </dependency>
 </dependencies>
 ```
+
+  </TabItem>
+</Tabs>
 
 Replace `alumnium-cli-darwin-arm64` with the artifact matching your platform, or add multiple artifacts if you need to support multiple platforms. The available CLI artifacts are:
 
@@ -57,9 +66,29 @@ Alumnium requires Python 3+ and is distributed as a [PyPI package](https://pypi.
 
 To install, run the following command:
 
+<Tabs>
+  <TabItem label="pip">
+
 ```bash title="Installing dependencies…"
 pip install alumnium
 ```
+
+  </TabItem>
+  <TabItem label="Poetry">
+
+```bash title="Installing dependencies…"
+poetry add alumnium
+```
+
+  </TabItem>
+  <TabItem label="uv">
+
+```bash title="Installing dependencies…"
+uv add alumnium
+```
+
+  </TabItem>
+</Tabs>
 
 </LanguageContent>
 
