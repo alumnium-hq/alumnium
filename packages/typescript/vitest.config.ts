@@ -8,6 +8,8 @@ import type { InlineConfig } from "vitest/node";
 
 const driverKind = Env.ALUMNIUM_DRIVER;
 const isAppium = Driver.isAppium(driverKind);
+const isMaestro = Driver.isMaestro(driverKind);
+const isMobile = Driver.isMobile(driverKind);
 
 await Logger.initEnv({ quiet: true });
 
@@ -41,10 +43,14 @@ export default defineConfig({
             count: Env.ALUMNIUM_TEST_RETRY_COUNT,
             delay: Env.ALUMNIUM_TEST_RETRY_DELAY,
           },
-          globalSetup: isAppium ? ["tests/system/setup.appium.ts"] : [],
+          globalSetup: isAppium
+            ? ["tests/system/setup.appium.ts"]
+            : isMaestro
+              ? ["tests/system/setup.maestro.ts"]
+              : [],
           setupFiles: ["tests/system/setup.ts"],
           pool: "threads",
-          fileParallelism: !isAppium,
+          fileParallelism: !isMobile,
           maxWorkers: Env.ALUMNIUM_TEST_MAX_CONCURRENCY,
         },
       },

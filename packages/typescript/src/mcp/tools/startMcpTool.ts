@@ -6,6 +6,7 @@ import z from "zod";
 
 import { Alumni } from "../../client/Alumni.ts";
 import { Driver } from "../../drivers/Driver.ts";
+import { Env } from "../../Env.ts";
 import { NavigationPolicy } from "../../NavigationPolicy.ts";
 import { Telemetry } from "../../telemetry/Telemetry.ts";
 import { DragSliderTool } from "../../tools/DragSliderTool.ts";
@@ -20,8 +21,8 @@ import { McpArtifactsStore } from "../McpArtifactsStore.ts";
 import { McpProfilesStore } from "../McpProfilesStore.ts";
 import { McpState } from "../McpState.ts";
 import {
-  createAppiumDriver,
   createChromeDriver,
+  createMobileDriver,
   type McpDriver,
 } from "../mcpDrivers.ts";
 import { McpTool } from "./McpTool.ts";
@@ -79,18 +80,23 @@ export const startMcpTool = McpTool.define("start", {
 
           Must include "platformName" (e.g., "chrome", "ios", "android").
 
-          Example JSON string: '{"platformName": "ios", "appium:deviceName": "iPhone 16", "appium:platformVersion": "18.0"}'.
+          Example JSON string: '{"platformName": "ios", "appium:deviceName": "iPhone 16", "appium:platformVersion": "18.0", "alumnium:options": {"application": "com.example.app"}}'.
 
           Example file path: "/path/to/capabilities.json".
 
           Top-level options:
 
           Alumnium-specific options go in "alumnium:options":
+            - "appArguments" (string[]) — command-line arguments to launch the mobile app with, e.g. ["-UITesting"]. Becomes "appium:processArguments".args on Appium; passed to the app's launch on Maestro;
+            - "appEnvironment" (object) — environment variables to launch the mobile app with, e.g. {"API_URL": "https://staging.example.com"}. Becomes "appium:processArguments".env on Appium; passed to the app's launch on Maestro (iOS simulators only);
+            - "application" (string) — the mobile app to run. An identifier of an installed app — iOS bundle id or Android package name, e.g. "com.example.app" — becomes "appium:bundleId"/"appium:appPackage" on Appium and is what Maestro requires. On Appium it may instead reference an app to install — a local .app/.apk/.ipa path, a URL, or a cloud id like "lt://APP123" — which becomes "appium:app";
+            - "appReset" (boolean, default false) — wipe the app's state before launching it. Becomes "appium:fullReset" on Appium, clearState on Maestro;
             - "autoswitchToNewTab" (boolean, default true) — auto-switch to newly opened tabs;
             - "baseUrl" (string) — URL to navigate to automatically after driver start, e.g. "https://example.com";
             - "changeAnalysis" (boolean, default true) — enable UI changes analysis agent;
             - "cookies" (array) — cookies to set, supported for Selenium and Playwright, e.g. [{"name": "session", "value": "abc123", "domain": ".example.com"}];
             - "device" (string or object) — Playwright device emulation, Playwright only. Either the name of a built-in device preset, e.g. "Pixel 7", or a custom device-descriptor object with any of viewport/userAgent/deviceScaleFactor/isMobile/hasTouch, e.g. {"viewport": {"width": 600, "height": 1024}, "userAgent": "...", "deviceScaleFactor": 1, "isMobile": true, "hasTouch": true} — you can paste this straight from Playwright's own device list; unrecognized fields (e.g. "defaultBrowserType", "screen") are ignored. "userAgent" set below overrides the device's;
+            - "deviceId" (string) — mobile device to drive, by simulator/emulator UDID. Becomes "appium:udid" on Appium; on Maestro selects among connected devices, defaulting to the first. Not to be confused with "device" above;
             - "excludeAttributes" (string[]) — accessibility attributes to exclude from the tree (e.g., ["src"]);
             - "executablePath" (string) — path to a custom Chrome executable;
             - "fullPageScreenshot" (boolean, default false) — capture full-page screenshots.
@@ -252,11 +258,45 @@ export const startMcpTool = McpTool.define("start", {
       }),
     };
 
+    // Shared mobile options, translated per driver in `createMobileDriver`.
+    const mobileOptions: McpDriver.MobileOptions = {
+      ...(typeof alumniumOptions["application"] === "string" && {
+        app: alumniumOptions["application"],
+      }),
+      ...(typeof alumniumOptions["deviceId"] === "string" && {
+        deviceId: alumniumOptions["deviceId"],
+      }),
+      ...(typeof alumniumOptions["appReset"] === "boolean" && {
+        appReset: alumniumOptions["appReset"],
+      }),
+      ...(Array.isArray(alumniumOptions["appArguments"]) && {
+        appArguments: alumniumOptions["appArguments"].filter(
+          (value): value is string => typeof value === "string",
+        ),
+      }),
+      ...(typeof alumniumOptions["appEnvironment"] === "object" &&
+        alumniumOptions["appEnvironment"] !== null &&
+        !Array.isArray(alumniumOptions["appEnvironment"]) &&
+        Object.values(alumniumOptions["appEnvironment"]).every(
+          (value) => typeof value === "string",
+        ) && {
+          appEnvironment: alumniumOptions["appEnvironment"] as Record<
+            string,
+            string
+          >,
+        }),
+    };
+
     const alumniumOptionsNonDriverKeys = new Set([
+      "app",
+      "appArguments",
+      "appEnvironment",
+      "appReset",
       "baseUrl",
       "changeAnalysis",
       "cookies",
       "device",
+      "deviceId",
       "excludeAttributes",
       "executablePath",
       "headers",
@@ -303,17 +343,32 @@ export const startMcpTool = McpTool.define("start", {
       case "xcuitest":
       case "uiautomator2":
         {
+          const kind = Env.ALUMNIUM_DRIVER === "maestro" ? "maestro" : "appium";
           driver = await tracer.span(
             "mcp.driver.start",
             {
               "mcp.driver.id": id,
-              "driver.kind": "appium",
+              "driver.kind": kind,
               "driver.platform": platform,
             },
-            () => createAppiumDriver(platform, capabilities, serverUrl),
+            () =>
+              createMobileDriver(
+                platform,
+                capabilities,
+                serverUrl,
+                mobileOptions,
+              ),
           );
         }
         break;
+
+      case "maestro":
+        logger.error(
+          "platformName 'maestro' is not a target. Pass 'ios' or 'android' and set ALUMNIUM_DRIVER=maestro.",
+        );
+        throw new Error(
+          "platformName 'maestro' is not a target. Pass 'ios' or 'android' and set ALUMNIUM_DRIVER=maestro.",
+        );
 
       case undefined:
         logger.error(`Unsupported platformName: ${platformName}`);

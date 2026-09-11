@@ -123,6 +123,7 @@ mise :test/system:selenium
 mise :test/system:playwright
 mise :test/system:appium-ios
 mise :test/system:appium-android
+mise :test/system:maestro
 
 # Run unit tests
 mise :test/unit
@@ -159,13 +160,13 @@ mise :types
 
 For local development, you may need to configure the following environment variables:
 
-| Variable Name        | Description                                            | Default Value             |
-| -------------------- | ------------------------------------------------------ | ------------------------- |
-| `ALUMNIUM_DRIVER`    | Driver to use for tests (selenium, playwright, appium) | `selenium`                |
-| `ALUMNIUM_MODEL`     | AI model provider (anthropic, openai, google, etc.)    | `openai`                  |
-| `ALUMNIUM_LOG_PATH`  | Path to the alumnium log directory                     | `stdout(logs to console)` |
-| `ALUMNIUM_LOG_LEVEL` | Log level or configuration value                       | `WARNING`                 |
-| `ALUMNIUM_CACHE`     | Cache provider or disable it                           | `filesystem`              |
+| Variable Name        | Description                                                                         | Default Value             |
+| -------------------- | ----------------------------------------------------------------------------------- | ------------------------- |
+| `ALUMNIUM_DRIVER`    | Driver to use for tests (selenium, playwright, appium-ios, appium-android, maestro) | `selenium`                |
+| `ALUMNIUM_MODEL`     | AI model provider (anthropic, openai, google, etc.)                                 | `openai`                  |
+| `ALUMNIUM_LOG_PATH`  | Path to the alumnium log directory                                                  | `stdout(logs to console)` |
+| `ALUMNIUM_LOG_LEVEL` | Log level or configuration value                                                    | `WARNING`                 |
+| `ALUMNIUM_CACHE`     | Cache provider or disable it                                                        | `filesystem`              |
 
 ### 5. Pull Request Process
 

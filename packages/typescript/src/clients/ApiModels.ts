@@ -11,7 +11,7 @@ import type { SessionId } from "../server/session/SessionId.ts";
 import type { ToolCall } from "../tools/BaseTool.ts";
 
 export interface SessionRequest {
-  platform: "chromium" | "uiautomator2" | "xcuitest";
+  platform: "chromium" | "maestro" | "uiautomator2" | "xcuitest";
   provider: string | undefined;
   name?: string | undefined;
   tools: { [key: string]: any }[];
@@ -22,7 +22,7 @@ export interface SessionRequest {
 export interface SessionResponse {
   session_id: SessionId;
   model: string;
-  platform: "chromium" | "uiautomator2" | "xcuitest";
+  platform: "chromium" | "maestro" | "uiautomator2" | "xcuitest";
 }
 
 export interface PlanRequest {

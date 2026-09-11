@@ -5,9 +5,9 @@ describe("Obscured Element", () => {
   const it = baseIt.override("setup", async ({ setup, skip }) => {
     return async (options) => {
       const result = await setup(options);
-      const { isAppiumDriver } = result;
+      const { isMobile } = result;
 
-      if (isAppiumDriver) skip("Not supported on Appium driver yet");
+      if (isMobile) skip("Not supported on mobile drivers yet");
 
       return result;
     };
