@@ -3,6 +3,8 @@
  * State management for MCP server driver instances.
  */
 
+import type { BaseServerAccessibilityTree } from "../server/accessibility/BaseServerAccessibilityTree.ts";
+
 import { Alumni } from "../client/Alumni.ts";
 import { PlaywrightDriver } from "../drivers/PlaywrightDriver.ts";
 import { LlmUsageStats } from "../llm/llmSchema.ts";
@@ -18,6 +20,7 @@ export namespace McpState {
 
   export interface Driver {
     readonly al: Alumni;
+    tree?: BaseServerAccessibilityTree | undefined;
     readonly mcpDriver: McpDriver;
     readonly artifactsStore: McpArtifactsStore;
     stepCounter: number;

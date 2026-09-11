@@ -129,6 +129,13 @@ You can also override the LLM for each provider by passing it after `/`.
 export ALUMNIUM_MODEL="openai/gpt-5"
 ```
 
+### `ALUMNIUM_MCP_MODE`
+
+MCP execution mode:
+
+- `agentic` (default) uses an LLM to interpret instructions, providing high-level tools (do/get/check)
+- `direct` skips LLM, instead providing low-level interaction tools (click/type/upload/etc.)
+
 ### `ALUMNIUM_MCP_ARTIFACTS_DIR`
 
 Sets the directory where the MCP server stores artifacts such as screenshots. Default is `.alumnium/artifacts`.
