@@ -200,7 +200,7 @@ export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree
     const value = xmlTag.attribs.value || null;
 
     this.#traverseListOptions(xmlTag, (option) => {
-      if (value === undefined) return;
+      if (value === null) return;
 
       const optionValue = option.attribs.name || textContent(option).trim();
       option.attribs.selected = String(optionValue === value);

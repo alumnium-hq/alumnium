@@ -45,10 +45,10 @@
             <LabelText id=63>
               Dropdown (select)
               <combobox name="Dropdown (select)" expanded="true">
-                <option name="Open this select menu" id=68 focusable selected="false" />
-                <option name="One" id=69 focusable selected="false" />
-                <option name="Two" id=70 focusable selected="false" />
-                <option name="Three" id=71 focusable selected="false" />
+                <option name="Open this select menu" id=68 focusable selected />
+                <option name="One" id=69 focusable />
+                <option name="Two" id=70 focusable />
+                <option name="Three" id=71 focusable />
               </combobox>
             </LabelText>
             <LabelText id=72>

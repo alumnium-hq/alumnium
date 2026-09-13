@@ -321,7 +321,7 @@ describe(ServerChromiumAccessibilityTree, () => {
 
       expect(tree.toXml()).toMatchInlineSnapshot(`
         "<combobox expanded="true">
-          <option name="One" id=3 focusable selected="false" />
+          <option name="One" id=3 focusable />
         </combobox>"
       `);
 
