@@ -80,14 +80,20 @@ runs:
     - name: Boot Android Emulator
       if: inputs.platform == 'android'
       run: |
+        ADB="$ANDROID_HOME/platform-tools/adb"
+        LOG="$RUNNER_TEMP/emulator.log"
         nohup "$ANDROID_HOME/emulator/emulator" @maestro \
           -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot -camera-back none \
-          > "$RUNNER_TEMP/emulator.log" 2>&1 &
-        ADB="$ANDROID_HOME/platform-tools/adb"
-        "$ADB" wait-for-device
-        timeout 300 bash -c "until [ \"\$('$ADB' shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')\" = 1 ]; do sleep 5; done"
+          > "$LOG" 2>&1 &
+        if ! timeout 300 bash -c "until [ \"\$('$ADB' shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')\" = 1 ]; do sleep 5; done"; then
+          echo "::error::Android emulator did not boot within 5 minutes"
+          "$ADB" devices
+          cat "$LOG"
+          exit 1
+        fi
         "$ADB" shell settings put global window_animation_scale 0
         "$ADB" shell settings put global transition_animation_scale 0
         "$ADB" shell settings put global animator_duration_scale 0
         "$ADB" devices
+        tail -n 20 "$LOG"
       shell: bash

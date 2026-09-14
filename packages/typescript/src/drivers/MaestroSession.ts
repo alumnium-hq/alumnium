@@ -125,6 +125,8 @@ export class MaestroSession {
       // The SDK's default environment forwards only HOME/PATH/SHELL/TERM/USER.
       ...toolchainEnvironment(),
       MAESTRO_CLI_ANALYSIS_NOTIFICATION_DISABLED: "true",
+      // Keeps first-run analytics notices off stderr in fresh environments such as CI.
+      MAESTRO_CLI_NO_ANALYTICS: "1",
     };
     const transport = new StdioClientTransport({
       command: this.#executablePath,
