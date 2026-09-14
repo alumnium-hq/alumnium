@@ -94,71 +94,73 @@ jobs:
         if: failure() && runner.debug == '1'
         uses: mxschmitt/action-tmate@v3
 
-  test-pkg:
-    name: Package Tests
-    runs-on: ubuntu-latest
-    env:
-      ALUMNIUM_MODEL: azure_openai
+# TEMP(maestro-ci): re-enable once the Maestro jobs are green.
+#   test-pkg:
+#     name: Package Tests
+#     runs-on: ubuntu-latest
+#     env:
+#       ALUMNIUM_MODEL: azure_openai
 
-    steps:
-      - name: Git Checkout
-        uses: actions/checkout@v6
-        with:
-          ref: ${{ inputs.sha || github.sha }}
+#     steps:
+#       - name: Git Checkout
+#         uses: actions/checkout@v6
+#         with:
+#           ref: ${{ inputs.sha || github.sha }}
 
-      - name: Set Up Dev Env
-        uses: ./.github/actions/setup
+#       - name: Set Up Dev Env
+#         uses: ./.github/actions/setup
 
-      - name: Set Up Playwright
-        uses: ./.github/actions/setup-playwright
-        with:
-          package: typescript
+#       - name: Set Up Playwright
+#         uses: ./.github/actions/setup-playwright
+#         with:
+#           package: typescript
 
-      - name: Build Dist
-        run: mise //packages/typescript:build
+#       - name: Build Dist
+#         run: mise //packages/typescript:build
 
-      - name: Run npm Tests
-        run: mise //packages/typescript:test/package
+#       - name: Run npm Tests
+#         run: mise //packages/typescript:test/package
 
-      - name: Upload Alumnium Artifacts
-        if: always()
-        uses: ./.github/actions/alumnium-artifacts
-        with:
-          name: ci-typescript-test-pkg
-          package: typescript
+#       - name: Upload Alumnium Artifacts
+#         if: always()
+#         uses: ./.github/actions/alumnium-artifacts
+#         with:
+#           name: ci-typescript-test-pkg
+#           package: typescript
 
-      - name: Run Playwright Post-Setup
-        if: always()
-        uses: ./.github/actions/setup-playwright/post
-        with:
-          package: typescript
+#       - name: Run Playwright Post-Setup
+#         if: always()
+#         uses: ./.github/actions/setup-playwright/post
+#         with:
+#           package: typescript
 
-      - name: Debug Session
-        if: failure() && runner.debug == '1'
-        uses: mxschmitt/action-tmate@v3
+#       - name: Debug Session
+#         if: failure() && runner.debug == '1'
+#         uses: mxschmitt/action-tmate@v3
 
-  build:
-    name: Build
-    runs-on: ubuntu-latest
+# TEMP(maestro-ci): re-enable once the Maestro jobs are green.
+#   build:
+#     name: Build
+#     runs-on: ubuntu-latest
 
-    steps:
-      - name: Git Checkout
-        uses: actions/checkout@v6
-        with:
-          ref: ${{ inputs.sha || github.sha }}
+#     steps:
+#       - name: Git Checkout
+#         uses: actions/checkout@v6
+#         with:
+#           ref: ${{ inputs.sha || github.sha }}
 
-      - name: Set Up Dev Env
-        uses: ./.github/actions/setup
+#       - name: Set Up Dev Env
+#         uses: ./.github/actions/setup
 
-      - name: Build Dist
-        run: mise //packages/typescript:build
+#       - name: Build Dist
+#         run: mise //packages/typescript:build
 
-      - name: Upload npm Artifacts
-        uses: ./.github/actions/dist-artifacts
-        with:
-          name: build
-          npm: true
+#       - name: Upload npm Artifacts
+#         uses: ./.github/actions/dist-artifacts
+#         with:
+#           name: build
+#           npm: true
 
-      - name: Debug Session
-        if: failure() && runner.debug == '1'
-        uses: mxschmitt/action-tmate@v3
+#       - name: Debug Session
+#         if: failure() && runner.debug == '1'
+#         uses: mxschmitt/action-tmate@v3

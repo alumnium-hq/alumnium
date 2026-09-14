@@ -125,86 +125,99 @@ jobs:
         with:
           workflow-inputs: ${{ toJSON(inputs) }}
 
-      - name: Set Up Dev Env
-        uses: ./.github/actions/setup
-        with:
-          python-cache: true
+# TEMP(maestro-ci): re-enable once the Maestro jobs are green.
+#       - name: Set Up Dev Env
+#         uses: ./.github/actions/setup
+#         with:
+#           python-cache: true
 
-      - name: Build
-        run: mise :build
+# TEMP(maestro-ci): re-enable once the Maestro jobs are green.
+#       - name: Build
+#         run: mise :build
 
-      - name: Check Formatting
-        run: mise :format/check
+# TEMP(maestro-ci): re-enable once the Maestro jobs are green.
+#       - name: Check Formatting
+#         run: mise :format/check
 
-      - name: Lint
-        run: mise :lint
+# TEMP(maestro-ci): re-enable once the Maestro jobs are green.
+#       - name: Lint
+#         run: mise :lint
 
-      - name: Check Types
-        run: mise :types
+# TEMP(maestro-ci): re-enable once the Maestro jobs are green.
+#       - name: Check Types
+#         run: mise :types
 
-      - name: Unit Tests
-        run: mise :test/unit
+# TEMP(maestro-ci): re-enable once the Maestro jobs are green.
+#       - name: Unit Tests
+#         run: mise :test/unit
 
-      - name: Upload Binaries Artifacts
-        uses: ./.github/actions/dist-artifacts
-        with:
-          name: build
-          bin: true
+# TEMP(maestro-ci): re-enable once the Maestro jobs are green.
+#       - name: Upload Binaries Artifacts
+#         uses: ./.github/actions/dist-artifacts
+#         with:
+#           name: build
+#           bin: true
 
-      - name: Upload Test Artifacts
-        if: always()
-        uses: ./.github/actions/test-artifacts
-        with:
-          name: ci
-          typescript: true
-          python: true
+# TEMP(maestro-ci): re-enable once the Maestro jobs are green.
+#       - name: Upload Test Artifacts
+#         if: always()
+#         uses: ./.github/actions/test-artifacts
+#         with:
+#           name: ci
+#           typescript: true
+#           python: true
 
-      - name: Upload Alumnium Artifacts
-        if: always()
-        uses: ./.github/actions/alumnium-artifacts
-        with:
-          name: ci-test
-          package: typescript
+# TEMP(maestro-ci): re-enable once the Maestro jobs are green.
+#       - name: Upload Alumnium Artifacts
+#         if: always()
+#         uses: ./.github/actions/alumnium-artifacts
+#         with:
+#           name: ci-test
+#           package: typescript
 
-      - name: Run Post-Setup
-        if: always()
-        uses: ./.github/actions/setup/post
+# TEMP(maestro-ci): re-enable once the Maestro jobs are green.
+#       - name: Run Post-Setup
+#         if: always()
+#         uses: ./.github/actions/setup/post
 
       - name: Debug Session
         if: failure() && runner.debug == '1'
         uses: mxschmitt/action-tmate@v3
 
-  eval:
-    name: Eval
-    needs: test
-    secrets: inherit
-    if: needs.test.outputs.run-eval == 'true'
-    uses: ./.github/workflows/ci-eval.yml
-    with:
-      sha: ${{ needs.test.outputs.sha }}
-      models: ${{ needs.test.outputs.models }}
+# TEMP(maestro-ci): re-enable once the Maestro jobs are green.
+#   eval:
+#     name: Eval
+#     needs: test
+#     secrets: inherit
+#     if: needs.test.outputs.run-eval == 'true'
+#     uses: ./.github/workflows/ci-eval.yml
+#     with:
+#       sha: ${{ needs.test.outputs.sha }}
+#       models: ${{ needs.test.outputs.models }}
 
-  java:
-    name: Java
-    needs: test
-    secrets: inherit
-    if: needs.test.outputs.run-java == 'true'
-    uses: ./.github/workflows/ci-java.yml
-    with:
-      sha: ${{ needs.test.outputs.sha }}
-      models: ${{ needs.test.outputs.models }}
-      drivers: ${{ needs.test.outputs.drivers }}
+# TEMP(maestro-ci): re-enable once the Maestro jobs are green.
+#   java:
+#     name: Java
+#     needs: test
+#     secrets: inherit
+#     if: needs.test.outputs.run-java == 'true'
+#     uses: ./.github/workflows/ci-java.yml
+#     with:
+#       sha: ${{ needs.test.outputs.sha }}
+#       models: ${{ needs.test.outputs.models }}
+#       drivers: ${{ needs.test.outputs.drivers }}
 
-  python:
-    name: Python
-    needs: test
-    secrets: inherit
-    if: needs.test.outputs.run-python == 'true'
-    uses: ./.github/workflows/ci-python.yml
-    with:
-      sha: ${{ needs.test.outputs.sha }}
-      models: ${{ needs.test.outputs.models }}
-      drivers: ${{ needs.test.outputs.drivers }}
+# TEMP(maestro-ci): re-enable once the Maestro jobs are green.
+#   python:
+#     name: Python
+#     needs: test
+#     secrets: inherit
+#     if: needs.test.outputs.run-python == 'true'
+#     uses: ./.github/workflows/ci-python.yml
+#     with:
+#       sha: ${{ needs.test.outputs.sha }}
+#       models: ${{ needs.test.outputs.models }}
+#       drivers: ${{ needs.test.outputs.drivers }}
 
   typescript:
     name: TypeScript

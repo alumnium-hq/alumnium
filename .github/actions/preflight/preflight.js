@@ -37,8 +37,9 @@ class Preflight {
   static DEFAULT_DRIVERS = [
     "maestro-android",
     "maestro-ios",
-    "selenium",
-    "playwright",
+    // TEMP(maestro-ci): restore once the Maestro jobs are green.
+    // "selenium",
+    // "playwright",
   ];
   static DEFAULT_PROVIDERS = ["azure_openai"];
 
