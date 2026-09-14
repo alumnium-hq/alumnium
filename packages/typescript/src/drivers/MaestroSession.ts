@@ -86,6 +86,9 @@ export class MaestroSession {
 
   #client: Client | undefined;
   #deviceId: string | undefined;
+  /** Upper bound for one Maestro MCP tool call. */
+  static readonly TOOL_TIMEOUT_MS = 5 * 60_000;
+
   #os: MaestroSession.Os = "ios";
   readonly #requestedDeviceId: string | undefined;
   readonly #executablePath: string;
@@ -463,10 +466,14 @@ export class MaestroSession {
     // Every tool but `list_devices` targets a device, and `list_devices` is what resolves it.
     const deviceArgs =
       tool === "list_devices" ? {} : { device_id: this.deviceId };
-    const result = await client.callTool({
-      name: tool,
-      arguments: { ...deviceArgs, ...args },
-    });
+    // The SDK gives a request 60 seconds by default. Maestro's first command against a device
+    // starts its on-device driver (an XCTest runner on iOS, an instrumentation app on Android),
+    // which can take well over a minute on a cold CI machine.
+    const result = await client.callTool(
+      { name: tool, arguments: { ...deviceArgs, ...args } },
+      undefined,
+      { timeout: MaestroSession.TOOL_TIMEOUT_MS },
+    );
 
     const content = (result.content ?? []) as MaestroSession.Content[];
     if (result.isError) {
