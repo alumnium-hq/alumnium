@@ -143,7 +143,7 @@ run = [{ task = "test/system", args = ["appium-android", "{{usage.test}}"] }]
 [tasks."test/system:maestro"]
 run = '''
 ALUMNIUM_DRIVER=maestro \
-ALUMNIUM_TEST_VITEST_ARGS="tests/system/todo.app.test.ts" \
+ALUMNIUM_TEST_VITEST_ARGS="${ALUMNIUM_TEST_VITEST_ARGS:-tests/system/todo.app.test.ts}" \
 ./scripts/test-system.sh
 '''
 

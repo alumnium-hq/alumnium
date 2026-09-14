@@ -90,7 +90,9 @@ export async function useSetup(props: useSetup.Props): Promise<Setup> {
   }
 
   if (Driver.isMaestro(driverId)) {
-    (al.driver as MaestroDriver).delay = 0.5;
+    const maestroDriver = al.driver as MaestroDriver;
+    const isAndroid = inject("maestroOs") === "android";
+    maestroDriver.delay = isAndroid ? 2 : 0.5;
   }
 
   const model = await al.model();

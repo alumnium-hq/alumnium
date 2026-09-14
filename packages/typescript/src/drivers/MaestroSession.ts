@@ -9,6 +9,8 @@ import path from "node:path";
 import z from "zod";
 import { ALUMNIUM_VERSION } from "../package.ts";
 import { Logger } from "../telemetry/Logger.ts";
+import { sleep } from "../utils/timers.ts";
+import { lit } from "smollit";
 
 const logger = Logger.get(import.meta.url);
 
@@ -123,6 +125,9 @@ export class MaestroSession {
       args: ["mcp"],
       env: {
         ...getDefaultEnvironment(),
+        // The SDK's default environment forwards only HOME/PATH/SHELL/TERM/USER. Maestro locates
+        // `adb` through the Android SDK variables, so without these it sees no Android devices.
+        ...androidSdkEnvironment(),
         MAESTRO_CLI_ANALYSIS_NOTIFICATION_DISABLED: "true",
       },
       stderr: "pipe",
@@ -210,7 +215,14 @@ export class MaestroSession {
       Object.keys(this.#launchEnv).length > 0 || this.#launchArgs.length > 0;
 
     if (!configured) {
-      await this.run(`- launchApp:\n    clearState: ${clearState}\n`);
+      await this.run(lit`
+        - launchApp:
+            clearState: ${clearState}
+      `);
+      // iOS blocks until the app is up. On Android, Maestro returns once the launch intent is
+      // dispatched, before the activity owns the screen — a tree read at that moment sees only the
+      // system bars — so wait for the app window to appear before handing control back.
+      if (this.#os === "android") await this.#waitForAndroidWindow();
       return;
     }
 
@@ -221,7 +233,7 @@ export class MaestroSession {
     }
 
     // Maestro owns app state, so let it do the wiping and keep simctl to the launch itself.
-    if (clearState) await this.run("- clearState\n");
+    if (clearState) await this.run("- clearState");
     await this.#launchWithSimctl();
   }
 
@@ -284,6 +296,40 @@ export class MaestroSession {
     });
   }
 
+  async #waitForAndroidWindow(timeoutMs = 30_000): Promise<void> {
+    const deadline = Date.now() + timeoutMs;
+    while (Date.now() < deadline) {
+      if (await this.#androidWindowPresent()) {
+        // Settles the launch animation, so the first tree read is of a finished screen.
+        await this.run("- waitForAnimationToEnd");
+        return;
+      }
+      await sleep(1000);
+    }
+    logger.info(
+      `${this.appId} did not put its window on screen within ${timeoutMs}ms of launching`,
+    );
+  }
+
+  async #androidWindowPresent(): Promise<boolean> {
+    try {
+      const hierarchy = await this.inspectScreen();
+      const keyFor = (name: string) =>
+        Object.entries(hierarchy.ui_schema.abbreviations).find(
+          ([, full]) => full === name,
+        )?.[0] ?? name;
+      const ridKey = keyFor("resource-id");
+      const childrenKey = keyFor("children");
+      const has = (node: MaestroSession.Node): boolean =>
+        node[ridKey] === "android:id/content" ||
+        (Array.isArray(node[childrenKey]) &&
+          (node[childrenKey] as MaestroSession.Node[]).some(has));
+      return hierarchy.elements.some(has);
+    } catch {
+      return false;
+    }
+  }
+
   async #screenFingerprint(): Promise<string> {
     try {
       const hierarchy = await this.inspectScreen();
@@ -306,7 +352,7 @@ export class MaestroSession {
       await new Promise((resolve) => setTimeout(resolve, 500));
       if ((await this.#screenFingerprint()) !== before) {
         // Settles the launch animation, so the first tree read is of a finished screen.
-        await this.run("- waitForAnimationToEnd\n");
+        await this.run("- waitForAnimationToEnd");
         return;
       }
     }
@@ -401,4 +447,15 @@ export class MaestroSession {
   }
 
   //#endregion
+}
+
+/** The Android SDK location variables, whichever of them are set. */
+function androidSdkEnvironment(): Record<string, string> {
+  const forwarded: Record<string, string> = {};
+  for (const name of ["ANDROID_HOME", "ANDROID_SDK_ROOT"]) {
+    // oxlint-disable-next-line node/no-process-env -- forwarded verbatim to the child process
+    const value = process.env[name];
+    if (value) forwarded[name] = value;
+  }
+  return forwarded;
 }

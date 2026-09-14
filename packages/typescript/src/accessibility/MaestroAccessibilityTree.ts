@@ -18,7 +18,9 @@ const DEFAULT_ABBREVIATIONS: Record<string, string> = {
 /** Attributes rendered onto every node, in the order they should appear. */
 const ATTR_ORDER = [
   "resource-id",
+  "class",
   "accessibilityText",
+  "content-desc",
   "hintText",
   "text",
   "value",
@@ -26,12 +28,13 @@ const ATTR_ORDER = [
   "selected",
   "focused",
   "enabled",
+  "clickable",
   "bounds",
 ] as const;
 
 export namespace MaestroAccessibilityTree {
   /** Role names inferred from the attributes Maestro provides. */
-  export type Role = "TextField" | "CheckBox" | "Text" | "View";
+  export type Role = "TextField" | "CheckBox" | "Button" | "Text" | "View";
 }
 
 /**
@@ -83,7 +86,9 @@ export class MaestroAccessibilityTree extends BaseAccessibilityTree<MaestroSessi
       this.#nodeToXml(node, root),
     );
 
-    return (this.xml = XmlRenderer.render([root]));
+    return (this.xml = XmlRenderer.render([root], {
+      preserveFalseAttrs: new Set(["checked"]),
+    }));
   }
 
   #nodeToXml(node: MaestroSession.Node, parent: Element | null): Element {
@@ -105,8 +110,8 @@ export class MaestroAccessibilityTree extends BaseAccessibilityTree<MaestroSessi
     this.#elementsByRawId.set(rawId, {
       id: rawId,
       type: role,
-      name: attrs["accessibilityText"],
-      label: attrs["accessibilityText"],
+      name: attrs["accessibilityText"] ?? attrs["content-desc"],
+      label: attrs["accessibilityText"] ?? attrs["content-desc"],
       value: attrs["text"] ?? attrs["value"],
       maestroBounds: attrs["bounds"],
     });
@@ -127,6 +132,18 @@ export class MaestroAccessibilityTree extends BaseAccessibilityTree<MaestroSessi
       if (key in this.#defaults && this.#defaults[key] === value) continue;
       attrs[name] = String(value);
     }
+    // Maestro omits any attribute equal to its schema default, and `checked` defaults to false —
+    // so an unchecked checkbox arrives with no `checked` at all. Every other platform's source
+    // (CDP on web, UIAutomator2 on Appium) reports `checked="false"` outright, and the retriever
+    // relies on that: given a CheckBox with no state it declines to infer one, in either
+    // direction (measured against gpt-5 with the captured Android row). For a node that is a
+    // checkbox, absence *is* the state, so say so the way the other sources do.
+    if (
+      attrs["checked"] === undefined &&
+      this.#roleFromClass(attrs["class"]) === "CheckBox"
+    ) {
+      attrs["checked"] = "false";
+    }
     return attrs;
   }
 
@@ -144,12 +161,46 @@ export class MaestroAccessibilityTree extends BaseAccessibilityTree<MaestroSessi
     attrs: Record<string, string>,
     childCount: number,
   ): MaestroAccessibilityTree.Role {
+    // Android reports the widget class, which is the most reliable signal there is. It must win
+    // over the interactivity flag below: a Compose `EditText` is clickable too, and treating it as
+    // a button would send typed text to the wrong kind of control.
+    const fromClass = this.#roleFromClass(attrs["class"]);
+    if (fromClass) return fromClass;
     if (attrs["hintText"]) return "TextField";
     if (attrs["checked"] !== undefined) return "CheckBox";
     const hasText =
-      !!attrs["text"] || !!attrs["accessibilityText"] || !!attrs["value"];
+      !!attrs["text"] ||
+      !!attrs["accessibilityText"] ||
+      !!attrs["content-desc"] ||
+      !!attrs["value"];
     if (childCount === 0 && hasText) return "Text";
+    // Android reports interactivity as a flag rather than a type. A clickable node with nothing
+    // to say for itself — an unlabelled icon button, say — is still a control the model must be
+    // able to target, so it must not collapse into a structural `View`.
+    if (attrs["clickable"] === "true") return "Button";
     return "View";
+  }
+
+  /** Maps an Android widget class (e.g. `android.widget.EditText`) to a role, if it names one. */
+  #roleFromClass(
+    cls: string | undefined,
+  ): MaestroAccessibilityTree.Role | null {
+    const simple = cls?.split(".").at(-1);
+    switch (simple) {
+      case "EditText":
+      case "AutoCompleteTextView":
+        return "TextField";
+      case "CheckBox":
+      case "CheckedTextView":
+      case "Switch":
+      case "ToggleButton":
+        return "CheckBox";
+      case "Button":
+      case "ImageButton":
+        return "Button";
+      default:
+        return null;
+    }
   }
 
   elementById(rawId: number): AccessibilityElement {

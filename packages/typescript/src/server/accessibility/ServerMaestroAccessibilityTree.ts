@@ -42,15 +42,26 @@ export class ServerMaestroAccessibilityTree extends BaseServerAccessibilityTree 
     return xmlTag.tagName === "View" ? "generic" : xmlTag.tagName;
   }
 
-  #textAttrs = new Set(["accessibilityText", "text", "value", "hintText"]);
+  #textAttrs = new Set([
+    "accessibilityText",
+    "content-desc",
+    "text",
+    "value",
+    "hintText",
+  ]);
 
   protected override parseName(
     _role: string,
     xmlTag: Xml.Tag,
   ): string | undefined {
     const { accessibilityText, text, value } = xmlTag.attribs;
+    const contentDesc = xmlTag.attribs["content-desc"];
     return (
-      accessibilityText?.trim() || text?.trim() || value?.trim() || undefined
+      accessibilityText?.trim() ||
+      contentDesc?.trim() ||
+      text?.trim() ||
+      value?.trim() ||
+      undefined
     );
   }
 
@@ -63,6 +74,7 @@ export class ServerMaestroAccessibilityTree extends BaseServerAccessibilityTree 
 
   #xmlAttrsToExtract = new Set([
     "accessibilityText",
+    "content-desc",
     "hintText",
     "text",
     "value",
@@ -70,6 +82,7 @@ export class ServerMaestroAccessibilityTree extends BaseServerAccessibilityTree 
     "checked",
     "selected",
     "focused",
+    "clickable",
   ]);
 
   protected override skipXmlAttr(
@@ -101,12 +114,14 @@ export class ServerMaestroAccessibilityTree extends BaseServerAccessibilityTree 
 
   protected override redundantTextAttrs = new Set([
     "accessibilityText",
+    "content-desc",
     "text",
     "value",
   ]);
 
   protected override deduplicateAttrs = new Set([
     "accessibilityText",
+    "content-desc",
     "text",
     "value",
   ]);
@@ -117,17 +132,22 @@ export class ServerMaestroAccessibilityTree extends BaseServerAccessibilityTree 
     return role === "Text" ? "accessibilityText" : undefined;
   }
 
+  protected override pruneBackendRedundantNodes(xmlTag: Xml.Tag): void {
+    this.#pruneWrapperLabel(xmlTag);
+  }
+
   /**
    * Collapses the wrapper-plus-duplicate-label pattern Maestro produces for iOS controls, where a
    * button reports its label on the outer node and again on an inner leaf.
    */
-  protected override pruneBackendRedundantNodes(xmlTag: Xml.Tag): void {
+  #pruneWrapperLabel(xmlTag: Xml.Tag): void {
     for (const child of xmlTag.children) {
       const childTag = Xml.nodeAsTag(child);
-      if (childTag) this.pruneBackendRedundantNodes(childTag);
+      if (childTag) this.#pruneWrapperLabel(childTag);
     }
 
-    const label = xmlTag.attribs["accessibilityText"];
+    const label =
+      xmlTag.attribs["accessibilityText"] ?? xmlTag.attribs["content-desc"];
     if (!label || xmlTag.children.length !== 1) return;
 
     const onlyChild = xmlTag.children[0];

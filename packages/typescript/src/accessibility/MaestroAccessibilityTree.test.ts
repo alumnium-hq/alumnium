@@ -57,6 +57,53 @@ describe("MaestroAccessibilityTree", () => {
     });
   });
 
+  describe("Android", () => {
+    const load = async (name: string) =>
+      new MaestroAccessibilityTree(
+        JSON.parse(
+          await fs.readFile(
+            path.resolve(
+              path.dirname(fileURLToPath(import.meta.url)),
+              `__fixtures__/${name}.json`,
+            ),
+            "utf-8",
+          ),
+        ) as MaestroSession.Hierarchy,
+      );
+
+    it("derives roles from the widget class, so an EditText is a TextField even though it is clickable", async () => {
+      const xml = (await load("maestro_android_row_unchecked")).toStr();
+      expect(xml).toMatch(
+        /<CheckBox raw_id=\d+ class="android.widget.CheckBox"/,
+      );
+      expect(xml).not.toMatch(
+        /<Button raw_id=\d+ class="android.widget.CheckBox"/,
+      );
+    });
+
+    it("marks an unlabelled clickable view as a Button so the model can target it", async () => {
+      const xml = (await load("maestro_android_row_unchecked")).toStr();
+      expect(xml).toMatch(
+        /<Button raw_id=\d+ class="android.view.View" clickable/,
+      );
+    });
+
+    it("emits Android's content-desc as its own attribute", async () => {
+      const xml = (await load("maestro_android_row_unchecked")).toStr();
+      expect(xml).toContain('content-desc="New Task"');
+    });
+
+    it("states checked=false on an unchecked checkbox", async () => {
+      const xml = (await load("maestro_android_row_unchecked")).toStr();
+      expect(xml).toMatch(/<CheckBox [^>]*checked="false"/);
+    });
+
+    it("keeps checked=true on a ticked checkbox", async () => {
+      const xml = (await load("maestro_android_row_checked")).toStr();
+      expect(xml).toMatch(/<CheckBox (?:[^>]* )?checked(?: |\/)/);
+    });
+  });
+
   describe("elementById", () => {
     it("returns the element with its bounds", async () => {
       const tree = await loadTree();

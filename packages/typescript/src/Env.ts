@@ -147,6 +147,21 @@ export const Env = {
     return envVar("ALUMNIUM_MAESTRO_PATH", z.string().optional());
   },
 
+  get ALUMNIUM_MAESTRO_OS() {
+    return envVar(
+      "ALUMNIUM_MAESTRO_OS",
+      z.enum(["ios", "android"]).default("ios"),
+    );
+  },
+
+  get ANDROID_HOME() {
+    return envVar("ANDROID_HOME", z.string().optional());
+  },
+
+  get ANDROID_SDK_ROOT() {
+    return envVar("ANDROID_SDK_ROOT", z.string().optional());
+  },
+
   get ALUMNIUM_MODEL() {
     return envVar(
       "ALUMNIUM_MODEL",
