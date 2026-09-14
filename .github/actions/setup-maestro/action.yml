@@ -88,14 +88,22 @@ runs:
       run: |
         # Current cmdline-tools and the emulator disagree on the default AVD directory, so pin it.
         export ANDROID_AVD_HOME="$HOME/.android/avd"
+        mkdir -p "$ANDROID_AVD_HOME"
+        env | grep -E '^(ANDROID|XDG|HOME)' | sort
         if [ -f "$ANDROID_AVD_HOME/maestro.ini" ]; then
           echo "AVD 'maestro' restored from cache"
         else
           echo no | "$ANDROID_HOME/cmdline-tools/latest/bin/avdmanager" create avd \
-            --force --name maestro --device pixel_6 --package "$SYSTEM_IMAGE"
+            --force --name maestro --device pixel_6 --package "$SYSTEM_IMAGE" \
+            --path "$ANDROID_AVD_HOME/maestro.avd"
         fi
         ls -la "$ANDROID_AVD_HOME"
         "$ANDROID_HOME/emulator/emulator" -list-avds
+        if [ ! -f "$ANDROID_AVD_HOME/maestro.ini" ]; then
+          echo "::error::AVD 'maestro' was not created in $ANDROID_AVD_HOME"
+          find "$HOME" "$ANDROID_HOME" /tmp -name 'maestro.ini' 2> /dev/null || true
+          exit 1
+        fi
       shell: bash
       env:
         SYSTEM_IMAGE: system-images;android-${{ inputs.android-api-level }};google_apis;x86_64
