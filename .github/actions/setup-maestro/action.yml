@@ -13,7 +13,7 @@ inputs:
 
   android-api-level:
     required: false
-    default: 35
+    default: "35"
     description: Android API level of the emulator to boot.
 
 runs:
@@ -48,6 +48,16 @@ runs:
         sudo udevadm trigger --name-match=kvm
       shell: bash
 
+    - name: Install Android System Image
+      if: inputs.platform == 'android'
+      run: |
+        yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
+        "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install \
+          "platform-tools" "emulator" "$SYSTEM_IMAGE" > /dev/null
+      shell: bash
+      env:
+        SYSTEM_IMAGE: system-images;android-${{ inputs.android-api-level }};google_apis;x86_64
+
     - name: Restore AVD Cache
       if: inputs.platform == 'android'
       id: avd-cache
@@ -60,28 +70,24 @@ runs:
 
     - name: Create AVD
       if: inputs.platform == 'android' && steps.avd-cache.outputs.cache-hit != 'true'
-      uses: reactivecircus/android-emulator-runner@v2
-      with:
-        api-level: ${{ inputs.android-api-level }}
-        arch: x86_64
-        target: google_apis
-        profile: pixel_6
-        force-avd-creation: false
-        emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-        disable-animations: false
-        script: echo "Generated AVD snapshot for caching."
+      run: |
+        echo no | "$ANDROID_HOME/cmdline-tools/latest/bin/avdmanager" create avd \
+          --force --name maestro --device pixel_6 --package "$SYSTEM_IMAGE"
+      shell: bash
+      env:
+        SYSTEM_IMAGE: system-images;android-${{ inputs.android-api-level }};google_apis;x86_64
 
-    # NOTE: The emulator keeps running after the script finishes and is killed
-    # in the action's post step, so later steps can use it.
     - name: Boot Android Emulator
       if: inputs.platform == 'android'
-      uses: reactivecircus/android-emulator-runner@v2
-      with:
-        api-level: ${{ inputs.android-api-level }}
-        arch: x86_64
-        target: google_apis
-        profile: pixel_6
-        force-avd-creation: false
-        emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-        disable-animations: true
-        script: adb devices
+      run: |
+        nohup "$ANDROID_HOME/emulator/emulator" @maestro \
+          -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot -camera-back none \
+          > "$RUNNER_TEMP/emulator.log" 2>&1 &
+        ADB="$ANDROID_HOME/platform-tools/adb"
+        "$ADB" wait-for-device
+        timeout 300 bash -c "until [ \"\$('$ADB' shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')\" = 1 ]; do sleep 5; done"
+        "$ADB" shell settings put global window_animation_scale 0
+        "$ADB" shell settings put global transition_animation_scale 0
+        "$ADB" shell settings put global animator_duration_scale 0
+        "$ADB" devices
+      shell: bash
