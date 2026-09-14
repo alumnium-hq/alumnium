@@ -221,6 +221,13 @@ export const Env = {
     );
   },
 
+  get ALUMNIUM_PLAYWRIGHT_NEW_TAB_TIMEOUT() {
+    return envVar(
+      "ALUMNIUM_PLAYWRIGHT_NEW_TAB_TIMEOUT",
+      z.coerce.number().default(10_000),
+    );
+  },
+
   get ALUMNIUM_TEST_MAX_CONCURRENCY() {
     const defaultValue = 4;
     const cpusCount = os.cpus().length;

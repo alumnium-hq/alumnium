@@ -20,6 +20,8 @@ import com.microsoft.playwright.CDPSession;
 import com.microsoft.playwright.Frame;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.Request;
+import com.microsoft.playwright.Response;
 import com.microsoft.playwright.TimeoutError;
 import java.net.URI;
 import java.nio.file.Path;
@@ -28,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,9 +45,14 @@ public final class PlaywrightDriver extends BaseDriver {
   private static final ObjectMapper MAPPER = new ObjectMapper();
 
   private static final String WAITER_SCRIPT = loadScript("/ai/alumnium/driver/scripts/waiter.js");
-  private static final String WAIT_FOR_SCRIPT =
-      loadScript("/ai/alumnium/driver/scripts/waitFor.js");
   private static final String CONTEXT_WAS_DESTROYED_ERROR = "Execution context was destroyed";
+  private static final List<String> NETWORK_EVENTS =
+      List.of(
+          "Network.requestWillBeSent",
+          "Network.responseReceived",
+          "Network.dataReceived",
+          "Network.loadingFinished",
+          "Network.loadingFailed");
 
   private static final int NEW_TAB_DELAY = 50;
   private static final int NEW_TAB_TIMEOUT = 10_000;
@@ -53,9 +61,19 @@ public final class PlaywrightDriver extends BaseDriver {
   private CDPSession client;
   private final List<Page> openedPages = new ArrayList<>();
   private final Set<BrowserContext> watchedContexts = new HashSet<>();
+  private final Set<Page> trackedPages =
+      java.util.Collections.newSetFromMap(new IdentityHashMap<>());
   private Page previousPage;
   private boolean pendingWindowOpen = false;
   private final Set<Frame> oopifFrames = new HashSet<>();
+  private CdpNetworkMonitor networkMonitor;
+  private final Map<Page, CdpNetworkMonitor> pageNetworkMonitors = new IdentityHashMap<>();
+  private final Map<Page, CDPSession> pageSessions = new IdentityHashMap<>();
+  private final Map<Frame, CDPSession> networkSessions = new IdentityHashMap<>();
+  private final Map<Frame, String> networkFrameIds = new IdentityHashMap<>();
+  private final Map<Request, String> playwrightRequestIds = new IdentityHashMap<>();
+  private int nextNetworkFrameId = 1;
+  private int nextPlaywrightRequestId = 1;
   public boolean autoswitchToNewTab = true;
   public boolean fullPageScreenshot = Config.FULL_PAGE_SCREENSHOT;
   public final Set<Class<? extends BaseTool>> supportedTools =
@@ -69,7 +87,10 @@ public final class PlaywrightDriver extends BaseDriver {
 
   public PlaywrightDriver(Page page) {
     this.page = page;
+    setupContextNetworkTracking(page.context());
+    page.context().addInitScript(WAITER_SCRIPT);
     watchContextOf(page);
+    attachPageListeners(page);
     initCDPSession();
   }
 
@@ -309,38 +330,166 @@ public final class PlaywrightDriver extends BaseDriver {
 
   private void initCDPSession() {
     oopifFrames.clear();
-
-    if (client != null) {
-      try {
-        client.detach();
-      } catch (RuntimeException e) {
-        // The target may already be closed.
-      }
+    this.client = initPageNetwork(page);
+    this.networkMonitor = pageNetworkMonitors.get(page);
+    enableTargetAutoAttach(client);
+    for (Frame frame : page.frames()) {
+      if (frame != page.mainFrame()) attachNetworkFrame(frame);
     }
-
-    this.client = page.context().newCDPSession(page);
-    enablePageEvents();
-    enableTargetAutoAttach();
   }
 
-  private void enablePageEvents() {
+  private CDPSession initPageNetwork(Page targetPage) {
+    CDPSession existing = pageSessions.get(targetPage);
+    if (existing != null) return existing;
+
+    CdpNetworkMonitor monitor =
+        pageNetworkMonitors.computeIfAbsent(targetPage, ignored -> new CdpNetworkMonitor());
+    CDPSession session = targetPage.context().newCDPSession(targetPage);
+    configureNetworkSession(session, "", monitor);
+    pageSessions.put(targetPage, session);
+    return session;
+  }
+
+  private void setupContextNetworkTracking(BrowserContext context) {
+    context.onRequest(this::playwrightRequestStarted);
+    context.onResponse(this::playwrightResponseReceived);
+    context.onRequestFinished(this::playwrightRequestFinished);
+    context.onRequestFailed(this::playwrightRequestFinished);
+  }
+
+  private void playwrightRequestStarted(Request request) {
+    Page requestPage = requestPage(request);
+    if (requestPage == null) return;
+    CdpNetworkMonitor monitor =
+        pageNetworkMonitors.computeIfAbsent(requestPage, ignored -> new CdpNetworkMonitor());
+    String requestId = "pw:" + nextPlaywrightRequestId++;
+    playwrightRequestIds.put(request, requestId);
+    monitor.process(
+        "Network.requestWillBeSent",
+        Map.of(
+            "requestId",
+            requestId,
+            "type",
+            cdpResourceType(request.resourceType()),
+            "request",
+            Map.of("url", request.url())),
+        "playwright");
+  }
+
+  private void playwrightResponseReceived(Response response) {
+    String requestId = playwrightRequestIds.get(response.request());
+    if (requestId == null) return;
+    Page requestPage = requestPage(response.request());
+    CdpNetworkMonitor monitor = requestPage == null ? null : pageNetworkMonitors.get(requestPage);
+    if (monitor == null) return;
+    monitor.process(
+        "Network.responseReceived",
+        Map.of("requestId", requestId, "response", Map.of("headers", response.headers())),
+        "playwright");
+  }
+
+  private void playwrightRequestFinished(Request request) {
+    String requestId = playwrightRequestIds.remove(request);
+    if (requestId == null) return;
+    Page requestPage = requestPage(request);
+    CdpNetworkMonitor monitor = requestPage == null ? null : pageNetworkMonitors.get(requestPage);
+    if (monitor != null) {
+      monitor.process("Network.loadingFinished", Map.of("requestId", requestId), "playwright");
+    }
+  }
+
+  private static Page requestPage(Request request) {
     try {
-      client.send("Page.enable");
+      return request.frame().page();
+    } catch (RuntimeException ignored) {
+      // Popup navigation requests may arrive before Playwright creates their frame.
+      return null;
+    }
+  }
 
-      // Playwright page event fires after navigation, so it can be very slow.
-      // Use CDP instead which fires when the browser is asked to open a window.
-      client.on(
-          "Page.windowOpen",
-          event -> {
-            JsonElement url = event.get("url");
-            String opened = url == null || url.isJsonNull() ? "" : url.getAsString();
-            LOG.debug("Window open requested: {}", opened.isEmpty() ? "(empty)" : opened);
-            pendingWindowOpen = true;
-          });
+  private static String cdpResourceType(String resourceType) {
+    return switch (resourceType) {
+      case "cspviolationreport" -> "CSPViolationReport";
+      case "eventsource" -> "EventSource";
+      case "manifest" -> "Manifest";
+      case "media" -> "Media";
+      case "ping" -> "Ping";
+      case "prefetch" -> "Prefetch";
+      case "websocket" -> "WebSocket";
+      default -> resourceType;
+    };
+  }
 
-      LOG.debug("Enabled Page events for new tab detection");
-    } catch (RuntimeException e) {
-      LOG.debug("Could not enable Page events: {}", e.getMessage());
+  private void configureNetworkSession(
+      CDPSession session, String sessionId, CdpNetworkMonitor monitor) {
+    sendCdpOn(session, "Page.enable", null);
+    sendCdpOn(session, "Network.enable", null);
+    sendCdpOn(
+        session,
+        "Page.addScriptToEvaluateOnNewDocument",
+        Map.of("source", WAITER_SCRIPT, "runImmediately", true));
+    for (String event : NETWORK_EVENTS) {
+      session.on(event, params -> monitor.process(event, jsonObjectToMap(params), sessionId));
+    }
+    session.on(
+        "Page.windowOpen",
+        event -> {
+          JsonElement url = event.get("url");
+          String opened = url == null || url.isJsonNull() ? "" : url.getAsString();
+          LOG.debug("Window open requested: {}", opened.isEmpty() ? "(empty)" : opened);
+          pendingWindowOpen = true;
+        });
+  }
+
+  private void attachNetworkFrame(Frame frame) {
+    if (frame.page() != page || frame == page.mainFrame() || networkSessions.containsKey(frame)) {
+      return;
+    }
+
+    CDPSession session = null;
+    try {
+      Map<String, Object> mainFrameTree = sendCdp("Page.getFrameTree", null);
+      session = page.context().newCDPSession(frame);
+      Map<String, Object> sessionFrameTree = sendCdpOn(session, "Page.getFrameTree", null);
+      @SuppressWarnings("unchecked")
+      Map<String, Object> mainRoot = (Map<String, Object>) mainFrameTree.get("frameTree");
+      @SuppressWarnings("unchecked")
+      Map<String, Object> sessionRoot = (Map<String, Object>) sessionFrameTree.get("frameTree");
+      if (mainRoot != null && collectFrameIds(mainRoot).contains(frameIdOf(sessionRoot))) {
+        detachSession(session);
+        return;
+      }
+
+      CdpNetworkMonitor monitor = pageNetworkMonitors.get(frame.page());
+      if (monitor == null) {
+        detachSession(session);
+        return;
+      }
+      configureNetworkSession(session, networkFrameId(frame), monitor);
+      networkSessions.put(frame, session);
+    } catch (RuntimeException error) {
+      if (session != null && !networkSessions.containsValue(session)) detachSession(session);
+      // Same-process and destroyed frames are covered by the page session.
+    }
+  }
+
+  private void detachNetworkFrame(Frame frame) {
+    String sessionId = networkFrameIds.remove(frame);
+    CdpNetworkMonitor monitor = pageNetworkMonitors.get(frame.page());
+    if (sessionId != null && monitor != null) monitor.clearSession(sessionId);
+    CDPSession session = networkSessions.remove(frame);
+    if (session != null) detachSession(session);
+  }
+
+  private String networkFrameId(Frame frame) {
+    return networkFrameIds.computeIfAbsent(frame, ignored -> "frame:" + nextNetworkFrameId++);
+  }
+
+  private static void detachSession(CDPSession session) {
+    try {
+      session.detach();
+    } catch (RuntimeException ignored) {
+      // The page or frame target may already be gone.
     }
   }
 
@@ -412,19 +561,24 @@ public final class PlaywrightDriver extends BaseDriver {
     }
     JsonObject resp = session.send(method, paramsJson);
     if (resp == null) return Map.of();
+    return jsonObjectToMap(resp);
+  }
+
+  private static Map<String, Object> jsonObjectToMap(JsonObject value) {
     try {
-      JsonNode parsed = MAPPER.readTree(resp.toString());
+      JsonNode parsed = MAPPER.readTree(value.toString());
       @SuppressWarnings("unchecked")
       Map<String, Object> out = MAPPER.convertValue(parsed, Map.class);
       return out == null ? Map.of() : out;
     } catch (Exception e) {
-      throw new IllegalStateException("Failed to parse CDP response for " + method, e);
+      throw new IllegalStateException("Failed to parse CDP payload", e);
     }
   }
 
-  private void enableTargetAutoAttach() {
+  private void enableTargetAutoAttach(CDPSession session) {
     try {
-      sendCdp(
+      sendCdpOn(
+          session,
           "Target.setAutoAttach",
           Map.of("autoAttach", true, "waitForDebuggerOnStart", false, "flatten", true));
     } catch (RuntimeException e) {
@@ -441,15 +595,16 @@ public final class PlaywrightDriver extends BaseDriver {
     Retry.execute(
         opts,
         () -> {
-          page.evaluate(WAITER_SCRIPT);
-          Object err =
-              page.evaluate(
-                  "(...scriptArgs) => new Promise((resolve) => "
-                      + "{ const arguments = [...scriptArgs, resolve]; "
-                      + WAIT_FOR_SCRIPT
-                      + " })");
-          if (err != null) {
-            LOG.debug("Failed to wait for page: {}", err);
+          PageWaiter.Result result =
+              new PageWaiter(
+                      networkMonitor,
+                      this::waiterSnapshot,
+                      Config.WAITER_IDLE_MS,
+                      Config.WAITER_TIMEOUT_MS,
+                      () -> page.waitForTimeout(10))
+                  .waitForPageStability();
+          if (!result.loaded()) {
+            LOG.debug("Timed out waiting for page; pending requests: {}", result.pending());
           }
           return null;
         });
@@ -457,6 +612,24 @@ public final class PlaywrightDriver extends BaseDriver {
 
   private void flushEvents() {
     page.context().cookies();
+  }
+
+  private PageWaiter.Snapshot waiterSnapshot() {
+    Object value = page.evaluate(PageWaiter.WAITER_SNAPSHOT_SCRIPT);
+    if (value == null) {
+      page.evaluate(WAITER_SCRIPT);
+      value = page.evaluate(PageWaiter.WAITER_SNAPSHOT_SCRIPT);
+    }
+    if (!(value instanceof Map<?, ?> snapshot)) return null;
+    return new PageWaiter.Snapshot(
+        number(snapshot.get("lastMutationAt")),
+        number(snapshot.get("now")),
+        (int) number(snapshot.get("pendingTimeouts")),
+        String.valueOf(snapshot.get("readyState")));
+  }
+
+  private static long number(Object value) {
+    return value instanceof Number number ? number.longValue() : 0;
   }
 
   private void watchContextOf(Page page) {
@@ -472,25 +645,48 @@ public final class PlaywrightDriver extends BaseDriver {
     pendingWindowOpen = false;
     openedPages.add(opened);
     watchContextOf(opened);
-    opened.onClose(this::onPageClosed);
+    attachPageListeners(opened);
+    try {
+      initPageNetwork(opened);
+    } catch (RuntimeException error) {
+      LOG.debug("Could not initialize new tab network tracking", error);
+    }
+  }
+
+  private void attachPageListeners(Page page) {
+    if (!trackedPages.add(page)) return;
+    page.onClose(this::onPageClosed);
+    page.onFrameAttached(this::attachNetworkFrame);
+    page.onFrameNavigated(this::attachNetworkFrame);
+    page.onFrameDetached(this::detachNetworkFrame);
   }
 
   private void onPageClosed(Page closed) {
     openedPages.remove(closed);
+    trackedPages.remove(closed);
+    for (Frame frame : List.copyOf(networkSessions.keySet())) {
+      if (frame.page() == closed) detachNetworkFrame(frame);
+    }
+    pageNetworkMonitors.remove(closed);
+    CDPSession session = pageSessions.remove(closed);
+    if (session != null) detachSession(session);
+
     if (closed != page) return;
+    this.client = null;
 
     if (previousPage == null || previousPage.isClosed()) {
       LOG.warn("Active tab was closed and the tab it came from is gone");
+      this.networkMonitor = null;
       return;
     }
 
     LOG.debug("Active tab was closed, returning to {}", previousPage.url());
     this.page = previousPage;
     this.previousPage = null;
+    this.networkMonitor = pageNetworkMonitors.get(page);
     resetAccessibilityTree();
     // Opening a session here would run inside whatever call delivered this
     // event, on a tab that may be gone as well. Let the next command open one.
-    this.client = null;
   }
 
   private void autoswitchToNewTabAction(Runnable action) {

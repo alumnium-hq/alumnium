@@ -16,6 +16,8 @@ public final class Config {
   public static final int PLAYWRIGHT_NEW_TAB_TIMEOUT =
       parseInt("ALUMNIUM_PLAYWRIGHT_NEW_TAB_TIMEOUT", 200);
   public static final int RETRIES = parseInt("ALUMNIUM_RETRIES", 2);
+  public static final int WAITER_IDLE_MS = parseInt("ALUMNIUM_WAITER_IDLE_MS", 25);
+  public static final int WAITER_TIMEOUT_MS = parseInt("ALUMNIUM_WAITER_TIMEOUT_MS", 10_000);
   public static final String SERVER_URL = emptyToNull(System.getenv("ALUMNIUM_SERVER_URL"));
   public static final String MODEL = emptyToNull(System.getenv("ALUMNIUM_MODEL"));
   public static final String LOG_LEVEL =
