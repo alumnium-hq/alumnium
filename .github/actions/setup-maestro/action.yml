@@ -63,7 +63,8 @@ runs:
     - name: Install Android System Image
       if: inputs.platform == 'android'
       run: |
-        yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
+        # `yes` dies with SIGPIPE once sdkmanager stops reading; that is expected, not an error.
+        (yes 2> /dev/null | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null) || true
         "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install \
           "platform-tools" "emulator" "$SYSTEM_IMAGE" > /dev/null
       shell: bash
