@@ -93,6 +93,25 @@ describe("MaestroAccessibilityTree", () => {
       expect(xml).toContain('content-desc="New Task"');
     });
 
+    it("hoists a lone child label onto its unlabelled clickable wrapper", async () => {
+      const tree = await load("maestro_android_row_unchecked");
+      const xml = tree.toStr();
+      // The Compose FAB: wrapper Button > (labelled View, empty widget Button).
+      expect(xml).toMatch(
+        /<Button raw_id=(\d+) class="android.view.View" content-desc="New Task" clickable bounds="[^"]+" \/>/,
+      );
+      expect(xml).not.toMatch(/<Text [^>]*content-desc="New Task"/);
+      const rawId = Number(
+        xml.match(/<Button raw_id=(\d+)[^>]*content-desc="New Task"/)?.[1],
+      );
+      expect(tree.elementById(rawId).name).toBe("New Task");
+    });
+
+    it("leaves a task row alone, since its checkbox is interactive", async () => {
+      const xml = (await load("maestro_android_row_unchecked")).toStr();
+      expect(xml).toMatch(/<Button [^>]*clickable[^>]*>\s*<CheckBox /);
+    });
+
     it("finds a node by resource-id anywhere in the hierarchy", async () => {
       const tree = await load("maestro_android_row_unchecked");
       expect(

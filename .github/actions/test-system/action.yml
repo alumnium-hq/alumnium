@@ -37,8 +37,8 @@ runs:
       uses: actions/cache/restore@v5
       with:
         path: packages/${{ inputs.package }}/.alumnium/cache/
-        key: alumnium-cache-v4-${{ inputs.package }}-${{ inputs.driver }}-${{ inputs.model }}-${{ inputs.sha }}
-        restore-keys: alumnium-cache-v4-${{ inputs.package }}-${{ inputs.driver }}-${{ inputs.model }}-
+        key: alumnium-cache-v5-${{ inputs.package }}-${{ inputs.driver }}-${{ inputs.model }}-${{ inputs.sha }}
+        restore-keys: alumnium-cache-v5-${{ inputs.package }}-${{ inputs.driver }}-${{ inputs.model }}-
 
     - name: Prepare Display
       if: runner.os == 'Linux' && !startsWith(inputs.driver, 'appium') && !startsWith(inputs.driver, 'maestro')
@@ -61,7 +61,7 @@ runs:
       uses: actions/cache/save@v5
       with:
         path: packages/${{ inputs.package }}/.alumnium/cache/
-        key: alumnium-cache-v4-${{ inputs.package }}-${{ inputs.driver }}-${{ inputs.model }}-${{ inputs.sha }}
+        key: alumnium-cache-v5-${{ inputs.package }}-${{ inputs.driver }}-${{ inputs.model }}-${{ inputs.sha }}
 
     - name: Run Playwright Post-Setup
       uses: ./.github/actions/setup-playwright/post

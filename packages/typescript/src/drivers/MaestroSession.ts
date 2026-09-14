@@ -90,6 +90,7 @@ export class MaestroSession {
   static readonly TOOL_TIMEOUT_MS = 5 * 60_000;
 
   #os: MaestroSession.Os = "ios";
+  #closing = false;
   readonly #requestedDeviceId: string | undefined;
   readonly #executablePath: string;
   readonly #launchEnv: Record<string, string>;
@@ -147,6 +148,7 @@ export class MaestroSession {
     // bare "Connection closed".
     const stderrTail: string[] = [];
     transport.onclose = () => {
+      if (this.#closing) return;
       const output = stderrTail.join("").trim();
       if (output) logger.warn(`Maestro MCP server exited:\n${output}`);
     };
@@ -411,6 +413,7 @@ export class MaestroSession {
   async close(): Promise<void> {
     const client = this.#client;
     this.#client = undefined;
+    this.#closing = true;
     if (!client) return;
     logger.debug("Closing Maestro MCP session");
     await client.close();

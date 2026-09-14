@@ -64,6 +64,46 @@ describe("PlannerAgentElementsCache", () => {
     expect(plannerCache.getEntries()).toEqual([]);
   });
 
+  it("skips a plan with no actions, since it would match every later screen", async () => {
+    const { memoryKey, plannerCache } = setup.cur;
+
+    await plannerCache.update({
+      memoryKey,
+      cacheHash: "hash" as ElementsCache.CacheHash,
+      meta: {
+        kind: "planner",
+        goal: "click add button" as BaseAgent.Goal,
+        treeXml: "<div id='1'>status bar</div>",
+      },
+      generation: LchainFactory.storedGeneration({
+        text: '{"explanation":"No add button on screen.","actions":[]}',
+      }),
+    });
+
+    expect(plannerCache.getEntries()).toEqual([]);
+  });
+
+  it("recognises an empty plan delivered as a tool call", () => {
+    const generation = LchainFactory.storedGenerationWith({
+      toolCalls: [
+        {
+          id: "call-1",
+          name: "plan",
+          type: "tool_call",
+          args: { explanation: "Nothing to do.", actions: [] },
+        },
+      ],
+    });
+    expect(PlannerAgentElementsCache.isEmptyPlan(generation)).toBe(true);
+    expect(
+      PlannerAgentElementsCache.isEmptyPlan(
+        LchainFactory.storedGeneration({
+          text: '{"explanation":"Click it.","actions":["click add button"]}',
+        }),
+      ),
+    ).toBe(false);
+  });
+
   it("updates elements while deduplicating by non-index attrs", async () => {
     const { plannerCache, app } = setup.cur;
 
