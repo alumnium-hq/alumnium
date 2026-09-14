@@ -23,6 +23,14 @@ ALUMNIUM_TEST_ALWAYS_EXIT_0="${ALUMNIUM_TEST_ALWAYS_EXIT_0:-false}"
 ALUMNIUM_LOG_FILENAME_BASE="test-system-${ALUMNIUM_DRIVER}-$(sanitize_filename "$ALUMNIUM_MODEL")"
 PKG_DIR="$(dirname "${BASH_SOURCE[0]}")/.."
 
+# Maestro is one driver for both mobile platforms; the task name picks the platform.
+case "$ALUMNIUM_DRIVER" in
+maestro-ios | maestro-android)
+	export ALUMNIUM_MAESTRO_OS="${ALUMNIUM_DRIVER#maestro-}"
+	export ALUMNIUM_DRIVER="maestro"
+	;;
+esac
+
 failed=0
 run_tests() {
 	if "$@"; then

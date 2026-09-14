@@ -5,7 +5,11 @@ import { promisify } from "node:util";
 import type { TestProject } from "vitest/node";
 import { Env } from "../../src/Env.ts";
 
-const exec = promisify(execFile);
+const execFileAsync = promisify(execFile);
+
+/** Runs a tool with a hard timeout: vitest's global setup has none, so a stuck one hangs the job. */
+const exec = (command: string, args: string[], timeoutMs = 120_000) =>
+  execFileAsync(command, args, { timeout: timeoutMs });
 
 const SUPPORT_DIR = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -47,7 +51,8 @@ export async function setup(project: TestProject) {
     // `simctl boot` brings the device up headlessly. Open the Simulator window too, so a run can
     // be watched rather than just inferred from the log.
     await showSimulator();
-    await exec("xcrun", ["simctl", "install", deviceId, app.path]);
+    // A cold simulator on a CI runner can take minutes to accept its first install.
+    await exec("xcrun", ["simctl", "install", deviceId, app.path], 300_000);
   }
 
   project.provide("maestroOs", os);
@@ -103,6 +108,9 @@ async function bootedSimulator(): Promise<string> {
 
   console.log(`Booting simulator ${candidate.name} (${candidate.udid})`);
   await exec("xcrun", ["simctl", "boot", candidate.udid]);
+  // `boot` returns as soon as the device starts coming up; installing into it before it has
+  // finished booting can stall, so wait for the boot to complete.
+  await exec("xcrun", ["simctl", "bootstatus", candidate.udid, "-b"], 300_000);
   return candidate.udid;
 }
 
