@@ -287,10 +287,6 @@ run = { task = "test/cache", args = ["cursor"] }
 description = "Run cache tests for `deepseek` model. See `test/cache` task for details."
 run = { task = "test/cache", args = ["deepseek"] }
 
-[tasks."test/cache:github"]
-description = "Run cache tests for `github` model. See `test/cache` task for details."
-run = { task = "test/cache", args = ["github"] }
-
 [tasks."test/cache:google"]
 description = "Run cache tests for `google` model. See `test/cache` task for details."
 run = { task = "test/cache", args = ["google"] }
