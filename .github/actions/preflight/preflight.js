@@ -10,9 +10,13 @@ class Preflight {
   static SUPPORTED_DRIVERS = [
     "appium-android",
     "appium-ios",
+    "maestro-android",
+    "maestro-ios",
     "playwright",
     "selenium",
   ];
+  // Drivers implemented only by the TypeScript package.
+  static TYPESCRIPT_ONLY_DRIVERS = ["maestro-android", "maestro-ios"];
   static SUPPORTED_PROVIDERS = [
     "azure_foundry",
     "azure_openai",
@@ -30,7 +34,12 @@ class Preflight {
   ];
 
   // Keep in sync with ci-*.yml workflow_dispatch inputs default values.
-  static DEFAULT_DRIVERS = ["selenium", "playwright"];
+  static DEFAULT_DRIVERS = [
+    "maestro-android",
+    "maestro-ios",
+    "selenium",
+    "playwright",
+  ];
   static DEFAULT_PROVIDERS = ["azure_openai"];
 
   #context;
@@ -53,6 +62,7 @@ class Preflight {
       sha: await this.#sha(),
       models: JSON.stringify(this.#models()),
       drivers: JSON.stringify(this.#drivers()),
+      "typescript-drivers": JSON.stringify(this.#typescriptDrivers()),
       ...(await this.#workflows()),
     };
 
@@ -120,7 +130,14 @@ class Preflight {
     );
   }
 
+  // Drivers shared by every client package.
   #drivers() {
+    return this.#typescriptDrivers().filter(
+      (driver) => !Preflight.TYPESCRIPT_ONLY_DRIVERS.includes(driver),
+    );
+  }
+
+  #typescriptDrivers() {
     return this.#selection(
       Preflight.SUPPORTED_DRIVERS,
       Preflight.DEFAULT_DRIVERS,

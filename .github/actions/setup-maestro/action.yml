@@ -1,0 +1,87 @@
+name: Setup Maestro
+description: Installs the Maestro CLI and boots a device for Maestro system tests.
+
+inputs:
+  platform:
+    required: true
+    description: Mobile platform to prepare a device for (ios, android).
+
+  maestro-version:
+    required: false
+    default: 2.8.0
+    description: Maestro CLI version to install.
+
+  android-api-level:
+    required: false
+    default: 35
+    description: Android API level of the emulator to boot.
+
+runs:
+  using: composite
+  steps:
+    - name: Restore Maestro CLI Cache
+      id: maestro-cache
+      uses: actions/cache@v5
+      with:
+        path: ~/.maestro
+        key: maestro-${{ runner.os }}-${{ inputs.maestro-version }}
+
+    - name: Install Maestro CLI
+      if: steps.maestro-cache.outputs.cache-hit != 'true'
+      run: curl -Ls "https://get.maestro.mobile.dev" | bash
+      shell: bash
+      env:
+        MAESTRO_VERSION: ${{ inputs.maestro-version }}
+
+    - name: Add Maestro CLI to PATH
+      run: echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
+      shell: bash
+
+    # NOTE: iOS simulator is booted by tests/system/setup.maestro.ts using the
+    # newest iPhone runtime available on the runner.
+
+    - name: Enable KVM
+      if: inputs.platform == 'android'
+      run: |
+        echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+        sudo udevadm control --reload-rules
+        sudo udevadm trigger --name-match=kvm
+      shell: bash
+
+    - name: Restore AVD Cache
+      if: inputs.platform == 'android'
+      id: avd-cache
+      uses: actions/cache@v5
+      with:
+        path: |
+          ~/.android/avd/*
+          ~/.android/adb*
+        key: avd-${{ runner.os }}-${{ inputs.android-api-level }}
+
+    - name: Create AVD
+      if: inputs.platform == 'android' && steps.avd-cache.outputs.cache-hit != 'true'
+      uses: reactivecircus/android-emulator-runner@v2
+      with:
+        api-level: ${{ inputs.android-api-level }}
+        arch: x86_64
+        target: google_apis
+        profile: pixel_6
+        force-avd-creation: false
+        emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+        disable-animations: false
+        script: echo "Generated AVD snapshot for caching."
+
+    # NOTE: The emulator keeps running after the script finishes and is killed
+    # in the action's post step, so later steps can use it.
+    - name: Boot Android Emulator
+      if: inputs.platform == 'android'
+      uses: reactivecircus/android-emulator-runner@v2
+      with:
+        api-level: ${{ inputs.android-api-level }}
+        arch: x86_64
+        target: google_apis
+        profile: pixel_6
+        force-avd-creation: false
+        emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+        disable-animations: true
+        script: adb devices
