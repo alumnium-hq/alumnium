@@ -85,7 +85,7 @@ export LANGCHAIN_CODEX_LITTERBOX_UPLOAD="true"  # optionally enable vision suppo
 ## Cursor
 
 :::caution
-Cursor support is experimental and can stop working at any time. It runs prompts through [Cursor Agents][24] (local runtime) via the standalone [`langchain-cursor`][26] package, so it consumes your Cursor subscription's usage. Each Alumnium action spins up a short-lived local agent, which adds latency compared to direct API providers — consider raising `ALUMNIUM_MODEL_TIMEOUT` if you hit timeouts.
+Cursor support is experimental and can stop working at any time. It runs prompts through [Cursor Agents][24] (local runtime) via the official [`@cursor/sdk`][26] package and Alumnium's AI SDK adapter, so it consumes your Cursor subscription's usage. Each Alumnium action spins up a short-lived local agent, which adds latency compared to direct API providers — consider raising `ALUMNIUM_MODEL_TIMEOUT` if you hit timeouts.
 
 When used from the compiled Alumnium binary (the Python and Java clients, or the standalone CLI), the first cursor-provider call downloads the Cursor SDK (~24 MB) from the npm registry into `~/.alumnium/vendor/cursor-sdk/<version>`, so it needs network access once. In air-gapped environments, point `ALUMNIUM_CURSOR_SDK_DIR` at a directory containing a pre-installed `node_modules` tree with `@cursor/sdk`.
 :::
@@ -220,6 +220,6 @@ Read next to learn how to write tests!
 [23]: https://litterbox.catbox.moe
 [24]: https://cursor.com/docs/cloud-agent
 [25]: https://cursor.com/dashboard
-[26]: https://www.npmjs.com/package/langchain-cursor
+[26]: https://www.npmjs.com/package/@cursor/sdk
 [27]: https://openrouter.ai
 [28]: https://openrouter.ai/settings/keys

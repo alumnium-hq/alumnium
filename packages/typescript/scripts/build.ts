@@ -377,8 +377,7 @@ async function main() {
       TARGET_PLATFORMS.map(async ({ os, arch, target, binPath }) => {
         const result = await Bun.build({
           entrypoints: [BIN_SRC_PATH, ...standaloneEmbeddedAssetPaths],
-          // NOTE: @cursor/sdk (a transitive dependency of
-          // langchain-cursor) is external because its
+          // NOTE: @cursor/sdk is external because its
           // webpack-chunked dist loads chunks dynamically
           // (`require("./" + chunkId + ".js")`), which cannot be bundled into
           // a single-file executable — and its license does not permit
