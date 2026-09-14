@@ -93,6 +93,9 @@ export async function useSetup(props: useSetup.Props): Promise<Setup> {
     const maestroDriver = al.driver as MaestroDriver;
     const isAndroid = inject("maestroOs") === "android";
     maestroDriver.delay = isAndroid ? 2 : 0.5;
+    // The soft keyboard covers the To-Do app's save button, so drop it after typing. The driver
+    // only sends the (Back-press based) hide when a keyboard is really on screen.
+    maestroDriver.hideKeyboardAfterTyping = isAndroid;
   }
 
   const model = await al.model();
