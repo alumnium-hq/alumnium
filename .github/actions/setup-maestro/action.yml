@@ -66,13 +66,20 @@ runs:
         path: |
           ~/.android/avd/*
           ~/.android/adb*
-        key: avd-${{ runner.os }}-${{ inputs.android-api-level }}
+        key: avd-${{ runner.os }}-maestro-api${{ inputs.android-api-level }}-v1
 
+    # NOTE: Checks the AVD itself rather than the cache result, so a stale or foreign cache entry
+    # can never leave the emulator without a device to boot.
     - name: Create AVD
-      if: inputs.platform == 'android' && steps.avd-cache.outputs.cache-hit != 'true'
+      if: inputs.platform == 'android'
       run: |
-        echo no | "$ANDROID_HOME/cmdline-tools/latest/bin/avdmanager" create avd \
-          --force --name maestro --device pixel_6 --package "$SYSTEM_IMAGE"
+        if [ -f "$HOME/.android/avd/maestro.ini" ]; then
+          echo "AVD 'maestro' restored from cache"
+        else
+          echo no | "$ANDROID_HOME/cmdline-tools/latest/bin/avdmanager" create avd \
+            --force --name maestro --device pixel_6 --package "$SYSTEM_IMAGE"
+        fi
+        "$ANDROID_HOME/emulator/emulator" -list-avds
       shell: bash
       env:
         SYSTEM_IMAGE: system-images;android-${{ inputs.android-api-level }};google_apis;x86_64
