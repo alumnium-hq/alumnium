@@ -86,12 +86,15 @@ runs:
     - name: Create AVD
       if: inputs.platform == 'android'
       run: |
-        if [ -f "$HOME/.android/avd/maestro.ini" ]; then
+        # Current cmdline-tools and the emulator disagree on the default AVD directory, so pin it.
+        export ANDROID_AVD_HOME="$HOME/.android/avd"
+        if [ -f "$ANDROID_AVD_HOME/maestro.ini" ]; then
           echo "AVD 'maestro' restored from cache"
         else
           echo no | "$ANDROID_HOME/cmdline-tools/latest/bin/avdmanager" create avd \
             --force --name maestro --device pixel_6 --package "$SYSTEM_IMAGE"
         fi
+        ls -la "$ANDROID_AVD_HOME"
         "$ANDROID_HOME/emulator/emulator" -list-avds
       shell: bash
       env:
@@ -100,6 +103,7 @@ runs:
     - name: Boot Android Emulator
       if: inputs.platform == 'android'
       run: |
+        export ANDROID_AVD_HOME="$HOME/.android/avd"
         ADB="$ANDROID_HOME/platform-tools/adb"
         LOG="$RUNNER_TEMP/emulator.log"
         nohup "$ANDROID_HOME/emulator/emulator" @maestro \
