@@ -37,8 +37,20 @@ runs:
       run: echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
       shell: bash
 
-    # NOTE: iOS simulator is booted by tests/system/setup.maestro.ts using the
-    # newest iPhone runtime available on the runner.
+    # NOTE: tests/system/setup.maestro.ts boots a simulator itself when none is up, but a cold
+    # CoreSimulator on a fresh runner takes minutes to come alive. Booting here keeps that
+    # warm-up out of the test step and puts its timing in the job log.
+    - name: Boot iOS Simulator
+      if: inputs.platform == 'ios'
+      run: |
+        UDID="$(xcrun simctl list devices available --json \
+          | jq -r '[.devices | to_entries[] | .value[] | select(.name | startswith("iPhone"))] | last | .udid')"
+        echo "Booting simulator $UDID"
+        xcrun simctl boot "$UDID"
+        time xcrun simctl bootstatus "$UDID" -b
+        open -a Simulator
+        xcrun simctl list devices booted
+      shell: bash
 
     - name: Enable KVM
       if: inputs.platform == 'android'

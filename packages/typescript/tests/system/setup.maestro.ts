@@ -51,7 +51,8 @@ export async function setup(project: TestProject) {
     // `simctl boot` brings the device up headlessly. Open the Simulator window too, so a run can
     // be watched rather than just inferred from the log.
     await showSimulator();
-    await exec("xcrun", ["simctl", "install", deviceId, app.path]);
+    // A cold simulator on a CI runner can take minutes to accept its first install.
+    await exec("xcrun", ["simctl", "install", deviceId, app.path], 300_000);
   }
 
   project.provide("maestroOs", os);
