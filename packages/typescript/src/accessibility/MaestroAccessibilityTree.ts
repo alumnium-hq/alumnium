@@ -147,6 +147,14 @@ export class MaestroAccessibilityTree extends BaseAccessibilityTree<MaestroSessi
     return attrs;
   }
 
+  /** True when any node in the hierarchy carries the given `resource-id`. */
+  hasResourceId(resourceId: string): boolean {
+    const visit = (node: MaestroSession.Node): boolean =>
+      this.#expand(node)["resource-id"] === resourceId ||
+      this.#childrenOf(node).some(visit);
+    return this.#hierarchy.elements.some(visit);
+  }
+
   #childrenOf(node: MaestroSession.Node): MaestroSession.Node[] {
     const children = node[this.#childrenKey] ?? node["children"];
     return Array.isArray(children) ? (children as MaestroSession.Node[]) : [];

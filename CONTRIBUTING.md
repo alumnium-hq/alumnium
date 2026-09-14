@@ -123,7 +123,8 @@ mise :test/system:selenium
 mise :test/system:playwright
 mise :test/system:appium-ios
 mise :test/system:appium-android
-mise :test/system:maestro
+mise :test/system:maestro-ios
+mise :test/system:maestro-android
 
 # Run unit tests
 mise :test/unit
