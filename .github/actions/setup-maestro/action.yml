@@ -1,0 +1,131 @@
+name: Setup Maestro
+description: Installs the Maestro CLI and boots a device for Maestro system tests.
+
+inputs:
+  platform:
+    required: true
+    description: Mobile platform to prepare a device for (ios, android).
+
+  maestro-version:
+    required: false
+    default: 2.8.0
+    description: Maestro CLI version to install.
+
+  android-api-level:
+    required: false
+    default: "35"
+    description: Android API level of the emulator to boot.
+
+runs:
+  using: composite
+  steps:
+    - name: Restore Maestro CLI Cache
+      id: maestro-cache
+      uses: actions/cache@v5
+      with:
+        path: ~/.maestro
+        key: maestro-${{ runner.os }}-${{ inputs.maestro-version }}
+
+    - name: Install Maestro CLI
+      if: steps.maestro-cache.outputs.cache-hit != 'true'
+      run: curl -Ls "https://get.maestro.mobile.dev" | bash
+      shell: bash
+      env:
+        MAESTRO_VERSION: ${{ inputs.maestro-version }}
+
+    - name: Add Maestro CLI to PATH
+      run: echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
+      shell: bash
+
+    # NOTE: tests/system/setup.maestro.ts boots a simulator itself when none is up, but a cold
+    # CoreSimulator on a fresh runner takes minutes to come alive. Booting here keeps that
+    # warm-up out of the test step and puts its timing in the job log.
+    - name: Boot iOS Simulator
+      if: inputs.platform == 'ios'
+      run: |
+        UDID="$(xcrun simctl list devices available --json \
+          | jq -r '[.devices | to_entries[] | .value[] | select(.name | startswith("iPhone"))] | last | .udid')"
+        echo "Booting simulator $UDID"
+        xcrun simctl boot "$UDID"
+        time xcrun simctl bootstatus "$UDID" -b
+        open -a Simulator
+        xcrun simctl list devices booted
+      shell: bash
+
+    - name: Enable KVM
+      if: inputs.platform == 'android'
+      run: |
+        echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+        sudo udevadm control --reload-rules
+        sudo udevadm trigger --name-match=kvm
+      shell: bash
+
+    - name: Install Android System Image
+      if: inputs.platform == 'android'
+      run: |
+        # `yes` dies with SIGPIPE once sdkmanager stops reading; that is expected, not an error.
+        (yes 2> /dev/null | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null) || true
+        "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install \
+          "platform-tools" "emulator" "$SYSTEM_IMAGE" > /dev/null
+      shell: bash
+      env:
+        SYSTEM_IMAGE: system-images;android-${{ inputs.android-api-level }};google_apis;x86_64
+
+    - name: Restore AVD Cache
+      if: inputs.platform == 'android'
+      id: avd-cache
+      uses: actions/cache@v5
+      with:
+        path: |
+          ~/.android/avd/*
+          ~/.android/adb*
+        key: avd-${{ runner.os }}-maestro-api${{ inputs.android-api-level }}-v1
+
+    # NOTE: Checks the AVD itself rather than the cache result, so a stale or foreign cache entry
+    # can never leave the emulator without a device to boot.
+    - name: Create AVD
+      if: inputs.platform == 'android'
+      run: |
+        # Current cmdline-tools and the emulator disagree on the default AVD directory, so pin it.
+        export ANDROID_AVD_HOME="$HOME/.android/avd"
+        mkdir -p "$ANDROID_AVD_HOME"
+        env | grep -E '^(ANDROID|XDG|HOME)' | sort
+        if [ -f "$ANDROID_AVD_HOME/maestro.ini" ]; then
+          echo "AVD 'maestro' restored from cache"
+        else
+          echo no | "$ANDROID_HOME/cmdline-tools/latest/bin/avdmanager" create avd \
+            --force --name maestro --device pixel_6 --package "$SYSTEM_IMAGE" \
+            --path "$ANDROID_AVD_HOME/maestro.avd"
+        fi
+        ls -la "$ANDROID_AVD_HOME"
+        "$ANDROID_HOME/emulator/emulator" -list-avds
+        if [ ! -f "$ANDROID_AVD_HOME/maestro.ini" ]; then
+          echo "::error::AVD 'maestro' was not created in $ANDROID_AVD_HOME"
+          find "$HOME" "$ANDROID_HOME" /tmp -name 'maestro.ini' 2> /dev/null || true
+          exit 1
+        fi
+      shell: bash
+      env:
+        SYSTEM_IMAGE: system-images;android-${{ inputs.android-api-level }};google_apis;x86_64
+
+    - name: Boot Android Emulator
+      if: inputs.platform == 'android'
+      run: |
+        export ANDROID_AVD_HOME="$HOME/.android/avd"
+        ADB="$ANDROID_HOME/platform-tools/adb"
+        LOG="$RUNNER_TEMP/emulator.log"
+        nohup "$ANDROID_HOME/emulator/emulator" @maestro \
+          -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot -camera-back none \
+          > "$LOG" 2>&1 &
+        if ! timeout 300 bash -c "until [ \"\$('$ADB' shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')\" = 1 ]; do sleep 5; done"; then
+          echo "::error::Android emulator did not boot within 5 minutes"
+          "$ADB" devices
+          cat "$LOG"
+          exit 1
+        fi
+        "$ADB" shell settings put global window_animation_scale 0
+        "$ADB" shell settings put global transition_animation_scale 0
+        "$ADB" shell settings put global animator_duration_scale 0
+        "$ADB" devices
+        tail -n 20 "$LOG"
+      shell: bash

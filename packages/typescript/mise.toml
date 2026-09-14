@@ -89,7 +89,7 @@ run = "bun vitest --project unit --coverage --coverage.reportsDirectory tests/ar
 [tasks."test/system"]
 usage = '''
 arg "<driver>" help="Driver to use for system tests" {
-  choices "selenium" "playwright" "appium-ios" "appium-android"
+  choices "selenium" "playwright" "appium-ios" "appium-android" "maestro-ios" "maestro-android"
   default "selenium"
 }
 arg "[test]" help="System test to run" default=""
@@ -111,6 +111,12 @@ run = [
     "{{usage.test}}",
   ] },
   { task = "test/system:appium-android", args = [
+    "{{usage.test}}",
+  ] },
+  { task = "test/system:maestro-ios", args = [
+    "{{usage.test}}",
+  ] },
+  { task = "test/system:maestro-android", args = [
     "{{usage.test}}",
   ] },
 ]
@@ -139,13 +145,17 @@ arg "[test]" help="System test to run" default=""
 '''
 run = [{ task = "test/system", args = ["appium-android", "{{usage.test}}"] }]
 
-# TODO: update for a new format
-[tasks."test/system:maestro"]
-run = '''
-ALUMNIUM_DRIVER=maestro \
-ALUMNIUM_TEST_VITEST_ARGS="${ALUMNIUM_TEST_VITEST_ARGS:-tests/system/todo.app.test.ts}" \
-./scripts/test-system.sh
+[tasks."test/system:maestro-android"]
+usage = '''
+arg "[test]" help="System test to run" default="todo.app"
 '''
+run = [{ task = "test/system", args = ["maestro-android", "{{usage.test}}"] }]
+
+[tasks."test/system:maestro-ios"]
+usage = '''
+arg "[test]" help="System test to run" default="todo.app"
+'''
+run = [{ task = "test/system", args = ["maestro-ios", "{{usage.test}}"] }]
 
 [tasks."test/waiter"]
 usage = '''

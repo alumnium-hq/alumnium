@@ -39,6 +39,14 @@ on:
         description: Run Appium (iOS) driver tests
         type: boolean
         default: false
+      maestro-android:
+        description: Run Maestro (Android) driver tests
+        type: boolean
+        default: true
+      maestro-ios:
+        description: Run Maestro (iOS) driver tests
+        type: boolean
+        default: true
       playwright:
         description: Run Playwright driver tests
         type: boolean

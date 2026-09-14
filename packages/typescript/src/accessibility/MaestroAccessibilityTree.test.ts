@@ -93,6 +93,16 @@ describe("MaestroAccessibilityTree", () => {
       expect(xml).toContain('content-desc="New Task"');
     });
 
+    it("finds a node by resource-id anywhere in the hierarchy", async () => {
+      const tree = await load("maestro_android_row_unchecked");
+      expect(
+        tree.hasResourceId(
+          "com.android.systemui:id/status_bar_launch_animation_container",
+        ),
+      ).toBe(true);
+      expect(tree.hasResourceId("android:id/inputArea")).toBe(false);
+    });
+
     it("states checked=false on an unchecked checkbox", async () => {
       const xml = (await load("maestro_android_row_unchecked")).toStr();
       expect(xml).toMatch(/<CheckBox [^>]*checked="false"/);
