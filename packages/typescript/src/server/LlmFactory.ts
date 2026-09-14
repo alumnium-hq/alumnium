@@ -12,9 +12,12 @@ import type {
 import { createXai } from "@ai-sdk/xai";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { createOllama } from "ollama-ai-provider-v2";
+import { isSingleFileExecutable } from "../bundle.ts";
 import { Env } from "../Env.ts";
 import { CodexLanguageModel } from "../llm/CodexLanguageModel.ts";
+import { CursorLanguageModel } from "../llm/CursorLanguageModel.ts";
 import { Model } from "../Model.ts";
+import { loadVendoredCursorSdk } from "../standalone/installCursorSdk.ts";
 import { Logger } from "../telemetry/Logger.ts";
 import { maskString } from "../utils/string.ts";
 
@@ -42,7 +45,7 @@ export class LlmFactory {
       case "codex":
         return LlmFactory.createCodexLlm(model);
       case "cursor":
-        throw new Error("Cursor provider is pending migration to AI SDK");
+        return LlmFactory.createCursorLlm(model);
       case "deepseek":
         return LlmFactory.createDeepSeekLlm(model);
       case "google":
@@ -188,6 +191,17 @@ export class LlmFactory {
   static createCodexLlm(model: Model): CodexLanguageModel {
     logger.debug(`Creating Codex LLM with model ${model.name}`);
     return new CodexLanguageModel({ modelId: model.name });
+  }
+
+  static createCursorLlm(model: Model): CursorLanguageModel {
+    logger.debug(`Creating Cursor LLM with model ${model.name}`);
+    const apiKey = Env.CURSOR_API_KEY;
+    if (apiKey) logMaskedSecret("Cursor API Key", apiKey);
+    return new CursorLanguageModel({
+      modelId: model.name,
+      ...apiKeyField(apiKey),
+      ...(isSingleFileExecutable() ? { sdkLoader: loadVendoredCursorSdk } : {}),
+    });
   }
 
   static createDeepSeekLlm(model: Model): LanguageModelV4 {

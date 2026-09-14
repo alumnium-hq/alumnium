@@ -8,7 +8,6 @@
 // fetched from registry.npmjs.org into ~/.alumnium/vendor, verified against
 // the lockfile's sha512 integrity, and loaded with createRequire plus the
 // parent-scoped bare-specifier hook from cursorSdkResolver.ts.
-import type { CursorSdkModule } from "langchain-cursor";
 import { createHash } from "node:crypto";
 import fs from "node:fs/promises";
 import { createRequire } from "node:module";
@@ -16,6 +15,7 @@ import os from "node:os";
 import path from "node:path";
 import { gunzipSync } from "node:zlib";
 import { Env } from "../Env.ts";
+import type { CursorSdkModule } from "../llm/CursorLanguageModel.ts";
 import { Logger } from "../telemetry/Logger.ts";
 import { retry } from "../utils/retry.ts";
 import {
