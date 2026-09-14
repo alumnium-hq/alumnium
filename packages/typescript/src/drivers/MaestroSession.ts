@@ -120,16 +120,16 @@ export class MaestroSession {
   async #connect(): Promise<void> {
     logger.info(`Starting Maestro MCP server: ${this.#executablePath} mcp`);
 
+    const env = {
+      ...getDefaultEnvironment(),
+      // The SDK's default environment forwards only HOME/PATH/SHELL/TERM/USER.
+      ...toolchainEnvironment(),
+      MAESTRO_CLI_ANALYSIS_NOTIFICATION_DISABLED: "true",
+    };
     const transport = new StdioClientTransport({
       command: this.#executablePath,
       args: ["mcp"],
-      env: {
-        ...getDefaultEnvironment(),
-        // The SDK's default environment forwards only HOME/PATH/SHELL/TERM/USER. Maestro locates
-        // `adb` through the Android SDK variables, so without these it sees no Android devices.
-        ...androidSdkEnvironment(),
-        MAESTRO_CLI_ANALYSIS_NOTIFICATION_DISABLED: "true",
-      },
+      env,
       stderr: "pipe",
     });
 
@@ -137,11 +137,29 @@ export class MaestroSession {
       name: "alumnium",
       version: ALUMNIUM_VERSION,
     });
-    await client.connect(transport);
+
+    // Keep the tail of what Maestro printed, so an early exit can say why instead of the SDK's
+    // bare "Connection closed".
+    const stderrTail: string[] = [];
+    transport.onclose = () => {
+      const output = stderrTail.join("").trim();
+      if (output) logger.warn(`Maestro MCP server exited:\n${output}`);
+    };
+
+    try {
+      await client.connect(transport);
+    } catch (error) {
+      throw new Error(
+        `Maestro MCP server failed to start: ${error}\n${await this.#describeLauncherFailure(env)}`,
+      );
+    }
     this.#client = client;
 
     transport.stderr?.on("data", (chunk: unknown) => {
-      logger.debug(`Maestro: ${String(chunk).trim()}`);
+      const text = String(chunk);
+      stderrTail.push(text);
+      while (stderrTail.length > 50) stderrTail.shift();
+      logger.debug(`Maestro: ${text.trim()}`);
     });
 
     const device = await this.#resolveDevice();
@@ -275,6 +293,19 @@ export class MaestroSession {
    * Runs a command to completion without blocking the event loop. `spawnSync` would stall the MCP
    * transport this session lives on for the whole run.
    */
+  /**
+   * The MCP transport swallows what a child printed before dying, so re-run the launcher alone
+   * and hand back its output. A missing JDK or a broken install shows up here verbatim.
+   */
+  async #describeLauncherFailure(env: NodeJS.ProcessEnv): Promise<string> {
+    try {
+      const probe = await this.#spawn(this.#executablePath, ["--version"], env);
+      return `\`${this.#executablePath} --version\` exited with ${probe.status}: ${(probe.stderr || probe.stdout).trim()}`;
+    } catch (error) {
+      return `\`${this.#executablePath}\` could not be run: ${error}`;
+    }
+  }
+
   #spawn(
     command: string,
     args: string[],
@@ -449,10 +480,14 @@ export class MaestroSession {
   //#endregion
 }
 
-/** The Android SDK location variables, whichever of them are set. */
-function androidSdkEnvironment(): Record<string, string> {
+/**
+ * Toolchain location variables, whichever of them are set. Maestro is a Java program launched
+ * through a shell script: on macOS the `java` on PATH is Apple's stub, which needs `JAVA_HOME`
+ * to find a JDK, and its Android side finds `adb` through the SDK variables.
+ */
+function toolchainEnvironment(): Record<string, string> {
   const forwarded: Record<string, string> = {};
-  for (const name of ["ANDROID_HOME", "ANDROID_SDK_ROOT"]) {
+  for (const name of ["JAVA_HOME", "ANDROID_HOME", "ANDROID_SDK_ROOT"]) {
     // oxlint-disable-next-line node/no-process-env -- forwarded verbatim to the child process
     const value = process.env[name];
     if (value) forwarded[name] = value;
