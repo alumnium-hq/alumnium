@@ -234,18 +234,6 @@ export class LlmFactory {
     );
   }
 
-  static createGithubLlm(model: Model): LanguageModelV4 {
-    logger.debug(`Creating Github LLM with model ${model.name}`);
-    return withCallDefaults(
-      createOpenAI({
-        baseURL: "https://models.github.ai/inference",
-        ...apiKeyField(Env.OPENAI_API_KEY),
-        name: "github",
-      }).chat(model.name),
-      { temperature: 0 },
-    );
-  }
-
   static createMistralAiLlm(model: Model): LanguageModelV4 {
     logger.debug(`Creating MistralAI LLM with model ${model.name}`);
     return withCallDefaults(

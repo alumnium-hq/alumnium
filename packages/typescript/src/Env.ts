@@ -207,7 +207,7 @@ export const Env = {
   get ALUMNIUM_MODEL_RETRIES() {
     return envVar(
       "ALUMNIUM_MODEL_RETRIES",
-      z.coerce.number().int().positive().default(8),
+      z.coerce.number().int().nonnegative().default(8),
     );
   },
 
