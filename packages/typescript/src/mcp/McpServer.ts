@@ -11,7 +11,10 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import type { McpMode } from "./McpMode.ts";
 import { ALUMNIUM_VERSION } from "../package.ts";
 import type { RequestHandlerExtra } from "@modelcontextprotocol/sdk/shared/protocol.js";
-import type { ServerNotification, ServerRequest } from "@modelcontextprotocol/sdk/types.js";
+import type {
+  ServerNotification,
+  ServerRequest,
+} from "@modelcontextprotocol/sdk/types.js";
 import { parseMcpNoCache } from "./mcpNoCache.ts";
 import { Logger } from "../telemetry/Logger.ts";
 import { checkMcpTool } from "./tools/checkMcpTool.ts";
@@ -70,9 +73,16 @@ export class McpServer {
         toolDef.name,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         { description, inputSchema: inputSchema as any },
-        async (input: any, extra: RequestHandlerExtra<ServerRequest, ServerNotification>) => {
+        async (
+          input: any,
+          extra: RequestHandlerExtra<ServerRequest, ServerNotification>,
+        ) => {
           try {
-            return { content: await execute(input, { noCache: parseMcpNoCache(extra._meta) }) };
+            return {
+              content: await execute(input, {
+                noCache: parseMcpNoCache(extra._meta),
+              }),
+            };
           } catch (error) {
             logger.error(`Error executing tool ${name}: {error}`, { error });
             return {

@@ -139,7 +139,15 @@ export class HttpClient extends Client {
     };
   })
   async retrieve(props: Client.RetrieveProps): Promise<[string, Data]> {
-    const { statement, accessibilityTree, title, url, app, screenshot, noCache } = props;
+    const {
+      statement,
+      accessibilityTree,
+      title,
+      url,
+      app,
+      screenshot,
+      noCache,
+    } = props;
 
     const body: StatementRequest = {
       statement,
