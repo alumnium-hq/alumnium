@@ -29,11 +29,13 @@ export class ChainedCache extends ServerCache {
         );
 
         this.usage = { ...cache.usage };
+        this.countHit();
         return result;
       }
     }
 
     logger.debug("Cache miss in all chained caches");
+    this.countMiss();
 
     return null;
   }

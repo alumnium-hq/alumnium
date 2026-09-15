@@ -165,6 +165,10 @@ describe("serverApp", () => {
           cache_read: 0,
           reasoning: 0,
         },
+        lookups: {
+          hits: 0,
+          misses: 0,
+        },
       });
     });
 
