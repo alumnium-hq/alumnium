@@ -127,6 +127,7 @@ export const ExecuteStatementBody = CacheableRequestBody.extend({
   url: z.string().optional(),
   title: z.string().optional(),
   screenshot: z.string().nullable().optional(),
+  no_cache: z.boolean().optional(),
 });
 
 export const ExecuteStatementResponse = z.object({

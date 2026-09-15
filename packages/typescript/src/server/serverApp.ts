@@ -234,7 +234,7 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                 const accessibilityTree = session.parseTree(
                   ctx.body.accessibility_tree,
                 );
-                const { statement, title, url, screenshot } = ctx.body;
+                const { statement, title, url, screenshot, no_cache } = ctx.body;
                 const treeXml = accessibilityTree.toXml(
                   new Set([
                     ...RetrieverAgent.EXCLUDE_ATTRIBUTES,
@@ -248,6 +248,7 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                     title,
                     url,
                     screenshot,
+                    noCache: no_cache,
                   });
                 return {
                   result: value,

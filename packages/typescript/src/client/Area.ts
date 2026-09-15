@@ -109,6 +109,7 @@ export class Area {
         url: await this.driver.url(),
         app: await this.driver.app(),
         screenshot,
+        noCache: options.noCache,
       });
 
       if (!value) {
@@ -135,6 +136,7 @@ export class Area {
         url: await this.driver.url(),
         app: await this.driver.app(),
         screenshot,
+        noCache: options.noCache,
       });
 
       return value === null ? explanation : value;

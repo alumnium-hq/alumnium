@@ -41,6 +41,7 @@ export namespace Client {
     url: string;
     app: AppId;
     screenshot?: string | undefined;
+    noCache?: boolean | undefined;
   }
 
   export interface PlanActionsProps {

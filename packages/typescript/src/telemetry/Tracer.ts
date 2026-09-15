@@ -366,7 +366,8 @@ export namespace Tracer {
             | "not_found"
             | "resolution_failed"
             | "unimplemented"
-            | "no_match";
+            | "no_match"
+            | "bypassed";
         };
       };
     };
@@ -380,7 +381,8 @@ export namespace Tracer {
           "cache.update.skip.reason":
             | "no_meta"
             | "not_eligible"
-            | "unimplemented";
+            | "unimplemented"
+            | "bypassed";
         };
       };
     };
