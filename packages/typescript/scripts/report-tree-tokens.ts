@@ -24,7 +24,7 @@ const EVAL_BASE_PATH = new URL(
   import.meta.url,
 );
 const ENCODING = "cl100k_base";
-const PLATFORMS = ["chrome", "uiautomator2", "xcuitest"];
+const PLATFORMS = ["chrome", "maestro", "uiautomator2", "xcuitest"];
 
 interface SnapshotTokens {
   name: string;

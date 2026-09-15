@@ -1,4 +1,5 @@
 import { xxh64Str } from "@js-fns/xxhash/str";
+import type { LchainSchema } from "../../../llm/LchainSchema.ts";
 import { Logger } from "../../../telemetry/Logger.ts";
 import type { PlannerAgent } from "../../agents/PlannerAgent.ts";
 import { BaseAgentElementsCache } from "./BaseAgentElementsCache.ts";
@@ -19,6 +20,13 @@ export class PlannerAgentElementsCache extends BaseAgentElementsCache<PlannerAge
       return;
     }
 
+    if (PlannerAgentElementsCache.isEmptyPlan(generation)) {
+      logger.debug(
+        `Skipping planner cache update: no actions planned for goal: ${goal.slice(0, 50)}...`,
+      );
+      return;
+    }
+
     logger.debug(
       `Caching planner response for goal: "${goal.slice(0, 50)}..."`,
     );
@@ -31,6 +39,30 @@ export class PlannerAgentElementsCache extends BaseAgentElementsCache<PlannerAge
       memoryKey,
       instruction: { goal },
     });
+  }
+
+  /**
+   * A plan with no actions means the planner could not find its target on that particular
+   * screen. Planner entries are keyed by goal alone and carry no elements to resolve, so such a
+   * plan would match every later screen too and silently turn the goal into a no-op.
+   */
+  static isEmptyPlan(generation: LchainSchema.StoredGeneration): boolean {
+    const candidates: unknown[] = [
+      ...(generation.message?.data.tool_calls ?? []).map((call) => call.args),
+    ];
+    try {
+      candidates.push(JSON.parse(generation.text));
+    } catch {
+      // Not a JSON plan; nothing to inspect.
+    }
+    return candidates.some(
+      (plan) =>
+        typeof plan === "object" &&
+        plan !== null &&
+        "actions" in plan &&
+        Array.isArray(plan.actions) &&
+        plan.actions.length === 0,
+    );
   }
 
   updateElements(

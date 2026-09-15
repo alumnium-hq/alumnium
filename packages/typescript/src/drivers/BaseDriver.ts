@@ -42,9 +42,9 @@ export abstract class BaseDriver {
   abstract quit(): Promise<void>;
   abstract back(): Promise<void>;
   abstract screenshot(): Promise<string>;
-  abstract title(): Promise<string>;
+  abstract title(): string | Promise<string>;
   abstract type(id: number, text: string): Promise<void>;
-  abstract url(): Promise<string>;
+  abstract url(): string | Promise<string>;
   abstract app(): Promise<AppId>;
   abstract findElement(id: number): Promise<Element>;
   abstract visit(url: string): Promise<void>;

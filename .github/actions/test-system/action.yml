@@ -8,7 +8,7 @@ inputs:
 
   driver:
     required: true
-    description: "Driver to use in system tests (selenium, playwright, appium-ios, appium-android)."
+    description: "Driver to use in system tests (selenium, playwright, appium-ios, appium-android, maestro-ios, maestro-android)."
 
   model:
     required: true
@@ -27,15 +27,21 @@ runs:
       with:
         package: ${{ inputs.package }}
 
+    - name: Set Up Maestro
+      uses: ./.github/actions/setup-maestro
+      if: startsWith(inputs.driver, 'maestro')
+      with:
+        platform: ${{ inputs.driver == 'maestro-ios' && 'ios' || 'android' }}
+
     - name: Restore Alumnium Cache
       uses: actions/cache/restore@v5
       with:
         path: packages/${{ inputs.package }}/.alumnium/cache/
-        key: alumnium-cache-v4-${{ inputs.package }}-${{ inputs.driver }}-${{ inputs.model }}-${{ inputs.sha }}
-        restore-keys: alumnium-cache-v4-${{ inputs.package }}-${{ inputs.driver }}-${{ inputs.model }}-
+        key: alumnium-cache-v5-${{ inputs.package }}-${{ inputs.driver }}-${{ inputs.model }}-${{ inputs.sha }}
+        restore-keys: alumnium-cache-v5-${{ inputs.package }}-${{ inputs.driver }}-${{ inputs.model }}-
 
     - name: Prepare Display
-      if: startsWith(inputs.driver, 'appium') != true
+      if: runner.os == 'Linux' && !startsWith(inputs.driver, 'appium') && !startsWith(inputs.driver, 'maestro')
       run: Xvfb ${{ env.DISPLAY }} -screen 0 1600x1200x24 &
       shell: bash
 
@@ -55,7 +61,7 @@ runs:
       uses: actions/cache/save@v5
       with:
         path: packages/${{ inputs.package }}/.alumnium/cache/
-        key: alumnium-cache-v4-${{ inputs.package }}-${{ inputs.driver }}-${{ inputs.model }}-${{ inputs.sha }}
+        key: alumnium-cache-v5-${{ inputs.package }}-${{ inputs.driver }}-${{ inputs.model }}-${{ inputs.sha }}
 
     - name: Run Playwright Post-Setup
       uses: ./.github/actions/setup-playwright/post

@@ -6,5 +6,7 @@ export type Element = WebElement | Locator | WebdriverIO.Element;
 export * from "./AppiumDriver.ts";
 export * from "./BaseDriver.ts";
 export * from "./keys.ts";
+export * from "./MaestroDriver.ts";
+export * from "./MaestroSession.ts";
 export * from "./PlaywrightDriver.ts";
 export * from "./SeleniumDriver.ts";

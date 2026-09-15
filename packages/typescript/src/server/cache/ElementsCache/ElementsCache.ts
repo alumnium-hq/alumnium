@@ -155,7 +155,10 @@ export class ElementsCache extends ServerCache {
         const tree = new ElementsCacheTree(agentMeta.treeXml);
 
         const memoryEntry = this.#memoryRecord(memoryKey);
-        if (memoryEntry) {
+        if (
+          memoryEntry &&
+          !this.#isStaleEmptyPlan(agentMeta, memoryEntry.generation)
+        ) {
           const masksIdsMap = tree.resolveElements(memoryEntry.elements);
 
           if (masksIdsMap) {
@@ -196,6 +199,20 @@ export class ElementsCache extends ServerCache {
             "agent.kind": agentMeta.kind,
             "cache.hash": cacheHash,
             "cache.lookup.miss.reason": "no_match",
+          });
+
+          return null;
+        }
+
+        if (this.#isStaleEmptyPlan(agentMeta, maskedGeneration)) {
+          logger.debug(
+            `Elements cache miss (empty plan) for ${agentMeta.kind}: "${cacheKey.slice(0, 50)}..."`,
+          );
+          span.event("cache.lookup.miss", {
+            ...this.#spanAttrs(),
+            "agent.kind": agentMeta.kind,
+            "cache.hash": cacheHash,
+            "cache.lookup.miss.reason": "empty_plan",
           });
 
           return null;
@@ -248,6 +265,17 @@ export class ElementsCache extends ServerCache {
         return null;
       }
     });
+  }
+
+  /** Entries written before empty plans were excluded from the cache must not be replayed. */
+  #isStaleEmptyPlan(
+    agentMeta: { kind: string },
+    generation: LchainSchema.StoredGeneration,
+  ): boolean {
+    return (
+      agentMeta.kind === "planner" &&
+      PlannerAgentElementsCache.isEmptyPlan(generation)
+    );
   }
 
   override async update(

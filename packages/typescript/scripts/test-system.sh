@@ -14,6 +14,13 @@ ALUMNIUM_TEST_PASS_THRESHOLD_PCT="${ALUMNIUM_TEST_PASS_THRESHOLD_PCT:-100}"
 ALUMNIUM_LOG_FILENAME_BASE="test-system-${ALUMNIUM_DRIVER}"
 PKG_DIR="$(dirname "${BASH_SOURCE[0]}")/.."
 
+case "$ALUMNIUM_DRIVER" in
+maestro-ios | maestro-android)
+	export ALUMNIUM_MAESTRO_OS="${ALUMNIUM_DRIVER#maestro-}"
+	export ALUMNIUM_DRIVER="maestro"
+	;;
+esac
+
 normalize_test_name() {
 	printf '%s' "$1" | tr '[:upper:]' '[:lower:]' | tr -cd '[:lower:][:digit:]'
 }
