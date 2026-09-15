@@ -26,7 +26,9 @@ export const McpCommand = CliCommand.define({
     Logger.path = { filename: logFilenameHint };
     await Logger.initEnv(logger);
 
-    const server = new McpServer({ mode: options.mode || Env.ALUMNIUM_MCP_MODE });
+    const server = new McpServer({
+      mode: options.mode || Env.ALUMNIUM_MCP_MODE,
+    });
     await server.run();
   },
 });
