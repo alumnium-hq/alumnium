@@ -1,3 +1,4 @@
+import { TZDate } from "@date-fns/tz";
 import { getFileSink } from "@logtape/file";
 import {
   configure,
@@ -91,9 +92,15 @@ export abstract class Logger {
     });
 
     if (!valid) {
-      await this.#flush();
+      await this.flush();
       process.exit(1);
     }
+  }
+
+  static async flush() {
+    await this.#loggerPromise;
+    disposeSync();
+    await dispose();
   }
 
   //#endregion
@@ -171,16 +178,18 @@ export abstract class Logger {
 
     const depth = Env.ALUMNIUM_LOG_OBJECTS_DEPTH;
     const maxStringLength = Env.ALUMNIUM_LOG_MAX_STR_LENGTH;
-    const consoleSink = getConsoleSink({
-      formatter: getAnsiColorFormatter({
-        value: (value) =>
-          inspect(value, {
-            colors: true,
-            depth,
-            maxStringLength,
-          }),
-      }),
+    const textFormatter = getAnsiColorFormatter({
+      value(value) {
+        // In Bun environment, use Bun's built-in inspector.
+        if (typeof Bun !== "undefined")
+          return Bun.inspect(value, { colors: true, depth });
+        // Fall back to Node's inspector for everything else.
+        return inspect(value, { colors: true, depth, maxStringLength });
+      },
+      timestamp: this.#createDateFormatter(),
     });
+
+    const consoleSink = getConsoleSink({ formatter: textFormatter });
     const mainSinks: string[] = ["main"];
     const flushInterval = Env.ALUMNIUM_LOG_FLUSH_INTERVAL;
 
@@ -200,7 +209,7 @@ export abstract class Logger {
     // NOTE: Wait for flush on process exit to ensure all logs are written.
     if (this.#path) {
       process.on("exit", () => {
-        void this.#flush();
+        void this.flush();
       });
     }
 
@@ -234,10 +243,17 @@ export abstract class Logger {
     return Logger.get(import.meta.url);
   }
 
-  static async #flush() {
-    await this.#loggerPromise;
-    disposeSync();
-    await dispose();
+  static #createDateFormatter() {
+    const dateFormatter = new Intl.DateTimeFormat("en-GB", {
+      dateStyle: "short",
+    });
+    return (time: number) => {
+      const datePart = dateFormatter.format(time);
+      const isoTimeStr = new TZDate(time).toISOString().slice(11);
+      const timePart = isoTimeStr.slice(0, 12);
+      const tzPart = isoTimeStr.slice(12);
+      return `${datePart} ${timePart} ${tzPart}`;
+    };
   }
 
   //#endregion
