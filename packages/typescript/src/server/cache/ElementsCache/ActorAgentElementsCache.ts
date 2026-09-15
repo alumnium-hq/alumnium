@@ -1,3 +1,4 @@
+import { Params } from "../../../Params.ts";
 import { Logger } from "../../../telemetry/Logger.ts";
 import type { ActorAgent } from "../../agents/ActorAgent.ts";
 import type { SessionContext } from "../../session/SessionContext.ts";
@@ -31,6 +32,7 @@ export class ActorAgentElementsCache extends BaseAgentElementsCache<ActorAgent.M
   ): Promise<void> {
     const { cacheHash, memoryKey, meta, generation } = props;
     const { goal, step, treeXml } = meta;
+    const params = Params.from(meta.params);
 
     const toolCalls = generation.message?.data.tool_calls;
     if (!toolCalls?.length) {
@@ -46,7 +48,7 @@ export class ActorAgentElementsCache extends BaseAgentElementsCache<ActorAgent.M
     const els: ElementsCache.Elements = [];
     for (const elId of elIds) {
       const attrs = tree.extractAttrs(elId);
-      if (attrs) els.push(attrs);
+      if (attrs) els.push(params.maskRecord(attrs));
     }
 
     if (!els.length) {
@@ -58,7 +60,10 @@ export class ActorAgentElementsCache extends BaseAgentElementsCache<ActorAgent.M
 
     logger.debug(`Caching actor response for step: "${step.slice(0, 50)}..."`);
 
-    const masked = ElementsCacheMask.mask(generation, elIds);
+    const masked = ElementsCacheMask.maskParams(
+      ElementsCacheMask.mask(generation, elIds),
+      params,
+    );
 
     this.setRecord({
       cacheHash,

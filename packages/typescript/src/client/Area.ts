@@ -3,12 +3,14 @@ import { Client } from "../clients/Client.ts";
 import type { Data } from "../clients/typecasting.ts";
 import { BaseDriver, type Element } from "../drivers/index.ts";
 import { NavigationBlockedError } from "../NavigationPolicy.ts";
+import { Params } from "../Params.ts";
 import { Telemetry } from "../telemetry/Telemetry.ts";
 import type { Tracer } from "../telemetry/Tracer.ts";
 import { BaseTool, type ToolClass } from "../tools/BaseTool.ts";
 import { retry } from "../utils/retry.ts";
 import { type Alumni } from "./Alumni.ts";
 import { AssertionError } from "./errors/AssertionError.ts";
+import { ParamsError } from "./errors/ParamsError.ts";
 import type { DoResult, DoStep } from "./result.ts";
 
 const { tracer } = Telemetry.get(import.meta.url);
@@ -38,10 +40,20 @@ export class Area {
     this.client = client;
   }
 
+  /**
+   * Executes a series of steps to achieve the given goal within this area.
+   *
+   * @param goal - Goal to achieve, optionally containing `{placeholder}` tokens.
+   * @param params - Values for the goal placeholders. See `Alumni.do`.
+   * @returns Explanation and the executed steps with their actions.
+   */
   @span("alumni.do", spanAttrs)
-  async do(goal: string): Promise<DoResult> {
+  async do(goal: string, params?: Record<string, string>): Promise<DoResult> {
+    const boundParams = Params.from(params);
+    boundParams.validate(goal, "goal");
+
     return retry(
-      { doRetry: (error) => !(error instanceof NavigationBlockedError) },
+      { doRetry: (error) => !(error instanceof ParamsError) && !(error instanceof NavigationBlockedError) },
       async () => {
         const app = await this.driver.app();
         this.driver.setAccessibilityTree(this.accessibilityTree);
@@ -61,6 +73,7 @@ export class Area {
               step,
               accessibilityTree: this.accessibilityTree.toStr(),
               app,
+              ...(params ? { params } : {}),
             });
 
           // When planner is off, explanation is just the goal — replace with actor's reasoning.
@@ -78,11 +91,14 @@ export class Area {
             calledTools.push(calledTool);
           }
 
-          executedSteps.push({ name: step, tools: calledTools });
+          executedSteps.push({
+            name: boundParams.substitute(step),
+            tools: calledTools,
+          });
         }
 
         return {
-          explanation: finalExplanation,
+          explanation: boundParams.substitute(finalExplanation),
           steps: executedSteps,
           changes: "",
         };
@@ -96,14 +112,19 @@ export class Area {
   }))
   async check(
     statement: string,
-    options: Alumni.VisionOptions = {},
+    options: Alumni.RetrievalOptions = {},
   ): Promise<string> {
+    // NOTE: Substituted here rather than passed down, see `Alumni.check`.
+    const boundParams = Params.from(options.params);
+    boundParams.validate(statement, "statement");
+    const substitutedStatement = boundParams.substitute(statement);
+
     return retry(async () => {
       const screenshot = options.vision
         ? await this.driver.screenshot()
         : undefined;
       const [explanation, value] = await this.client.retrieve({
-        statement: `Is the following true or false - ${statement}`,
+        statement: `Is the following true or false - ${substitutedStatement}`,
         accessibilityTree: this.accessibilityTree.toStr(),
         title: await this.driver.title(),
         url: await this.driver.url(),
@@ -123,13 +144,21 @@ export class Area {
     "alumni.flavor": "area",
     "alumni.method.args.vision": !!options?.vision,
   }))
-  async get(data: string, options: Alumni.VisionOptions = {}): Promise<Data> {
+  async get(
+    data: string,
+    options: Alumni.RetrievalOptions = {},
+  ): Promise<Data> {
+    // NOTE: Substituted here rather than passed down, see `Alumni.check`.
+    const boundParams = Params.from(options.params);
+    boundParams.validate(data, "data");
+    const substitutedData = boundParams.substitute(data);
+
     return retry(async () => {
       const screenshot = options.vision
         ? await this.driver.screenshot()
         : undefined;
       const [explanation, value] = await this.client.retrieve({
-        statement: data,
+        statement: substitutedData,
         accessibilityTree: this.accessibilityTree.toStr(),
         title: await this.driver.title(),
         url: await this.driver.url(),
