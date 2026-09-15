@@ -12,12 +12,14 @@ await main();
 async function main() {
   await setupEmbeddedDependencies();
 
-  const [{ McpCommand }, { ServerCommand }] = await Promise.all([
-    import("../mcp/McpCommand.ts"),
-    import("../server/ServerCommand.ts"),
-  ]);
+  const [{ McpCommand }, { ServerCommand }, { TestCommand }] =
+    await Promise.all([
+      import("../mcp/McpCommand.ts"),
+      import("../server/ServerCommand.ts"),
+      import("../test/TestCommand.ts"),
+    ]);
 
-  const COMMANDS = [ServerCommand, McpCommand];
+  const COMMANDS = [ServerCommand, McpCommand, TestCommand];
   const cli = cac("alumnium");
 
   COMMANDS.forEach((command) => command.register(cli));

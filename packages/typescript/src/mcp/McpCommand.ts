@@ -13,7 +13,7 @@ export const McpCommand = CliCommand.define({
   name: "mcp",
   description: "Run MCP server",
 
-  Args: z.object({
+  Options: z.object({
     mode: McpMode.optional().register(CliCommand.option, {
       name: "mode",
       syntax: "--mode <mode>",
@@ -22,11 +22,13 @@ export const McpCommand = CliCommand.define({
     }),
   }),
 
-  action: async ({ args, logFilenameHint }) => {
+  action: async ({ options, logFilenameHint }) => {
     Logger.path = { filename: logFilenameHint };
     await Logger.initEnv(logger);
 
-    const server = new McpServer({ mode: args.mode || Env.ALUMNIUM_MCP_MODE });
+    const server = new McpServer({
+      mode: options.mode || Env.ALUMNIUM_MCP_MODE,
+    });
     await server.run();
   },
 });
