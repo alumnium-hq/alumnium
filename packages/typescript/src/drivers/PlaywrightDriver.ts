@@ -114,7 +114,8 @@ export class PlaywrightDriver extends BaseDriver {
   private oopifFrameIds: Map<string, string> = new Map();
   // Playwright Frame objects that correspond to OOPIFs (populated during getAccessibilityTree)
   private oopifFrames: Set<Frame> = new Set();
-  public platform: Driver.Platform = "chromium";
+  public kind = "playwright" as const;
+  public platform = "chromium" as const;
   public supportedTools: Set<ToolClass> = new Set([
     ClickTool,
     DragAndDropTool,
@@ -1068,7 +1069,7 @@ export class PlaywrightDriver extends BaseDriver {
 
 function spanAttrs(this: PlaywrightDriver): Tracer.SpansDriverAttrs {
   return {
-    "driver.kind": "playwright",
+    "driver.kind": this.kind,
     "driver.platform": this.platform,
   };
 }

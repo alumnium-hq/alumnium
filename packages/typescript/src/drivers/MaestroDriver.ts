@@ -10,6 +10,7 @@ import { ClickTool } from "../tools/ClickTool.ts";
 import { PressKeyTool } from "../tools/PressKeyTool.ts";
 import { TypeTool } from "../tools/TypeTool.ts";
 import { BaseDriver } from "./BaseDriver.ts";
+import type { Driver } from "./Driver.ts";
 import type { Element } from "./index.ts";
 import type { Keys } from "./keys.ts";
 import { MaestroSession } from "./MaestroSession.ts";
@@ -21,7 +22,11 @@ const { span } = tracer.dec();
 const stateful = BaseDriver.stateful;
 
 export class MaestroDriver extends BaseDriver {
-  public platform = "maestro" as const;
+  public kind = "maestro" as const;
+
+  get platform(): Driver.MobileOs {
+    return this.session.os;
+  }
 
   public supportedTools: Set<ToolClass> = new Set([
     ClickTool,
@@ -65,23 +70,10 @@ export class MaestroDriver extends BaseDriver {
           point: "${x},${y}"
       - inputText: ${JSON.stringify(text)}
     `);
-    if (this.hideKeyboardAfterTyping && (await this.#keyboardShown())) {
-      await this.session.run("- hideKeyboard\n");
-    }
-  }
 
-  /**
-   * On Android, Maestro's `hideKeyboard` is a Back press, which leaves the current screen when
-   * no keyboard is up. So only hide a keyboard the hierarchy actually shows: the IME renders as
-   * its own window rooted at the framework's `android:id/inputArea`. iOS gives no such tell and
-   * its `hideKeyboard` is safe to send blind.
-   */
-  async #keyboardShown(): Promise<boolean> {
-    if (this.session.os !== "android") return true;
-    const hierarchy = await this.session.inspectScreen();
-    return new MaestroAccessibilityTree(hierarchy).hasResourceId(
-      "android:id/inputArea",
-    );
+    if (this.hideKeyboardAfterTyping && (await this.#keyboardShown())) {
+      await this.session.run("- hideKeyboard");
+    }
   }
 
   @span("driver.press_key", spanAttrs)
@@ -108,8 +100,8 @@ export class MaestroDriver extends BaseDriver {
   }
 
   @span("driver.app", spanAttrs)
-  app(): Promise<AppId> {
-    return Promise.resolve(AppId.parse(this.session.appId));
+  app(): AppId {
+    return AppId.parse(this.session.appId);
   }
 
   @span("driver.title", spanAttrs)
@@ -217,6 +209,19 @@ export class MaestroDriver extends BaseDriver {
 
   //#endregion
 
+  /**
+   * On Android, Maestro's `hideKeyboard` is a Back press, which leaves the current screen when
+   * no keyboard is up. So only hide a keyboard the view hierarchy actually show keyboard.
+   * iOS keyboard is safe to hide even if it's not shown.
+   */
+  async #keyboardShown(): Promise<boolean> {
+    if (this.session.os !== "android") return true;
+
+    const hierarchy = await this.session.inspectScreen();
+    const tree = new MaestroAccessibilityTree(hierarchy);
+    return tree.hasResourceId("android:id/inputArea");
+  }
+
   async #elementOf(id: number): Promise<{ bounds: string }> {
     const tree = await this.getAccessibilityTree();
     const element = tree.elementById(id);
@@ -237,7 +242,7 @@ export class MaestroDriver extends BaseDriver {
 
 function spanAttrs(this: MaestroDriver): Tracer.SpansDriverAttrs {
   return {
-    "driver.kind": "maestro",
+    "driver.kind": this.kind,
     "driver.platform": this.platform,
   };
 }

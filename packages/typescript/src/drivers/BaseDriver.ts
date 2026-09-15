@@ -14,6 +14,7 @@ import type { Keys } from "./keys.ts";
 const logger = Logger.get(import.meta.url);
 
 export abstract class BaseDriver {
+  abstract kind: Driver.Kind;
   abstract platform: Driver.Platform;
   abstract supportedTools: Set<ToolClass>;
   protected abstract fetchAccessibilityTree(): Promise<BaseAccessibilityTree>;
@@ -45,7 +46,7 @@ export abstract class BaseDriver {
   abstract title(): string | Promise<string>;
   abstract type(id: number, text: string): Promise<void>;
   abstract url(): string | Promise<string>;
-  abstract app(): Promise<AppId>;
+  abstract app(): AppId | Promise<AppId>;
   abstract findElement(id: number): Promise<Element>;
   abstract visit(url: string): Promise<void>;
   abstract scrollTo(id: number): Promise<void>;
@@ -156,6 +157,7 @@ export abstract class BaseDriver {
       const drill = await TreeDevDrill.run({
         action,
         platform: this.platform,
+        driver: this.kind,
         tree: freshTree,
         probe: (tree, rawId) => this.devDrillProbeTree(tree, rawId),
       });

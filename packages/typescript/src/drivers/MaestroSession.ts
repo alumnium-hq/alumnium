@@ -1,8 +1,5 @@
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import {
-  getDefaultEnvironment,
-  StdioClientTransport,
-} from "@modelcontextprotocol/sdk/client/stdio.js";
+import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { spawn } from "node:child_process";
 import os from "node:os";
 import path from "node:path";
@@ -17,16 +14,10 @@ const logger = Logger.get(import.meta.url);
 export namespace MaestroSession {
   export type Os = z.infer<typeof MaestroSession.Os>;
 
-  /**
-   * A node of Maestro's compacted view hierarchy. Keys are abbreviated (`b` for bounds, `c` for
-   * children, and so on) and every attribute is optional — absent ones take the value from
-   * `ui_schema.defaults`.
-   */
   export interface Node {
     [key: string]: unknown;
   }
 
-  /** What `inspect_screen` returns: an abbreviation legend plus a list of root nodes. */
   export interface Hierarchy {
     ui_schema: {
       platform?: string;
@@ -124,11 +115,9 @@ export class MaestroSession {
     logger.info(`Starting Maestro MCP server: ${this.#executablePath} mcp`);
 
     const env = {
-      ...getDefaultEnvironment(),
-      // The SDK's default environment forwards only HOME/PATH/SHELL/TERM/USER.
-      ...toolchainEnvironment(),
+      // oxlint-disable-next-line node/no-process-env
+      ...process.env,
       MAESTRO_CLI_ANALYSIS_NOTIFICATION_DISABLED: "true",
-      // Keeps first-run analytics notices off stderr in fresh environments such as CI.
       MAESTRO_CLI_NO_ANALYTICS: "1",
     };
     const transport = new StdioClientTransport({
@@ -294,14 +283,6 @@ export class MaestroSession {
     await this.#waitForLaunch(before);
   }
 
-  /**
-   * Runs a command to completion without blocking the event loop. `spawnSync` would stall the MCP
-   * transport this session lives on for the whole run.
-   */
-  /**
-   * The MCP transport swallows what a child printed before dying, so re-run the launcher alone
-   * and hand back its output. A missing JDK or a broken install shows up here verbatim.
-   */
   async #describeLauncherFailure(env: NodeJS.ProcessEnv): Promise<string> {
     try {
       const probe = await this.#spawn(this.#executablePath, ["--version"], env);
@@ -487,19 +468,4 @@ export class MaestroSession {
   }
 
   //#endregion
-}
-
-/**
- * Toolchain location variables, whichever of them are set. Maestro is a Java program launched
- * through a shell script: on macOS the `java` on PATH is Apple's stub, which needs `JAVA_HOME`
- * to find a JDK, and its Android side finds `adb` through the SDK variables.
- */
-function toolchainEnvironment(): Record<string, string> {
-  const forwarded: Record<string, string> = {};
-  for (const name of ["JAVA_HOME", "ANDROID_HOME", "ANDROID_SDK_ROOT"]) {
-    // oxlint-disable-next-line node/no-process-env -- forwarded verbatim to the child process
-    const value = process.env[name];
-    if (value) forwarded[name] = value;
-  }
-  return forwarded;
 }

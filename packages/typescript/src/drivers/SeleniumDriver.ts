@@ -77,7 +77,8 @@ const WAITER_SCRIPT = waiterScriptSource;
 
 export class SeleniumDriver extends BaseDriver {
   protected driver: ChromiumWebDriver;
-  public platform: Driver.Platform = "chromium";
+  public kind = "selenium" as const;
+  public platform = "chromium" as const;
   public autoswitchToNewTab = true;
   #shadowChildToHostMap: Partial<Record<number, number>> = {};
   #networkMonitor = new CdpNetworkMonitor();
@@ -981,7 +982,7 @@ export class SeleniumDriver extends BaseDriver {
 
 function spanAttrs(this: SeleniumDriver): Tracer.SpansDriverAttrs {
   return {
-    "driver.kind": "selenium",
+    "driver.kind": this.kind,
     "driver.platform": this.platform,
   };
 }

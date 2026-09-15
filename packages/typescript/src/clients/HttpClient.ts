@@ -264,7 +264,8 @@ export class HttpClient extends Client {
     const body: SessionRequest = {
       provider: this.#model?.provider,
       name: this.#model?.name,
-      platform: this.platform as SessionRequest["platform"],
+      platform: this.platform,
+      driver: this.driver,
       tools: toolSchemas,
       planner: this.planner,
       exclude_attributes: this.excludeAttributes,
