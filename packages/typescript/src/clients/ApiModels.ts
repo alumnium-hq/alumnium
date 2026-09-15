@@ -56,6 +56,7 @@ export interface StatementRequest {
   url?: string;
   title?: string;
   screenshot?: string | null;
+  no_cache?: boolean;
   app: AppId;
 }
 

@@ -22,7 +22,7 @@ export const checkMcpTool = McpTool.define("check", {
       .describe("Use screenshot for verification"),
   }),
 
-  async execute(input, { logger }) {
+  async execute(input, { logger, noCache }) {
     const { id, statement, vision } = input;
 
     const al = McpState.getDriverAlumni(id);
@@ -30,7 +30,7 @@ export const checkMcpTool = McpTool.define("check", {
     let explanation = "";
     let result = "";
     try {
-      explanation = await al.check(statement, { vision });
+      explanation = await al.check(statement, { vision, noCache });
       result = "success";
       logger.debug(`Success with ${explanation}`);
     } catch (error) {

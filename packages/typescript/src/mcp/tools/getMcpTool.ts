@@ -21,11 +21,11 @@ export const getMcpTool = McpTool.define("get", {
       .describe("Use screenshot for extraction"),
   }),
 
-  async execute(input) {
+  async execute(input, { noCache }) {
     const { id, data, vision } = input;
 
     const al = McpState.getDriverAlumni(id);
-    const result = await al.get(data, { vision });
+    const result = await al.get(data, { vision, noCache });
 
     await McpArtifactsStore.saveScreenshot({
       id,

@@ -139,7 +139,15 @@ export class HttpClient extends Client {
     };
   })
   async retrieve(props: Client.RetrieveProps): Promise<[string, Data]> {
-    const { statement, accessibilityTree, title, url, app, screenshot } = props;
+    const {
+      statement,
+      accessibilityTree,
+      title,
+      url,
+      app,
+      screenshot,
+      noCache,
+    } = props;
 
     const body: StatementRequest = {
       statement,
@@ -147,6 +155,7 @@ export class HttpClient extends Client {
       title,
       url,
       screenshot: screenshot || null,
+      ...(noCache === undefined ? {} : { no_cache: noCache }),
       app,
     };
     const result = await this.#sessionFetch<StatementResponse>(

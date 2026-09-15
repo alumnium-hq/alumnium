@@ -1,5 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { pushMock } from "../../tests/unit/mocks.ts";
+import { AppId } from "../AppId.ts";
+import { HttpClient } from "../clients/HttpClient.ts";
 import type { Http } from "../Http.ts";
 import { ActorAgent } from "./agents/ActorAgent.ts";
 import { AreaAgent } from "./agents/AreaAgent.ts";
@@ -252,6 +254,48 @@ describe("serverApp", () => {
       });
     });
   });
+
+  it.each([true, false, undefined])(
+    "forwards HTTP retrieval cache bypass (%s)",
+    async (noCache) => {
+      pushMock(
+        vi
+          .spyOn(globalThis, "fetch")
+          .mockImplementation((input, init) =>
+            serverApp.handle(
+              new Request(
+                typeof input === "string"
+                  ? input
+                  : input instanceof URL
+                    ? input.href
+                    : input.url,
+                init,
+              ),
+            ),
+          ),
+      );
+      const client = new HttpClient({
+        baseUrl: "http://localhost",
+        platform: "chromium",
+        tools: {},
+        planner: false,
+        excludeAttributes: [],
+        model: { provider: "anthropic", name: "test-model" },
+      });
+      await client.retrieve({
+        statement: "the page has a todo",
+        accessibilityTree: sampleAccessibilityTree,
+        title: "Todo",
+        url: "http://localhost",
+        app: AppId.parse("test"),
+        noCache,
+      });
+      expect(RetrieverAgent.prototype.invoke).toHaveBeenLastCalledWith(
+        expect.objectContaining({ noCache }),
+      );
+      await client.quit();
+    },
+  );
 
   describe("POST /sessions/:session_id/statements", () => {
     it("executes statement", async () => {

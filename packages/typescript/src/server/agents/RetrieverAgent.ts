@@ -39,6 +39,13 @@ export namespace RetrieverAgent {
     title: string | undefined;
     url: string | undefined;
     screenshot: string | undefined | null;
+    /**
+     * Retrieve afresh, skipping the response cache.
+     *
+     * NOTE: Deliberately absent from `RetrieverAgent.Meta` below, which the cache
+     * hashes. See `BaseAgent.InvokeChainOptions`.
+     */
+    noCache?: boolean | undefined;
   }
 }
 
@@ -80,6 +87,7 @@ export class RetrieverAgent extends BaseAgent {
       title = "",
       url = "",
       screenshot = null,
+      noCache,
     } = props;
 
     logger.info("Starting retrieval:");
@@ -133,6 +141,8 @@ export class RetrieverAgent extends BaseAgent {
         ["human", humanMessages],
       ],
       meta,
+      undefined,
+      { noCache },
     );
 
     this.logData(logger, "out", {

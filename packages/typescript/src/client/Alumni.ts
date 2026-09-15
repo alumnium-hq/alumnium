@@ -56,6 +56,8 @@ export namespace Alumni {
 
   export interface VisionOptions {
     vision?: boolean;
+    /** Skip response cache reads and writes for this retrieval. */
+    noCache?: boolean | undefined;
   }
 
   export interface CheckOptions extends VisionOptions {
@@ -246,6 +248,7 @@ export class Alumni {
         url: await this.driver.url(),
         app: await this.driver.app(),
         screenshot,
+        noCache: options.noCache,
       });
 
       if (!value || !explanation) {
@@ -279,6 +282,7 @@ export class Alumni {
         url: await this.driver.url(),
         app: await this.driver.app(),
         screenshot,
+        noCache: options.noCache,
       });
 
       return value === null ? explanation : value;
