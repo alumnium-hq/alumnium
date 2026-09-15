@@ -11,7 +11,9 @@ import type { SessionId } from "../server/session/SessionId.ts";
 import type { ToolCall } from "../tools/BaseTool.ts";
 
 export interface SessionRequest {
-  platform: "chromium" | "maestro" | "uiautomator2" | "xcuitest";
+  platform: "chromium" | "ios" | "android";
+  /** Optional since Java/Python only support Appium. */
+  driver?: "selenium" | "playwright" | "appium" | "maestro" | undefined;
   provider: string | undefined;
   name?: string | undefined;
   tools: { [key: string]: any }[];
@@ -22,7 +24,7 @@ export interface SessionRequest {
 export interface SessionResponse {
   session_id: SessionId;
   model: string;
-  platform: "chromium" | "maestro" | "uiautomator2" | "xcuitest";
+  platform: "chromium" | "ios" | "android";
 }
 
 export interface PlanRequest {

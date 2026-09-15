@@ -13,7 +13,7 @@ inputs:
 
   android-api-level:
     required: false
-    default: "35"
+    default: 35
     description: Android API level of the emulator to boot.
 
 runs:

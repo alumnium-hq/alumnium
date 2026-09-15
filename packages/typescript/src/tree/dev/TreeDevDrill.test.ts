@@ -18,6 +18,7 @@ describe(TreeDevDrill, () => {
     const drill = await TreeDevDrill.run({
       action: "click",
       platform: "chromium",
+      driver: "playwright",
       tree: new TestTree("input"),
       probe,
     });
@@ -32,6 +33,7 @@ describe(TreeDevDrill, () => {
     const drill = await TreeDevDrill.run({
       action: "type",
       platform: "chromium",
+      driver: "playwright",
       tree: new TestTree("input"),
       probe,
     });
@@ -55,6 +57,7 @@ describe(TreeDevDrill, () => {
     const drill = await TreeDevDrill.run({
       action: "wait",
       platform: "chromium",
+      driver: "playwright",
       tree: new TestTree("input"),
       probe,
     });
@@ -84,6 +87,7 @@ describe(TreeDevDrill, () => {
     const drill = await TreeDevDrill.run({
       action: "click",
       platform: "chromium",
+      driver: "playwright",
       tree,
       probe,
     });
@@ -105,6 +109,7 @@ describe(TreeDevDrill, () => {
     const drill = await TreeDevDrill.run({
       action: "click",
       platform: "chromium",
+      driver: "playwright",
       tree: new TestTree("input"),
       probe,
     });
@@ -125,6 +130,7 @@ describe(TreeDevDrill, () => {
     const drill = await TreeDevDrill.run({
       action: "wait",
       platform: "chromium",
+      driver: "playwright",
       tree,
       probe,
     });

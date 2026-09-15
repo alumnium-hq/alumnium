@@ -41,7 +41,12 @@ export namespace McpDriver {
     appArguments?: string[] | undefined;
     appEnvironment?: Record<string, string> | undefined;
     appReset?: boolean | undefined;
-    deviceId?: string | undefined;
+    /**
+     * The device to drive: a simulator/emulator UDID or serial, or a device name such as
+     * `"iPhone 16"`. Appium gets `appium:udid` for identifiers and `appium:deviceName` for names;
+     * Maestro matches identifiers against its connected devices.
+     */
+    device?: string | undefined;
   }
 
   export interface Capabilities {
@@ -391,27 +396,27 @@ export async function createSeleniumDriver(
  * Create a mobile driver from capabilities.
  */
 export async function createMobileDriver(
-  platform: Driver.AppiumPlatform,
+  os: Driver.MobileOs,
   capabilities: McpDriver.Capabilities,
   serverUrl: string | null | undefined,
   mobileOptions: McpDriver.MobileOptions = {},
 ): Promise<McpDriver> {
   const driverKind = Env.ALUMNIUM_DRIVER;
-  logger.info(`Creating mobile driver for ${platform} using ${driverKind}`);
+  logger.info(`Creating mobile driver for ${os} using ${driverKind}`);
   if (driverKind === "maestro") {
-    return createMaestroDriver(platform, mobileOptions);
+    return createMaestroDriver(os, mobileOptions);
   } else {
-    translateToAppiumCapabilities(platform, capabilities, mobileOptions);
-    return createAppiumDriver(platform, capabilities, serverUrl);
+    translateToAppiumCapabilities(os, capabilities, mobileOptions);
+    return createAppiumDriver(os, capabilities, serverUrl);
   }
 }
 
 function translateToAppiumCapabilities(
-  platform: Driver.AppiumPlatform,
+  os: Driver.MobileOs,
   capabilities: McpDriver.Capabilities,
   {
     app,
-    deviceId,
+    device,
     appReset,
     appArguments,
     appEnvironment,
@@ -422,13 +427,18 @@ function translateToAppiumCapabilities(
     // An installable goes to `appium:app`; an identifier names an app already on the device.
     const key = isAppReference(app)
       ? "appium:app"
-      : platform === "xcuitest"
+      : os === "ios"
         ? "appium:bundleId"
         : "appium:appPackage";
     translated.push([key, app]);
   }
 
-  if (deviceId !== undefined) translated.push(["appium:udid", deviceId]);
+  if (device !== undefined) {
+    translated.push([
+      isDeviceIdentifier(device) ? "appium:udid" : "appium:deviceName",
+      device,
+    ]);
+  }
   if (appReset !== undefined) {
     translated.push(["appium:noReset", !appReset]);
     translated.push(["appium:fullReset", appReset]);
@@ -460,13 +470,31 @@ function isAppReference(application: string): boolean {
 }
 
 /**
+ * Tells a device identifier (a UDID or serial) from a device name. Identifiers are what tooling
+ * prints: an iOS simulator UUID, a real iOS device's 40-hex or `00008030-…` UDID, an Android
+ * `emulator-5554` port name, or an Android serial. Names such as `"iPhone 16"` or `"Pixel 7"`
+ * are human words, so whitespace is the deciding tell when no known identifier shape matches.
+ */
+export function isDeviceIdentifier(device: string): boolean {
+  return (
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+      device,
+    ) ||
+    /^[0-9a-f]{40}$/i.test(device) ||
+    /^[0-9a-f]{8}-[0-9a-f]{16}$/i.test(device) ||
+    /^emulator-\d+$/.test(device) ||
+    (!/\s/.test(device) && /\d/.test(device))
+  );
+}
+
+/**
  * Create Maestro driver from capabilities.
  */
 export async function createMaestroDriver(
-  platform: Driver.AppiumPlatform,
+  os: Driver.MobileOs,
   {
     app,
-    deviceId,
+    device,
     appReset,
     appArguments,
     appEnvironment,
@@ -484,7 +512,7 @@ export async function createMaestroDriver(
   }
 
   logger.info(
-    `Creating Maestro driver for ${platform} (app=${app}, device=${deviceId ?? "first connected"})`,
+    `Creating Maestro driver for ${os} (app=${app}, device=${device ?? "first connected"})`,
   );
 
   const session = await MaestroSession.start({
@@ -492,7 +520,7 @@ export async function createMaestroDriver(
     ...(appArguments !== undefined && { launchArgs: appArguments }),
     ...(appEnvironment !== undefined && { launchEnv: appEnvironment }),
     // Which device to drive is per-session state; unset means Maestro's first connected device.
-    ...(deviceId !== undefined && { deviceId }),
+    ...(device !== undefined && { deviceId: device }),
     ...(Env.ALUMNIUM_MAESTRO_PATH !== undefined && {
       executablePath: Env.ALUMNIUM_MAESTRO_PATH,
     }),
@@ -510,7 +538,7 @@ export async function createMaestroDriver(
  * Create Appium driver from capabilities.
  */
 export async function createAppiumDriver(
-  platform: Driver.AppiumPlatform,
+  os: Driver.MobileOs,
   capabilities: McpDriver.Capabilities,
   serverUrl: string | null | undefined,
 ): Promise<WebdriverIoBrowser> {
@@ -519,9 +547,7 @@ export async function createAppiumDriver(
 
   const remoteServer = serverUrl || Env.ALUMNIUM_APPIUM_SERVER;
 
-  logger.info(
-    `Creating Appium driver for ${platform} (server=${remoteServer})`,
-  );
+  logger.info(`Creating Appium driver for ${os} (server=${remoteServer})`);
 
   const remoteServerUrl = new URL(remoteServer);
   const remoteOptions =
@@ -549,7 +575,7 @@ export async function createAppiumDriver(
     await driver.updateSettings(settings);
   }
 
-  logger.debug(`Appium driver for ${platform} created successfully`);
+  logger.debug(`Appium driver for ${os} created successfully`);
   return driver;
 }
 

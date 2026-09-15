@@ -77,6 +77,7 @@ describe(TreeDevDrillStore, () => {
 function result(action: string, error: string): TreeDevDrill.TreeResult {
   return {
     platform: "chromium",
+    driver: "playwright",
     input: "<input/>",
     output: "<output/>",
     failures: [

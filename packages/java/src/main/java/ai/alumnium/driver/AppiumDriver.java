@@ -33,8 +33,8 @@ public final class AppiumDriver extends BaseDriver {
   private static final Logger LOG = LoggerFactory.getLogger(AppiumDriver.class);
 
   public enum Platform {
-    UIAUTOMATOR2,
-    XCUITEST
+    ANDROID,
+    IOS
   }
 
   private final io.appium.java_client.AppiumDriver driver;
@@ -50,15 +50,15 @@ public final class AppiumDriver extends BaseDriver {
     this.driver = driver;
     Object automationName = driver.getCapabilities().getCapability("automationName");
     if (automationName != null && automationName.toString().equalsIgnoreCase("uiautomator2")) {
-      this.platform = Platform.UIAUTOMATOR2;
+      this.platform = Platform.ANDROID;
     } else {
-      this.platform = Platform.XCUITEST;
+      this.platform = Platform.IOS;
     }
   }
 
   @Override
   public String platform() {
-    return platform == Platform.UIAUTOMATOR2 ? "uiautomator2" : "xcuitest";
+    return platform == Platform.ANDROID ? "android" : "ios";
   }
 
   @Override
@@ -74,7 +74,7 @@ public final class AppiumDriver extends BaseDriver {
       driver.getPageSource();
     }
     String xml = driver.getPageSource();
-    return platform == Platform.UIAUTOMATOR2
+    return platform == Platform.ANDROID
         ? new UIAutomator2AccessibilityTree(xml)
         : new XCUITestAccessibilityTree(xml);
   }
@@ -186,7 +186,7 @@ public final class AppiumDriver extends BaseDriver {
   @Override
   public WebElement findElement(int id) {
     AccessibilityElement element = accessibilityTree().elementById(id);
-    return platform == Platform.XCUITEST ? findElementIos(element) : findElementAndroid(element);
+    return platform == Platform.IOS ? findElementIos(element) : findElementAndroid(element);
   }
 
   @Override
@@ -268,7 +268,7 @@ public final class AppiumDriver extends BaseDriver {
   }
 
   private void scrollIntoView(WebElement element) {
-    if (platform == Platform.UIAUTOMATOR2) {
+    if (platform == Platform.ANDROID) {
       scrollIntoViewAndroid(element);
     } else {
       driver.executeScript(
