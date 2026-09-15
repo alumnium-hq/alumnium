@@ -100,6 +100,7 @@ export const PlanStepActionsBody = CacheableRequestBody.extend({
   goal: z.string(),
   step: z.string(),
   accessibility_tree: z.string(),
+  params: z.record(z.string(), z.string()).optional(),
 });
 
 export const PlanStepActionsResponse = z.object({

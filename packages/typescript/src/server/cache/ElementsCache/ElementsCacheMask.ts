@@ -1,11 +1,93 @@
 import { ensure } from "alwaysly";
 import type { LchainSchema } from "../../../llm/LchainSchema.ts";
+import type { Params } from "../../../Params.ts";
 import { Logger } from "../../../telemetry/Logger.ts";
 
 const logger = Logger.get(import.meta.url);
 
+export namespace ElementsCacheMask {
+  export type ArgsFn = (args: Record<string, unknown> | undefined) => void;
+}
+
 export abstract class ElementsCacheMask {
   static ID_FIELDS = new Set(["id", "from_id", "to_id"]);
+
+  /**
+   * Replaces goal parameter values in the cached tool call arguments with their
+   * placeholders, so that a cached response does not depend on the value it was
+   * recorded with.
+   *
+   * @param generation - Generation to mask.
+   * @param params - Goal parameters in play.
+   * @returns Generation with the parameter values masked.
+   */
+  static maskParams(
+    generation: LchainSchema.StoredGeneration,
+    params: Params,
+  ): LchainSchema.StoredGeneration {
+    return this.#mapStringArgs(generation, (value) => params.mask(value));
+  }
+
+  /**
+   * Substitutes fresh goal parameter values into the cached tool call
+   * arguments.
+   *
+   * @param generation - Generation read from the cache.
+   * @param params - Goal parameters in play.
+   * @returns Generation with the parameter values substituted.
+   */
+  static substituteParams(
+    generation: LchainSchema.StoredGeneration,
+    params: Params,
+  ): LchainSchema.StoredGeneration {
+    return this.#mapStringArgs(generation, (value) => params.substitute(value));
+  }
+
+  static #mapStringArgs(
+    generation: LchainSchema.StoredGeneration,
+    mapValue: (value: string) => string,
+  ): LchainSchema.StoredGeneration {
+    const mapped = structuredClone(generation);
+
+    try {
+      this.#eachArgs(mapped, (args) => {
+        if (!args) return;
+        for (const [key, value] of Object.entries(args)) {
+          if (typeof value === "string") args[key] = mapValue(value);
+        }
+      });
+    } catch (error) {
+      logger.debug(`Error mapping response arguments: ${error}`);
+    }
+
+    return mapped;
+  }
+
+  /**
+   * Visits the arguments of every tool call in a generation, wherever the
+   * provider happened to put them.
+   */
+  static #eachArgs(
+    generation: LchainSchema.StoredGeneration,
+    fn: ElementsCacheMask.ArgsFn,
+  ) {
+    for (const call of generation.message?.data.tool_calls || []) {
+      fn(call.args);
+    }
+
+    if (!Array.isArray(generation.message?.data.content)) return;
+
+    generation.message?.data.content.forEach((content) => {
+      if (typeof content !== "object") return;
+
+      switch (content.type) {
+        case "functionCall":
+          return fn(content.functionCall.args);
+        case "tool_use":
+          return fn(content.input);
+      }
+    });
+  }
 
   static mask(
     generation: LchainSchema.StoredGeneration,

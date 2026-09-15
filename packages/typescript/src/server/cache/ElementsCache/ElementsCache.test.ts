@@ -170,6 +170,61 @@ describe("ElementsCache", () => {
         );
       });
 
+      it("resolves a different element for a different goal parameter", async () => {
+        // NOTE: The point of masking goal parameters into the cached element:
+        // one entry recorded for "8" serves every digit, because the element is
+        // re-resolved from the substituted text against the live tree.
+        const { llmContext, cache, prompt1, prompt2, llmKey, cacheDir } =
+          setup.cur;
+        const calculatorXml =
+          '<div><button id="1">3</button><button id="2">8</button></div>';
+        const step = "click {number} button" as BaseAgent.Step;
+
+        llmContext.assignPromptsMeta([prompt1], {
+          kind: "actor",
+          step,
+          goal: step as string as BaseAgent.Goal,
+          treeXml: calculatorXml,
+          params: { number: "8" },
+        });
+
+        await cache.update(prompt1, llmKey, [
+          LchainFactory.generationWith({
+            text: "",
+            toolCalls: [
+              LchainFactory.toolCall({ name: "ClickTool", args: { id: 2 } }),
+            ],
+          }),
+        ]);
+        await cache.save();
+
+        const elementsPath = (await cacheDir.flatTree()).find((entry) =>
+          entry.endsWith("elements.json"),
+        );
+        expect(await cacheDir.readJson(elementsPath!)).toEqual([
+          { role: "button", index: 0, text: "{number}" },
+        ]);
+
+        llmContext.assignPromptsMeta([prompt2], {
+          kind: "actor",
+          step,
+          goal: step as string as BaseAgent.Goal,
+          treeXml: calculatorXml,
+          params: { number: "3" },
+        });
+
+        const result = await cache.lookup(prompt2, llmKey);
+
+        expect(Lchain.toStored(result![0]!)).toEqual(
+          LchainFactory.storedGenerationWith({
+            text: "",
+            toolCalls: [
+              expect.objectContaining({ name: "ClickTool", args: { id: 1 } }),
+            ],
+          }),
+        );
+      });
+
       it("resolves null if app does not match", async () => {
         const { sessionContext, llmContext, cache, prompt1, llmKey, treeXml } =
           setup.cur;

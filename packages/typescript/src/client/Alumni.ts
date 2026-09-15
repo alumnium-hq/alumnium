@@ -18,6 +18,7 @@ import { Env } from "../Env.ts";
 import { LlmUsageStats } from "../llm/llmSchema.ts";
 import { Model } from "../Model.ts";
 import { NavigationPolicy } from "../NavigationPolicy.ts";
+import { Params } from "../Params.ts";
 import { Telemetry } from "../telemetry/Telemetry.ts";
 import type { Tracer } from "../telemetry/Tracer.ts";
 import { BaseTool, type ToolClass } from "../tools/BaseTool.ts";
@@ -25,6 +26,7 @@ import { retry } from "../utils/retry.ts";
 import { Area } from "./Area.ts";
 import { Cache } from "./Cache.ts";
 import { AssertionError } from "./errors/AssertionError.ts";
+import { ParamsError } from "./errors/ParamsError.ts";
 import type { DoResult, DoStep } from "./result.ts";
 
 const { tracer, logger } = Telemetry.get(import.meta.url);
@@ -35,10 +37,8 @@ const { span } = tracer.dec();
  */
 export type AlumniOptions = Alumni.Options;
 
-/**
- * @deprecated Use `Alumni.VisionOptions` instead.
- */
-export type VisionOptions = Alumni.VisionOptions;
+/** @deprecated Use Alumni.RetrievalOptions instead. */
+export type VisionOptions = Alumni.RetrievalOptions;
 
 export namespace Alumni {
   export type Driver = WebDriver | Page | Browser;
@@ -54,11 +54,15 @@ export namespace Alumni {
     navigationPolicy?: NavigationPolicy.Options | undefined;
   }
 
-  export interface VisionOptions {
+  /** @deprecated Use RetrievalOptions instead. */
+  export type VisionOptions = RetrievalOptions;
+
+  export interface RetrievalOptions {
     vision?: boolean;
+    params?: Record<string, string> | undefined;
   }
 
-  export interface CheckOptions extends VisionOptions {
+  export interface CheckOptions extends RetrievalOptions {
     assert?: CheckAssert;
   }
 
@@ -151,78 +155,105 @@ export class Alumni {
     await this.driver.quit();
   }
 
+  /**
+   * Executes a series of steps to achieve the given goal.
+   *
+   * @param goal - Goal to achieve, optionally containing `{placeholder}` tokens.
+   * @param params - Values for the goal placeholders. Passing them keeps the
+   *   goal text stable across runs, so goals differing only in a value share a
+   *   cache entry, and a recorded step can be replayed against a freshly
+   *   produced value. See `Params`.
+   * @returns Explanation and the executed steps with their actions.
+   */
   @span("alumni.do", spanAttrs)
-  async do(goal: string): Promise<DoResult> {
-    return retry(async () => {
-      const app = await this.driver.app();
+  async do(goal: string, params?: Record<string, string>): Promise<DoResult> {
+    const boundParams = Params.from(params);
+    boundParams.validate(goal, "goal");
+    const plannerGoal = boundParams.substitute(goal);
 
-      this.driver.resetAccessibilityTree();
-      const initialAccessibilityTree = await this.driver.getAccessibilityTree();
-      const beforeTree = this.changeAnalysis
-        ? initialAccessibilityTree.toStr()
-        : null;
-      const beforeUrl = this.changeAnalysis ? await this.driver.url() : null;
-      const { explanation, steps } = await this.client.planActions({
-        goal,
-        accessibilityTree: initialAccessibilityTree.toStr(),
-        app,
-      });
+    return retry(
+      { doRetry: (error) => !(error instanceof ParamsError) },
+      async () => {
+        const app = await this.driver.app();
 
-      let finalExplanation = explanation;
-      const executedSteps: DoStep[] = [];
-      for (let idx = 0; idx < steps.length; idx++) {
-        const step = steps[idx];
-        always(step);
-
-        // Use initial tree for first step, fresh tree for subsequent steps.
-        if (idx > 0) this.driver.resetAccessibilityTree();
-        const accessibilityTree = await this.driver.getAccessibilityTree();
-        const { explanation: actorExplanation, actions } =
-          await this.client.executeAction({
-            goal,
-            step,
-            accessibilityTree: accessibilityTree.toStr(),
-            app,
-          });
-
-        // When planner is off, explanation is just the goal — replace with actor's reasoning.
-        if (finalExplanation === goal) {
-          finalExplanation = actorExplanation;
-        }
-
-        const calledTools: string[] = [];
-        for (const toolCall of actions) {
-          const calledTool = await BaseTool.executeToolCall(
-            toolCall,
-            this.tools,
-            this.driver,
-          );
-          calledTools.push(calledTool);
-        }
-
-        executedSteps.push({ name: step, tools: calledTools });
-      }
-
-      let changes = "";
-      if (this.changeAnalysis && executedSteps.length > 0) {
         this.driver.resetAccessibilityTree();
-        changes = await this.client.analyzeChanges({
-          beforeAccessibilityTree: beforeTree!,
-          beforeUrl: beforeUrl!,
-          afterAccessibilityTree: (
-            await this.driver.getAccessibilityTree()
-          ).toStr(),
-          afterUrl: await this.driver.url(),
+        const initialAccessibilityTree =
+          await this.driver.getAccessibilityTree();
+        const beforeTree = this.changeAnalysis
+          ? initialAccessibilityTree.toStr()
+          : null;
+        const beforeUrl = this.changeAnalysis ? await this.driver.url() : null;
+        const { explanation, steps } = await this.client.planActions({
+          goal: plannerGoal,
+          accessibilityTree: initialAccessibilityTree.toStr(),
           app,
         });
-      }
 
-      return {
-        explanation: finalExplanation,
-        steps: executedSteps,
-        changes,
-      };
-    });
+        let finalExplanation = explanation;
+        const executedSteps: DoStep[] = [];
+        for (let idx = 0; idx < steps.length; idx++) {
+          const plannedStep = steps[idx];
+          always(plannedStep);
+          // Keep actor cache entries reusable after planning with real values.
+          const step = boundParams.mask(plannedStep);
+
+          // Use initial tree for first step, fresh tree for subsequent steps
+          if (idx > 0) this.driver.resetAccessibilityTree();
+          const accessibilityTree =
+            idx === 0
+              ? initialAccessibilityTree
+              : await this.driver.getAccessibilityTree();
+          const { explanation: actorExplanation, actions } =
+            await this.client.executeAction({
+              goal,
+              step,
+              accessibilityTree: accessibilityTree.toStr(),
+              app,
+              ...(params ? { params } : {}),
+            });
+
+          // When planner is off, explanation is just the goal — replace with actor's reasoning.
+          if (finalExplanation === plannerGoal) {
+            finalExplanation = actorExplanation;
+          }
+
+          const calledTools: string[] = [];
+          for (const toolCall of actions) {
+            const calledTool = await BaseTool.executeToolCall(
+              toolCall,
+              this.tools,
+              this.driver,
+            );
+            calledTools.push(calledTool);
+          }
+
+          executedSteps.push({
+            name: boundParams.substitute(step),
+            tools: calledTools,
+          });
+        }
+
+        let changes = "";
+        if (this.changeAnalysis && executedSteps.length > 0) {
+          this.driver.resetAccessibilityTree();
+          changes = await this.client.analyzeChanges({
+            beforeAccessibilityTree: beforeTree!,
+            beforeUrl: beforeUrl!,
+            afterAccessibilityTree: (
+              await this.driver.getAccessibilityTree()
+            ).toStr(),
+            afterUrl: await this.driver.url(),
+            app,
+          });
+        }
+
+        return {
+          explanation: boundParams.substitute(finalExplanation),
+          steps: executedSteps,
+          changes,
+        };
+      },
+    );
   }
 
   @span("alumni.check", (_, options) => ({
@@ -233,6 +264,21 @@ export class Alumni {
     statement: string,
     options: Alumni.CheckOptions = {},
   ): Promise<string> {
+    // NOTE: Substituted here, before the request, and deliberately not passed
+    // down the way `do` passes its params to the actor. `do` sends the
+    // placeholder text because `ElementsCache` keys on it and can mask the
+    // values out of what it stores; the retriever is ineligible for that cache,
+    // and a verdict reused across values would be a check that never read the
+    // page. Substituting here makes the request identical to one with the value
+    // written into the statement, so nothing downstream can tell the difference
+    // and existing cache entries keep hitting.
+    //
+    // NOTE: Outside `retry`, which has no `ParamsError` guard of its own and
+    // would otherwise retry a bad call with backoff.
+    const boundParams = Params.from(options.params);
+    boundParams.validate(statement, "statement");
+    const substitutedStatement = boundParams.substitute(statement);
+
     return retry(async () => {
       const screenshot = options.vision
         ? await this.driver.screenshot()
@@ -240,7 +286,7 @@ export class Alumni {
       this.driver.resetAccessibilityTree();
       const accessibilityTree = await this.driver.getAccessibilityTree();
       const [explanation, value] = await this.client.retrieve({
-        statement: `Is the following true or false - ${statement}`,
+        statement: `Is the following true or false - ${substitutedStatement}`,
         accessibilityTree: accessibilityTree.toStr(),
         title: await this.driver.title(),
         url: await this.driver.url(),
@@ -265,7 +311,15 @@ export class Alumni {
     "alumni.flavor": "alumni",
     "alumni.method.args.vision": !!options?.vision,
   }))
-  async get(data: string, options: Alumni.VisionOptions = {}): Promise<Data> {
+  async get(
+    data: string,
+    options: Alumni.RetrievalOptions = {},
+  ): Promise<Data> {
+    // NOTE: Substituted here rather than passed down, see `check`.
+    const boundParams = Params.from(options.params);
+    boundParams.validate(data, "data");
+    const substitutedData = boundParams.substitute(data);
+
     return retry(async () => {
       const screenshot = options.vision
         ? await this.driver.screenshot()
@@ -273,7 +327,7 @@ export class Alumni {
       this.driver.resetAccessibilityTree();
       const accessibilityTree = await this.driver.getAccessibilityTree();
       const [explanation, value] = await this.client.retrieve({
-        statement: data,
+        statement: substitutedData,
         accessibilityTree: accessibilityTree.toStr(),
         title: await this.driver.title(),
         url: await this.driver.url(),

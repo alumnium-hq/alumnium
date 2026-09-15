@@ -167,6 +167,7 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                   ctx.body.goal,
                   ctx.body.step,
                   accessibilityTree.toXml(session.excludeAttributes),
+                  ctx.body.params,
                 );
                 return {
                   explanation,
