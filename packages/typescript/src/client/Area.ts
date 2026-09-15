@@ -53,7 +53,11 @@ export class Area {
     boundParams.validate(goal, "goal");
 
     return retry(
-      { doRetry: (error) => !(error instanceof ParamsError) && !(error instanceof NavigationBlockedError) },
+      {
+        doRetry: (error) =>
+          !(error instanceof ParamsError) &&
+          !(error instanceof NavigationBlockedError),
+      },
       async () => {
         const app = await this.driver.app();
         this.driver.setAccessibilityTree(this.accessibilityTree);
