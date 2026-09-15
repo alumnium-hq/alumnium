@@ -262,7 +262,16 @@ describe("serverApp", () => {
         vi
           .spyOn(globalThis, "fetch")
           .mockImplementation((input, init) =>
-            serverApp.handle(new Request(typeof input === "string" ? input : input instanceof URL ? input.href : input.url, init)),
+            serverApp.handle(
+              new Request(
+                typeof input === "string"
+                  ? input
+                  : input instanceof URL
+                    ? input.href
+                    : input.url,
+                init,
+              ),
+            ),
           ),
       );
       const client = new HttpClient({
