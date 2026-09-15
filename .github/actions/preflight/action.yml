@@ -13,11 +13,7 @@ outputs:
 
   drivers:
     value: ${{ steps.preflight.outputs.drivers }}
-    description: JSON array of drivers to run system tests with in every client package.
-
-  typescript-drivers:
-    value: ${{ steps.preflight.outputs.typescript-drivers }}
-    description: JSON array of drivers to run TypeScript system tests with, including TypeScript-only ones.
+    description: JSON array of drivers to run system tests with.
 
   models:
     value: ${{ steps.preflight.outputs.models }}

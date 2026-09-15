@@ -102,7 +102,6 @@ jobs:
     outputs:
       sha: ${{ steps.params.outputs.sha }}
       drivers: ${{ steps.params.outputs.drivers }}
-      typescript-drivers: ${{ steps.params.outputs.typescript-drivers }}
       models: ${{ steps.params.outputs.models }}
       run-eval: ${{ steps.params.outputs.run-eval }}
       run-java: ${{ steps.params.outputs.run-java }}
@@ -228,4 +227,4 @@ jobs:
     with:
       sha: ${{ needs.test.outputs.sha }}
       models: ${{ needs.test.outputs.models }}
-      drivers: ${{ needs.test.outputs.typescript-drivers }}
+      drivers: ${{ needs.test.outputs.drivers }}
