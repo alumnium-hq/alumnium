@@ -26,6 +26,6 @@ export const TestCommand = CliCommand.define({
 
     logger.info(`Running scenario ${scenarioPath}`);
 
-    // TODO: Do the work here
+    throw new Error("The test runner is not implemented yet");
   },
 });
