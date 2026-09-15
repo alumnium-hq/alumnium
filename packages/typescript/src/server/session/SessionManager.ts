@@ -121,12 +121,15 @@ export class SessionManager {
   getTotalStats(): LlmUsageStats {
     const totalStats = createLlmUsageStats();
     Object.values(this.#sessions).forEach((session) => {
-      (Object.keys(session.stats.total) as (keyof LlmUsage)[]).forEach(
-        (key) => {
-          totalStats.total[key] += session.stats.total[key];
-          totalStats.cache[key] += session.stats.cache[key];
-        },
-      );
+      const stats = session.stats;
+
+      (Object.keys(stats.total) as (keyof LlmUsage)[]).forEach((key) => {
+        totalStats.total[key] += stats.total[key];
+        totalStats.cache[key] += stats.cache[key];
+      });
+
+      totalStats.lookups.hits += stats.lookups.hits;
+      totalStats.lookups.misses += stats.lookups.misses;
     });
     return totalStats;
   }
