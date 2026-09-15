@@ -1,3 +1,4 @@
+import { always } from "alwaysly";
 import { Element } from "domhandler";
 import type { MaestroSession } from "../drivers/MaestroSession.ts";
 import { XmlRenderer } from "../xml/XmlRenderer.ts";
@@ -106,17 +107,73 @@ export class MaestroAccessibilityTree extends BaseAccessibilityTree<MaestroSessi
     const element = new Element(role, xmlAttrs);
     element.parent = parent;
     element.children = children.map((child) => this.#nodeToXml(child, element));
+    this.#hoistWrapperLabel(element);
 
+    const label =
+      element.attribs["accessibilityText"] ?? element.attribs["content-desc"];
     this.#elementsByRawId.set(rawId, {
       id: rawId,
       type: role,
-      name: attrs["accessibilityText"] ?? attrs["content-desc"],
-      label: attrs["accessibilityText"] ?? attrs["content-desc"],
-      value: attrs["text"] ?? attrs["value"],
+      name: label,
+      label,
+      value: element.attribs["text"] ?? element.attribs["value"],
       maestroBounds: attrs["bounds"],
     });
 
     return element;
+  }
+
+  /** Attributes a leaf may carry and still count as "nothing but a label". */
+  static readonly #INERT_ATTRS = new Set([
+    "raw_id",
+    "class",
+    "bounds",
+    "enabled",
+    "content-desc",
+    "text",
+  ]);
+
+  /**
+   * Compose renders a control as an unlabelled clickable wrapper around a labelled leaf and an
+   * empty widget shell: `<Button clickable><Text content-desc="New Task"/><Button/></Button>`.
+   * The label belongs to the control. Left on the child, the wrapper is just "a Button", which
+   * the elements cache can only tell apart from its siblings by position — so the cached "add
+   * button" click lands on whatever unlabelled button now sits at that index. Move the label up
+   * and drop the leaves that carried nothing else.
+   */
+  #hoistWrapperLabel(element: Element): void {
+    if (element.name !== "Button") return;
+    if (element.attribs["content-desc"] || element.attribs["text"]) return;
+    if (element.children.length === 0) return;
+
+    const leaves = element.children.filter(
+      (child): child is Element =>
+        child instanceof Element &&
+        child.children.length === 0 &&
+        Object.keys(child.attribs).every((attr) =>
+          MaestroAccessibilityTree.#INERT_ATTRS.has(attr),
+        ),
+    );
+    if (leaves.length !== element.children.length) return;
+
+    const labelled = leaves.filter(
+      (leaf) => leaf.attribs["content-desc"] || leaf.attribs["text"],
+    );
+    if (labelled.length !== 1) return;
+
+    const [source] = labelled;
+    always(source);
+    const attrName = source.attribs["content-desc"] ? "content-desc" : "text";
+    const merged: Record<string, string> = {
+      raw_id: element.attribs["raw_id"] ?? "",
+    };
+    for (const name of ATTR_ORDER) {
+      const value =
+        name === attrName ? source.attribs[name] : element.attribs[name];
+      if (value !== undefined && value !== "") merged[name] = value;
+    }
+    element.attribs = merged;
+    element.children = [];
   }
 
   /**

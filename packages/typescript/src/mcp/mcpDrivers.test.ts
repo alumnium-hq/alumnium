@@ -1,12 +1,14 @@
 import type { WebDriver } from "selenium-webdriver";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+import { Driver } from "../drivers/Driver.ts";
 import { Env } from "../Env.ts";
 import { FileStore } from "../FileStore/FileStore.ts";
 import {
   createMobileDriver,
   createPlaywrightDriver,
   createSeleniumDriver,
+  isDeviceIdentifier,
 } from "./mcpDrivers.ts";
 
 const mocks = vi.hoisted(() => {
@@ -442,11 +444,11 @@ describe("Appium capability translation", () => {
   });
 
   async function translated(
-    platform: "xcuitest" | "uiautomator2",
+    os: Driver.MobileOs,
     capabilities: Record<string, unknown>,
     options: Parameters<typeof createMobileDriver>[3],
   ): Promise<Record<string, unknown>> {
-    await createMobileDriver(platform, capabilities, null, options);
+    await createMobileDriver(os, capabilities, null, options);
     return mobileMocks.remote.mock.calls[0]![0].capabilities as Record<
       string,
       unknown
@@ -461,37 +463,62 @@ describe("Appium capability translation", () => {
       "https://cdn.example.com/builds/app.ipa",
     ]) {
       vi.clearAllMocks();
-      expect(await translated("xcuitest", {}, { app })).toEqual({
+      expect(await translated("ios", {}, { app })).toEqual({
         "appium:app": app,
       });
     }
   });
 
   it("translates an installed app's identifier to the platform's app capability", async () => {
-    expect(
-      await translated("xcuitest", {}, { app: "com.example.app" }),
-    ).toEqual({ "appium:bundleId": "com.example.app" });
+    expect(await translated("ios", {}, { app: "com.example.app" })).toEqual({
+      "appium:bundleId": "com.example.app",
+    });
 
     vi.clearAllMocks();
-    expect(
-      await translated("uiautomator2", {}, { app: "com.example.app" }),
-    ).toEqual({ "appium:appPackage": "com.example.app" });
+    expect(await translated("android", {}, { app: "com.example.app" })).toEqual(
+      { "appium:appPackage": "com.example.app" },
+    );
   });
 
-  it("translates deviceId and appReset", async () => {
+  it("translates a device identifier to appium:udid, and appReset to the reset pair", async () => {
     expect(
-      await translated("xcuitest", {}, { deviceId: "UDID-1", appReset: true }),
+      await translated(
+        "ios",
+        {},
+        { device: "5FEB61C5-E3F5-471D-AE23-8A07438D5E92", appReset: true },
+      ),
     ).toEqual({
-      "appium:udid": "UDID-1",
+      "appium:udid": "5FEB61C5-E3F5-471D-AE23-8A07438D5E92",
       "appium:fullReset": true,
       "appium:noReset": false,
     });
   });
 
+  it("translates a device name to appium:deviceName", async () => {
+    expect(await translated("ios", {}, { device: "iPhone 16" })).toEqual({
+      "appium:deviceName": "iPhone 16",
+    });
+  });
+
+  it("tells device identifiers from device names", () => {
+    for (const id of [
+      "5FEB61C5-E3F5-471D-AE23-8A07438D5E92",
+      "00008030-001A2B3C4D5E6F7A",
+      "a1b2c3d4e5f60718293a4b5c6d7e8f9012345678",
+      "emulator-5554",
+      "R58M12345AB",
+    ]) {
+      expect(isDeviceIdentifier(id), id).toBe(true);
+    }
+    for (const name of ["iPhone 16", "Pixel 7", "iPad", "Galaxy S24 Ultra"]) {
+      expect(isDeviceIdentifier(name), name).toBe(false);
+    }
+  });
+
   it("translates appArguments and appEnvironment into processArguments", async () => {
     expect(
       await translated(
-        "xcuitest",
+        "ios",
         {},
         {
           appArguments: ["-UITesting"],
@@ -507,14 +534,14 @@ describe("Appium capability translation", () => {
   });
 
   it("leaves capabilities alone when no option is given", async () => {
-    expect(await translated("xcuitest", { "appium:udid": "keep" }, {})).toEqual(
-      { "appium:udid": "keep" },
-    );
+    expect(await translated("ios", { "appium:udid": "keep" }, {})).toEqual({
+      "appium:udid": "keep",
+    });
   });
 
   it("lets an option override a conflicting capability", async () => {
     const capabilities = await translated(
-      "xcuitest",
+      "ios",
       { "appium:bundleId": "com.old.app" },
       { app: "com.new.app" },
     );
@@ -536,9 +563,9 @@ describe("createMobileDriver", () => {
     vi.stubEnv("ALUMNIUM_DRIVER", "appium-ios");
     Env.reset();
 
-    await createMobileDriver("xcuitest", { platformName: "ios" }, null, {
+    await createMobileDriver("ios", { platformName: "ios" }, null, {
       app: "com.example.app",
-      deviceId: "UDID-1",
+      device: "UDID-1",
       appReset: true,
     });
 
@@ -557,9 +584,9 @@ describe("createMobileDriver", () => {
     vi.stubEnv("ALUMNIUM_DRIVER", "maestro");
     Env.reset();
 
-    await createMobileDriver("xcuitest", { platformName: "ios" }, null, {
+    await createMobileDriver("ios", { platformName: "ios" }, null, {
       app: "com.example.app",
-      deviceId: "UDID-1",
+      device: "UDID-1",
       appReset: true,
     });
 
@@ -576,7 +603,7 @@ describe("createMobileDriver", () => {
     vi.stubEnv("ALUMNIUM_DRIVER", "maestro");
     Env.reset();
 
-    await createMobileDriver("xcuitest", {}, null, {
+    await createMobileDriver("ios", {}, null, {
       app: "com.example.app",
     });
 
@@ -590,7 +617,7 @@ describe("createMobileDriver", () => {
     vi.stubEnv("ALUMNIUM_DRIVER", "maestro");
     Env.reset();
 
-    await createMobileDriver("xcuitest", {}, null, {
+    await createMobileDriver("ios", {}, null, {
       app: "com.example.app",
       appArguments: ["-UITesting"],
       appEnvironment: { API_URL: "https://staging.example.com" },
@@ -606,7 +633,7 @@ describe("createMobileDriver", () => {
     vi.stubEnv("ALUMNIUM_DRIVER", "maestro");
     Env.reset();
 
-    await createMobileDriver("xcuitest", {}, null, {
+    await createMobileDriver("ios", {}, null, {
       app: "com.example.app",
     });
 
@@ -620,7 +647,7 @@ describe("createMobileDriver", () => {
     Env.reset();
 
     await expect(
-      createMobileDriver("xcuitest", {}, null, {
+      createMobileDriver("ios", {}, null, {
         app: "/tmp/TodoList.app",
       }),
     ).rejects.toThrow(/cannot install/);
@@ -633,7 +660,7 @@ describe("createMobileDriver", () => {
 
     await expect(
       createMobileDriver(
-        "xcuitest",
+        "ios",
         { "appium:bundleId": "com.example.app" },
         null,
         {},

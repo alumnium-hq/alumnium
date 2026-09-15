@@ -3,9 +3,7 @@ import { z } from "zod";
 export namespace Driver {
   export type ChromiumPlatform = z.infer<typeof Driver.ChromiumPlatform>;
 
-  export type AppiumPlatform = z.infer<typeof Driver.AppiumPlatform>;
-
-  export type AppiumOs = z.infer<typeof Driver.AppiumOs>;
+  export type MobileOs = z.infer<typeof Driver.MobileOs>;
 
   export type Platform = z.infer<typeof Driver.Platform>;
 
@@ -30,45 +28,17 @@ export abstract class Driver {
     return val;
   }, this.ChromiumPlatformStrict);
 
-  static appiumOses = ["android", "ios"] as const;
+  static mobileOses = ["android", "ios"] as const;
 
-  static AppiumOs = z.enum(this.appiumOses);
+  static MobileOs = z.enum(this.mobileOses);
 
-  static appiumPlatforms = ["uiautomator2", "xcuitest"] as const;
+  static platforms = [this.chromiumPlatform, ...this.mobileOses] as const;
 
-  static AppiumPlatformStrict = z.enum(this.appiumPlatforms);
-
-  static AppiumPlatform = z.preprocess((val): unknown => {
-    // Normalize Appium OS to platform
-    const parsedOs = this.AppiumOs.safeParse(val);
-    switch (parsedOs.data) {
-      case "android":
-        return "uiautomator2";
-      case "ios":
-        return "xcuitest";
-      case undefined:
-        return val;
-    }
-  }, this.AppiumPlatformStrict);
-
-  static maestroPlatform = "maestro" as const;
-
-  static MaestroPlatform = z.literal(this.maestroPlatform);
-
-  static PlatformStrict = z.enum([
-    this.chromiumPlatform,
-    ...this.appiumPlatforms,
-    this.maestroPlatform,
-  ]);
+  static PlatformStrict = z.enum(this.platforms);
 
   static Platform = z.preprocess((val) => {
     const parsedChromium = this.ChromiumPlatform.safeParse(val);
-    if (parsedChromium.success) return parsedChromium.data;
-
-    const parsedAppium = this.AppiumPlatform.safeParse(val);
-    if (parsedAppium.success) return parsedAppium.data;
-
-    return val;
+    return parsedChromium.success ? parsedChromium.data : val;
   }, this.PlatformStrict);
 
   static chromiumKinds = ["selenium", "playwright"] as const;
@@ -89,13 +59,13 @@ export abstract class Driver {
     this.maestroKind,
   ] as const;
 
-  static Kind = z.enum(this.kinds).default("selenium");
+  static Kind = z.enum(this.kinds);
 
   static Id = z
     .union([
       this.ChromiumKind,
       this.MaestroKind,
-      z.templateLiteral([this.AppiumKind, "-", this.AppiumOs]),
+      z.templateLiteral([this.AppiumKind, "-", this.MobileOs]),
     ])
     .default("selenium");
 

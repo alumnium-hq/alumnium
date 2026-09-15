@@ -34,6 +34,8 @@ export namespace Session {
     sessionId: SessionId;
     model: Model;
     platform: Driver.Platform;
+    // Optional since Java/Python only support Appium.
+    driver?: Driver.Kind | undefined;
     tools: ToolDefinition[];
     llm?: LanguageModel | undefined;
     planner?: boolean | undefined;
@@ -49,9 +51,14 @@ export class Session {
     message: "Invalid session ID",
   });
 
+  static defaultDriver(platform: Driver.Platform): Driver.Kind {
+    return platform === "chromium" ? "selenium" : "appium";
+  }
+
   sessionId: SessionId;
   model: Model;
   platform: Driver.Platform;
+  driver: Driver.Kind;
   tools: ToolDefinition[];
   #llm: LanguageModel | undefined;
   cache: ServerCache;
@@ -71,6 +78,7 @@ export class Session {
     this.sessionId = sessionId;
     this.model = model;
     this.platform = platform;
+    this.driver = props.driver ?? Session.defaultDriver(platform);
     this.tools = tools;
     this.planner = props.planner ?? true;
     this.excludeAttributes = props.excludeAttributes ?? new Set();
@@ -180,7 +188,7 @@ export class Session {
    * @returns The created server tree instance
    */
   parseTree(xml: string): BaseServerAccessibilityTree {
-    const tree = TreeFactory.create(this.platform, xml);
+    const tree = TreeFactory.create(this.platform, this.driver, xml);
     logger.debug(`Processed tree for session ${this.sessionId}`);
     return tree;
   }

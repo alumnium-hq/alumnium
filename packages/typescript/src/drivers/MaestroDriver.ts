@@ -4,12 +4,12 @@ import type { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTr
 import { AppId } from "../AppId.ts";
 import { Telemetry } from "../telemetry/Telemetry.ts";
 import { TreeDevDrillError } from "../tree/dev/TreeDevDrillError.ts";
-import type { Tracer } from "../telemetry/Tracer.ts";
 import type { ToolClass } from "../tools/BaseTool.ts";
 import { ClickTool } from "../tools/ClickTool.ts";
 import { PressKeyTool } from "../tools/PressKeyTool.ts";
 import { TypeTool } from "../tools/TypeTool.ts";
 import { BaseDriver } from "./BaseDriver.ts";
+import type { Driver } from "./Driver.ts";
 import type { Element } from "./index.ts";
 import type { Keys } from "./keys.ts";
 import { MaestroSession } from "./MaestroSession.ts";
@@ -21,7 +21,11 @@ const { span } = tracer.dec();
 const stateful = BaseDriver.stateful;
 
 export class MaestroDriver extends BaseDriver {
-  public platform = "maestro" as const;
+  public kind = "maestro" as const;
+
+  get platform(): Driver.MobileOs {
+    return this.session.os;
+  }
 
   public supportedTools: Set<ToolClass> = new Set([
     ClickTool,
@@ -39,14 +43,14 @@ export class MaestroDriver extends BaseDriver {
     this.session = session;
   }
 
-  @span("driver.get_accessibility_tree", spanAttrs)
+  @span("driver.fetch_accessibility_tree", BaseDriver.spanAttrs)
   protected async fetchAccessibilityTree(): Promise<BaseAccessibilityTree> {
     if (this.delay > 0) await sleep(this.delay * 1000);
     const hierarchy = await this.session.inspectScreen();
     return new MaestroAccessibilityTree(hierarchy);
   }
 
-  @span("driver.click", spanAttrs)
+  @span("driver.click", BaseDriver.spanAttrs)
   @stateful
   async click(id: number): Promise<void> {
     const { x, y } = await this.#pointOf(id);
@@ -56,7 +60,7 @@ export class MaestroDriver extends BaseDriver {
     `);
   }
 
-  @span("driver.type", spanAttrs)
+  @span("driver.type", BaseDriver.spanAttrs)
   @stateful
   async type(id: number, text: string): Promise<void> {
     const { x, y } = await this.#pointOf(id);
@@ -65,71 +69,58 @@ export class MaestroDriver extends BaseDriver {
           point: "${x},${y}"
       - inputText: ${JSON.stringify(text)}
     `);
+
     if (this.hideKeyboardAfterTyping && (await this.#keyboardShown())) {
-      await this.session.run("- hideKeyboard\n");
+      await this.session.run("- hideKeyboard");
     }
   }
 
-  /**
-   * On Android, Maestro's `hideKeyboard` is a Back press, which leaves the current screen when
-   * no keyboard is up. So only hide a keyboard the hierarchy actually shows: the IME renders as
-   * its own window rooted at the framework's `android:id/inputArea`. iOS gives no such tell and
-   * its `hideKeyboard` is safe to send blind.
-   */
-  async #keyboardShown(): Promise<boolean> {
-    if (this.session.os !== "android") return true;
-    const hierarchy = await this.session.inspectScreen();
-    return new MaestroAccessibilityTree(hierarchy).hasResourceId(
-      "android:id/inputArea",
-    );
-  }
-
-  @span("driver.press_key", spanAttrs)
+  @span("driver.press_key", BaseDriver.spanAttrs)
   @stateful
   async pressKey(key: Keys.Key): Promise<void> {
     await this.session.run(`- pressKey: ${key}`);
   }
 
-  @span("driver.back", spanAttrs)
+  @span("driver.back", BaseDriver.spanAttrs)
   @stateful
   async back(): Promise<void> {
     await this.session.run("- back");
   }
 
-  @span("driver.visit", spanAttrs)
+  @span("driver.visit", BaseDriver.spanAttrs)
   @stateful
   async visit(url: string): Promise<void> {
     await this.session.run(`- openLink: ${JSON.stringify(url)}`);
   }
 
-  @span("driver.screenshot", spanAttrs)
+  @span("driver.screenshot", BaseDriver.spanAttrs)
   screenshot(): Promise<string> {
     return this.session.screenshot();
   }
 
-  @span("driver.app", spanAttrs)
-  app(): Promise<AppId> {
-    return Promise.resolve(AppId.parse(this.session.appId));
+  @span("driver.app", BaseDriver.spanAttrs)
+  app(): AppId {
+    return AppId.parse(this.session.appId);
   }
 
-  @span("driver.title", spanAttrs)
+  @span("driver.title", BaseDriver.spanAttrs)
   title(): string {
     return "";
   }
 
-  @span("driver.url", spanAttrs)
+  @span("driver.url", BaseDriver.spanAttrs)
   url(): string {
     return "";
   }
 
-  @span("driver.wait", spanAttrs)
+  @span("driver.wait", BaseDriver.spanAttrs)
   @stateful
   async wait(seconds: number): Promise<void> {
     const clampedSeconds = Math.max(1, Math.min(30, seconds));
     await sleep(clampedSeconds * 1000);
   }
 
-  @span("driver.quit", spanAttrs)
+  @span("driver.quit", BaseDriver.spanAttrs)
   async quit(): Promise<void> {
     await this.session.close();
   }
@@ -137,47 +128,47 @@ export class MaestroDriver extends BaseDriver {
   //#region Unsupported
 
   /** Maestro has no programmatic access to elements. */
-  @span("driver.find_element", spanAttrs)
+  @span("driver.find_element", BaseDriver.spanAttrs)
   findElement(): Promise<Element> {
     throw new Error("Element handles are not supported on Maestro");
   }
 
-  @span("driver.drag_slider", spanAttrs)
+  @span("driver.drag_slider", BaseDriver.spanAttrs)
   dragSlider(): void {
     throw new Error("Dragging slider is not supported on Maestro");
   }
 
-  @span("driver.drag_and_drop", spanAttrs)
+  @span("driver.drag_and_drop", BaseDriver.spanAttrs)
   dragAndDrop(): Promise<void> {
     throw new Error("Dragging and dropping is not supported on Maestro");
   }
 
-  @span("driver.scroll_to", spanAttrs)
+  @span("driver.scroll_to", BaseDriver.spanAttrs)
   scrollTo(): Promise<void> {
     throw new Error("Scrolling to element is not supported on Maestro");
   }
 
-  @span("driver.execute_script", spanAttrs)
+  @span("driver.execute_script", BaseDriver.spanAttrs)
   executeScript(): Promise<void> {
     throw new Error("Executing scripts is not supported on Maestro");
   }
 
-  @span("driver.switch_to_next_tab", spanAttrs)
+  @span("driver.switch_to_next_tab", BaseDriver.spanAttrs)
   switchToNextTab(): Promise<void> {
     throw new Error("Tab switching not supported on Maestro");
   }
 
-  @span("driver.switch_to_previous_tab", spanAttrs)
+  @span("driver.switch_to_previous_tab", BaseDriver.spanAttrs)
   switchToPreviousTab(): Promise<void> {
     throw new Error("Tab switching not supported on Maestro");
   }
 
-  @span("driver.wait_for_selector", spanAttrs)
+  @span("driver.wait_for_selector", BaseDriver.spanAttrs)
   waitForSelector(): Promise<void> {
     throw new Error("waitForSelector not supported on Maestro");
   }
 
-  @span("driver.print_to_pdf", spanAttrs)
+  @span("driver.print_to_pdf", BaseDriver.spanAttrs)
   printToPdf(): Promise<void> {
     throw new Error("Printing to PDF not supported on Maestro");
   }
@@ -217,6 +208,19 @@ export class MaestroDriver extends BaseDriver {
 
   //#endregion
 
+  /**
+   * On Android, Maestro's `hideKeyboard` is a Back press, which leaves the current screen when
+   * no keyboard is up. So only hide a keyboard the view hierarchy actually show keyboard.
+   * iOS keyboard is safe to hide even if it's not shown.
+   */
+  async #keyboardShown(): Promise<boolean> {
+    if (this.session.os !== "android") return true;
+
+    const hierarchy = await this.session.inspectScreen();
+    const tree = new MaestroAccessibilityTree(hierarchy);
+    return tree.hasResourceId("android:id/inputArea");
+  }
+
   async #elementOf(id: number): Promise<{ bounds: string }> {
     const tree = await this.getAccessibilityTree();
     const element = tree.elementById(id);
@@ -233,11 +237,4 @@ export class MaestroDriver extends BaseDriver {
     logger.debug(`Resolved raw_id=${id} to point ${point.x},${point.y}`);
     return point;
   }
-}
-
-function spanAttrs(this: MaestroDriver): Tracer.SpansDriverAttrs {
-  return {
-    "driver.kind": "maestro",
-    "driver.platform": this.platform,
-  };
 }

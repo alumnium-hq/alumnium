@@ -9,9 +9,9 @@ export abstract class TreeDevDrill {
   static async run(
     props: TreeDevDrill.RunProps,
   ): Promise<TreeDevDrill.RunResult> {
-    const { action, platform, tree, probe } = props;
+    const { action, platform, driver, tree, probe } = props;
     const input = tree.toStr();
-    const serverTree = TreeFactory.create(platform, input);
+    const serverTree = TreeFactory.create(platform, driver, input);
     const output = serverTree.toXml();
     const failures: TreeDevDrill.Failure[] = [];
     const renderedIds = this.#collectRenderedIds(output, action, failures);
@@ -62,9 +62,9 @@ export abstract class TreeDevDrill {
     }
 
     return {
-      key: `${this.#platformKey(platform)}-${xxh64Str(input)}`,
+      key: `${this.#platformKey(platform, driver)}-${xxh64Str(input)}`,
       tested,
-      result: { platform, input, output, failures },
+      result: { platform, driver, input, output, failures },
     };
   }
 
@@ -136,8 +136,9 @@ export abstract class TreeDevDrill {
     }
   }
 
-  static #platformKey(platform: Driver.Platform): string {
-    return platform === "chromium" ? "chrome" : platform;
+  static #platformKey(platform: Driver.Platform, driver: Driver.Kind): string {
+    const kind = TreeFactory.kindFor(platform, driver);
+    return kind === "chromium" ? "chrome" : kind;
   }
 }
 
@@ -162,6 +163,7 @@ export namespace TreeDevDrill {
 
   export interface TreeResult {
     platform: Driver.Platform;
+    driver: Driver.Kind;
     input: string;
     output: string;
     failures: Failure[];
@@ -176,6 +178,7 @@ export namespace TreeDevDrill {
   export interface RunProps {
     action: string;
     platform: Driver.Platform;
+    driver: Driver.Kind;
     tree: BaseAccessibilityTree;
     probe: (tree: BaseAccessibilityTree, rawId: number) => Promise<ExternalId>;
   }

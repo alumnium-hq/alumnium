@@ -28,6 +28,7 @@ export class TreeDevDrillStore {
 
   static TreeResult = z.object({
     platform: Driver.Platform,
+    driver: Driver.Kind,
     input: z.string(),
     output: z.string(),
     failures: z.array(TreeDevDrillStore.Failure),

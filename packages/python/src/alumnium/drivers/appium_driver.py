@@ -34,11 +34,11 @@ class AppiumDriver(BaseDriver):
         self.delay: float = 0
         self.hide_keyboard_after_typing = False
         self.double_fetch_page_source = False
-        self.platform: Literal["uiautomator2", "xcuitest"]
+        self.platform: Literal["ios", "android"]
         if self.driver.capabilities.get("automationName", "").lower() == "uiautomator2":
-            self.platform = "uiautomator2"
+            self.platform = "android"
         else:
-            self.platform = "xcuitest"
+            self.platform = "ios"
 
     def _fetch_accessibility_tree(self) -> XCUITestAccessibilityTree | UIAutomator2AccessibilityTree:
         self._ensure_native_app_context()
@@ -49,7 +49,7 @@ class AppiumDriver(BaseDriver):
             _ = self.driver.page_source
         xml_string = self.driver.page_source
 
-        if self.platform == "uiautomator2":
+        if self.platform == "android":
             return UIAutomator2AccessibilityTree(xml_string)
         else:
             return XCUITestAccessibilityTree(xml_string)
@@ -139,7 +139,7 @@ class AppiumDriver(BaseDriver):
 
     def find_element(self, id: int) -> WebElement:
         element = self.accessibility_tree.element_by_id(id)
-        if self.platform == "xcuitest":
+        if self.platform == "ios":
             return self._find_element_ios(element)
         else:
             return self._find_element_android(element)
@@ -202,7 +202,7 @@ class AppiumDriver(BaseDriver):
         return self.driver.find_element(By.XPATH, xpath)  # type: ignore[reportReturnType]
 
     def _hide_keyboard(self):
-        if self.platform == "uiautomator2":
+        if self.platform == "android":
             self.driver.hide_keyboard()
         else:
             # Tap to the top left corner of the keyboard to dismiss it
@@ -215,7 +215,7 @@ class AppiumDriver(BaseDriver):
             actions.perform()
 
     def _scroll_into_view(self, element: WebElement):
-        if self.platform == "uiautomator2":
+        if self.platform == "android":
             self._scroll_into_view_android(element)
         else:
             self.driver.execute_script("mobile: scrollToElement", {"elementId": element.id})

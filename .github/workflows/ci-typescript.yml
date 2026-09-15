@@ -41,7 +41,6 @@ env:
 jobs:
   test-system:
     name: System Tests
-    # NOTE: Maestro iOS tests need an iOS simulator, which is only available on macOS runners.
     runs-on: ${{ matrix.driver == 'maestro-ios' && 'macos-latest' || 'ubuntu-latest' }}
     timeout-minutes: 60
     env:
