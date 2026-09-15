@@ -169,6 +169,7 @@ export class Alumni {
   async do(goal: string, params?: Record<string, string>): Promise<DoResult> {
     const boundParams = Params.from(params);
     boundParams.validate(goal, "goal");
+    const plannerGoal = boundParams.substitute(goal);
 
     return retry(
       { doRetry: (error) => !(error instanceof ParamsError) },
@@ -183,7 +184,7 @@ export class Alumni {
           : null;
         const beforeUrl = this.changeAnalysis ? await this.driver.url() : null;
         const { explanation, steps } = await this.client.planActions({
-          goal,
+          goal: plannerGoal,
           accessibilityTree: initialAccessibilityTree.toStr(),
           app,
         });
@@ -191,8 +192,10 @@ export class Alumni {
         let finalExplanation = explanation;
         const executedSteps: DoStep[] = [];
         for (let idx = 0; idx < steps.length; idx++) {
-          const step = steps[idx];
-          always(step);
+          const plannedStep = steps[idx];
+          always(plannedStep);
+          // Keep actor cache entries reusable after planning with real values.
+          const step = boundParams.mask(plannedStep);
 
           // Use initial tree for first step, fresh tree for subsequent steps
           if (idx > 0) this.driver.resetAccessibilityTree();
@@ -210,7 +213,7 @@ export class Alumni {
             });
 
           // When planner is off, explanation is just the goal — replace with actor's reasoning.
-          if (finalExplanation === goal) {
+          if (finalExplanation === plannerGoal) {
             finalExplanation = actorExplanation;
           }
 

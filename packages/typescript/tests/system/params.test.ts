@@ -79,6 +79,19 @@ describe("Goal parameters", () => {
     expect(await al.get("the calculator display value")).toBe(83);
   });
 
+  it("plans actions with the actual parameter values", async ({
+    expect,
+    setup,
+  }) => {
+    const { al, $ } = await setup({ planner: true, changeAnalysis: false });
+    await $.navigate("https://seleniumbase.io/apps/calculator");
+
+    await al.do("click the {digit} button on the calculator", { digit: "2" });
+    await al.do("click the {digit} button on the calculator", { digit: "8" });
+
+    expect(await al.get("the calculator display value")).toBe(28);
+  });
+
   it("misses the cache when the value is inlined", async ({
     expect,
     setup,

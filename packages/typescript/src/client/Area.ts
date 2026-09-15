@@ -51,6 +51,7 @@ export class Area {
   async do(goal: string, params?: Record<string, string>): Promise<DoResult> {
     const boundParams = Params.from(params);
     boundParams.validate(goal, "goal");
+    const plannerGoal = boundParams.substitute(goal);
 
     return retry(
       {
@@ -63,14 +64,16 @@ export class Area {
         this.driver.setAccessibilityTree(this.accessibilityTree);
 
         const { explanation, steps } = await this.client.planActions({
-          goal,
+          goal: plannerGoal,
           accessibilityTree: this.accessibilityTree.toStr(),
           app,
         });
 
         let finalExplanation = explanation;
         const executedSteps: DoStep[] = [];
-        for (const step of steps) {
+        for (const plannedStep of steps) {
+          // Keep actor cache entries reusable after planning with real values.
+          const step = boundParams.mask(plannedStep);
           const { explanation: actorExplanation, actions } =
             await this.client.executeAction({
               goal,
@@ -81,7 +84,7 @@ export class Area {
             });
 
           // When planner is off, explanation is just the goal — replace with actor's reasoning.
-          if (finalExplanation === goal) {
+          if (finalExplanation === plannerGoal) {
             finalExplanation = actorExplanation;
           }
 
