@@ -1,9 +1,32 @@
-import { describe } from "vitest";
+import fs from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
+import { afterAll, beforeAll, beforeEach, describe, vi } from "vitest";
+import { Env } from "../../src/Env.ts";
 import { AssertionError } from "../../src/client/errors/AssertionError.ts";
 import { ParamsError } from "../../src/client/errors/ParamsError.ts";
 import { baseIt } from "./helpers.ts";
 
 describe("Goal parameters", () => {
+  let cacheRoot: string;
+
+  beforeAll(async () => {
+    cacheRoot = await fs.mkdtemp(path.join(os.tmpdir(), "alumnium-params-"));
+  });
+
+  beforeEach(({ task }) => {
+    vi.restoreAllMocks();
+    // Cache assertions must not depend on earlier tests or previous runs.
+    vi.spyOn(Env, "ALUMNIUM_CACHE_PATH", "get").mockReturnValue(
+      path.join(cacheRoot, task.id),
+    );
+  });
+
+  afterAll(async () => {
+    vi.restoreAllMocks();
+    await fs.rm(cacheRoot, { recursive: true, force: true });
+  });
+
   const it = baseIt.override("setup", async ({ setup, skip }) => {
     return async (options) => {
       const result = await setup(options);
@@ -131,6 +154,9 @@ describe("Goal parameters", () => {
     expect,
     setup,
   }) => {
+    // Retry cache hits for the same failed value are unrelated to this check.
+    vi.spyOn(Env, "ALUMNIUM_NO_RETRY", "get").mockReturnValue(true);
+
     // NOTE: The semantics that make client-side substitution correct: a check
     // must read the page for every value, so two values never share an entry.
     const { al, $ } = await setup({ planner: false });
