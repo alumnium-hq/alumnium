@@ -1,5 +1,4 @@
-import type { ToolDefinition } from "@langchain/core/language_models/base";
-import { BaseChatModel } from "@langchain/core/language_models/chat_models";
+import { wrapLanguageModel } from "ai";
 import z from "zod";
 import { AppId } from "../../AppId.ts";
 import { Driver } from "../../drivers/Driver.ts";
@@ -8,8 +7,10 @@ import {
   LlmUsage,
   LlmUsageStats,
 } from "../../llm/llmSchema.ts";
+import type { LanguageModel } from "../../llm/LanguageModel.ts";
 import { Model } from "../../Model.ts";
 import { Logger } from "../../telemetry/Logger.ts";
+import type { ToolDefinition } from "../../tools/ToolDefinition.ts";
 import { BaseServerAccessibilityTree } from "../accessibility/BaseServerAccessibilityTree.ts";
 import { TreeFactory } from "../../tree/TreeFactory.ts";
 import { ActorAgent } from "../agents/ActorAgent.ts";
@@ -19,8 +20,8 @@ import { LocatorAgent } from "../agents/LocatorAgent.ts";
 import { PlannerAgent } from "../agents/PlannerAgent.ts";
 import { RetrieverAgent } from "../agents/RetrieverAgent.ts";
 import { ServerCache } from "../cache/ServerCache.ts";
+import { createCacheMiddleware } from "../cache/CacheMiddleware.ts";
 import { CacheFactory } from "../CacheFactory.ts";
-import { LlmContext } from "../LlmContext.ts";
 import { LlmFactory } from "../LlmFactory.ts";
 import { SessionContext } from "./SessionContext.ts";
 import { SessionId } from "./SessionId.ts";
@@ -34,7 +35,7 @@ export namespace Session {
     model: Model;
     platform: Driver.Platform;
     tools: ToolDefinition[];
-    llm?: BaseChatModel | undefined;
+    llm?: LanguageModel | undefined;
     planner?: boolean | undefined;
     excludeAttributes?: Set<string> | undefined;
   }
@@ -52,7 +53,7 @@ export class Session {
   model: Model;
   platform: Driver.Platform;
   tools: ToolDefinition[];
-  llm: BaseChatModel;
+  llm: LanguageModel;
   cache: ServerCache;
   planner: boolean;
   excludeAttributes: Set<string>;
@@ -74,28 +75,24 @@ export class Session {
     this.planner = props.planner ?? true;
     this.excludeAttributes = props.excludeAttributes ?? new Set();
     this.#context = new SessionContext({ app, sessionId });
-    const llmContext = new LlmContext(model);
+    this.cache = CacheFactory.createCache(this.#context, model);
+    const llm = props.llm ?? LlmFactory.createLlm(this.model);
+    this.llm = wrapLanguageModel({
+      model: llm,
+      middleware: createCacheMiddleware(this.cache),
+    });
 
-    this.cache = CacheFactory.createCache(this.#context, llmContext, model);
-
-    // TODO: When assigning cache via `props.llm.cache` it doesn't work properly
-    // find a way to make it work or expose option to create cache via `Alumni`.
-    if (props.llm) {
-      props.llm.cache = this.cache;
-    }
-    this.llm = props.llm ?? LlmFactory.createLlm(this.model, this.cache);
-
-    this.actorAgent = new ActorAgent(llmContext, this.llm, this.tools);
+    this.actorAgent = new ActorAgent(model, this.llm, this.tools);
     this.plannerAgent = new PlannerAgent(
-      llmContext,
+      model,
       this.llm,
       this.tools.map((schema) => schema.function.name),
     );
 
-    this.retrieverAgent = new RetrieverAgent(llmContext, this.llm);
-    this.areaAgent = new AreaAgent(llmContext, this.llm);
-    this.locatorAgent = new LocatorAgent(llmContext, this.llm);
-    this.changesAnalyzerAgent = new ChangesAnalyzerAgent(llmContext, this.llm);
+    this.retrieverAgent = new RetrieverAgent(model, this.llm);
+    this.areaAgent = new AreaAgent(model, this.llm);
+    this.locatorAgent = new LocatorAgent(model, this.llm);
+    this.changesAnalyzerAgent = new ChangesAnalyzerAgent(model, this.llm);
 
     logger.info(
       `Created session ${sessionId} with model ${model.provider}/${model.name} and platform ${platform}`,

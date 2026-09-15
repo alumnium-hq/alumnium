@@ -9,7 +9,7 @@ import type { InlineConfig } from "vitest/node";
 const driverKind = Env.ALUMNIUM_DRIVER;
 const isAppium = Driver.isAppium(driverKind);
 
-await Logger.initEnv();
+await Logger.initEnv({ quiet: true });
 
 const reporters: InlineConfig["reporters"] & {} = ["default"];
 if (Env.ALUMNIUM_TEST_PASS_THRESHOLD_PCT < 100)
@@ -27,13 +27,6 @@ export default defineConfig({
           name: "unit",
           include: ["src/**/*.test.ts"],
           setupFiles: ["tests/unit/setup.ts"],
-          server: {
-            deps: {
-              // Process the package with vitest so vi.mock("@cursor/sdk")
-              // reaches the dynamic import inside it.
-              inline: ["langchain-cursor"],
-            },
-          },
           pool: "threads",
           maxWorkers: Env.ALUMNIUM_TEST_MAX_CONCURRENCY,
         },

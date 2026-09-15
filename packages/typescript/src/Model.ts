@@ -24,6 +24,7 @@ const providers = [
   "mistralai",
   "ollama",
   "openai",
+  "openrouter",
   "xai",
 ] as const;
 
@@ -40,6 +41,7 @@ const defaultModels: Record<Model.Provider, string> = {
   mistralai: "mistral-medium-2505",
   ollama: "qwen3.6",
   openai: "gpt-5-nano-2025-08-07",
+  openrouter: "openai/gpt-5-nano",
   xai: "grok-4-1-fast-reasoning",
 };
 
@@ -58,6 +60,8 @@ const devs = [
 
 const ModelDev = z.enum(devs);
 
+export const defaultModelProvider: Model.Provider = "openai";
+
 export const Model = {
   Provider: ModelProvider,
 
@@ -74,8 +78,8 @@ export const Model = {
 
   parse(modelStr: string): Model {
     // Split on the first "/" only: the provider is a single segment, but the
-    // model name may itself contain slashes (e.g. OpenRouter/Fireworks ids like
-    // "openai/xiaomi/mimo-v2.5"). A plain split("/") would drop everything after
+    // model name may itself contain slashes (e.g. OpenRouter ids like
+    // "openrouter/openai/gpt-5"). A plain split("/") would drop everything after
     // the second segment and send a truncated model id to the provider.
     const slashIndex = modelStr.indexOf("/");
     const provider =

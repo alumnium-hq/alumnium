@@ -10,6 +10,7 @@ Alumnium needs access to an AI model to work. The following models are supported
 | [Anthropic][1]          | Claude 4.5 Haiku        |
 | [Google][2]             | Gemini 3.1 Flash Lite   |
 | [OpenAI][3] _(default)_ | GPT-5 Nano              |
+| [OpenRouter][27]        | GPT-5 Nano              |
 | [Codex][22]             | GPT-5.6 Luna            |
 | [DeepSeek][12]          | DeepSeek R1             |
 | [Meta][8]               | Llama 4 Maverick 17B    |
@@ -20,7 +21,11 @@ Alumnium needs access to an AI model to work. The following models are supported
 These models were chosen because they provide the best balance between intelligence, performance, and cost. Most models now support reasoning capabilities for improved accuracy and decision-making in test automation.
 
 :::tip[Trying out?]
-[Google][7] provides a free-of-charge plan in many regions, which is convenient for experimenting. Alumnium automatically retries the requests when hitting rate limits on the free plan.
+[Google][7] provides a free-of-charge plan in many regions, which is convenient for experimenting. Alumnium automatically retries requests when hitting rate limits on the free plan.
+:::
+
+:::caution[GitHub Models retired]
+[GitHub Models][20] was fully retired on July 30, 2026 and is no longer supported by Alumnium.
 :::
 
 ## Anthropic
@@ -80,7 +85,7 @@ export LANGCHAIN_CODEX_LITTERBOX_UPLOAD="true"  # optionally enable vision suppo
 ## Cursor
 
 :::caution
-Cursor support is experimental and can stop working at any time. It runs prompts through [Cursor Agents][24] (local runtime) via the standalone [`langchain-cursor`][26] package, so it consumes your Cursor subscription's usage. Each Alumnium action spins up a short-lived local agent, which adds latency compared to direct API providers — consider raising `ALUMNIUM_MODEL_TIMEOUT` if you hit timeouts.
+Cursor support is experimental and can stop working at any time. It runs prompts through [Cursor Agents][24] (local runtime) via the official [`@cursor/sdk`][26] package and Alumnium's AI SDK adapter, so it consumes your Cursor subscription's usage. Each Alumnium action spins up a short-lived local agent, which adds latency compared to direct API providers — consider raising `ALUMNIUM_MODEL_TIMEOUT` if you hit timeouts.
 
 When used from the compiled Alumnium binary (the Python and Java clients, or the standalone CLI), the first cursor-provider call downloads the Cursor SDK (~24 MB) from the npm registry into `~/.alumnium/vendor/cursor-sdk/<version>`, so it needs network access once. In air-gapped environments, point `ALUMNIUM_CURSOR_SDK_DIR` at a directory containing a pre-installed `node_modules` tree with `@cursor/sdk`.
 :::
@@ -177,6 +182,18 @@ export ALUMNIUM_MODEL="xai"
 export XAI_API_KEY="xai-..."
 ```
 
+## OpenRouter
+
+To access models through OpenRouter:
+
+1. Get an [OpenRouter API key][28].
+2. Export the provider and API key. Include the model author in custom model IDs:
+
+```bash
+export ALUMNIUM_MODEL="openrouter/z-ai/glm-5.3-flash"
+export OPENROUTER_API_KEY="sk-or-v1-..."
+```
+
 Read next to learn how to write tests!
 
 [1]: https://www.anthropic.com
@@ -198,8 +215,11 @@ Read next to learn how to write tests!
 [17]: https://docs.mistral.ai/getting-started/quickstart#account-setup
 [18]: https://x.ai
 [19]: https://x.ai/api
+[20]: https://docs.github.com/en/github-models
 [22]: https://github.com/openai/codex
 [23]: https://litterbox.catbox.moe
 [24]: https://cursor.com/docs/cloud-agent
 [25]: https://cursor.com/dashboard
-[26]: https://www.npmjs.com/package/langchain-cursor
+[26]: https://www.npmjs.com/package/@cursor/sdk
+[27]: https://openrouter.ai
+[28]: https://openrouter.ai/settings/keys

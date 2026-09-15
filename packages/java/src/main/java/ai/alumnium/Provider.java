@@ -16,6 +16,7 @@ public enum Provider {
   MISTRALAI("mistralai"),
   OLLAMA("ollama"),
   OPENAI("openai"),
+  OPENROUTER("openrouter"),
   XAI("xai");
 
   private final String value;

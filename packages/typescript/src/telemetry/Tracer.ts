@@ -36,7 +36,8 @@ export namespace Tracer {
     SpansServer &
     SpansMcp &
     SpansHttp &
-    SpansLlm;
+    SpansLlm &
+    SpansTest;
 
   //#region Alumni
 
@@ -164,6 +165,13 @@ export namespace Tracer {
 
   export interface SpansDriver {
     "driver.get_accessibility_tree": {
+      Attrs: SpansDriverAttrs;
+      Events: {
+        "driver.get_accessibility_tree.cache_hit": null;
+      };
+    };
+
+    "driver.fetch_accessibility_tree": {
       Attrs: SpansDriverAttrs;
     };
 
@@ -467,6 +475,21 @@ export namespace Tracer {
   export interface SpansLlmModelAttrs {
     "llm.model.name": string;
     "llm.model.provider": Model.Provider;
+  }
+
+  //#endregion
+
+  //#region Test
+
+  export interface SpansTest {
+    "test.case": {
+      Attrs: {
+        "test.case.id": string;
+        "test.case.name": string;
+        "test.file.name": string;
+        "test.retry.count": number;
+      };
+    };
   }
 
   //#endregion

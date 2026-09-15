@@ -24,5 +24,8 @@
     "lodash": ">=4.18.1",
     "picomatch": ">=2.3.2",
     "yaml": ">=2.8.3"
+  },
+  "patchedDependencies": {
+    "@ai-sdk/amazon-bedrock@5.0.61": "patches/@ai-sdk%2Famazon-bedrock@5.0.61.patch"
   }
 }
