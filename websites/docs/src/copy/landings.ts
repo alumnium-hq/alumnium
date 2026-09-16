@@ -30,7 +30,7 @@ const frameworkIcons: IconProp[] = [
   { id: "selenium", style: "logo" },
   { id: "playwright", style: "logo" },
   { id: "appium", style: "logo" },
-  { id: "webdriverio", style: "logo" },
+  { id: "maestro", style: "logo" },
 ];
 
 const sections = {
@@ -334,7 +334,7 @@ const sections = {
 
       copy: txt`
         Alumnium works with web applications through Selenium or Playwright and
-        with iOS and Android applications through Appium.
+        with iOS and Android applications through Appium or Maestro.
 
         Reuse plain-language instructions across supported platforms, with
         platform-specific adjustments when the applications behave differently.
@@ -364,7 +364,8 @@ const sections = {
         Meta, DeepSeek, and Mistral, or run a supported local model with Ollama.
 
         Change supported models without changing the test intent, and keep using
-        Selenium, Playwright, or Appium as the underlying automation layer.
+        Selenium, Playwright, Appium, or Maestro as the underlying automation
+        layer.
       `,
     },
   }),
@@ -1833,6 +1834,7 @@ const sections = {
 
                 1. Selenium or Playwright for web automation.
                 2. Appium or WebdriverIO for iOS and Android mobile testing.
+                3. Maestro for iOS and Android mobile testing through the MCP server.
 
                 Client libraries let you add Alumnium incrementally alongside
                 existing framework code. Exact capabilities vary by framework
