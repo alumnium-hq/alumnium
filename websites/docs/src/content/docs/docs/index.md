@@ -19,6 +19,6 @@ Alumnium was created out of frustration that no open-source project builds upon 
 
 ## Design
 
-Alumnium wraps an Appium, Playwright, or Selenium instance and provides a high-level API to perform actions, assert verifications based on the application's state and retrieve information from it. It works by operating on the accessibility tree, compacting it, and sending it to the AI model along with instructions about what has to be done or checked. Once the AI model determines the course of action, Alumnium instructs the browser what to do on the page.
+Alumnium wraps an Appium, Maestro, Playwright, or Selenium instance and provides a high-level API to perform actions, assert verifications based on the application's state and retrieve information from it. It works by operating on the accessibility tree, compacting it, and sending it to the AI model along with instructions about what has to be done or checked. Once the AI model determines the course of action, Alumnium instructs the browser what to do on the page.
 
-This means that Alumnium can co-exist with existing Appium/Selenium/Playwright tests and CI. The only thing it needs is access to an AI model.
+This means that Alumnium can co-exist with existing Appium/Maestro/Selenium/Playwright tests and CI. The only thing it needs is access to an AI model.
