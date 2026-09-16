@@ -11,7 +11,7 @@ Playwright driver supports both _headful_ and _headless_ modes, while Selenium d
 
 ## Mobile Support
 
-Alumnium currently supports Appium with XCUITest driver for iOS automation and UiAutomator2 driver for Android automation.
+Alumnium supports [Appium](https://appium.io) with XCUITest driver for iOS automation and UiAutomator2 driver for Android automation across all client libraries. The MCP server can also drive iOS and Android through [Maestro](https://maestro.dev).
 
 ## Environment Variables
 
