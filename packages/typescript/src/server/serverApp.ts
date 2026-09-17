@@ -32,7 +32,7 @@ export const serverApp = new Elysia({ prefix: "/v1" })
 
   .get(
     "/health",
-    (_) => ({
+    (_ctx) => ({
       status: "healthy",
     }),
     { response: s.HealthCheckResponse },

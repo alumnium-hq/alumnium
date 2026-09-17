@@ -323,7 +323,7 @@ export class ElementsCache extends ServerCache {
     logger.debug(`Saving ${entries.length} elements cache entries`);
 
     await Promise.all(
-      entries.map(async ([_, entry]) => {
+      entries.map(async ([_key, entry]) => {
         const { cacheHash, app, agentKind, instruction, generation, elements } =
           entry;
         const store = this.#cacheStore.subStore(
