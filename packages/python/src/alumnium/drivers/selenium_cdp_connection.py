@@ -139,16 +139,15 @@ class SeleniumCdpConnection:
 
     def _on_attached_to_target(self, params: dict, parent_session_id: str):
         target = params.get("targetInfo", {})
-        if target.get("type") not in {"page", "iframe"}:
-            return
-
         session_id = params["sessionId"]
-        target_id = target.get("targetId", "")
-        with self._state_lock:
-            if target_id:
-                self._target_sessions[target_id] = session_id
-            self._session_parents[session_id] = parent_session_id
-        self._start_session_configuration(session_id)
+        configure = target.get("type") in {"page", "iframe"}
+        if configure:
+            target_id = target.get("targetId", "")
+            with self._state_lock:
+                if target_id:
+                    self._target_sessions[target_id] = session_id
+                self._session_parents[session_id] = parent_session_id
+        self._start_session_configuration(session_id, configure)
 
     def _on_detached_from_target(self, session_id: str):
         with self._state_lock:
@@ -173,17 +172,22 @@ class SeleniumCdpConnection:
             if self._active_session in detached_sessions:
                 self._active_session = ""
 
-    def _start_session_configuration(self, session_id: str):
+    def _start_session_configuration(self, session_id: str, configure: bool):
         Thread(
             target=self._configure_session_safely,
-            args=(session_id,),
+            args=(session_id, configure),
             name="alumnium-cdp-configure",
             daemon=True,
         ).start()
 
-    def _configure_session_safely(self, session_id: str):
+    def _configure_session_safely(self, session_id: str, configure: bool):
         try:
-            self._configure_session(session_id)
+            try:
+                if configure:
+                    event, _ = self._configure_session(session_id)
+                    event.wait()
+            finally:
+                self.send("Runtime.runIfWaitingForDebugger", session_id=session_id)
         except Exception:
             pass
 
@@ -204,7 +208,6 @@ class SeleniumCdpConnection:
                 {"source": self.waiter_script, "runImmediately": True},
                 session_id,
             )
-            self.send("Runtime.runIfWaitingForDebugger", session_id=session_id)
         except Exception as error:
             errors.append(error)
             raise

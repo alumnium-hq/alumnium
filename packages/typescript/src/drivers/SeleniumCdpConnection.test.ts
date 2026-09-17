@@ -5,23 +5,8 @@ describe("SeleniumCdpConnection", () => {
   afterEach(() => vi.unstubAllGlobals());
 
   it("configures auto-attached targets without attaching them explicitly", async () => {
-    let socket: FakeWebSocket | undefined;
-    vi.stubGlobal(
-      "WebSocket",
-      class {
-        constructor() {
-          socket = new FakeWebSocket();
-          return socket;
-        }
-      },
-    );
-
-    const connection = await SeleniumCdpConnection.connect(
-      { get: (key) => (key === "se:cdp" ? "ws://cdp" : undefined) },
-      "waiter",
-    );
+    const { connection, socket } = await connect();
     await connection.activate("CDwindow-page");
-    if (!socket) throw new Error("WebSocket was not created");
 
     expect(socket.commands).not.toContain("Target.attachToTarget");
     expect(
@@ -31,12 +16,73 @@ describe("SeleniumCdpConnection", () => {
     expect(socket.commands).toContain("Runtime.runIfWaitingForDebugger");
     connection.close();
   });
+
+  it.each(["page", "iframe", "worker", "shared_worker", "service_worker"])(
+    "resumes attached %s targets after any required setup",
+    async (type) => {
+      const { connection, socket } = await connect();
+      try {
+        socket.attachTarget(type, "new-session");
+        await vi.waitFor(() => {
+          expect(socket.sessionCommands("new-session").at(-1)).toBe(
+            "Runtime.runIfWaitingForDebugger",
+          );
+        });
+        const commands = socket.sessionCommands("new-session");
+        if (type === "page" || type === "iframe") {
+          expect(commands.at(-2)).toBe("Page.addScriptToEvaluateOnNewDocument");
+        } else {
+          expect(commands).toEqual(["Runtime.runIfWaitingForDebugger"]);
+        }
+      } finally {
+        connection.close();
+      }
+    },
+  );
+
+  it("resumes a target even if configuration fails", async () => {
+    const { connection, socket } = await connect();
+    try {
+      socket.failMethod = "Page.enable";
+      socket.attachTarget("page", "new-session");
+      await vi.waitFor(() => {
+        expect(socket.sessionCommands("new-session")).toEqual([
+          "Target.setAutoAttach",
+          "Page.enable",
+          "Runtime.runIfWaitingForDebugger",
+        ]);
+      });
+    } finally {
+      connection.close();
+    }
+  });
 });
+
+async function connect() {
+  let socket: FakeWebSocket | undefined;
+  vi.stubGlobal(
+    "WebSocket",
+    class {
+      constructor() {
+        socket = new FakeWebSocket();
+        return socket;
+      }
+    },
+  );
+  const connection = await SeleniumCdpConnection.connect(
+    { get: (key) => (key === "se:cdp" ? "ws://cdp" : undefined) },
+    "waiter",
+  );
+  if (!socket) throw new Error("WebSocket was not created");
+  return { connection, socket };
+}
 
 type Listener = (event: { data: string }) => void;
 
 class FakeWebSocket {
   commands: string[] = [];
+  failMethod: string | undefined;
+  #sentCommands: Array<{ method: string; sessionId?: string }> = [];
   #listeners: Partial<Record<string, Listener[]>> = {};
   #attached = false;
 
@@ -57,11 +103,20 @@ class FakeWebSocket {
       sessionId?: string;
     };
     this.commands.push(command.method);
+    this.#sentCommands.push(command);
     queueMicrotask(() => {
       if (command.method === "Target.setAutoAttach" && !command.sessionId) {
         this.#attachPage();
       }
-      if (command.method === "Target.getTargets") {
+      if (command.method === this.failMethod) {
+        this.#emit(
+          "message",
+          JSON.stringify({
+            id: command.id,
+            error: { message: "Configuration failed" },
+          }),
+        );
+      } else if (command.method === "Target.getTargets") {
         this.#emit(
           "message",
           JSON.stringify({
@@ -79,6 +134,25 @@ class FakeWebSocket {
 
   close(): void {
     this.#emit("close");
+  }
+
+  sessionCommands(sessionId: string): string[] {
+    return this.#sentCommands
+      .filter((command) => command.sessionId === sessionId)
+      .map((command) => command.method);
+  }
+
+  attachTarget(type: string, sessionId: string): void {
+    this.#emit(
+      "message",
+      JSON.stringify({
+        method: "Target.attachedToTarget",
+        params: {
+          sessionId,
+          targetInfo: { targetId: sessionId, type },
+        },
+      }),
+    );
   }
 
   #attachPage(): void {

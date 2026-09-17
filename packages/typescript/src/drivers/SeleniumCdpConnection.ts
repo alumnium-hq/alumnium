@@ -178,13 +178,19 @@ export class SeleniumCdpConnection {
       const targetInfo = params.targetInfo as
         | { targetId?: string; type?: string }
         | undefined;
+      const sessionId = String(params.sessionId);
+      let configuration = Promise.resolve();
       if (targetInfo?.type === "page" || targetInfo?.type === "iframe") {
-        const sessionId = String(params.sessionId);
         if (targetInfo.targetId)
           this.#targetSessions.set(targetInfo.targetId, sessionId);
         this.#sessionParents.set(sessionId, message.sessionId ?? "");
-        void this.#configureSession(sessionId).catch(() => undefined);
+        configuration = this.#configureSession(sessionId);
       }
+      void configuration
+        .finally(() =>
+          this.#send("Runtime.runIfWaitingForDebugger", {}, sessionId),
+        )
+        .catch(() => undefined);
     } else if (method === "Target.detachedFromTarget") {
       this.#detachSession(String(params.sessionId ?? ""));
     }
@@ -207,7 +213,6 @@ export class SeleniumCdpConnection {
       { source: this.#waiterScript, runImmediately: true },
       sessionId,
     );
-    await this.#send("Runtime.runIfWaitingForDebugger", {}, sessionId);
   }
 
   async #awaitSession(targetId: string): Promise<string> {

@@ -306,18 +306,28 @@ final class SeleniumCdpConnection implements AutoCloseable, WebSocket.Listener {
   private void attachedToTarget(JsonNode params, String parentSession) {
     JsonNode target = params.path("targetInfo");
     String type = target.path("type").asText();
-    if (!"page".equals(type) && !"iframe".equals(type)) return;
-
     String sessionId = params.path("sessionId").asText();
-    String targetId = target.path("targetId").asText();
     if (sessionId.isEmpty()) return;
-    if (!targetId.isEmpty()) targetSessions.put(targetId, sessionId);
-    sessionParents.put(sessionId, parentSession);
+    CompletableFuture<Void> configuration = CompletableFuture.completedFuture(null);
+    if ("page".equals(type) || "iframe".equals(type)) {
+      String targetId = target.path("targetId").asText();
+      if (!targetId.isEmpty()) targetSessions.put(targetId, sessionId);
+      sessionParents.put(sessionId, parentSession);
+      configuration = configureSession(sessionId);
+    }
 
-    configureSession(sessionId)
+    configuration
+        .handle(
+            (result, error) -> {
+              if (error != null) {
+                LOG.debug("Could not configure CDP session {}", sessionId, unwrap(error));
+              }
+              return null;
+            })
+        .thenCompose(result -> send("Runtime.runIfWaitingForDebugger", Map.of(), sessionId, true))
         .exceptionally(
             error -> {
-              LOG.debug("Could not configure CDP session {}", sessionId, unwrap(error));
+              LOG.debug("Could not resume CDP session {}", sessionId, unwrap(error));
               return null;
             });
   }
@@ -357,8 +367,6 @@ final class SeleniumCdpConnection implements AutoCloseable, WebSocket.Listener {
                             Map.of("source", waiterScript, "runImmediately", true),
                             sessionId,
                             true))
-                .thenCompose(
-                    result -> send("Runtime.runIfWaitingForDebugger", Map.of(), sessionId, true))
                 .thenApply(result -> null));
   }
 
