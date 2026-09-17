@@ -1,11 +1,85 @@
-import type { Locator, Page } from "playwright-core";
+import { EventEmitter } from "node:events";
+import type {
+  BrowserContext,
+  CDPSession,
+  Locator,
+  Page,
+} from "playwright-core";
 import { describe, expect, it, vi } from "vitest";
 import type { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.ts";
 import { TreeDevDrillError } from "../tree/dev/TreeDevDrillError.ts";
 import { TestTreeFactory } from "./__factories__/TestTreeFactory.ts";
 import { PlaywrightDriver } from "./PlaywrightDriver.ts";
+import type { CdpNetworkMonitor } from "./CdpNetworkMonitor.ts";
 
 describe("PlaywrightDriver", () => {
+  it("preserves per-page requests and reuses CDP sessions across switches and close", async () => {
+    const sessions = new Map<Page, ReturnType<typeof session>>();
+    const pages: Page[] = [];
+    const context = Object.assign(new EventEmitter(), {
+      addInitScript: vi.fn(async () => undefined),
+      newCDPSession: vi.fn(async (page: Page) => {
+        const client = session();
+        sessions.set(page, client);
+        return client as CDPSession;
+      }),
+      pages: () => pages,
+    }) as unknown as BrowserContext & EventEmitter;
+    function page(): Page & EventEmitter {
+      let closed = false;
+      const tab = Object.assign(new EventEmitter(), {
+        context: () => context,
+        frames: () => [],
+        isClosed: () => closed,
+        waitForTimeout: vi.fn(async () => undefined),
+        waitForLoadState: vi.fn(async () => undefined),
+        url: () => "https://example.com",
+        close: async () => {
+          closed = true;
+          tab.emit("close");
+        },
+      }) as unknown as Page & EventEmitter;
+      pages.push(tab);
+      return tab;
+    }
+    function session() {
+      return Object.assign(new EventEmitter(), {
+        send: vi.fn(async () => ({})),
+        detach: vi.fn(async () => undefined),
+      });
+    }
+    function monitor(driver: PlaywrightDriver): CdpNetworkMonitor {
+      return Reflect.get(driver, "networkMonitor");
+    }
+    const first = page();
+    const driver = new PlaywrightDriver(first);
+    const firstMonitor = monitor(driver);
+    firstMonitor.process("Network.requestWillBeSent", {
+      requestId: "first",
+      request: { url: "https://example.com/first" },
+    });
+    const second = page();
+    context.emit("page", second);
+    await driver.switchToNextTab();
+    const secondMonitor = monitor(driver);
+    sessions.get(first)!.emit("Network.requestWillBeSent", {
+      requestId: "background",
+      request: { url: "https://example.com/background" },
+    });
+    expect(secondMonitor.pending).toEqual([]);
+    expect(firstMonitor.pending).toHaveLength(2);
+    await driver.switchToPreviousTab();
+    expect(monitor(driver)).toBe(firstMonitor);
+    await driver.switchToNextTab();
+    expect(monitor(driver)).toBe(secondMonitor);
+    expect(context.newCDPSession).toHaveBeenCalledTimes(2);
+    await second.close();
+    await vi.waitFor(() => expect(monitor(driver)).toBe(firstMonitor));
+    expect(driver.page).toBe(first);
+    expect(firstMonitor.pending).toHaveLength(2);
+    expect(sessions.get(second)!.detach).toHaveBeenCalledOnce();
+  });
+
   it("waits for CDP initialization before closing the page", async () => {
     const initScript = Promise.withResolvers<void>();
     const frame = {};

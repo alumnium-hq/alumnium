@@ -34,6 +34,7 @@ import {
   waitForPageStability,
 } from "./CdpNetworkMonitor.ts";
 import { waiterScriptSource } from "./scripts/bundledScripts.ts";
+import { PlaywrightNetworkMonitor } from "./PlaywrightNetworkMonitor.ts";
 
 const { tracer, logger } = Telemetry.get(import.meta.url);
 const { span } = tracer.dec();
@@ -96,7 +97,11 @@ const RETRY_OPTIONS: retry.Options = {
 export class PlaywrightDriver extends BaseDriver {
   private client!: CDPSession;
   private cdpReady: Promise<void>;
-  private networkMonitor = new CdpNetworkMonitor();
+  private networkMonitor: CdpNetworkMonitor;
+  #network: PlaywrightNetworkMonitor;
+  #pageSessions = new Map<Page, Promise<CDPSession>>();
+  #pageOopifFrameIds = new WeakMap<Page, Map<string, string>>();
+  #attachingFrames = new Set<Frame>();
   private networkSessions = new Map<Frame, CDPSession>();
   private networkFrameIds = new WeakMap<Frame, number>();
   private nextNetworkFrameId = 1;
@@ -125,6 +130,8 @@ export class PlaywrightDriver extends BaseDriver {
   constructor(page: Page) {
     super();
     this.page = page;
+    this.#network = new PlaywrightNetworkMonitor(page.context());
+    this.networkMonitor = this.#network.forPage(page);
     this.cdpReady = Promise.resolve(
       this.page.context().addInitScript({ content: WAITER_SCRIPT }),
     ).then(() => this.initCDPSession());
@@ -145,11 +152,23 @@ export class PlaywrightDriver extends BaseDriver {
     logger.debug(`New tab opened: ${page.url()}`);
     this.trackPage(page);
     this.newTabAction?.pages.push(page);
+    void this.#initPageNetwork(page).catch((error) => {
+      logger.debug(
+        `Could not initialize new tab network tracking: ${String(error)}`,
+      );
+    });
   }
 
   private onPageClose(page: Page): void {
     logger.debug(`Page closed: ${page.url()}`);
     this.trackedPages.delete(page);
+    for (const frame of this.networkSessions.keys()) {
+      if (frame.page() === page) this.detachNetworkFrame(frame);
+    }
+    const session = this.#pageSessions.get(page);
+    this.#pageSessions.delete(page);
+    this.#pageOopifFrameIds.delete(page);
+    void session?.then((client) => client.detach()).catch(() => undefined);
     if (this.newTabAction)
       this.newTabAction.pages = this.newTabAction.pages.filter(
         (opened) => opened !== page,
@@ -168,53 +187,83 @@ export class PlaywrightDriver extends BaseDriver {
   private async initCDPSession(): Promise<void> {
     const generation = ++this.cdpGeneration;
     const page = this.page;
-    this.oopifFrameIds.clear();
     this.oopifFrames.clear();
-    for (const session of this.networkSessions.values()) {
-      await session.detach().catch(() => undefined);
-    }
-    this.networkSessions.clear();
-    this.networkMonitor.clear();
-    const client = await page.context().newCDPSession(page);
+    const client = await this.#initPageNetwork(page);
     if (generation !== this.cdpGeneration || page !== this.page) {
-      await client.detach();
       return;
     }
     this.client = client;
-    await this.configureNetworkSession(client);
-    await this.enableTargetAutoAttach();
+    this.networkMonitor = this.#network.forPage(page);
+    this.oopifFrameIds = this.#pageOopifFrameIds.get(page)!;
     for (const frame of this.page.frames()) {
       if (frame !== this.page.mainFrame()) await this.attachNetworkFrame(frame);
     }
   }
 
+  #initPageNetwork(page: Page): Promise<CDPSession> {
+    let session = this.#pageSessions.get(page);
+    if (!session) {
+      session = this.#createPageSession(page).catch((error) => {
+        this.#pageSessions.delete(page);
+        throw error;
+      });
+      this.#pageSessions.set(page, session);
+    }
+    return session;
+  }
+
+  async #createPageSession(page: Page): Promise<CDPSession> {
+    const monitor = this.#network.forPage(page);
+    const frameIds = new Map<string, string>();
+    this.#pageOopifFrameIds.set(page, frameIds);
+    const session = await page.context().newCDPSession(page);
+    try {
+      await this.configureNetworkSession(session, monitor);
+      await this.enableTargetAutoAttach(session, frameIds);
+      return session;
+    } catch (error) {
+      await session.detach().catch(() => undefined);
+      throw error;
+    }
+  }
+
   private async configureNetworkSession(
     session: CDPSession,
+    monitor: CdpNetworkMonitor,
     sessionId = "",
   ): Promise<void> {
+    for (const event of NETWORK_EVENTS) {
+      session.on(event, (params) => monitor.process(event, params, sessionId));
+    }
     await session.send("Page.enable");
     await session.send("Network.enable");
     await session.send("Page.addScriptToEvaluateOnNewDocument", {
       source: WAITER_SCRIPT,
       runImmediately: true,
     });
-    for (const event of NETWORK_EVENTS) {
-      session.on(event, (params) =>
-        this.networkMonitor.process(event, params, sessionId),
-      );
-    }
     session.on("Page.windowOpen", () => {
-      if (this.newTabAction) this.newTabAction.announced = true;
+      if (monitor === this.networkMonitor && this.newTabAction)
+        this.newTabAction.announced = true;
     });
   }
 
   private async attachNetworkFrame(frame: Frame): Promise<void> {
-    if (frame.page() !== this.page || this.networkSessions.has(frame)) return;
+    const page = frame.page();
+    if (
+      page !== this.page ||
+      frame === page.mainFrame() ||
+      this.networkSessions.has(frame) ||
+      this.#attachingFrames.has(frame)
+    )
+      return;
+    this.#attachingFrames.add(frame);
+    const monitor = this.#network.forPage(page);
+    let session: CDPSession | undefined;
     try {
       const frameTree = (await this.client.send(
         "Page.getFrameTree",
       )) as CDPFrameTree;
-      const session = await this.page.context().newCDPSession(frame);
+      session = await page.context().newCDPSession(frame);
       const sessionFrameTree = (await session.send(
         "Page.getFrameTree",
       )) as CDPFrameTree;
@@ -225,16 +274,28 @@ export class PlaywrightDriver extends BaseDriver {
         await session.detach();
         return;
       }
-      await this.configureNetworkSession(session, this.networkFrameId(frame));
+      await this.configureNetworkSession(
+        session,
+        monitor,
+        this.networkFrameId(frame),
+      );
+      if (frame.isDetached() || page.isClosed()) {
+        monitor.clearSession(this.networkFrameId(frame));
+        await session.detach();
+        return;
+      }
       this.networkSessions.set(frame, session);
     } catch {
+      await session?.detach().catch(() => undefined);
       // Same-process or destroyed frames are covered by the page session.
+    } finally {
+      this.#attachingFrames.delete(frame);
     }
   }
 
   private detachNetworkFrame(frame: Frame): void {
     const sessionId = this.networkFrameId(frame);
-    this.networkMonitor.clearSession(sessionId);
+    this.#network.clearSession(frame.page(), sessionId);
     const session = this.networkSessions.get(frame);
     if (session) void session.detach().catch(() => undefined);
     this.networkSessions.delete(frame);
@@ -249,19 +310,16 @@ export class PlaywrightDriver extends BaseDriver {
     return `frame:${id}`;
   }
 
-  private async enableTargetAutoAttach(): Promise<void> {
+  private async enableTargetAutoAttach(
+    client: CDPSession,
+    frameIds: Map<string, string>,
+  ): Promise<void> {
     try {
-      await this.client.send("Target.setAutoAttach", {
-        autoAttach: true,
-        waitForDebuggerOnStart: false,
-        flatten: true,
-      });
-
       // Track OOPIF frames: they arrive as attached targets of type "iframe"
       // but are absent from Page.getFrameTree because they run in a separate
       // renderer process. The URL is often empty at attach time; it gets
       // updated via Page.frameNavigated events.
-      this.client.on(
+      client.on(
         "Target.attachedToTarget",
         (event: {
           targetInfo: { type: string; targetId: string; url: string };
@@ -271,37 +329,36 @@ export class PlaywrightDriver extends BaseDriver {
             logger.debug(
               `OOPIF attached: frameId=${event.targetInfo.targetId} url=${event.targetInfo.url || "(empty)"}`,
             );
-            this.oopifFrameIds.set(
-              event.targetInfo.targetId,
-              event.targetInfo.url,
-            );
+            frameIds.set(event.targetInfo.targetId, event.targetInfo.url);
           }
         },
       );
 
-      this.client.on(
-        "Target.detachedFromTarget",
-        (event: { targetId?: string }) => {
-          if (event.targetId && this.oopifFrameIds.has(event.targetId)) {
-            logger.debug(`OOPIF detached: frameId=${event.targetId}`);
-            this.oopifFrameIds.delete(event.targetId);
-          }
-        },
-      );
+      client.on("Target.detachedFromTarget", (event: { targetId?: string }) => {
+        if (event.targetId && frameIds.has(event.targetId)) {
+          logger.debug(`OOPIF detached: frameId=${event.targetId}`);
+          frameIds.delete(event.targetId);
+        }
+      });
 
       // Update URLs as OOPIF frames navigate (the initial attach URL is often empty)
-      this.client.on(
+      client.on(
         "Page.frameNavigated",
         (event: { frame: { id: string; url: string }; type: string }) => {
-          if (this.oopifFrameIds.has(event.frame.id)) {
+          if (frameIds.has(event.frame.id)) {
             logger.debug(
               `OOPIF navigated: frameId=${event.frame.id} url=${event.frame.url}`,
             );
-            this.oopifFrameIds.set(event.frame.id, event.frame.url);
+            frameIds.set(event.frame.id, event.frame.url);
           }
         },
       );
 
+      await client.send("Target.setAutoAttach", {
+        autoAttach: true,
+        waitForDebuggerOnStart: false,
+        flatten: true,
+      });
       logger.debug("Enabled Target.setAutoAttach for OOPIF support");
     } catch (error) {
       logger.debug(
