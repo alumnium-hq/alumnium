@@ -7,11 +7,30 @@ import { BaseAgentElementsCache } from "./BaseAgentElementsCache.ts";
 const logger = Logger.get(import.meta.url);
 
 export class PlannerAgentElementsCache extends BaseAgentElementsCache<PlannerAgent.Meta> {
-  static isCacheable(generation: LchainSchema.StoredGeneration): boolean {
-    const parsed = PlannerAgent.Plan.safeParse(
-      generation.message?.data.additional_kwargs.parsed,
-    );
-    return !parsed.success || parsed.data.actions.some(Boolean);
+  /**
+   * A plan with no actions means the planner could not find its target on that particular
+   * screen. Planner entries are keyed by goal alone and carry no elements to resolve, so such a
+   * plan would match every later screen too and silently turn the goal into a no-op.
+   *
+   * The plan may live in `additional_kwargs.parsed` (OpenAI JSON schema output), in a tool call
+   * (Anthropic, Google) or only in the raw text, so all three are inspected.
+   */
+  static isEmptyPlan(generation: LchainSchema.StoredGeneration): boolean {
+    const data = generation.message?.data;
+    const candidates: unknown[] = [
+      data?.additional_kwargs.parsed,
+      ...(data?.tool_calls ?? []).map((call) => call.args),
+    ];
+    try {
+      candidates.push(JSON.parse(generation.text));
+    } catch {
+      // Not a JSON plan; nothing to inspect.
+    }
+
+    return candidates.some((candidate) => {
+      const parsed = PlannerAgent.Plan.safeParse(candidate);
+      return parsed.success && !parsed.data.actions.some(Boolean);
+    });
   }
 
   async update(
@@ -27,9 +46,9 @@ export class PlannerAgentElementsCache extends BaseAgentElementsCache<PlannerAge
       return;
     }
 
-    if (!PlannerAgentElementsCache.isCacheable(generation)) {
+    if (PlannerAgentElementsCache.isEmptyPlan(generation)) {
       logger.debug(
-        `Skipping planner cache update: plan has no actions for goal: ${goal.slice(0, 50)}...`,
+        `Skipping planner cache update: no actions planned for goal: ${goal.slice(0, 50)}...`,
       );
       return;
     }

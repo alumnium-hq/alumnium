@@ -155,13 +155,10 @@ export class ElementsCache extends ServerCache {
         const tree = new ElementsCacheTree(agentMeta.treeXml);
 
         const memoryEntry = this.#memoryRecord(memoryKey);
-        if (memoryEntry) {
-          if (
-            agentMeta.kind === "planner" &&
-            !PlannerAgentElementsCache.isCacheable(memoryEntry.generation)
-          ) {
-            return null;
-          }
+        if (
+          memoryEntry &&
+          !this.#isStaleEmptyPlan(agentMeta, memoryEntry.generation)
+        ) {
           const masksIdsMap = tree.resolveElements(memoryEntry.elements);
 
           if (masksIdsMap) {
@@ -207,13 +204,17 @@ export class ElementsCache extends ServerCache {
           return null;
         }
 
-        if (
-          agentMeta.kind === "planner" &&
-          !PlannerAgentElementsCache.isCacheable(maskedGeneration)
-        ) {
+        if (this.#isStaleEmptyPlan(agentMeta, maskedGeneration)) {
           logger.debug(
-            `Elements cache miss (planner has no actions): "${cacheKey.slice(0, 50)}..."`,
+            `Elements cache miss (empty plan) for ${agentMeta.kind}: "${cacheKey.slice(0, 50)}..."`,
           );
+          span.event("cache.lookup.miss", {
+            ...this.#spanAttrs(),
+            "agent.kind": agentMeta.kind,
+            "cache.hash": cacheHash,
+            "cache.lookup.miss.reason": "empty_plan",
+          });
+
           return null;
         }
 
@@ -397,6 +398,17 @@ export class ElementsCache extends ServerCache {
     llmKey: LlmContext.LlmKey,
   ): ElementsCache.MemoryKey {
     return `${cacheHash}|${llmKey}|${this.app}` as ElementsCache.MemoryKey;
+  }
+
+  /** Entries written before empty plans were excluded from the cache must not be replayed. */
+  #isStaleEmptyPlan(
+    agentMeta: ElementsCache.AgentMeta,
+    generation: LchainSchema.StoredGeneration,
+  ): boolean {
+    return (
+      agentMeta.kind === "planner" &&
+      PlannerAgentElementsCache.isEmptyPlan(generation)
+    );
   }
 
   #memoryRecord(
