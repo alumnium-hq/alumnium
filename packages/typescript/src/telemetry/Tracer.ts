@@ -366,7 +366,8 @@ export namespace Tracer {
             | "not_found"
             | "resolution_failed"
             | "unimplemented"
-            | "no_match";
+            | "no_match"
+            | "empty_plan";
         };
       };
     };

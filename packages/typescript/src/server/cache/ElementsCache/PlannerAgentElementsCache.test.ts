@@ -93,6 +93,55 @@ describe("PlannerAgentElementsCache", () => {
     expect(plannerCache.getEntries()).toEqual([]);
   });
 
+  it("skips planner generation whose only action is blank", async () => {
+    const { memoryKey, plannerCache } = setup.cur;
+
+    await plannerCache.update({
+      memoryKey,
+      cacheHash: "hash" as ElementsCache.CacheHash,
+      meta: {
+        kind: "planner",
+        goal: "close any pop-ups if they appear" as BaseAgent.Goal,
+        treeXml: "<link id='1'>Skip to content</link>",
+      },
+      generation: LchainFactory.storedGeneration({
+        text: '{"explanation":"No pop-up present","actions":[""]}',
+        message: {
+          data: {
+            additional_kwargs: {
+              parsed: { explanation: "No pop-up present", actions: [""] },
+            },
+          },
+        },
+      }),
+    });
+
+    expect(plannerCache.getEntries()).toEqual([]);
+  });
+
+  it("detects an empty plan delivered as a tool call", () => {
+    const generation = LchainFactory.storedGenerationWith({
+      toolCalls: [
+        {
+          type: "tool_call",
+          id: "call-1",
+          name: "Plan",
+          args: { explanation: "No matching element", actions: [] },
+        },
+      ],
+    });
+
+    expect(PlannerAgentElementsCache.isEmptyPlan(generation)).toBe(true);
+  });
+
+  it("detects an empty plan present only in the text", () => {
+    const generation = LchainFactory.storedGeneration({
+      text: '{"explanation":"No matching element","actions":[]}',
+    });
+
+    expect(PlannerAgentElementsCache.isEmptyPlan(generation)).toBe(true);
+  });
+
   it("allows element-free planner generation with actions", () => {
     const generation = LchainFactory.storedGeneration({
       text: '{"actions":["navigate"]}',
@@ -108,7 +157,7 @@ describe("PlannerAgentElementsCache", () => {
       },
     });
 
-    expect(PlannerAgentElementsCache.isCacheable(generation)).toBe(true);
+    expect(PlannerAgentElementsCache.isEmptyPlan(generation)).toBe(false);
   });
 
   it("updates elements while deduplicating by non-index attrs", async () => {
