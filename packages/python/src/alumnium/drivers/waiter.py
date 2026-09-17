@@ -20,6 +20,7 @@ def wait_for_page_to_load(
     snapshot: Callable[[], dict | None],
     idle: float = WAITER_IDLE_SECONDS,
     timeout: float = WAITER_TIMEOUT_SECONDS,
+    poll: Callable[[float], None] = sleep,
 ) -> tuple[bool, list[str]]:
     started_at = monotonic()
     deadline = started_at + timeout
@@ -37,7 +38,7 @@ def wait_for_page_to_load(
                 and not monitor.pending()
             ):
                 return True, []
-        sleep(WAITER_POLL_SECONDS)
+        poll(WAITER_POLL_SECONDS)
 
     return False, pending
 

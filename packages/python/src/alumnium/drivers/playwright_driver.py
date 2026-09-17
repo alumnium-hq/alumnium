@@ -231,6 +231,7 @@ class PlaywrightDriver(BaseDriver):
             loaded, pending = wait_for_page_to_load(
                 self.network_monitor,
                 lambda: self.page.evaluate(WAITER_SNAPSHOT_SCRIPT),
+                poll=lambda seconds: self.page.wait_for_timeout(seconds * 1000),
             )
             if not loaded:
                 logger.debug(f"  <- Timed out waiting for page to load; pending requests: {pending}")
