@@ -23,7 +23,6 @@ import {
 } from "../../tools/index.ts";
 import { McpState } from "../McpState.ts";
 import { McpTool } from "./McpTool.ts";
-import { lit } from "smollit";
 
 const ACTOR_TOOLS = [
   ClickTool,

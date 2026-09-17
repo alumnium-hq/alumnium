@@ -112,7 +112,7 @@ class PlaywrightAsyncDriver(BaseDriver):
                 await element.locator("xpath=ancestor::select").select_option(value)
         else:
             async with self._autoswitch_to_new_tab():
-                await self._scroll_element_into_center(element)
+                await self._scroll_element_if_needed(element)
                 await element.click(force=True)
 
     def drag_slider(self, id: int, value: float):
@@ -120,7 +120,7 @@ class PlaywrightAsyncDriver(BaseDriver):
 
     async def _drag_slider(self, id: int, value: float):
         element = await self._find_element(id)
-        await self._scroll_element_into_center(element)
+        await self._scroll_element_if_needed(element)
         await element.fill(f"{value:g}")
 
     def drag_and_drop(self, from_id: int, to_id: int):
@@ -129,7 +129,7 @@ class PlaywrightAsyncDriver(BaseDriver):
     async def _drag_and_drop(self, from_id: int, to_id: int):
         from_element = await self._find_element(from_id)
         to_element = await self._find_element(to_id)
-        await self._scroll_element_into_center(from_element)
+        await self._scroll_element_if_needed(from_element)
         await from_element.drag_to(to_element)
 
     def hover(self, id: int):
@@ -194,7 +194,7 @@ class PlaywrightAsyncDriver(BaseDriver):
 
     async def _type(self, id: int, text: str):
         element = await self._find_element(id)
-        await self._scroll_element_into_center(element)
+        await self._scroll_element_if_needed(element)
         await element.fill(text)
 
     def upload(self, id: int, paths: list[str]):
@@ -268,6 +268,15 @@ class PlaywrightAsyncDriver(BaseDriver):
 
     async def _print_to_pdf(self, filepath: str):
         await self.page.pdf(path=filepath)
+
+    async def _scroll_element_if_needed(self, element: Locator):
+        try:
+            logger.debug("Attempting to hover over element")
+            await element.hover(trial=True, timeout=200)
+        except TimeoutError as error:
+            logger.debug(error.message)
+            logger.debug("Hover failed, scrolling into view instead")
+            await self._scroll_element_into_center(element)
 
     async def _scroll_element_into_center(self, element: Locator):
         await element.evaluate("el => el.scrollIntoView({block: 'center'})")

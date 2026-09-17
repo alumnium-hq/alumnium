@@ -111,18 +111,18 @@ class PlaywrightDriver(BaseDriver):
                 element.locator("xpath=ancestor::select").select_option(value)
         else:
             with self._autoswitch_to_new_tab():
-                self._scroll_element_into_center(element)
+                self._scroll_element_if_needed(element)
                 element.click(force=True)
 
     def drag_slider(self, id: int, value: float):
         element = self.find_element(id)
-        self._scroll_element_into_center(element)
+        self._scroll_element_if_needed(element)
         element.fill(f"{value:g}")
 
     def drag_and_drop(self, from_id: int, to_id: int):
         from_element = self.find_element(from_id)
         to_element = self.find_element(to_id)
-        self._scroll_element_into_center(from_element)
+        self._scroll_element_if_needed(from_element)
         from_element.drag_to(to_element)
 
     def hover(self, id: int):
@@ -157,7 +157,7 @@ class PlaywrightDriver(BaseDriver):
 
     def type(self, id: int, text: str):
         element = self.find_element(id)
-        self._scroll_element_into_center(element)
+        self._scroll_element_if_needed(element)
         element.fill(text)
 
     def upload(self, id: int, paths: list[str]):
@@ -215,6 +215,15 @@ class PlaywrightDriver(BaseDriver):
 
     def print_to_pdf(self, filepath: str):
         self.page.pdf(path=filepath)
+
+    def _scroll_element_if_needed(self, element: Locator):
+        try:
+            logger.debug("Attempting to hover over element")
+            element.hover(trial=True, timeout=200)
+        except TimeoutError as error:
+            logger.debug(error.message)
+            logger.debug("Hover failed, scrolling into view instead")
+            self._scroll_element_into_center(element)
 
     def _scroll_element_into_center(self, element: Locator):
         element.evaluate("el => el.scrollIntoView({block: 'center'})")

@@ -322,7 +322,7 @@ export class PlaywrightDriver extends BaseDriver {
       });
     } else {
       await this.autoswitchToNewTabAction(async () => {
-        await this.#scrollElementIntoCenter(element);
+        await this.#scrollElementIfNeeded(element);
         await element.click({ force: true });
       });
     }
@@ -332,7 +332,7 @@ export class PlaywrightDriver extends BaseDriver {
   @stateful
   async dragSlider(id: number, value: number): Promise<void> {
     const element = await this.findElement(id);
-    await this.#scrollElementIntoCenter(element);
+    await this.#scrollElementIfNeeded(element);
     await element.fill(String(value));
   }
 
@@ -341,7 +341,7 @@ export class PlaywrightDriver extends BaseDriver {
   async dragAndDrop(fromId: number, toId: number): Promise<void> {
     const fromElement = await this.findElement(fromId);
     const toElement = await this.findElement(toId);
-    await this.#scrollElementIntoCenter(fromElement);
+    await this.#scrollElementIfNeeded(fromElement);
     await fromElement.dragTo(toElement);
   }
 
@@ -412,7 +412,7 @@ export class PlaywrightDriver extends BaseDriver {
   @stateful
   async type(id: number, text: string): Promise<void> {
     const element = await this.findElement(id);
-    await this.#scrollElementIntoCenter(element);
+    await this.#scrollElementIfNeeded(element);
     await element.fill(text);
   }
 
@@ -479,6 +479,17 @@ export class PlaywrightDriver extends BaseDriver {
     // TODO: We need to remove the attribute after we are done with the element,
     // but Playwright locator is lazy and we cannot guarantee when it is safe to do so.
     return frame.locator(`css=[data-alumnium-id='${backendNodeId}']`);
+  }
+
+  async #scrollElementIfNeeded(element: Locator): Promise<void> {
+    try {
+      logger.debug(`Attempting to hover over element`);
+      await element.hover({ trial: true, timeout: 200 });
+    } catch (error) {
+      logger.debug(error instanceof Error ? error.message : String(error));
+      logger.debug(`Hover failed, scrolling into view instead`);
+      await this.#scrollElementIntoCenter(element);
+    }
   }
 
   async #scrollElementIntoCenter(element: Locator): Promise<void> {

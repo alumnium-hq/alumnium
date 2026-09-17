@@ -20,6 +20,7 @@ import com.microsoft.playwright.CDPSession;
 import com.microsoft.playwright.Frame;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.PlaywrightException;
 import com.microsoft.playwright.TimeoutError;
 import java.net.URI;
 import java.nio.file.Path;
@@ -138,7 +139,7 @@ public final class PlaywrightDriver extends BaseDriver {
     } else {
       autoswitchToNewTabAction(
           () -> {
-            scrollElementIntoCenter(element);
+            scrollElementIfNeeded(element);
             element.click(new Locator.ClickOptions().setForce(true));
           });
     }
@@ -147,7 +148,7 @@ public final class PlaywrightDriver extends BaseDriver {
   @Override
   public void dragSlider(int id, double value) {
     Locator element = findElement(id);
-    scrollElementIntoCenter(element);
+    scrollElementIfNeeded(element);
     element.fill(stripTrailingZeros(value));
   }
 
@@ -155,7 +156,7 @@ public final class PlaywrightDriver extends BaseDriver {
   public void dragAndDrop(int fromId, int toId) {
     Locator fromElement = findElement(fromId);
     Locator toElement = findElement(toId);
-    scrollElementIntoCenter(fromElement);
+    scrollElementIfNeeded(fromElement);
     fromElement.dragTo(toElement);
   }
 
@@ -205,7 +206,7 @@ public final class PlaywrightDriver extends BaseDriver {
   @Override
   public void type(int id, String text) {
     Locator element = findElement(id);
-    scrollElementIntoCenter(element);
+    scrollElementIfNeeded(element);
     element.fill(text);
   }
 
@@ -302,6 +303,17 @@ public final class PlaywrightDriver extends BaseDriver {
 
   // endregion
   // region Internals
+
+  private void scrollElementIfNeeded(Locator element) {
+    try {
+      LOG.debug("Attempting to hover over element");
+      element.hover(new Locator.HoverOptions().setTrial(true).setTimeout(200));
+    } catch (PlaywrightException e) {
+      LOG.debug(e.getMessage());
+      LOG.debug("Hover failed, scrolling into view instead");
+      scrollElementIntoCenter(element);
+    }
+  }
 
   private void scrollElementIntoCenter(Locator element) {
     element.evaluate("el => el.scrollIntoView({block: 'center'})");
