@@ -8,7 +8,7 @@ import { chromium } from "playwright";
 import type { Locator, Page } from "playwright-core";
 import { Builder, WebElement, type WebDriver } from "selenium-webdriver";
 import { Options } from "selenium-webdriver/chrome.js";
-import { inject, it as vitestIt } from "vitest";
+import { inject, it as vitestIt, type RunnerTask } from "vitest";
 import { attach, type Browser } from "webdriverio";
 import { Driver } from "../../src/drivers/Driver.ts";
 import { Env } from "../../src/Env.ts";
@@ -93,6 +93,10 @@ export async function useSetup(props: useSetup.Props): Promise<Setup> {
       await al.cache.discard();
     }
 
+    if (driverId === "playwright") {
+      await stopTracing(driver as Page, ctx.task, passed);
+    }
+
     await al.quit();
   });
 
@@ -124,6 +128,7 @@ async function createDriver(driverId: Driver.Id): Promise<Alumni.Driver> {
         headless: Env.ALUMNIUM_PLAYWRIGHT_HEADLESS,
       });
       const context = await browser.newContext();
+      await context.tracing.start({ screenshots: true, snapshots: true });
       const page = await context.newPage();
       return page;
     }
@@ -148,6 +153,24 @@ async function createDriver(driverId: Driver.Id): Promise<Alumni.Driver> {
     default:
       never();
   }
+}
+
+async function stopTracing(
+  page: Page,
+  task: RunnerTask,
+  passed: boolean,
+): Promise<void> {
+  const dirname = path.dirname(fileURLToPath(import.meta.url));
+  const file = path.basename(task.file.name, ".test.ts");
+  const name = task.name.replace(/[^a-z0-9]+/gi, "-").toLowerCase();
+  const retry = task.result?.retryCount ?? 0;
+  const status = passed ? "passed" : "failed";
+  const tracePath = path.resolve(
+    dirname,
+    "../artifacts/traces",
+    `${file}-${name}-${status}-${retry}.zip`,
+  );
+  page.context().tracing.stop({ path: tracePath });
 }
 
 function createHelpers(
