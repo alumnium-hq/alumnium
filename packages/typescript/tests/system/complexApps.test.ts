@@ -6,11 +6,10 @@ describe("Complex apps", { tags: ["external"] }, () => {
     const it = baseIt.override("setup", async ({ setup, skip }) => {
       return async (options) => {
         const result = await setup(options);
-        const { isAppiumDriver } = result;
+        const { isMobile } = result;
 
         // Skip if using Appium driver
-        if (isAppiumDriver)
-          skip("Example is web-only and does not support mobile");
+        if (isMobile) skip("Example is web-only and does not support mobile");
 
         return result;
       };

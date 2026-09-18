@@ -54,6 +54,10 @@ jobs:
       matrix:
         driver: ${{ fromJSON(inputs.drivers) }}
         model: ${{ fromJSON(inputs.models) }}
+        # Maestro is implemented by the TypeScript package only.
+        exclude:
+          - driver: maestro-android
+          - driver: maestro-ios
 
     steps:
       - name: Git Checkout

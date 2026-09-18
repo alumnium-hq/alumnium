@@ -20,6 +20,8 @@ const { span } = tracer.dec();
 export namespace SessionManager {
   export interface CreateSessionProps {
     platform: Driver.Platform;
+    // Optional since Java/Python only support Appium.
+    driver?: Driver.Kind | undefined;
     provider?: Model.Provider | undefined;
     name?: string | undefined;
     tools: ToolDefinition[];

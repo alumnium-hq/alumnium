@@ -45,6 +45,8 @@ mise //packages/{package-name}:lint                        # Run linter
 mise //packages/{package-name}:test/unit                   # Run unit tests
 mise //packages/{package-name}:test/system:appium-ios      # Run Appium iOS system tests
 mise //packages/{package-name}:test/system:appium-android  # Run Appium Android system tests
+mise //packages/{package-name}:test/system:maestro-ios     # Run Maestro iOS system tests
+mise //packages/{package-name}:test/system:maestro-android # Run Maestro Android system tests
 mise //packages/{package-name}:test/system:playwright      # Run Playwright system tests
 mise //packages/{package-name}:test/system:selenium        # Run Selenium system tests
 ```

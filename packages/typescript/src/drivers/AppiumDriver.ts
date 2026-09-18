@@ -1,6 +1,5 @@
 import { Key as SeleniumKey } from "selenium-webdriver";
 import type { Browser } from "webdriverio";
-import z from "zod";
 import type { AccessibilityElement } from "../accessibility/AccessibilityElement.ts";
 import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.ts";
 import { UIAutomator2AccessibilityTree } from "../accessibility/UIAutomator2AccessibilityTree.ts";
@@ -15,22 +14,16 @@ import { DragAndDropTool } from "../tools/DragAndDropTool.ts";
 import { PressKeyTool } from "../tools/PressKeyTool.ts";
 import { TypeTool } from "../tools/TypeTool.ts";
 import { BaseDriver } from "./BaseDriver.ts";
+import { Driver } from "./Driver.ts";
 import type { Keys } from "./keys.ts";
 
 const { tracer, logger } = Telemetry.get(import.meta.url);
 const { span } = tracer.dec();
 const stateful = BaseDriver.stateful;
 
-export namespace AppiumDriver {
-  export type Platform = z.infer<typeof AppiumDriver.Platform>;
-}
-
 export class AppiumDriver extends BaseDriver {
-  static platforms = ["uiautomator2", "xcuitest"] as const;
-
-  static Platform = z.enum(AppiumDriver.platforms);
-
-  public platform: AppiumDriver.Platform;
+  public kind = "appium" as const;
+  public platform: Driver.MobileOs;
 
   private driver: Browser;
 
@@ -48,11 +41,10 @@ export class AppiumDriver extends BaseDriver {
   constructor(driver: Browser) {
     super();
     this.driver = driver;
-    if (this.driver.capabilities.platformName?.toLowerCase() === "android") {
-      this.platform = "uiautomator2";
-    } else {
-      this.platform = "xcuitest";
-    }
+    this.platform =
+      this.driver.capabilities.platformName?.toLowerCase() === "android"
+        ? "android"
+        : "ios";
   }
 
   @span("driver.get_accessibility_tree", spanAttrs)
@@ -68,7 +60,7 @@ export class AppiumDriver extends BaseDriver {
     }
 
     const xmlString = await this.driver.getPageSource();
-    if (this.platform === "uiautomator2") {
+    if (this.platform === "android") {
       return new UIAutomator2AccessibilityTree(xmlString);
     } else {
       return new XCUITestAccessibilityTree(xmlString);
@@ -272,7 +264,7 @@ export class AppiumDriver extends BaseDriver {
   }
 
   private async hideKeyboard(): Promise<void> {
-    if (this.platform === "uiautomator2") {
+    if (this.platform === "android") {
       await this.driver.hideKeyboard();
     } else {
       // Tap to the top left corner of the keyboard to dismiss it
@@ -288,7 +280,7 @@ export class AppiumDriver extends BaseDriver {
   }
 
   private async scrollIntoView(element: WebdriverIO.Element): Promise<void> {
-    if (this.platform === "uiautomator2") {
+    if (this.platform === "android") {
       await element.scrollIntoView();
     } else {
       await this.driver.execute("mobile: scrollToElement", {
@@ -298,7 +290,7 @@ export class AppiumDriver extends BaseDriver {
   }
 
   #elementLocator(element: AccessibilityElement): string {
-    if (this.platform === "xcuitest") {
+    if (this.platform === "ios") {
       // Use iOS Predicate locators for XCUITest
 
       let predicate = `type == "${element.type}"`;
@@ -360,7 +352,7 @@ export class AppiumDriver extends BaseDriver {
 
 function spanAttrs(this: AppiumDriver): Tracer.SpansDriverAttrs {
   return {
-    "driver.kind": "appium",
+    "driver.kind": this.kind,
     "driver.platform": this.platform,
   };
 }

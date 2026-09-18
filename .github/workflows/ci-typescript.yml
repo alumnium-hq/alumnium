@@ -9,7 +9,7 @@ on:
         description: JSON array of drivers to run system tests with.
         required: false
         type: string
-        default: '["playwright", "selenium"]'
+        default: '["maestro-android", "maestro-ios", "playwright", "selenium"]'
       models:
         description: JSON array of model providers to test with.
         required: false
@@ -43,7 +43,7 @@ env:
 jobs:
   test-system:
     name: System Tests
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.driver == 'maestro-ios' && 'macos-latest' || 'ubuntu-latest' }}
     timeout-minutes: 60
     env:
       ALUMNIUM_DRIVER: ${{ matrix.driver }}

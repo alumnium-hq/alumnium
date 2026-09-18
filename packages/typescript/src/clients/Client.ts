@@ -10,6 +10,7 @@ import type { Data } from "./typecasting.ts";
 export namespace Client {
   export interface Props {
     platform: Driver.Platform;
+    driver: Driver.Kind;
     tools: Record<string, ToolClass>;
     planner: boolean | undefined;
     excludeAttributes: string[] | undefined;
@@ -88,12 +89,14 @@ export abstract class Client {
   });
 
   protected platform: Driver.Platform;
+  protected driver: Driver.Kind;
   protected tools: Record<string, ToolClass>;
   protected planner: boolean;
   protected excludeAttributes: string[] | undefined;
 
   constructor(props: Client.Props) {
     this.platform = props.platform;
+    this.driver = props.driver;
     this.tools = props.tools;
     this.planner = props.planner ?? true;
     this.excludeAttributes = props.excludeAttributes;

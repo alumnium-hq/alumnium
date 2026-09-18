@@ -6,6 +6,7 @@ import z from "zod";
 
 import { Alumni } from "../../client/Alumni.ts";
 import { Driver } from "../../drivers/Driver.ts";
+import { Env } from "../../Env.ts";
 import { NavigationPolicy } from "../../NavigationPolicy.ts";
 import { Telemetry } from "../../telemetry/Telemetry.ts";
 import { DragSliderTool } from "../../tools/DragSliderTool.ts";
@@ -20,8 +21,8 @@ import { McpArtifactsStore } from "../McpArtifactsStore.ts";
 import { McpProfilesStore } from "../McpProfilesStore.ts";
 import { McpState } from "../McpState.ts";
 import {
-  createAppiumDriver,
   createChromeDriver,
+  createMobileDriver,
   type McpDriver,
 } from "../mcpDrivers.ts";
 import { McpTool } from "./McpTool.ts";
@@ -29,9 +30,10 @@ import { McpTool } from "./McpTool.ts";
 const { tracer } = Telemetry.get(import.meta.url);
 
 /**
- * Parses `alumnium:options.device` into either a Playwright device-catalog name (string) or a
- * device-descriptor object (e.g. pasted directly from Playwright's own device list). Field-level
- * validation of the object form happens downstream in `resolveDeviceOptions`.
+ * Parses `alumnium:options.device` into either a device name/identifier (string) or a Playwright
+ * device-descriptor object (e.g. pasted directly from Playwright's own device list). A string is
+ * a Playwright catalog name for browsers and a device name, UDID or serial for mobile drivers.
+ * Field-level validation of the object form happens downstream in `resolveDeviceOptions`.
  */
 function parseDeviceOption(
   value: unknown,
@@ -79,19 +81,21 @@ export const startMcpTool = McpTool.define("start", {
 
           Must include "platformName" (e.g., "chrome", "ios", "android").
 
-          Example JSON string: '{"platformName": "ios", "appium:deviceName": "iPhone 16", "appium:platformVersion": "18.0"}'.
+          Example JSON string: '{"platformName": "ios", "appium:platformVersion": "18.0", "alumnium:options": {"app": "com.example.app", "device": "iPhone 16"}}'.
 
           Example file path: "/path/to/capabilities.json".
 
-          Top-level options:
-
           Alumnium-specific options go in "alumnium:options":
+            - "app" (string) — the mobile app to run (iOS bundle id, Android package name, or path/URL to install);
+            - "appArguments" (string[]) — command-line arguments to launch the mobile app with, e.g. ["-UITesting"];
+            - "appEnvironment" (object) — environment variables to launch the mobile app with, e.g. {"API_URL": "https://staging.example.com"};
+            - "appReset" (boolean, default false) — wipe the app's state before launching it;
             - "autoswitchToNewTab" (boolean, default true) — auto-switch to newly opened tabs;
             - "baseUrl" (string) — URL to navigate to automatically after driver start, e.g. "https://example.com";
             - "changeAnalysis" (boolean, default true) — enable UI changes analysis agent;
             - "cookies" (array) — cookies to set, supported for Selenium and Playwright, e.g. [{"name": "session", "value": "abc123", "domain": ".example.com"}];
-            - "device" (string or object) — Playwright device emulation, Playwright only. Either the name of a built-in device preset, e.g. "Pixel 7", or a custom device-descriptor object with any of viewport/userAgent/deviceScaleFactor/isMobile/hasTouch, e.g. {"viewport": {"width": 600, "height": 1024}, "userAgent": "...", "deviceScaleFactor": 1, "isMobile": true, "hasTouch": true} — you can paste this straight from Playwright's own device list; unrecognized fields (e.g. "defaultBrowserType", "screen") are ignored. "userAgent" set below overrides the device's;
-            - "excludeAttributes" (string[]) — accessibility attributes to exclude from the tree (e.g., ["src"]);
+            - "device" (string or object) — the device to run on, e.g. "iPhone 16" (Playwright built-in preset name or a custom object with viewport/userAgent/deviceScaleFactor/isMobile/hasTouch, iOS real device unique device identifier, Android/iOS simulator name, etc.).
+            - "excludeAttributes" (string[]) — accessibility attributes to exclude from the tree, e.g., ["src"];
             - "executablePath" (string) — path to a custom Chrome executable;
             - "fullPageScreenshot" (boolean, default false) — capture full-page screenshots.
             - "headers" (object) — extra HTTP headers, supported for Selenium and Playwright. A string value is sent with every request, e.g. {"Authorization": "Bearer token"}; an object value is sent only to hosts matching the key, e.g. {".example.com": {"X-Feature": "on"}};
@@ -252,7 +256,38 @@ export const startMcpTool = McpTool.define("start", {
       }),
     };
 
+    // Shared mobile options, translated per driver in `createMobileDriver`.
+    const mobileOptions: McpDriver.MobileOptions = {
+      ...(typeof alumniumOptions["app"] === "string" && {
+        app: alumniumOptions["app"],
+      }),
+      ...(typeof device === "string" && { device }),
+      ...(typeof alumniumOptions["appReset"] === "boolean" && {
+        appReset: alumniumOptions["appReset"],
+      }),
+      ...(Array.isArray(alumniumOptions["appArguments"]) && {
+        appArguments: alumniumOptions["appArguments"].filter(
+          (value): value is string => typeof value === "string",
+        ),
+      }),
+      ...(typeof alumniumOptions["appEnvironment"] === "object" &&
+        alumniumOptions["appEnvironment"] !== null &&
+        !Array.isArray(alumniumOptions["appEnvironment"]) &&
+        Object.values(alumniumOptions["appEnvironment"]).every(
+          (value) => typeof value === "string",
+        ) && {
+          appEnvironment: alumniumOptions["appEnvironment"] as Record<
+            string,
+            string
+          >,
+        }),
+    };
+
     const alumniumOptionsNonDriverKeys = new Set([
+      "app",
+      "appArguments",
+      "appEnvironment",
+      "appReset",
       "baseUrl",
       "changeAnalysis",
       "cookies",
@@ -277,7 +312,6 @@ export const startMcpTool = McpTool.define("start", {
 
     logger.info(`Starting driver ${id} for platform: ${platformName}`);
 
-    // Detect platform and create appropriate driver
     const platform = Driver.Platform.safeParse(platformName).data;
     let driver: McpDriver;
     switch (platform) {
@@ -300,17 +334,24 @@ export const startMcpTool = McpTool.define("start", {
         break;
       }
 
-      case "xcuitest":
-      case "uiautomator2":
+      case "ios":
+      case "android":
         {
           driver = await tracer.span(
             "mcp.driver.start",
             {
               "mcp.driver.id": id,
-              "driver.kind": "appium",
+              "driver.kind":
+                Env.ALUMNIUM_DRIVER === "maestro" ? "maestro" : "appium",
               "driver.platform": platform,
             },
-            () => createAppiumDriver(platform, capabilities, serverUrl),
+            () =>
+              createMobileDriver(
+                platform,
+                capabilities,
+                serverUrl,
+                mobileOptions,
+              ),
           );
         }
         break;

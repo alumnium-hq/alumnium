@@ -125,6 +125,14 @@ Encoding: `cl100k_base`
 | _Average_                          |     _2854_ |     _2403_ |     _-451_ |   _-15.80%_ |
 | **Total**                          | **325322** | **273900** | **-51422** | **-15.81%** |
 
+## `maestro`
+
+| Snapshot                            |  Before |   After | Change | Change % |
+| ----------------------------------- | ------: | ------: | -----: | -------: |
+| `maestro-7d378d9eacd58bc5.snap.xml` |     272 |     272 |      0 |       0% |
+| _Average_                           |   _272_ |   _272_ |    _0_ |     _0%_ |
+| **Total**                           | **272** | **272** |  **0** |   **0%** |
+
 ## `uiautomator2`
 
 | Snapshot                                 |    Before |     After |     Change |    Change % |

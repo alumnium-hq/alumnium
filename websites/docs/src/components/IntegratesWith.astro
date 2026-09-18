@@ -11,6 +11,7 @@ import qwen from "../assets/qwen.svg";
 import grok from "../assets/grok.svg";
 
 import appium from "../assets/appium.svg";
+import maestro from "../assets/maestro.svg";
 import playwright from "../assets/playwright.svg";
 import selenium from "../assets/selenium.svg";
 ---
@@ -104,6 +105,14 @@ import selenium from "../assets/selenium.svg";
         }}
         alt="Appium"
         href="https://appium.io"
+      />
+      <Logo
+        {...{
+          //  @ts-expect-error -- Cloudflare types conflict with Astro types
+          src: maestro.src,
+        }}
+        alt="Maestro"
+        href="https://maestro.dev"
       />
       <Logo
         {...{

@@ -10,6 +10,8 @@ class Preflight {
   static SUPPORTED_DRIVERS = [
     "appium-android",
     "appium-ios",
+    "maestro-android",
+    "maestro-ios",
     "playwright",
     "selenium",
   ];
@@ -30,7 +32,12 @@ class Preflight {
   ];
 
   // Keep in sync with ci-*.yml workflow_dispatch inputs default values.
-  static DEFAULT_DRIVERS = ["selenium", "playwright"];
+  static DEFAULT_DRIVERS = [
+    "maestro-android",
+    "maestro-ios",
+    "playwright",
+    "selenium",
+  ];
   static DEFAULT_PROVIDERS = ["azure_openai"];
 
   #context;

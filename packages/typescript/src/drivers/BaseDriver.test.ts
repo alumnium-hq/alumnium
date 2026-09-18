@@ -95,6 +95,7 @@ describe(BaseDriver, () => {
     }
 
     class TestDriver extends BaseDriver {
+      kind = "playwright" as const;
       platform = "chromium" as const;
       supportedTools = new Set<ToolClass>();
       trees: BaseAccessibilityTree[] = [];

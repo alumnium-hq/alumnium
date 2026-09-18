@@ -11,6 +11,8 @@ import {
   AppiumDriver,
   BaseDriver,
   type Element,
+  MaestroDriver,
+  MaestroSession,
   PlaywrightDriver,
   SeleniumDriver,
 } from "../drivers/index.ts";
@@ -41,7 +43,7 @@ export type AlumniOptions = Alumni.Options;
 export type VisionOptions = Alumni.VisionOptions;
 
 export namespace Alumni {
-  export type Driver = WebDriver | Page | Browser;
+  export type Driver = WebDriver | Page | Browser | MaestroSession;
 
   export interface Options {
     url?: string | undefined;
@@ -97,6 +99,8 @@ export class Alumni {
     ) {
       // WebdriverIO Browser (Appium)
       this.driver = new AppiumDriver(driver as Browser);
+    } else if (driver instanceof MaestroSession) {
+      this.driver = new MaestroDriver(driver);
     } else {
       throw new Error(`Unsupported driver type '${typeof driver}'`);
     }
@@ -116,6 +120,7 @@ export class Alumni {
 
     const clientProps: Client.Props = {
       platform: this.driver.platform,
+      driver: this.driver.kind,
       tools: this.tools,
       planner,
       excludeAttributes:
