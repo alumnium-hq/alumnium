@@ -1,11 +1,207 @@
-import type { Page } from "playwright-core";
+import { EventEmitter } from "node:events";
+import type {
+  BrowserContext,
+  CDPSession,
+  Locator,
+  Page,
+} from "playwright-core";
 import { describe, expect, it, vi } from "vitest";
 import type { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.ts";
 import { TreeDevDrillError } from "../tree/dev/TreeDevDrillError.ts";
 import { TestTreeFactory } from "./__factories__/TestTreeFactory.ts";
 import { PlaywrightDriver } from "./PlaywrightDriver.ts";
+import type { CdpNetworkMonitor } from "./CdpNetworkMonitor.ts";
 
 describe("PlaywrightDriver", () => {
+  it("preserves per-page requests and reuses CDP sessions across switches and close", async () => {
+    const sessions = new Map<Page, ReturnType<typeof session>>();
+    const pages: Page[] = [];
+    const context = Object.assign(new EventEmitter(), {
+      addInitScript: vi.fn(async () => undefined),
+      newCDPSession: vi.fn(async (page: Page) => {
+        const client = session();
+        sessions.set(page, client);
+        return client as CDPSession;
+      }),
+      pages: () => pages,
+    }) as unknown as BrowserContext & EventEmitter;
+    function page(): Page & EventEmitter {
+      let closed = false;
+      const tab = Object.assign(new EventEmitter(), {
+        context: () => context,
+        frames: () => [],
+        isClosed: () => closed,
+        waitForTimeout: vi.fn(async () => undefined),
+        waitForLoadState: vi.fn(async () => undefined),
+        url: () => "https://example.com",
+        close: async () => {
+          closed = true;
+          tab.emit("close");
+        },
+      }) as unknown as Page & EventEmitter;
+      pages.push(tab);
+      return tab;
+    }
+    function session() {
+      return Object.assign(new EventEmitter(), {
+        send: vi.fn(async () => ({})),
+        detach: vi.fn(async () => undefined),
+      });
+    }
+    function monitor(driver: PlaywrightDriver): CdpNetworkMonitor {
+      return Reflect.get(driver, "networkMonitor");
+    }
+    const first = page();
+    const driver = new PlaywrightDriver(first);
+    const firstMonitor = monitor(driver);
+    firstMonitor.process("Network.requestWillBeSent", {
+      requestId: "first",
+      request: { url: "https://example.com/first" },
+    });
+    const second = page();
+    context.emit("page", second);
+    await driver.switchToNextTab();
+    const secondMonitor = monitor(driver);
+    sessions.get(first)!.emit("Network.requestWillBeSent", {
+      requestId: "background",
+      request: { url: "https://example.com/background" },
+    });
+    expect(secondMonitor.pending).toEqual([]);
+    expect(firstMonitor.pending).toHaveLength(2);
+    await driver.switchToPreviousTab();
+    expect(monitor(driver)).toBe(firstMonitor);
+    await driver.switchToNextTab();
+    expect(monitor(driver)).toBe(secondMonitor);
+    expect(context.newCDPSession).toHaveBeenCalledTimes(2);
+    await second.close();
+    await vi.waitFor(() => expect(monitor(driver)).toBe(firstMonitor));
+    expect(driver.page).toBe(first);
+    expect(firstMonitor.pending).toHaveLength(2);
+    expect(sessions.get(second)!.detach).toHaveBeenCalledOnce();
+  });
+
+  it("waits for CDP initialization before closing the page", async () => {
+    const initScript = Promise.withResolvers<void>();
+    const frame = {};
+    const session = {
+      send: vi.fn(async () => ({})),
+      on: vi.fn(),
+      detach: vi.fn(),
+    };
+    const close = vi.fn(async () => undefined);
+    const page = {
+      on: vi.fn(),
+      context: () => ({
+        addInitScript: vi.fn(() => initScript.promise),
+        newCDPSession: vi.fn(async () => session),
+        on: vi.fn(),
+      }),
+      mainFrame: () => frame,
+      frames: () => [frame],
+      close,
+    };
+    const driver = new PlaywrightDriver(page as unknown as Page);
+
+    const quitting = driver.quit();
+    await Promise.resolve();
+    expect(close).not.toHaveBeenCalled();
+
+    initScript.resolve();
+    await quitting;
+    expect(close).toHaveBeenCalledOnce();
+  });
+
+  it("waits for a page only after CDP announces a new tab", async () => {
+    let onPage: (page: Page) => void = () => {};
+    let onWindowOpen: () => void = () => {};
+    const session = {
+      send: vi.fn(async () => ({})),
+      on: vi.fn((event: string, listener: () => void) => {
+        if (event === "Page.windowOpen") onWindowOpen = listener;
+      }),
+      detach: vi.fn(),
+    };
+    const context = {
+      addInitScript: vi.fn(),
+      newCDPSession: vi.fn(async () => session),
+      on: vi.fn((event: string, listener: (page: Page) => void) => {
+        if (event === "page") onPage = listener;
+      }),
+      waitForEvent: vi.fn(async () => {
+        onPage(newPage as unknown as Page);
+        throw new Error("one-shot listener missed the page event");
+      }),
+    };
+    const frame = {};
+    const initialPage = {
+      on: vi.fn(),
+      context: () => context,
+      mainFrame: () => frame,
+      frames: () => [frame],
+      waitForTimeout: vi.fn(),
+      isClosed: () => false,
+    };
+    const newPage = {
+      on: vi.fn(),
+      context: () => context,
+      mainFrame: () => frame,
+      frames: () => [frame],
+      isClosed: () => false,
+      url: () => "https://example.com/slow",
+    };
+    const element = {
+      evaluate: vi.fn(async () => "BUTTON"),
+      click: vi.fn(async () => onWindowOpen()),
+    };
+    const driver = new ClickTestPlaywrightDriver(
+      initialPage as unknown as Page,
+      element as unknown as Locator,
+    );
+
+    await driver.click(1);
+
+    expect(context.waitForEvent).toHaveBeenCalledWith("page", {
+      timeout: 100,
+    });
+    expect(driver.page).toBe(newPage);
+  });
+
+  it("does not wait for a page when no tab is announced", async () => {
+    const session = {
+      send: vi.fn(async () => ({})),
+      on: vi.fn(),
+      detach: vi.fn(),
+    };
+    const context = {
+      addInitScript: vi.fn(),
+      newCDPSession: vi.fn(async () => session),
+      on: vi.fn(),
+      waitForEvent: vi.fn(),
+    };
+    const frame = {};
+    const page = {
+      on: vi.fn(),
+      context: () => context,
+      mainFrame: () => frame,
+      frames: () => [frame],
+      waitForTimeout: vi.fn(),
+      isClosed: () => false,
+    };
+    const element = {
+      evaluate: vi.fn(async () => "BUTTON"),
+      click: vi.fn(),
+    };
+    const driver = new ClickTestPlaywrightDriver(
+      page as unknown as Page,
+      element as unknown as Locator,
+    );
+
+    await driver.click(1);
+
+    expect(context.waitForEvent).not.toHaveBeenCalled();
+    expect(driver.page).toBe(page);
+  });
+
   it("serializes AX nodes without fetching DOM metadata", async () => {
     const frame = { url: () => "https://example.com" };
     const send = vi.fn(async (command: string) => {
@@ -38,13 +234,18 @@ describe("PlaywrightDriver", () => {
     const page = {
       on: vi.fn(),
       context: () => ({
+        addInitScript: vi.fn(),
         newCDPSession: vi.fn(async () => session),
         on: vi.fn(),
-        cookies: vi.fn(async () => []),
       }),
       mainFrame: () => frame,
       frames: () => [frame],
-      evaluate: vi.fn(async () => undefined),
+      evaluate: vi.fn(async () => ({
+        lastMutationAt: 0,
+        now: performance.now(),
+        pendingTimeouts: 0,
+        readyState: "complete",
+      })),
     };
     const driver = new FetchTestPlaywrightDriver(page as unknown as Page);
     await vi.waitFor(() =>
@@ -74,14 +275,15 @@ describe("PlaywrightDriver", () => {
       const session = { send, on: vi.fn(), detach: vi.fn() };
       const frame = {};
       const context = {
+        addInitScript: vi.fn(),
         newCDPSession: vi.fn(async () => session),
         on: vi.fn(),
-        cookies: vi.fn(async () => []),
       };
       const page = {
         on: vi.fn(),
         context: () => context,
         mainFrame: () => frame,
+        frames: () => [frame],
       };
       const driver = new TestPlaywrightDriver(page as unknown as Page);
       await vi.waitFor(() =>
@@ -121,11 +323,12 @@ describe("PlaywrightDriver", () => {
       const page = {
         on: vi.fn(),
         context: () => ({
+          addInitScript: vi.fn(),
           newCDPSession: vi.fn(async () => session),
           on: vi.fn(),
-          cookies: vi.fn(async () => []),
         }),
         mainFrame: () => frame,
+        frames: () => [frame],
       };
       const driver = new TestPlaywrightDriver(page as unknown as Page);
       await vi.waitFor(() => expect(send).toHaveBeenCalled());
@@ -152,11 +355,12 @@ describe("PlaywrightDriver", () => {
       const page = {
         on: vi.fn(),
         context: () => ({
+          addInitScript: vi.fn(),
           newCDPSession: vi.fn(async () => session),
           on: vi.fn(),
-          cookies: vi.fn(async () => []),
         }),
         mainFrame: () => frame,
+        frames: () => [frame],
       };
       const driver = new TestPlaywrightDriver(page as unknown as Page);
       await vi.waitFor(() => expect(send).toHaveBeenCalled());
@@ -187,15 +391,21 @@ describe("PlaywrightDriver", () => {
       const page = {
         on: vi.fn(),
         context: () => ({
+          addInitScript: vi.fn(),
           newCDPSession: vi.fn(async () => session),
           on: vi.fn(),
-          cookies: vi.fn(async () => []),
         }),
         mainFrame: () => mainFrame,
+        frames: () => [mainFrame],
       };
       const driver = new TestPlaywrightDriver(page as unknown as Page);
+      await vi.waitFor(() =>
+        expect(send).toHaveBeenCalledWith(
+          "Target.setAutoAttach",
+          expect.anything(),
+        ),
+      );
       Object.assign(driver, { oopifFrames: new Set([oopifFrame]) });
-      await vi.waitFor(() => expect(send).toHaveBeenCalled());
 
       await expect(
         driver.probe(
@@ -217,5 +427,18 @@ describe("PlaywrightDriver", () => {
 class FetchTestPlaywrightDriver extends PlaywrightDriver {
   fetchTree(): Promise<BaseAccessibilityTree> {
     return this.fetchAccessibilityTree();
+  }
+}
+
+class ClickTestPlaywrightDriver extends PlaywrightDriver {
+  readonly #element: Locator;
+
+  constructor(page: Page, element: Locator) {
+    super(page);
+    this.#element = element;
+  }
+
+  override async findElement(): Promise<Locator> {
+    return this.#element;
   }
 }
