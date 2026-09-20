@@ -242,6 +242,10 @@ export class LlmFactory {
       model: model.name,
       ...apiKeyField(Env.DEEPSEEK_API_KEY),
       temperature: 0,
+      reasoning: {
+        effort: "low",
+        summary: "auto",
+      },
       cache,
     });
 

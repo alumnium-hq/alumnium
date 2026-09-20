@@ -11,7 +11,7 @@ Alumnium needs access to an AI model to work. The following models are supported
 | [Google][2]             | Gemini 3.5 Flash Lite   |
 | [OpenAI][3] _(default)_ | GPT-5.6 Luna            |
 | [Codex][22]             | GPT-5.6 Luna            |
-| [DeepSeek][12]          | DeepSeek R1             |
+| [DeepSeek][12]          | DeepSeek Flash          |
 | [Meta][8]               | Llama 4 Maverick 17B    |
 | [MistralAI][16]         | Mistral Medium 3        |
 | [Ollama][15]            | Qwen 3.6                |

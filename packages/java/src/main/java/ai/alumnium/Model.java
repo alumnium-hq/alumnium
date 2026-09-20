@@ -81,7 +81,7 @@ public final class Model {
             Map.entry(Provider.AWS_META, "us.meta.llama4-maverick-17b-instruct-v1:0"),
             Map.entry(Provider.CODEX, "gpt-5.6-luna"),
             Map.entry(Provider.CURSOR, "composer-2.5"),
-            Map.entry(Provider.DEEPSEEK, "deepseek-reasoner"),
+            Map.entry(Provider.DEEPSEEK, "deepseek-flash"),
             Map.entry(Provider.GOOGLE, "gemini-3.5-flash-lite"),
             Map.entry(Provider.MISTRALAI, "mistral-medium-2505"),
             Map.entry(Provider.OLLAMA, "qwen3.6"),

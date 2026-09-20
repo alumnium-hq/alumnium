@@ -116,7 +116,7 @@ Select AI provider and model to use.
 | aws_meta      | us.meta.llama4-maverick-17b-instruct-v1:0   | Serverless Amazon Bedrock API.                                           |
 | codex         | gpt-5.6-luna                                | OpenAI models via ChatGPT Plus/Pro OAuth.                                |
 | cursor        | composer-2.5                                | Cursor models via Cursor Agents SDK (local runtime).                     |
-| deepseek      | deepseek-reasoner                           | DeepSeek Platform.                                                       |
+| deepseek      | deepseek-flash                              | DeepSeek Platform.                                                       |
 | google        | gemini-3.5-flash-lite                       | Google AI Studio API.                                                    |
 | mistralai     | mistral-medium-2505                         | Mistral AI Studio API.                                                   |
 | ollama        | qwen3.6:35b                                 | Local model inference with Ollama.                                       |
