@@ -35,7 +35,7 @@ const defaultModels: Record<Model.Provider, string> = {
   aws_meta: "us.meta.llama4-maverick-17b-instruct-v1:0",
   codex: "gpt-5.6-luna",
   cursor: "composer-2.5",
-  deepseek: "deepseek-reasoner",
+  deepseek: "deepseek-flash",
   google: "gemini-3.5-flash-lite",
   mistralai: "mistral-medium-2505",
   ollama: "qwen3.6",

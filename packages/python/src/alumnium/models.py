@@ -27,7 +27,7 @@ class Name:
         Provider.AWS_META: "us.meta.llama4-maverick-17b-instruct-v1:0",
         Provider.CODEX: "gpt-5.6-luna",
         Provider.CURSOR: "composer-2.5",
-        Provider.DEEPSEEK: "deepseek-reasoner",
+        Provider.DEEPSEEK: "deepseek-flash",
         Provider.GOOGLE: "gemini-3.5-flash-lite",
         Provider.MISTRALAI: "mistral-medium-2505",
         Provider.OLLAMA: "qwen3.6",
