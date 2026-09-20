@@ -61,6 +61,19 @@ describe(NavigationPolicy, () => {
       expect(policy().evaluate("file:///etc/passwd").allowed).toBe(false);
     });
 
+    // The WHATWG URL parser canonicalizes all of these to "file:///..." —
+    // matching only the raw input string would let them slip past `^file://`.
+    it.each([
+      ["file:/etc/passwd", "single slash"],
+      ["file:etc/passwd", "no slashes"],
+      ["FILE:///etc/passwd", "uppercase scheme"],
+      ["file:\\etc\\passwd", "backslash separators"],
+      [" file:///etc/passwd", "leading whitespace"],
+      ["fi\tle:///etc/passwd", "embedded tab"],
+    ])("still blocks file:// variant %s (%s)", (url: string) => {
+      expect(policy().evaluate(url).allowed).toBe(false);
+    });
+
     it("still blocks IPv4-mapped IPv6 metadata (CVE-2026-49857 bypass class)", () => {
       expect(policy().evaluate("http://[::ffff:a9fe:a9fe]/").allowed).toBe(
         false,

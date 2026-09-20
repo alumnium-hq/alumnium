@@ -100,8 +100,13 @@ export class NavigationPolicy {
   evaluate(url: string): NavigationPolicy.Evaluation {
     if (this.#isAllowedFilePath(url)) return { allowed: true };
 
-    const hostname = URL.parse(url)?.hostname.toLowerCase() ?? "";
+    const parsed = URL.parse(url);
+    const hostname = parsed?.hostname.toLowerCase() ?? "";
     const haystacks = [hostname, url.toLowerCase()];
+    // The WHATWG parser normalizes spelling variants (`file:/x`, `FILE://x`,
+    // leading whitespace or embedded tabs, `\` separators) into a canonical
+    // href — match patterns against it too, or `^file://` misses them.
+    if (parsed) haystacks.push(parsed.href);
     const unwrapped = NavigationPolicy.#unwrapIPv4MappedIPv6(hostname);
     if (unwrapped) haystacks.push(unwrapped);
 
