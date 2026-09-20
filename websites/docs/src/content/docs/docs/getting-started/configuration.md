@@ -8,7 +8,7 @@ Alumnium needs access to an AI model to work. The following models are supported
 | Provider                | Model                   |
 | ----------------------- | ----------------------- |
 | [Anthropic][1]          | Claude 4.5 Haiku        |
-| [Google][2]             | Gemini 3.1 Flash Lite   |
+| [Google][2]             | Gemini 3.5 Flash Lite   |
 | [OpenAI][3] _(default)_ | GPT-5.6 Luna            |
 | [Codex][22]             | GPT-5.6 Luna            |
 | [DeepSeek][12]          | DeepSeek R1             |
