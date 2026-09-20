@@ -20,8 +20,8 @@ class Provider(Enum):
 
 class Name:
     DEFAULT = {
-        Provider.AZURE_FOUNDRY: "gpt-5-nano",  # 2025-08-07
-        Provider.AZURE_OPENAI: "gpt-5-nano",  # 2025-08-07
+        Provider.AZURE_FOUNDRY: "gpt-5.6-luna",
+        Provider.AZURE_OPENAI: "gpt-5.6-luna",
         Provider.ANTHROPIC: "claude-haiku-4-5-20251001",
         Provider.AWS_ANTHROPIC: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
         Provider.AWS_META: "us.meta.llama4-maverick-17b-instruct-v1:0",
@@ -31,7 +31,7 @@ class Name:
         Provider.GOOGLE: "gemini-3.1-flash-lite",
         Provider.MISTRALAI: "mistral-medium-2505",
         Provider.OLLAMA: "qwen3.6",
-        Provider.OPENAI: "gpt-5-nano-2025-08-07",
+        Provider.OPENAI: "gpt-5.6-luna",
         Provider.XAI: "grok-4-1-fast-reasoning",
     }
 

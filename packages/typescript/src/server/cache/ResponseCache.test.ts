@@ -32,8 +32,8 @@ describe("ResponseCache", () => {
     const files = await cacheDir.flatTree();
     expect(files).toMatchInlineSnapshot(`
       [
-        "test-app/openai/gpt-5-nano-2025-08-07/responses/7b730f07bfaaba58/request.json",
-        "test-app/openai/gpt-5-nano-2025-08-07/responses/7b730f07bfaaba58/response.json",
+        "test-app/openai/gpt-5.6-luna/responses/7b730f07bfaaba58/request.json",
+        "test-app/openai/gpt-5.6-luna/responses/7b730f07bfaaba58/response.json",
       ]
     `);
 
@@ -65,10 +65,10 @@ describe("ResponseCache", () => {
     const files = await cacheDir.flatTree();
     expect(files).toMatchInlineSnapshot(`
       [
-        "test-app/openai/gpt-5-nano-2025-08-07/responses/7b730f07bfaaba58/request.json",
-        "test-app/openai/gpt-5-nano-2025-08-07/responses/7b730f07bfaaba58/response.json",
-        "test-app/openai/gpt-5-nano-2025-08-07/responses/90a8b9ed129be0b8/request.json",
-        "test-app/openai/gpt-5-nano-2025-08-07/responses/90a8b9ed129be0b8/response.json",
+        "test-app/openai/gpt-5.6-luna/responses/7b730f07bfaaba58/request.json",
+        "test-app/openai/gpt-5.6-luna/responses/7b730f07bfaaba58/response.json",
+        "test-app/openai/gpt-5.6-luna/responses/90a8b9ed129be0b8/request.json",
+        "test-app/openai/gpt-5.6-luna/responses/90a8b9ed129be0b8/response.json",
       ]
     `);
 
@@ -107,7 +107,7 @@ async function setup() {
   const cacheDir = await createMockDir({ prefix: "response-cache" });
 
   const defaultModel = Model.parse("ollama");
-  const contextModel = Model.parse("openai/gpt-5-nano-2025-08-07");
+  const contextModel = Model.parse("openai/gpt-5.6-luna");
 
   pushMock(
     vi.spyOn(Env, "ALUMNIUM_MODEL", "get").mockReturnValue(defaultModel),

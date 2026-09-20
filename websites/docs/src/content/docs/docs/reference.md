@@ -110,8 +110,8 @@ Select AI provider and model to use.
 | Value         | LLM                                         | Notes                                                                    |
 | ------------- | ------------------------------------------- | ------------------------------------------------------------------------ |
 | anthropic     | claude-haiku-4-5-20251001                   | Anthropic API.                                                           |
-| azure_foundry | gpt-5-nano                                  | Azure AI Foundry API.                                                    |
-| azure_openai  | gpt-5-nano                                  | Self-hosted Azure OpenAI API. Recommended model version is _2025-08-07_. |
+| azure_foundry | gpt-5.6-luna                                | Azure AI Foundry API.                                                    |
+| azure_openai  | gpt-5.6-luna                                | Self-hosted Azure OpenAI API.                                            |
 | aws_anthropic | us.anthropic.claude-haiku-4-5-20251001-v1:0 | Serverless Amazon Bedrock API.                                           |
 | aws_meta      | us.meta.llama4-maverick-17b-instruct-v1:0   | Serverless Amazon Bedrock API.                                           |
 | codex         | gpt-5.6-luna                                | OpenAI models via ChatGPT Plus/Pro OAuth.                                |
@@ -120,7 +120,7 @@ Select AI provider and model to use.
 | google        | gemini-3.1-flash-lite                       | Google AI Studio API.                                                    |
 | mistralai     | mistral-medium-2505                         | Mistral AI Studio API.                                                   |
 | ollama        | qwen3.6:35b                                 | Local model inference with Ollama.                                       |
-| openai        | gpt-5-nano-2025-08-07                       | OpenAI API.                                                              |
+| openai        | gpt-5.6-luna                                | OpenAI API.                                                              |
 | xai           | grok-4-1-fast-reasoning                     | xAI API.                                                                 |
 
 You can also override the LLM for each provider by passing it after `/`.

@@ -5,7 +5,7 @@ describe("Model.parse", () => {
   it("uses the provider's default model when only a provider is given", () => {
     expect(Model.parse("openai")).toEqual({
       provider: "openai",
-      name: "gpt-5-nano-2025-08-07",
+      name: "gpt-5.6-luna",
     });
   });
 
