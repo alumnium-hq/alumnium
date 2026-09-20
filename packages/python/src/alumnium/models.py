@@ -28,7 +28,7 @@ class Name:
         Provider.CODEX: "gpt-5.6-luna",
         Provider.CURSOR: "composer-2.5",
         Provider.DEEPSEEK: "deepseek-reasoner",
-        Provider.GOOGLE: "gemini-3.1-flash-lite",
+        Provider.GOOGLE: "gemini-3.5-flash-lite",
         Provider.MISTRALAI: "mistral-medium-2505",
         Provider.OLLAMA: "qwen3.6",
         Provider.OPENAI: "gpt-5.6-luna",

@@ -263,10 +263,7 @@ export class LlmFactory {
         model: model.name,
         ...apiKeyField(Env.GOOGLE_API_KEY),
         temperature: 0,
-        thinkingConfig: {
-          thinkingLevel: "LOW",
-          includeThoughts: true,
-        },
+        reasoningEffort: "low",
         cache,
       });
     }
