@@ -22,6 +22,7 @@ import {
   type JSONSchemaType,
 } from "../../tools/index.ts";
 import { McpState } from "../McpState.ts";
+import { fetchAccessibilityTreeMcpTool } from "./fetchAccessibilityTreeMcpTool.ts";
 import { McpTool } from "./McpTool.ts";
 
 const ACTOR_TOOLS = [
@@ -70,11 +71,12 @@ export const directMcpTools = ACTOR_TOOLS.map((Tool) => {
   );
 
   return McpTool.define(name, {
-    description,
+    description: `${description} Returns the current accessibility tree after the action. Use element IDs from this tree for the next action.`,
     inputSchema,
     async execute(input) {
-      const { id, ...inputArgs } = inputSchema.parse(input);
-      const state = McpState.getDriverState(z.string().parse(id));
+      const { id: sessionId, ...inputArgs } = inputSchema.parse(input);
+      const id = z.string().parse(sessionId);
+      const state = McpState.getDriverState(id);
       const args = Object.fromEntries(
         Object.entries(inputArgs).map(([param, value]) => [
           parameters[param]!,
@@ -99,7 +101,10 @@ export const directMcpTools = ACTOR_TOOLS.map((Tool) => {
         state.al.driver,
       );
 
-      return [{ type: "text", text: result }];
+      return [
+        { type: "text", text: result },
+        ...(await fetchAccessibilityTreeMcpTool.execute({ id })),
+      ];
     },
   });
 });

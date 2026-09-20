@@ -39,18 +39,20 @@ Unlike [Agentic Mode](/docs/mcp/agentic-mode), direct mode does not expose `do`,
 
 ## Working with Element IDs
 
-Call `fetch_accessibility_tree` before using an element ID. Actions use `element_id`, `from_element_id`, and `to_element_id` to distinguish element IDs from the session `id`. Fetch a new tree after each action before using element IDs again.
+Every successful direct action returns its result followed by a fresh accessibility tree as XML. Use the element IDs from that tree for the next action. There is no need to call `fetch_accessibility_tree` between actions. You can still call it to read the initial page after `start` or refresh the tree when the page changes independently.
+
+Actions use `element_id`, `from_element_id`, and `to_element_id` to distinguish element IDs from the session `id`.
 
 For example, start a session and use its returned `id` in subsequent calls:
 
 ```typescript
-start({ capabilities: '{"platformName": "chrome"' });
+start({ capabilities: '{"platformName": "chrome"}' });
 navigate_to_url({ id: "<session-id>", url: "https://example.com" });
 
-fetch_accessibility_tree({ id: "<session-id>" });
+// Use an element ID from the tree returned by navigate_to_url.
 click({ id: "<session-id>", element_id: 12 });
 
-fetch_accessibility_tree({ id: "<session-id>" });
+// Use an element ID from the updated tree returned by click.
 type({ id: "<session-id>", element_id: 8, text: "hello" });
 
 stop({ id: "<session-id>" });
