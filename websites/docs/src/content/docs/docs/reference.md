@@ -121,7 +121,7 @@ Select AI provider and model to use.
 | mistralai     | mistral-medium-2505                         | Mistral AI Studio API.                                                   |
 | ollama        | qwen3.6:35b                                 | Local model inference with Ollama.                                       |
 | openai        | gpt-5.6-luna                                | OpenAI API.                                                              |
-| xai           | grok-4-1-fast-reasoning                     | xAI API.                                                                 |
+| xai           | grok-4.20-0309-reasoning                    | xAI API.                                                                 |
 
 You can also override the LLM for each provider by passing it after `/`.
 

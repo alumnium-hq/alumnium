@@ -32,7 +32,7 @@ class Name:
         Provider.MISTRALAI: "mistral-medium-2505",
         Provider.OLLAMA: "qwen3.6",
         Provider.OPENAI: "gpt-5.6-luna",
-        Provider.XAI: "grok-4-1-fast-reasoning",
+        Provider.XAI: "grok-4.20-0309-reasoning",
     }
 
 
