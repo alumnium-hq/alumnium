@@ -40,7 +40,7 @@ const defaultModels: Record<Model.Provider, string> = {
   mistralai: "mistral-medium-2505",
   ollama: "qwen3.6",
   openai: "gpt-5.6-luna",
-  xai: "grok-4-1-fast-reasoning",
+  xai: "grok-4.20-0309-reasoning",
 };
 
 const ModelProvider = z.enum(providers);

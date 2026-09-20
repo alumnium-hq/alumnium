@@ -86,7 +86,7 @@ public final class Model {
             Map.entry(Provider.MISTRALAI, "mistral-medium-2505"),
             Map.entry(Provider.OLLAMA, "qwen3.6"),
             Map.entry(Provider.OPENAI, "gpt-5.6-luna"),
-            Map.entry(Provider.XAI, "grok-4-1-fast-reasoning"));
+            Map.entry(Provider.XAI, "grok-4.20-0309-reasoning"));
 
     public static String defaultFor(Provider provider) {
       return DEFAULT.getOrDefault(provider, "");
