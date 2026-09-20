@@ -32,7 +32,7 @@ export AWS_REGION_NAME="us-west-1"  # default: us-east-1
 
 ## Azure Foundry
 
-Alumnium supports GPT-5 Nano model on Azure AI Foundry.
+Alumnium supports GPT-5.6 Luna model on Azure AI Foundry.
 
 Please follow the respective documentation on how to deploy the model to Azure AI Foundry. Once deployed, configure Alumnium to use it by exporting the following environment variables:
 
@@ -45,7 +45,7 @@ export AZURE_FOUNDRY_API_VERSION="..."
 
 ## Azure OpenAI
 
-Alumnium supports GPT-5 Nano model on Azure OpenAI service.
+Alumnium supports GPT-5.6 Luna model on Azure OpenAI service.
 
 Please follow the respective documentation on how to deploy the model to Azure. Once deployed, configure Alumnium to use it by exporting the following environment variables:
 

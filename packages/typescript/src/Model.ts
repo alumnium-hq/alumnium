@@ -28,8 +28,8 @@ const providers = [
 ] as const;
 
 const defaultModels: Record<Model.Provider, string> = {
-  azure_foundry: "gpt-5-nano",
-  azure_openai: "gpt-5-nano",
+  azure_foundry: "gpt-5.6-luna",
+  azure_openai: "gpt-5.6-luna",
   anthropic: "claude-haiku-4-5-20251001",
   aws_anthropic: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
   aws_meta: "us.meta.llama4-maverick-17b-instruct-v1:0",
@@ -39,7 +39,7 @@ const defaultModels: Record<Model.Provider, string> = {
   google: "gemini-3.1-flash-lite",
   mistralai: "mistral-medium-2505",
   ollama: "qwen3.6",
-  openai: "gpt-5-nano-2025-08-07",
+  openai: "gpt-5.6-luna",
   xai: "grok-4-1-fast-reasoning",
 };
 
