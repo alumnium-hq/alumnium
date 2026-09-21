@@ -24,10 +24,6 @@ These models were chosen because they provide the best balance between intellige
 [Google][7] provides a free-of-charge plan in many regions, which is convenient for experimenting. Alumnium automatically retries requests when hitting rate limits on the free plan.
 :::
 
-:::caution[GitHub Models retired]
-[GitHub Models][20] was fully retired on July 30, 2026 and is no longer supported by Alumnium.
-:::
-
 ## Anthropic
 
 To use Anthropic as an AI provider in Alumnium:
@@ -215,7 +211,6 @@ Read next to learn how to write tests!
 [17]: https://docs.mistral.ai/getting-started/quickstart#account-setup
 [18]: https://x.ai
 [19]: https://x.ai/api
-[20]: https://docs.github.com/en/github-models
 [22]: https://github.com/openai/codex
 [23]: https://litterbox.catbox.moe
 [24]: https://cursor.com/docs/cloud-agent
