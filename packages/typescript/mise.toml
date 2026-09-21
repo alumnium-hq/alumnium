@@ -134,10 +134,8 @@ run = [
 
 [tasks."test/system:all-models"]
 description = "Run system tests for all models."
-# TODO: Some models aren't configured in the dev env. Add missing keys and env
-# vars if applicable, then re-enable or remove commented system tests below.
 run = [
-  # { task = "test/system:playwright", env = { ALUMNIUM_MODEL = "azure_foundry" } }, # Missing key
+  { task = "test/system:playwright", env = { ALUMNIUM_MODEL = "azure_foundry" } },
   { task = "test/system:playwright", env = { ALUMNIUM_MODEL = "azure_openai" } },
   { task = "test/system:playwright", env = { ALUMNIUM_MODEL = "anthropic" } },
   { task = "test/system:playwright", env = { ALUMNIUM_MODEL = "aws_anthropic" } },
@@ -242,15 +240,13 @@ ALUMNIUM_TEST_CACHE="true" \
 
 [tasks."test/cache:all"]
 description = "Run cache tests for all models. See `test/cache` task for details."
-# TODO: Some models aren't configured in the dev env. Add missing keys and env
-# vars if applicable, then re-enable or remove commented cache tests below.
 run = [
-  # { task = "test/cache:azure_foundry" }, # Missing key
+  { task = "test/cache:azure_foundry" },
   { task = "test/cache:azure_openai" },
   { task = "test/cache:anthropic" },
   { task = "test/cache:aws_anthropic" },
   { task = "test/cache:aws_meta" },
-  # { task = "test/cache:cursor" }, # Missing key
+  { task = "test/cache:cursor" },
   { task = "test/cache:deepseek" },
   { task = "test/cache:google" },
   { task = "test/cache:mistralai" },
