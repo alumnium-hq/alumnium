@@ -121,7 +121,7 @@ Select AI provider and model to use.
 | mistralai     | mistral-medium-2505                         | Mistral AI Studio API.                                                   |
 | ollama        | qwen3.6:35b                                 | Local model inference with Ollama.                                       |
 | openai        | gpt-5.6-luna                                | OpenAI API.                                                              |
-| openrouter    | openai/gpt-5-nano                           | Models routed through OpenRouter.                                        |
+| openrouter    | openai/gpt-5.6-luna                         | Models routed through OpenRouter.                                        |
 | xai           | grok-4.20-0309-reasoning                    | xAI API.                                                                 |
 
 :::caution[GitHub Models retired]

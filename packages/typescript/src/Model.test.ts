@@ -9,7 +9,7 @@ describe("Model.parse", () => {
     });
     expect(Model.parse("openrouter")).toEqual({
       provider: "openrouter",
-      name: "openai/gpt-5-nano",
+      name: "openai/gpt-5.6-luna",
     });
   });
 
