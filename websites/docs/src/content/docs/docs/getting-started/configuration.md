@@ -14,7 +14,7 @@ Alumnium needs access to an AI model to work. The following models are supported
 | [Codex][22]             | GPT-5.6 Luna            |
 | [DeepSeek][12]          | DeepSeek Flash          |
 | [Meta][8]               | Llama 4 Maverick 17B    |
-| [MistralAI][16]         | Mistral Medium 3        |
+| [MistralAI][16]         | Mistral Medium 3.5      |
 | [Ollama][15]            | Qwen 3.6                |
 | [xAI][18]               | Grok 4.3                |
 
