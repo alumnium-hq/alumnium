@@ -122,7 +122,7 @@ Select AI provider and model to use.
 | ollama        | qwen3.6:35b                                 | Local model inference with Ollama.                                       |
 | openai        | gpt-5.6-luna                                | OpenAI API.                                                              |
 | openrouter    | openai/gpt-5.6-luna                         | Models routed through OpenRouter.                                        |
-| xai           | grok-4.20-0309-reasoning                    | xAI API.                                                                 |
+| xai           | grok-4.3                                    | xAI API.                                                                 |
 
 :::caution[GitHub Models retired]
 The `github` provider is no longer supported because [GitHub Models][5] was fully retired on July 30, 2026.

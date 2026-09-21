@@ -34,7 +34,7 @@ class Name:
         Provider.OLLAMA: "qwen3.6",
         Provider.OPENAI: "gpt-5.6-luna",
         Provider.OPENROUTER: "openai/gpt-5.6-luna",
-        Provider.XAI: "grok-4.20-0309-reasoning",
+        Provider.XAI: "grok-4.3",
     }
 
 
