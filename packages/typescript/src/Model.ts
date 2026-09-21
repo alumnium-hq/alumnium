@@ -42,7 +42,7 @@ const defaultModels: Record<Model.Provider, string> = {
   ollama: "qwen3.6",
   openai: "gpt-5.6-luna",
   openrouter: "openai/gpt-5.6-luna",
-  xai: "grok-4.20-0309-reasoning",
+  xai: "grok-4.3",
 };
 
 const ModelProvider = z.enum(providers);

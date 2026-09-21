@@ -87,7 +87,7 @@ public final class Model {
             Map.entry(Provider.OLLAMA, "qwen3.6"),
             Map.entry(Provider.OPENAI, "gpt-5.6-luna"),
             Map.entry(Provider.OPENROUTER, "openai/gpt-5.6-luna"),
-            Map.entry(Provider.XAI, "grok-4.20-0309-reasoning"));
+            Map.entry(Provider.XAI, "grok-4.3"));
 
     public static String defaultFor(Provider provider) {
       return DEFAULT.getOrDefault(provider, "");

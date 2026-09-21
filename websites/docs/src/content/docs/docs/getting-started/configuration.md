@@ -16,7 +16,7 @@ Alumnium needs access to an AI model to work. The following models are supported
 | [Meta][8]               | Llama 4 Maverick 17B    |
 | [MistralAI][16]         | Mistral Medium 3        |
 | [Ollama][15]            | Qwen 3.6                |
-| [xAI][18]               | Grok 4.20 Reasoning     |
+| [xAI][18]               | Grok 4.3                |
 
 These models were chosen because they provide the best balance between intelligence, performance, and cost. Most models now support reasoning capabilities for improved accuracy and decision-making in test automation.
 
