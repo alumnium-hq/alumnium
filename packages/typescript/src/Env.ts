@@ -159,21 +159,9 @@ export const Env = {
         .union([
           Model.Provider,
           z.templateLiteral([Model.Provider, "/", z.string()]),
-          z.literal("github"),
-          z.templateLiteral(["github/", z.string()]),
         ])
         .optional()
-        .transform((val, ctx): Model => {
-          if (val === "github" || val?.startsWith("github/")) {
-            ctx.issues.push({
-              code: "custom",
-              input: val,
-              message:
-                "GitHub Models were retired on July 30, 2026: https://docs.github.com/en/github-models",
-            });
-            return z.NEVER;
-          }
-
+        .transform((val, _ctx): Model => {
           return Model.parse(
             typeof val === "string" ? val : defaultModelProvider,
           );
@@ -379,20 +367,12 @@ export const Env = {
     return secretEnvVar("AZURE_FOUNDRY_API_KEY", z.string().optional());
   },
 
-  get AZURE_FOUNDRY_API_VERSION() {
-    return envVar("AZURE_FOUNDRY_API_VERSION", z.string().optional());
-  },
-
   get AZURE_FOUNDRY_TARGET_URI() {
     return secretEnvVar("AZURE_FOUNDRY_TARGET_URI", z.string().optional());
   },
 
   get AZURE_OPENAI_API_KEY() {
     return secretEnvVar("AZURE_OPENAI_API_KEY", z.string().optional());
-  },
-
-  get AZURE_OPENAI_API_VERSION() {
-    return envVar("AZURE_OPENAI_API_VERSION", z.string().optional());
   },
 
   get AZURE_OPENAI_DEFAULT_HEADERS() {

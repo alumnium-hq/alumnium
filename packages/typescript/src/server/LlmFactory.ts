@@ -78,26 +78,18 @@ export class LlmFactory {
           reasoning: "low" as const,
           providerOptions: { azure: { reasoningSummary: "auto" } },
         };
-    return withCallDefaults(provider.chat(model.name), defaults);
+    return withCallDefaults(provider.responses(model.name), defaults);
   }
 
   static createAzureFoundryProvider(): ReturnType<typeof createAzure> {
-    const apiVersion = Env.AZURE_FOUNDRY_API_VERSION;
-    if (!apiVersion) {
-      throw new Error(
-        "AZURE_FOUNDRY_API_VERSION environment variable is required for Azure Foundry models",
-      );
-    }
-
-    const targetURI = Env.AZURE_FOUNDRY_TARGET_URI;
-    const target = targetURI ? new URL(targetURI) : undefined;
+    const targetURI = Env.AZURE_FOUNDRY_TARGET_URI?.replace(/\/$/, "");
+    const target = targetURI ? new URL(`${targetURI}/openai`) : undefined;
     const targetParams = target
       ? new URLSearchParams(target.searchParams)
       : undefined;
     if (target) target.search = "";
 
     return createAzure({
-      apiVersion,
       ...apiKeyField(Env.AZURE_FOUNDRY_API_KEY),
       ...(target ? { baseURL: target.toString() } : {}),
       fetch: Object.assign(
@@ -109,8 +101,6 @@ export class LlmFactory {
             if (!url.searchParams.has(name))
               url.searchParams.append(name, value);
           }
-          if (!url.searchParams.has("api-version"))
-            url.searchParams.set("api-version", apiVersion);
           return fetch(url, init);
         },
         { preconnect: fetch.preconnect },
@@ -129,20 +119,12 @@ export class LlmFactory {
       Env.AZURE_OPENAI_ENDPOINT,
       "Azure OpenAI",
     );
-    const apiVersion = requiredEnv(
-      "AZURE_OPENAI_API_VERSION",
-      Env.AZURE_OPENAI_API_VERSION,
-      "Azure OpenAI",
-    );
     logMaskedSecret("Azure OpenAI API Key", apiKey);
     logMaskedSecret("Azure OpenAI API Endpoint", baseURL);
-    logMaskedSecret("Azure OpenAI API Version", apiVersion);
 
     return createAzure({
       apiKey,
       baseURL: `${baseURL.replace(/\/$/, "")}/openai`,
-      apiVersion,
-      useDeploymentBasedUrls: true,
       ...(Env.AZURE_OPENAI_DEFAULT_HEADERS
         ? { headers: Env.AZURE_OPENAI_DEFAULT_HEADERS }
         : {}),
