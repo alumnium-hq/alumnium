@@ -38,9 +38,9 @@ Please follow the respective documentation on how to deploy the model to Azure A
 
 ```bash
 export ALUMNIUM_MODEL="azure_foundry"
-export AZURE_FOUNDRY_TARGET_URI="https://..."
 export AZURE_FOUNDRY_API_KEY="..."
-export AZURE_FOUNDRY_API_VERSION="..."
+# Change as needed
+export AZURE_FOUNDRY_TARGET_URI="https://my-project.openai.azure.com"
 ```
 
 ## Azure OpenAI
@@ -53,8 +53,7 @@ Please follow the respective documentation on how to deploy the model to Azure. 
 export ALUMNIUM_MODEL="azure_openai"
 export AZURE_OPENAI_API_KEY="..."
 # Change as needed
-export AZURE_OPENAI_API_VERSION="2025-03-01-preview"
-export AZURE_OPENAI_ENDPOINT="https://my-model.openai.azure.com"
+export AZURE_OPENAI_ENDPOINT="https://my-project.openai.azure.com"
 ```
 
 ## Ollama

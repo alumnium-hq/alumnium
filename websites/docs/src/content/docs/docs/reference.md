@@ -201,10 +201,6 @@ AWS secret key used when `ALUMNIUM_MODEL` is set to `aws_anthropic` or `aws_meta
 
 API key used when `ALUMNIUM_MODEL` is set to `azure_foundry`.
 
-### `AZURE_FOUNDRY_API_VERSION`
-
-API version used when `ALUMNIUM_MODEL` is set to `azure_foundry`.
-
 ### `AZURE_FOUNDRY_TARGET_URI`
 
 Endpoint URL used when `ALUMNIUM_MODEL` is set to `azure_foundry`.
@@ -212,10 +208,6 @@ Endpoint URL used when `ALUMNIUM_MODEL` is set to `azure_foundry`.
 ### `AZURE_OPENAI_API_KEY`
 
 API key used when `ALUMNIUM_MODEL` is set to `azure_openai`.
-
-### `AZURE_OPENAI_API_VERSION`
-
-API version used when `ALUMNIUM_MODEL` is set to `azure_openai`.
 
 ### `AZURE_OPENAI_DEFAULT_HEADERS`
 

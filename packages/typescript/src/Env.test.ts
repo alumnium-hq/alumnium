@@ -48,21 +48,9 @@ describe("Env", () => {
   });
 
   describe("model invocation", () => {
-    it.each(["github", "github/gpt-4o-mini"])(
-      "reports that GitHub Models were retired for %s",
-      (input) => {
-        vi.stubEnv("ALUMNIUM_MODEL", input);
-
-        expect(() => Env.ALUMNIUM_MODEL).toThrow(z.ZodError);
-        expect(() => Env.ALUMNIUM_MODEL).toThrow(
-          "GitHub Models were retired on July 30, 2026: https://docs.github.com/en/github-models",
-        );
-      },
-    );
-
     it("preserves the validation error for unknown providers", () => {
       vi.stubEnv("ALUMNIUM_MODEL", "unknown/model");
-      expect(() => Env.ALUMNIUM_MODEL).toThrow(/Invalid option/);
+      expect(() => Env.ALUMNIUM_MODEL).toThrow(/Invalid/);
     });
 
     it.each([

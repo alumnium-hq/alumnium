@@ -1,5 +1,4 @@
 [env]
-AZURE_OPENAI_API_VERSION = "2025-03-01-preview"
 ALUMNIUM_MODEL = "azure_openai"
 ALUMNIUM_TRACE = true
 ALUMNIUM_LOG_LEVEL = "debug"
