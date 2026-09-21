@@ -206,7 +206,10 @@ export class LlmFactory {
 
   static createDeepSeekLlm(model: Model): LanguageModelV4 {
     logger.debug(`Creating DeepSeek LLM with model ${model.name}`);
-    const defaults: Partial<LanguageModelV4CallOptions> = { temperature: 0 };
+    const defaults: Partial<LanguageModelV4CallOptions> = {
+      temperature: 0,
+      reasoning: "low",
+    };
     return withCallDefaults(
       createDeepSeek(apiKeyField(Env.DEEPSEEK_API_KEY))(model.name),
       defaults,
@@ -222,14 +225,7 @@ export class LlmFactory {
         ? { temperature: 0 }
         : {
             temperature: 0,
-            providerOptions: {
-              google: {
-                thinkingConfig: {
-                  thinkingLevel: "low",
-                  includeThoughts: true,
-                },
-              },
-            },
+            reasoning: "low",
           },
     );
   }
@@ -291,8 +287,9 @@ export class LlmFactory {
       createXai(apiKeyField(Env.XAI_API_KEY))(model.name),
       {
         temperature: 0,
+        reasoning: "low",
         providerOptions: {
-          xai: { reasoningEffort: "low", reasoningSummary: "auto" },
+          xai: { reasoningSummary: "auto" },
         },
       },
     );

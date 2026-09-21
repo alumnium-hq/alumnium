@@ -41,7 +41,7 @@ const defaultModels: Record<Model.Provider, string> = {
   mistralai: "mistral-medium-2505",
   ollama: "qwen3.6",
   openai: "gpt-5.6-luna",
-  openrouter: "openai/gpt-5-nano",
+  openrouter: "openai/gpt-5.6-luna",
   xai: "grok-4.20-0309-reasoning",
 };
 
