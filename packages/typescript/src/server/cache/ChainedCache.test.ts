@@ -255,6 +255,51 @@ describe(ChainedCache, () => {
       });
     });
   });
+
+  describe("lookups", () => {
+    it("counts a hit in any of the caches", async () => {
+      const { sessionContext, cache1, cache2, lookupArgs } = setup();
+      cache2.assign(createGenerations());
+
+      const chained = new ChainedCache(sessionContext, [cache1, cache2]);
+      await chained.lookup(...lookupArgs);
+
+      expect(chained.lookups).toEqual({ hits: 1, misses: 0 });
+    });
+
+    it("counts a miss when all caches miss", async () => {
+      const { sessionContext, cache1, cache2, lookupArgs } = setup();
+
+      const chained = new ChainedCache(sessionContext, [cache1, cache2]);
+      await chained.lookup(...lookupArgs);
+
+      expect(chained.lookups).toEqual({ hits: 0, misses: 1 });
+    });
+
+    it("accumulates counts across lookups", async () => {
+      const { sessionContext, cache1, cache2, lookupArgs } = setup();
+
+      const chained = new ChainedCache(sessionContext, [cache1, cache2]);
+      await chained.lookup(...lookupArgs);
+      cache2.assign(createGenerations());
+      await chained.lookup(...lookupArgs);
+      await chained.lookup(...lookupArgs);
+
+      expect(chained.lookups).toEqual({ hits: 2, misses: 1 });
+    });
+
+    it("does not count in the chained caches", async () => {
+      const { sessionContext, cache1, cache2, lookupArgs } = setup();
+      cache2.assign(createGenerations());
+
+      const chained = new ChainedCache(sessionContext, [cache1, cache2]);
+      await chained.lookup(...lookupArgs);
+
+      // NOTE: Only the session-level cache counts, see `ServerCache.lookups`.
+      expect(cache1.lookups).toEqual({ hits: 0, misses: 0 });
+      expect(cache2.lookups).toEqual({ hits: 0, misses: 0 });
+    });
+  });
 });
 
 function setup() {

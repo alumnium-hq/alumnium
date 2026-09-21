@@ -4,12 +4,29 @@ import { AppId } from "../../AppId.ts";
 import type { Cache } from "../../client/Cache.ts";
 import { Lchain } from "../../llm/Lchain.ts";
 import type { LchainSchema } from "../../llm/LchainSchema.ts";
-import { createLlmUsage, type LlmUsage } from "../../llm/llmSchema.ts";
+import {
+  type CacheLookups,
+  createCacheLookups,
+  createLlmUsage,
+  type LlmUsage,
+} from "../../llm/llmSchema.ts";
 import type { LlmContext } from "../LlmContext.ts";
 import type { SessionContext } from "../session/SessionContext.ts";
 
 export abstract class ServerCache extends BaseCache {
   usage: LlmUsage = createLlmUsage();
+
+  /**
+   * Lookup counters, used to tell how much of a request was served from the
+   * cache. Only the session-level cache (see `CacheFactory`) counts, so the
+   * caches nested in a `ChainedCache` keep theirs at zero.
+   *
+   * NOTE: The object is mutated in place rather than replaced, so that callers
+   * accumulating across lookups don't lose counts (as they would with `usage`,
+   * which `ChainedCache` replaces on every hit).
+   */
+  readonly lookups: CacheLookups = createCacheLookups();
+
   protected sessionContext: SessionContext;
 
   constructor(sessionContext: SessionContext) {
@@ -53,6 +70,14 @@ export abstract class ServerCache extends BaseCache {
   abstract discard(): Promise<void>;
 
   abstract clear(props?: Cache.ClearProps): Promise<void>;
+
+  protected countHit(): void {
+    this.lookups.hits += 1;
+  }
+
+  protected countMiss(): void {
+    this.lookups.misses += 1;
+  }
 
   protected applyUsage(
     generationsArg:
