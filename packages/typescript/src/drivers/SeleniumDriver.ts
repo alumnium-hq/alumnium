@@ -261,8 +261,15 @@ export class SeleniumDriver extends BaseDriver {
         Tab: SeleniumKey.TAB,
       };
 
+      const mappedKey = keyMap[key];
+      if (!mappedKey) {
+        throw new Error(
+          `Unsupported key: "${key}". Supported keys are: ${Object.keys(keyMap).join(", ")}`,
+        );
+      }
+
       const actions = this.driver.actions({ async: true });
-      await actions.sendKeys(keyMap[key]).perform();
+      await actions.sendKeys(mappedKey).perform();
     });
   }
 

@@ -422,6 +422,51 @@ describe("PlaywrightDriver", () => {
       }
     }
   });
+
+  describe("pressKey", () => {
+    function createDriver() {
+      const keyboard = { press: vi.fn(async () => undefined) };
+      const mainFrame = {};
+      const context = {
+        addInitScript: vi.fn(async () => undefined),
+        newCDPSession: vi.fn(async () => ({
+          send: vi.fn(async () => ({})),
+          on: vi.fn(),
+          detach: vi.fn(async () => undefined),
+        })),
+        on: vi.fn(),
+      };
+      const page = {
+        keyboard,
+        context: () => context,
+        mainFrame: () => mainFrame,
+        frames: () => [mainFrame],
+        on: vi.fn(),
+      };
+      const driver = new PlaywrightDriver(page as unknown as Page);
+      return { driver, keyboard };
+    }
+
+    it("presses supported keys via page.keyboard.press", async () => {
+      const { driver, keyboard } = createDriver();
+      await driver.pressKey("Enter");
+      expect(keyboard.press).toHaveBeenCalledWith("Enter");
+
+      await driver.pressKey("Backspace");
+      expect(keyboard.press).toHaveBeenCalledWith("Backspace");
+    });
+
+    it("throws an error when key is unsupported or undefined", async () => {
+      const { driver, keyboard } = createDriver();
+      await expect(driver.pressKey("F5" as any)).rejects.toThrow(
+        'Unsupported key: "F5". Supported keys are: Backspace, Enter, Escape, Tab',
+      );
+      await expect(driver.pressKey(undefined as any)).rejects.toThrow(
+        'Unsupported key: "undefined". Supported keys are: Backspace, Enter, Escape, Tab',
+      );
+      expect(keyboard.press).not.toHaveBeenCalled();
+    });
+  });
 });
 
 class FetchTestPlaywrightDriver extends PlaywrightDriver {

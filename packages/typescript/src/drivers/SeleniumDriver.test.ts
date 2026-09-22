@@ -162,6 +162,47 @@ describe("SeleniumDriver", () => {
       }
     }
   });
+
+  describe("pressKey", () => {
+    it("presses supported keys via driver.actions", async () => {
+      const sendKeys = vi.fn();
+      const perform = vi.fn(async () => undefined);
+      const actions = vi.fn(() => ({
+        sendKeys: (...args: unknown[]) => {
+          sendKeys(...args);
+          return { perform };
+        },
+      }));
+      const driver = new SeleniumDriver({
+        getCapabilities: vi.fn(async () => ({ get: () => undefined })),
+        sendAndGetDevToolsCommand: vi.fn(async () => undefined),
+        getAllWindowHandles: vi.fn(async () => ["handle1"]),
+        actions,
+      } as unknown as WebDriver);
+
+      await driver.pressKey("Enter");
+      expect(sendKeys).toHaveBeenCalled();
+      expect(perform).toHaveBeenCalledOnce();
+    });
+
+    it("throws an error when key is unsupported or undefined", async () => {
+      const actions = vi.fn();
+      const driver = new SeleniumDriver({
+        getCapabilities: vi.fn(async () => ({ get: () => undefined })),
+        sendAndGetDevToolsCommand: vi.fn(async () => undefined),
+        getAllWindowHandles: vi.fn(async () => ["handle1"]),
+        actions,
+      } as unknown as WebDriver);
+
+      await expect(driver.pressKey("F5" as any)).rejects.toThrow(
+        'Unsupported key: "F5". Supported keys are: Backspace, Enter, Escape, Tab',
+      );
+      await expect(driver.pressKey(undefined as any)).rejects.toThrow(
+        'Unsupported key: "undefined". Supported keys are: Backspace, Enter, Escape, Tab',
+      );
+      expect(actions).not.toHaveBeenCalled();
+    });
+  });
 });
 
 class FetchTestSeleniumDriver extends SeleniumDriver {

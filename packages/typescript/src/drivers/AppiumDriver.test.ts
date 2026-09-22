@@ -56,6 +56,50 @@ describe("AppiumDriver", () => {
       expect(error).toMatchObject({ stage: "probe", external: locator });
     });
   });
+
+  describe("pressKey", () => {
+    it("presses supported keys via performActions", async () => {
+      const performActions = vi.fn(async () => undefined);
+      const getAppiumContext = vi.fn(async () => "NATIVE_APP");
+      const webdriver = {
+        capabilities: { platformName: "android" },
+        performActions,
+        getAppiumContext,
+      };
+      const driver = new AppiumDriver(webdriver as unknown as Browser);
+
+      await driver.pressKey("Enter");
+      expect(performActions).toHaveBeenCalledWith([
+        {
+          type: "key",
+          id: "keyboard",
+          actions: [
+            { type: "keyDown", value: expect.anything() },
+            { type: "keyUp", value: expect.anything() },
+          ],
+        },
+      ]);
+    });
+
+    it("throws an error when key is unsupported or undefined", async () => {
+      const performActions = vi.fn();
+      const getAppiumContext = vi.fn(async () => "NATIVE_APP");
+      const webdriver = {
+        capabilities: { platformName: "android" },
+        performActions,
+        getAppiumContext,
+      };
+      const driver = new AppiumDriver(webdriver as unknown as Browser);
+
+      await expect(driver.pressKey("F5" as any)).rejects.toThrow(
+        'Unsupported key: "F5". Supported keys are: Backspace, Enter, Escape, Tab',
+      );
+      await expect(driver.pressKey(undefined as any)).rejects.toThrow(
+        'Unsupported key: "undefined". Supported keys are: Backspace, Enter, Escape, Tab',
+      );
+      expect(performActions).not.toHaveBeenCalled();
+    });
+  });
 });
 
 class TestAppiumDriver extends AppiumDriver {

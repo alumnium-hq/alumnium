@@ -475,8 +475,15 @@ export class PlaywrightDriver extends BaseDriver {
       Tab: "Tab",
     };
 
+    const mappedKey = keyMap[key];
+    if (!mappedKey) {
+      throw new Error(
+        `Unsupported key: "${key}". Supported keys are: ${Object.keys(keyMap).join(", ")}`,
+      );
+    }
+
     await this.autoswitchToNewTabAction(() =>
-      this.page.keyboard.press(keyMap[key]),
+      this.page.keyboard.press(mappedKey),
     );
   }
 

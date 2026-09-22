@@ -19,6 +19,11 @@ export class PressKeyTool extends BaseTool {
 
   constructor(args: { key: Keys.Key }) {
     super();
+    if (!args?.key || !Keys.enum.includes(args.key)) {
+      throw new Error(
+        `Unsupported key: "${args?.key}". Supported keys are: ${Keys.enum.join(", ")}`,
+      );
+    }
     this.key = args.key;
   }
 
