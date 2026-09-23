@@ -1,13 +1,3 @@
-import { CdpNetworkMonitor } from "./CdpNetworkMonitor.ts";
-
-const NETWORK_EVENTS = new Set([
-  "Network.requestWillBeSent",
-  "Network.responseReceived",
-  "Network.dataReceived",
-  "Network.loadingFinished",
-  "Network.loadingFailed",
-]);
-
 const AUTO_ATTACH_PARAMS = {
   autoAttach: true,
   waitForDebuggerOnStart: true,
@@ -36,10 +26,7 @@ export class SeleniumCdpConnection {
   #nextId = 1;
   #pending = new Map<number, PendingCommand>();
   #targetSessions = new Map<string, string>();
-  #sessionParents = new Map<string, string>();
   #sessionConfigurations = new Map<string, Promise<void>>();
-  #activeSession = "";
-  #targetMonitors = new Map<string, CdpNetworkMonitor>();
   #closed = false;
 
   private constructor(socket: WebSocket, waiterScript: string) {
@@ -101,25 +88,13 @@ export class SeleniumCdpConnection {
     }
   }
 
-  async activate(windowHandle: string): Promise<void> {
-    const targetId = windowHandle.replace(/^CDwindow-/, "");
-    this.#activeSession = await this.#awaitSession(targetId);
-  }
-
-  get activeMonitor(): CdpNetworkMonitor {
-    return this.#monitorForSession(this.#activeSession);
-  }
-
   close(): void {
     if (this.#closed) return;
     this.#closed = true;
     this.#failPending(new Error("CDP connection closed"));
     this.#socket.close();
     this.#targetSessions.clear();
-    this.#sessionParents.clear();
     this.#sessionConfigurations.clear();
-    this.#targetMonitors.clear();
-    this.#activeSession = "";
   }
 
   #send(
@@ -171,10 +146,7 @@ export class SeleniumCdpConnection {
 
     const method = message.method ?? "";
     const params = message.params ?? {};
-    if (NETWORK_EVENTS.has(method)) {
-      const sessionId = message.sessionId ?? "";
-      this.#monitorForSession(sessionId).process(method, params, sessionId);
-    } else if (method === "Target.attachedToTarget") {
+    if (method === "Target.attachedToTarget") {
       const targetInfo = params.targetInfo as
         | { targetId?: string; type?: string }
         | undefined;
@@ -183,7 +155,6 @@ export class SeleniumCdpConnection {
       if (targetInfo?.type === "page" || targetInfo?.type === "iframe") {
         if (targetInfo.targetId)
           this.#targetSessions.set(targetInfo.targetId, sessionId);
-        this.#sessionParents.set(sessionId, message.sessionId ?? "");
         configuration = this.#configureSession(sessionId);
       }
       void configuration
@@ -207,7 +178,6 @@ export class SeleniumCdpConnection {
   async #configureNewSession(sessionId: string): Promise<void> {
     await this.#send("Target.setAutoAttach", AUTO_ATTACH_PARAMS, sessionId);
     await this.#send("Page.enable", {}, sessionId);
-    await this.#send("Network.enable", {}, sessionId);
     await this.#send(
       "Page.addScriptToEvaluateOnNewDocument",
       { source: this.#waiterScript, runImmediately: true },
@@ -233,57 +203,10 @@ export class SeleniumCdpConnection {
 
   #detachSession(sessionId: string): void {
     if (!sessionId) return;
-    const root = this.#rootSession(sessionId);
-    const detached = new Set([sessionId]);
-    for (const candidate of this.#sessionParents.keys()) {
-      if (this.#isDescendant(candidate, sessionId)) detached.add(candidate);
-    }
-    const monitor = this.#targetMonitors.get(root);
-    for (const detachedSession of detached) {
-      monitor?.clearSession(detachedSession);
-      this.#sessionParents.delete(detachedSession);
-      this.#sessionConfigurations.delete(detachedSession);
-    }
+    this.#sessionConfigurations.delete(sessionId);
     for (const [targetId, attachedSession] of this.#targetSessions) {
-      if (detached.has(attachedSession)) this.#targetSessions.delete(targetId);
+      if (attachedSession === sessionId) this.#targetSessions.delete(targetId);
     }
-    if (sessionId === root) this.#targetMonitors.delete(root);
-    if (detached.has(this.#activeSession)) this.#activeSession = "";
-  }
-
-  #rootSession(sessionId: string): string {
-    let current = sessionId;
-    const visited = new Set<string>();
-    while (!visited.has(current)) {
-      visited.add(current);
-      const parent = this.#sessionParents.get(current);
-      if (!parent) break;
-      current = parent;
-    }
-    return current;
-  }
-
-  #isDescendant(sessionId: string, ancestor: string): boolean {
-    let current = sessionId;
-    const visited = new Set<string>();
-    while (!visited.has(current)) {
-      visited.add(current);
-      const parent = this.#sessionParents.get(current);
-      if (!parent) return false;
-      if (parent === ancestor) return true;
-      current = parent;
-    }
-    return false;
-  }
-
-  #monitorForSession(sessionId: string): CdpNetworkMonitor {
-    const rootSession = this.#rootSession(sessionId);
-    let monitor = this.#targetMonitors.get(rootSession);
-    if (!monitor) {
-      monitor = new CdpNetworkMonitor();
-      this.#targetMonitors.set(rootSession, monitor);
-    }
-    return monitor;
   }
 
   #failConnection(): void {

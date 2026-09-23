@@ -6,15 +6,6 @@ from time import monotonic, sleep
 import requests
 from websocket import create_connection
 
-from .cdp_network_monitor import CdpNetworkMonitor
-
-NETWORK_EVENTS = {
-    "Network.requestWillBeSent",
-    "Network.responseReceived",
-    "Network.dataReceived",
-    "Network.loadingFinished",
-    "Network.loadingFailed",
-}
 AUTO_ATTACH_PARAMS = {"autoAttach": True, "waitForDebuggerOnStart": True, "flatten": True}
 TIMEOUT = 5
 
@@ -28,10 +19,7 @@ class SeleniumCdpConnection:
         self._send_lock = Lock()
         self._state_lock = Lock()
         self._target_sessions: dict[str, str] = {}
-        self._session_parents: dict[str, str] = {}
         self._session_configurations: dict[str, tuple[Event, list[Exception]]] = {}
-        self._active_session = ""
-        self._target_monitors: dict[str, CdpNetworkMonitor] = {}
         self._closed = False
         self._socket = create_connection(self._websocket_url(capabilities), timeout=TIMEOUT, suppress_origin=True)
         self._socket.settimeout(None)
@@ -50,18 +38,6 @@ class SeleniumCdpConnection:
         except Exception:
             self.close()
             raise
-
-    def activate(self, window_handle: str):
-        target_id = window_handle.removeprefix("CDwindow-")
-        session_id = self._await_session(target_id)
-        with self._state_lock:
-            self._active_session = session_id
-
-    @property
-    def active_monitor(self) -> CdpNetworkMonitor:
-        with self._state_lock:
-            session_id = self._active_session
-        return self._monitor_for_session(session_id)
 
     def send(self, method: str, params: dict | None = None, session_id: str = "", wait: bool = True) -> dict:
         command_id = next(self._ids)
@@ -129,48 +105,27 @@ class SeleniumCdpConnection:
 
         method = message.get("method", "")
         params = message.get("params", {})
-        session_id = message.get("sessionId", "")
-        if method in NETWORK_EVENTS:
-            self._monitor_for_session(session_id).process(method, params, session_id)
-        elif method == "Target.attachedToTarget":
-            self._on_attached_to_target(params, session_id)
+        if method == "Target.attachedToTarget":
+            self._on_attached_to_target(params)
         elif method == "Target.detachedFromTarget":
             self._on_detached_from_target(params.get("sessionId", ""))
 
-    def _on_attached_to_target(self, params: dict, parent_session_id: str):
+    def _on_attached_to_target(self, params: dict):
         target = params.get("targetInfo", {})
         session_id = params["sessionId"]
         configure = target.get("type") in {"page", "iframe"}
-        if configure:
-            target_id = target.get("targetId", "")
+        target_id = target.get("targetId", "")
+        if configure and target_id:
             with self._state_lock:
-                if target_id:
-                    self._target_sessions[target_id] = session_id
-                self._session_parents[session_id] = parent_session_id
+                self._target_sessions[target_id] = session_id
         self._start_session_configuration(session_id, configure)
 
     def _on_detached_from_target(self, session_id: str):
         with self._state_lock:
-            root_session = self._root_session_locked(session_id)
-            detached_sessions = {session_id}
-            detached_sessions.update(
-                candidate for candidate in self._session_parents if self._is_descendant_locked(candidate, session_id)
-            )
-            monitor = self._target_monitors.get(root_session)
-            for detached_session in detached_sessions:
-                if monitor:
-                    monitor.clear_session(detached_session)
-                self._session_parents.pop(detached_session, None)
-                self._session_configurations.pop(detached_session, None)
-            target_ids = [
-                target_id for target_id, attached in self._target_sessions.items() if attached in detached_sessions
-            ]
+            self._session_configurations.pop(session_id, None)
+            target_ids = [target_id for target_id, attached in self._target_sessions.items() if attached == session_id]
             for target_id in target_ids:
                 self._target_sessions.pop(target_id, None)
-            if session_id == root_session:
-                self._target_monitors.pop(root_session, None)
-            if self._active_session in detached_sessions:
-                self._active_session = ""
 
     def _start_session_configuration(self, session_id: str, configure: bool):
         Thread(
@@ -202,7 +157,6 @@ class SeleniumCdpConnection:
         try:
             self.send("Target.setAutoAttach", AUTO_ATTACH_PARAMS, session_id)
             self.send("Page.enable", session_id=session_id)
-            self.send("Network.enable", session_id=session_id)
             self.send(
                 "Page.addScriptToEvaluateOnNewDocument",
                 {"source": self.waiter_script, "runImmediately": True},
@@ -231,43 +185,6 @@ class SeleniumCdpConnection:
                 return session_id
             sleep(0.01)
         return ""
-
-    def _root_session(self, session_id: str) -> str:
-        with self._state_lock:
-            return self._root_session_locked(session_id)
-
-    def _root_session_locked(self, session_id: str) -> str:
-        current = session_id
-        visited = set()
-        while current not in visited:
-            visited.add(current)
-            parent = self._session_parents.get(current)
-            if not parent:
-                break
-            current = parent
-        return current
-
-    def _is_descendant_locked(self, session_id: str, ancestor: str) -> bool:
-        current = session_id
-        visited = set()
-        while current not in visited:
-            visited.add(current)
-            parent = self._session_parents.get(current)
-            if not parent:
-                return False
-            if parent == ancestor:
-                return True
-            current = parent
-        return False
-
-    def _monitor_for_session(self, session_id: str) -> CdpNetworkMonitor:
-        root_session = self._root_session(session_id)
-        with self._state_lock:
-            monitor = self._target_monitors.get(root_session)
-            if monitor is None:
-                monitor = CdpNetworkMonitor()
-                self._target_monitors[root_session] = monitor
-            return monitor
 
     def _fail_pending_commands(self):
         with self._pending_lock:

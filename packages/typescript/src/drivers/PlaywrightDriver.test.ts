@@ -10,10 +10,9 @@ import type { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTr
 import { TreeDevDrillError } from "../tree/dev/TreeDevDrillError.ts";
 import { TestTreeFactory } from "./__factories__/TestTreeFactory.ts";
 import { PlaywrightDriver } from "./PlaywrightDriver.ts";
-import type { CdpNetworkMonitor } from "./CdpNetworkMonitor.ts";
 
 describe("PlaywrightDriver", () => {
-  it("preserves per-page requests and reuses CDP sessions across switches and close", async () => {
+  it("reuses CDP sessions across switches and close", async () => {
     const sessions = new Map<Page, ReturnType<typeof session>>();
     const pages: Page[] = [];
     const context = Object.assign(new EventEmitter(), {
@@ -48,35 +47,18 @@ describe("PlaywrightDriver", () => {
         detach: vi.fn(async () => undefined),
       });
     }
-    function monitor(driver: PlaywrightDriver): CdpNetworkMonitor {
-      return Reflect.get(driver, "networkMonitor");
-    }
     const first = page();
     const driver = new PlaywrightDriver(first);
-    const firstMonitor = monitor(driver);
-    firstMonitor.process("Network.requestWillBeSent", {
-      requestId: "first",
-      request: { url: "https://example.com/first" },
-    });
     const second = page();
     context.emit("page", second);
     await driver.switchToNextTab();
-    const secondMonitor = monitor(driver);
-    sessions.get(first)!.emit("Network.requestWillBeSent", {
-      requestId: "background",
-      request: { url: "https://example.com/background" },
-    });
-    expect(secondMonitor.pending).toEqual([]);
-    expect(firstMonitor.pending).toHaveLength(2);
+    expect(driver.page).toBe(second);
     await driver.switchToPreviousTab();
-    expect(monitor(driver)).toBe(firstMonitor);
+    expect(driver.page).toBe(first);
     await driver.switchToNextTab();
-    expect(monitor(driver)).toBe(secondMonitor);
     expect(context.newCDPSession).toHaveBeenCalledTimes(2);
     await second.close();
-    await vi.waitFor(() => expect(monitor(driver)).toBe(firstMonitor));
-    expect(driver.page).toBe(first);
-    expect(firstMonitor.pending).toHaveLength(2);
+    await vi.waitFor(() => expect(driver.page).toBe(first));
     expect(sessions.get(second)!.detach).toHaveBeenCalledOnce();
   });
 

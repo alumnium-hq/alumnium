@@ -17,9 +17,7 @@ from ..tools.press_key_tool import PressKeyTool
 from ..tools.type_tool import TypeTool
 from ..tools.upload_tool import UploadTool
 from .base_driver import BaseDriver
-from .cdp_network_monitor import CdpNetworkMonitor
 from .keys import Key
-from .playwright_network_monitor import PlaywrightNetworkMonitor
 from .waiter import WAITER_SCRIPT, WAITER_SNAPSHOT_SCRIPT, wait_for_page_to_load
 
 logger = get_logger(__name__)
@@ -50,11 +48,7 @@ class PlaywrightDriver(BaseDriver):
             UploadTool,
         }
         self.oopif_frames: set[Frame] = set()
-        self._network = PlaywrightNetworkMonitor(page.context)
-        self.network_monitor = self._network.for_page(page)
         self._page_sessions: dict[Page, CDPSession] = {}
-        self.network_sessions: dict[Frame, CDPSession] = {}
-        self.network_frames: set[Frame] = set()
         self._tracked_pages: set[Page] = set()
         self._previous_page: Page | None = None
         self._new_tab_action: _NewTabAction | None = None
@@ -233,7 +227,6 @@ class PlaywrightDriver(BaseDriver):
         logger.debug("Waiting for page to finish loading:")
         try:
             loaded, pending = wait_for_page_to_load(
-                self.network_monitor,
                 lambda: self.page.evaluate(WAITER_SNAPSHOT_SCRIPT),
                 poll=lambda seconds: self.page.wait_for_timeout(seconds * 1000),
             )
@@ -289,47 +282,33 @@ class PlaywrightDriver(BaseDriver):
 
     def _init_cdp_session(self) -> CDPSession:
         self.oopif_frames.clear()
-        self.network_monitor = self._network.for_page(self.page)
-        self.client = self._init_page_network(self.page)
+        self.client = self._init_page_session(self.page)
         self._enable_target_auto_attach()
-        for frame in self.page.frames:
-            if frame != self.page.main_frame:
-                self._attach_oopif_network_session(frame)
         return self.client
 
-    def _init_page_network(self, page: Page) -> CDPSession:
+    def _init_page_session(self, page: Page) -> CDPSession:
         session = self._page_sessions.get(page)
         if session is not None:
             return session
-        monitor = self._network.for_page(page)
         session = page.context.new_cdp_session(page)
         self._page_sessions[page] = session
         try:
-            self._configure_network_session(session, monitor)
+            self._configure_page_session(session, page)
         except Error:
             self._page_sessions.pop(page, None)
             self._detach_session(session)
             raise
         return session
 
-    def _configure_network_session(self, session: CDPSession, monitor: CdpNetworkMonitor, session_id: str = ""):
-        for event in (
-            "Network.requestWillBeSent",
-            "Network.responseReceived",
-            "Network.dataReceived",
-            "Network.loadingFinished",
-            "Network.loadingFailed",
-        ):
-            session.on(event, lambda params, event=event: monitor.process(event, params, session_id))
+    def _configure_page_session(self, session: CDPSession, page: Page):
         session.send("Page.enable")
-        session.send("Network.enable")
         session.send(
             "Page.addScriptToEvaluateOnNewDocument",
             {"source": WAITER_SCRIPT, "runImmediately": True},
         )
         session.on(
             "Page.windowOpen",
-            lambda event: self._on_window_open(event) if monitor is self.network_monitor else None,
+            lambda event: self._on_window_open(event) if page is self.page else None,
         )
 
     def _on_window_open(self, _event: dict):
@@ -350,33 +329,6 @@ class PlaywrightDriver(BaseDriver):
             if page is not None:
                 return page
         return None
-
-    def _attach_oopif_network_session(self, frame: Frame):
-        page = frame.page
-        if page != self.page or frame == page.main_frame or frame in self.network_frames:
-            return
-        self.network_frames.add(frame)
-        monitor = self._network.for_page(page)
-        session = None
-        try:
-            frame_tree = self._send_cdp_command("Page.getFrameTree")
-            if self._find_cdp_frame_id_by_url(frame_tree, frame.url):
-                self.network_frames.discard(frame)
-                return
-            session = page.context.new_cdp_session(frame)
-            session_id = f"frame:{id(frame)}"
-            self._configure_network_session(session, monitor, session_id)
-            if frame.is_detached() or page.is_closed():
-                monitor.clear_session(session_id)
-                self.network_frames.discard(frame)
-                self._detach_session(session)
-                return
-            self.network_sessions[frame] = session
-        except Error:
-            self.network_frames.discard(frame)
-            if session is not None:
-                self._detach_session(session)
-            # Same-process frames are already covered by the page session.
 
     def _enable_target_auto_attach(self):
         try:
@@ -510,16 +462,6 @@ class PlaywrightDriver(BaseDriver):
             return
         self._tracked_pages.add(page)
         page.on("close", self._on_page_close)
-        page.on("frameattached", self._attach_oopif_network_session)
-        page.on("framenavigated", self._attach_oopif_network_session)
-        page.on("framedetached", self._on_frame_detached)
-
-    def _on_frame_detached(self, frame: Frame):
-        self.network_frames.discard(frame)
-        self._network.clear_session(frame.page, f"frame:{id(frame)}")
-        session = self.network_sessions.pop(frame, None)
-        if session is not None:
-            self._detach_session(session)
 
     @staticmethod
     def _detach_session(session: CDPSession):
@@ -533,17 +475,10 @@ class PlaywrightDriver(BaseDriver):
         self._track_page(page)
         if self._new_tab_action is not None:
             self._new_tab_action.pages.append(page)
-        try:
-            self._init_page_network(page)
-        except Error as error:
-            logger.debug(f"Could not initialize new tab network tracking: {error}")
 
     def _on_page_close(self, page: Page):
         logger.debug(f"Page closed: {page.url}")
         self._tracked_pages.discard(page)
-        for frame in list(self.network_sessions):
-            if frame.page == page:
-                self._on_frame_detached(frame)
         session = self._page_sessions.pop(page, None)
         if session is not None:
             self._detach_session(session)
@@ -555,7 +490,6 @@ class PlaywrightDriver(BaseDriver):
         if previous is None or previous.is_closed():
             return
         self.page = previous
-        self.network_monitor = self._network.for_page(previous)
         self._previous_page = None
         self.reset_accessibility_tree()
         self.client = None

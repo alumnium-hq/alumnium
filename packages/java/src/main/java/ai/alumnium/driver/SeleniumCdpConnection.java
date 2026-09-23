@@ -1,7 +1,6 @@
 package ai.alumnium.driver;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -13,7 +12,6 @@ import java.net.http.WebSocket;
 import java.nio.ByteBuffer;
 import java.time.Duration;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ConcurrentHashMap;
@@ -30,15 +28,7 @@ import org.slf4j.LoggerFactory;
 final class SeleniumCdpConnection implements AutoCloseable, WebSocket.Listener {
   private static final Logger LOG = LoggerFactory.getLogger(SeleniumCdpConnection.class);
   private static final ObjectMapper MAPPER = new ObjectMapper();
-  private static final TypeReference<Map<String, Object>> MAP_TYPE = new TypeReference<>() {};
   private static final Duration TIMEOUT = Duration.ofSeconds(5);
-  private static final Set<String> NETWORK_EVENTS =
-      Set.of(
-          "Network.requestWillBeSent",
-          "Network.responseReceived",
-          "Network.dataReceived",
-          "Network.loadingFinished",
-          "Network.loadingFailed");
   private static final Map<String, Object> AUTO_ATTACH_PARAMS =
       Map.of("autoAttach", true, "waitForDebuggerOnStart", true, "flatten", true);
 
@@ -47,17 +37,14 @@ final class SeleniumCdpConnection implements AutoCloseable, WebSocket.Listener {
   private final ConcurrentMap<Long, CompletableFuture<JsonNode>> pending =
       new ConcurrentHashMap<>();
   private final ConcurrentMap<String, String> targetSessions = new ConcurrentHashMap<>();
-  private final ConcurrentMap<String, String> sessionParents = new ConcurrentHashMap<>();
   private final ConcurrentMap<String, CompletableFuture<Void>> sessionConfigurations =
       new ConcurrentHashMap<>();
-  private final ConcurrentMap<String, CdpNetworkMonitor> targetMonitors = new ConcurrentHashMap<>();
   private final AtomicBoolean closed = new AtomicBoolean();
   private final Object textLock = new Object();
   private final Object sendLock = new Object();
   private final StringBuilder textMessage = new StringBuilder();
 
   private volatile WebSocket socket;
-  private volatile String activeSession = "";
   private CompletableFuture<Void> sendTail = CompletableFuture.completedFuture(null);
 
   private SeleniumCdpConnection(String waiterScript) {
@@ -89,13 +76,6 @@ final class SeleniumCdpConnection implements AutoCloseable, WebSocket.Listener {
     }
   }
 
-  void activate(String windowHandle) {
-    String prefix = "CDwindow-";
-    String targetId =
-        windowHandle.startsWith(prefix) ? windowHandle.substring(prefix.length()) : windowHandle;
-    activeSession = awaitSession(targetId);
-  }
-
   private String awaitSession(String targetId) {
     long deadline = System.nanoTime() + TIMEOUT.toNanos();
     while (System.nanoTime() < deadline) {
@@ -123,10 +103,6 @@ final class SeleniumCdpConnection implements AutoCloseable, WebSocket.Listener {
     return "";
   }
 
-  CdpNetworkMonitor activeMonitor() {
-    return monitorForSession(activeSession);
-  }
-
   @Override
   public void close() {
     if (!closed.compareAndSet(false, true)) return;
@@ -137,10 +113,7 @@ final class SeleniumCdpConnection implements AutoCloseable, WebSocket.Listener {
       current.sendClose(WebSocket.NORMAL_CLOSURE, "").exceptionally(error -> null);
     }
     targetSessions.clear();
-    sessionParents.clear();
     sessionConfigurations.clear();
-    targetMonitors.clear();
-    activeSession = "";
   }
 
   @Override
@@ -284,15 +257,8 @@ final class SeleniumCdpConnection implements AutoCloseable, WebSocket.Listener {
 
     String method = message.path("method").asText();
     JsonNode params = message.path("params");
-    String sessionId = message.path("sessionId").asText();
-    if (NETWORK_EVENTS.contains(method)) {
-      monitorForSession(sessionId)
-          .process(method, MAPPER.convertValue(params, MAP_TYPE), sessionId);
-      return;
-    }
-
     switch (method) {
-      case "Target.attachedToTarget" -> attachedToTarget(params, sessionId);
+      case "Target.attachedToTarget" -> attachedToTarget(params);
       case "Target.detachedFromTarget" -> detachedFromTarget(params.path("sessionId").asText());
       case "Target.targetCreated" -> {
         // Browser-level auto-attach handles page targets before their scripts run.
@@ -303,7 +269,7 @@ final class SeleniumCdpConnection implements AutoCloseable, WebSocket.Listener {
     }
   }
 
-  private void attachedToTarget(JsonNode params, String parentSession) {
+  private void attachedToTarget(JsonNode params) {
     JsonNode target = params.path("targetInfo");
     String type = target.path("type").asText();
     String sessionId = params.path("sessionId").asText();
@@ -312,7 +278,6 @@ final class SeleniumCdpConnection implements AutoCloseable, WebSocket.Listener {
     if ("page".equals(type) || "iframe".equals(type)) {
       String targetId = target.path("targetId").asText();
       if (!targetId.isEmpty()) targetSessions.put(targetId, sessionId);
-      sessionParents.put(sessionId, parentSession);
       configuration = configureSession(sessionId);
     }
 
@@ -335,21 +300,8 @@ final class SeleniumCdpConnection implements AutoCloseable, WebSocket.Listener {
   private void detachedFromTarget(String sessionId) {
     if (sessionId.isEmpty()) return;
 
-    String root = rootSession(sessionId);
-    CdpNetworkMonitor monitor = targetMonitors.get(root);
-    Set<String> detachedSessions = ConcurrentHashMap.newKeySet();
-    detachedSessions.add(sessionId);
-    sessionParents.keySet().stream()
-        .filter(candidate -> isDescendant(candidate, sessionId))
-        .forEach(detachedSessions::add);
-    if (monitor != null) detachedSessions.forEach(monitor::clearSession);
-    detachedSessions.forEach(sessionParents::remove);
-    detachedSessions.forEach(sessionConfigurations::remove);
-    targetSessions.entrySet().removeIf(entry -> detachedSessions.contains(entry.getValue()));
-    if (sessionId.equals(root)) {
-      targetMonitors.remove(root);
-    }
-    if (detachedSessions.contains(activeSession)) activeSession = "";
+    sessionConfigurations.remove(sessionId);
+    targetSessions.entrySet().removeIf(entry -> sessionId.equals(entry.getValue()));
   }
 
   private CompletableFuture<Void> configureSession(String sessionId) {
@@ -359,7 +311,6 @@ final class SeleniumCdpConnection implements AutoCloseable, WebSocket.Listener {
         ignored ->
             send("Target.setAutoAttach", AUTO_ATTACH_PARAMS, sessionId, true)
                 .thenCompose(result -> send("Page.enable", Map.of(), sessionId, true))
-                .thenCompose(result -> send("Network.enable", Map.of(), sessionId, true))
                 .thenCompose(
                     result ->
                         send(
@@ -368,34 +319,6 @@ final class SeleniumCdpConnection implements AutoCloseable, WebSocket.Listener {
                             sessionId,
                             true))
                 .thenApply(result -> null));
-  }
-
-  private String rootSession(String sessionId) {
-    String current = sessionId;
-    Set<String> visited = ConcurrentHashMap.newKeySet();
-    while (visited.add(current)) {
-      String parent = sessionParents.get(current);
-      if (parent == null || parent.isEmpty()) break;
-      current = parent;
-    }
-    return current;
-  }
-
-  private boolean isDescendant(String sessionId, String ancestor) {
-    String current = sessionId;
-    Set<String> visited = ConcurrentHashMap.newKeySet();
-    while (visited.add(current)) {
-      String parent = sessionParents.get(current);
-      if (parent == null || parent.isEmpty()) return false;
-      if (parent.equals(ancestor)) return true;
-      current = parent;
-    }
-    return false;
-  }
-
-  private CdpNetworkMonitor monitorForSession(String sessionId) {
-    return targetMonitors.computeIfAbsent(
-        rootSession(sessionId), ignored -> new CdpNetworkMonitor());
   }
 
   private void failConnection(RuntimeException error) {

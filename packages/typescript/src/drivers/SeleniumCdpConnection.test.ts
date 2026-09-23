@@ -6,7 +6,9 @@ describe("SeleniumCdpConnection", () => {
 
   it("configures auto-attached targets without attaching them explicitly", async () => {
     const { connection, socket } = await connect();
-    await connection.activate("CDwindow-page");
+    await vi.waitFor(() => {
+      expect(socket.commands).toContain("Runtime.runIfWaitingForDebugger");
+    });
 
     expect(socket.commands).not.toContain("Target.attachToTarget");
     expect(

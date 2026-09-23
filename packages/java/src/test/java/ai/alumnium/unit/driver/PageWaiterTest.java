@@ -2,7 +2,7 @@ package ai.alumnium.driver;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.Map;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.Test;
 
@@ -17,12 +17,10 @@ class PageWaiterTest {
 
   @Test
   void waitsForBrowserTimeoutsAndUsesPollAction() {
-    CdpNetworkMonitor monitor = new CdpNetworkMonitor();
     AtomicInteger polls = new AtomicInteger();
     AtomicInteger snapshots = new AtomicInteger();
     PageWaiter waiter =
         new PageWaiter(
-            monitor,
             () -> snapshot(snapshots.incrementAndGet() == 1 ? 1 : 0),
             0,
             100,
@@ -38,11 +36,9 @@ class PageWaiterTest {
 
   @Test
   void requiresCompleteAndMutationIdleSnapshots() {
-    CdpNetworkMonitor monitor = new CdpNetworkMonitor();
     AtomicInteger snapshots = new AtomicInteger();
     PageWaiter waiter =
         new PageWaiter(
-            monitor,
             () -> {
               int call = snapshots.incrementAndGet();
               if (call == 1) return new PageWaiter.Snapshot(0, 100, 0, "interactive");
@@ -58,18 +54,12 @@ class PageWaiterTest {
   }
 
   @Test
-  void rechecksNetworkQuietAfterSnapshot() {
-    CdpNetworkMonitor monitor = new CdpNetworkMonitor();
-    AtomicInteger snapshots = new AtomicInteger();
+  void waitsForRequestsReportedByTheSnapshot() {
     PageWaiter waiter =
         new PageWaiter(
-            monitor,
-            () -> {
-              snapshots.incrementAndGet();
-              monitor.process("Network.requestWillBeSent", request("fast"));
-              monitor.process("Network.loadingFinished", Map.of("requestId", "fast"));
-              return snapshot(0);
-            },
+            () ->
+                new PageWaiter.Snapshot(
+                    0, 0, 100, 0, "complete", List.of("https://example.com/slow")),
             25,
             70,
             () -> sleep(10));
@@ -77,22 +67,23 @@ class PageWaiterTest {
     PageWaiter.Result result = waiter.waitForPageStability();
 
     assertThat(result.loaded()).isFalse();
-    assertThat(result.pending()).isEmpty();
-    assertThat(snapshots.get()).isGreaterThanOrEqualTo(1);
+    assertThat(result.pending()).containsExactly("https://example.com/slow");
+  }
+
+  @Test
+  void waitsForTheNetworkToStayQuietAfterARequest() {
+    PageWaiter waiter =
+        new PageWaiter(
+            () -> new PageWaiter.Snapshot(0, 90, 100, 0, "complete", List.of()),
+            25,
+            70,
+            () -> sleep(10));
+
+    assertThat(waiter.waitForPageStability().loaded()).isFalse();
   }
 
   private static PageWaiter.Snapshot snapshot(int pendingTimeouts) {
     return new PageWaiter.Snapshot(0, 100, pendingTimeouts, "complete");
-  }
-
-  private static Map<String, Object> request(String requestId) {
-    return Map.of(
-        "requestId",
-        requestId,
-        "type",
-        "Fetch",
-        "request",
-        Map.of("url", "https://example.com/" + requestId));
   }
 
   private static void sleep(long millis) {

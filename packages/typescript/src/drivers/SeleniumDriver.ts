@@ -35,10 +35,10 @@ import type { Tracer } from "../telemetry/Tracer.ts";
 import { TreeDevDrillError } from "../tree/dev/TreeDevDrillError.ts";
 import type { Driver } from "./Driver.ts";
 import {
-  CdpNetworkMonitor,
   WAITER_SNAPSHOT_SCRIPT,
+  type WaiterSnapshot,
   waitForPageStability,
-} from "./CdpNetworkMonitor.ts";
+} from "./PageWaiter.ts";
 import { SeleniumCdpConnection } from "./SeleniumCdpConnection.ts";
 import { waiterScriptSource } from "./scripts/bundledScripts.ts";
 import type { ShadowRoot } from "selenium-webdriver/lib/webdriver.js";
@@ -81,7 +81,6 @@ export class SeleniumDriver extends BaseDriver {
   platform = "chromium" as const;
   autoswitchToNewTab = true;
   #shadowChildToHostMap: Partial<Record<number, number>> = {};
-  #networkMonitor = new CdpNetworkMonitor();
   #cdpConnection: SeleniumCdpConnection | null = null;
   #cdpReady: Promise<void>;
   public fullPageScreenshot = Env.ALUMNIUM_FULL_PAGE_SCREENSHOT;
@@ -480,13 +479,8 @@ export class SeleniumDriver extends BaseDriver {
   @span("driver.internal.wait_for_page_load")
   private async waitForPageToLoad(): Promise<void> {
     await this.#cdpReady;
-    await this.#cdpConnection?.activate(await this.driver.getWindowHandle());
-    const networkMonitor =
-      this.#cdpConnection?.activeMonitor ?? this.#networkMonitor;
     try {
-      const result = await waitForPageStability(networkMonitor, () =>
-        this.waiterSnapshot(),
-      );
+      const result = await waitForPageStability(() => this.waiterSnapshot());
       if (!result.loaded) {
         logger.warn(
           `Timed out waiting for page to load; pending requests: ${result.pending.join(", ")}`,
@@ -495,7 +489,7 @@ export class SeleniumDriver extends BaseDriver {
     } catch (error) {
       // Retry once on failure
       try {
-        await waitForPageStability(networkMonitor, () => this.waiterSnapshot());
+        await waitForPageStability(() => this.waiterSnapshot());
       } catch (retryError) {
         logger.warn(
           `Failed to wait for page to load after retry (${String(error)}): ${String(retryError)}`,
@@ -522,7 +516,7 @@ export class SeleniumDriver extends BaseDriver {
       );
     } catch (error) {
       logger.debug(
-        `Could not subscribe to CDP network events: ${error instanceof Error ? error.message : String(error)}`,
+        `Could not connect to CDP to inject the waiter script: ${error instanceof Error ? error.message : String(error)}`,
       );
       try {
         await this.executeCdpCommand("Page.addScriptToEvaluateOnNewDocument", {
@@ -537,20 +531,10 @@ export class SeleniumDriver extends BaseDriver {
     }
   }
 
-  private async waiterSnapshot(): Promise<{
-    lastMutationAt: number;
-    now: number;
-    pendingTimeouts: number;
-    readyState: "loading" | "interactive" | "complete";
-  } | null> {
+  private async waiterSnapshot(): Promise<WaiterSnapshot | null> {
     let snapshot = (await this.driver.executeScript(
       `return ${WAITER_SNAPSHOT_SCRIPT}`,
-    )) as {
-      lastMutationAt: number;
-      now: number;
-      pendingTimeouts: number;
-      readyState: "loading" | "interactive" | "complete";
-    } | null;
+    )) as WaiterSnapshot | null;
     if (!snapshot) {
       await this.driver.executeScript(WAITER_SCRIPT);
       snapshot = (await this.driver.executeScript(

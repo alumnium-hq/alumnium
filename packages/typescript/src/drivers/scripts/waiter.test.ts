@@ -70,14 +70,22 @@ describe("waiter script timeouts", () => {
 });
 
 function installWaiter() {
+  const window: Record<string, unknown> = {
+    addEventListener() {},
+    clearTimeout,
+    setTimeout,
+  };
+  window.parent = window;
   const context = vm.createContext({
     clearTimeout,
     document: { documentElement: {}, readyState: "complete" },
+    Element: class {},
     MutationObserver: class {
       observe() {}
     },
     setTimeout,
-    window: { clearTimeout, setTimeout },
+    window,
+    XMLHttpRequest: class {},
   });
   vm.runInContext(waiterScriptSource, context);
   const browser = context.window as {
