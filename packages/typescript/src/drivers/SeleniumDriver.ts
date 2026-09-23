@@ -476,7 +476,7 @@ export class SeleniumDriver extends BaseDriver {
     return this.driver.sendAndGetDevToolsCommand(cmd, params);
   }
 
-  @span("driver.internal.wait_for_page_load")
+  @span("driver.wait_for_page_to_load", BaseDriver.spanAttrs)
   private async waitForPageToLoad(): Promise<void> {
     await this.#cdpReady;
     try {

@@ -279,8 +279,6 @@ export namespace Tracer {
 
     "driver.internal.switch_to_single_frame": null;
 
-    "driver.internal.wait_for_page_load": null;
-
     "driver.internal.switch_to_new_tab": null;
 
     "driver.tree.to_str": {
