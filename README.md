@@ -15,7 +15,7 @@
     <a href="https://alumnium.ai/docs/">Documentation</a>
 </p>
 
-Alumnium is an AI-native library and MCP for end-to-end testing. It builds upon the existing test automation ecosystem and simplifies interactions with applications, providing more robust mechanisms for verifying assertions. It works with Appium, Playwright, or Selenium and gives you [state-of-the-art][7] capabilities.
+Alumnium is an AI-native library and MCP for end-to-end testing. It builds upon the existing test automation ecosystem and simplifies interactions with applications, providing more robust mechanisms for verifying assertions. It works with Appium, Maestro, Playwright, or Selenium and gives you [state-of-the-art][7] capabilities.
 
 https://github.com/user-attachments/assets/461050ba-f219-4ae2-bf5c-65faeb12b77e
 
@@ -69,12 +69,12 @@ import org.openqa.selenium.chrome.ChromeDriver;
 class AlumniumTest {
     public static void main(String...args) {
         ChromeDriver driver = new ChromeDriver();
-        Alumni alumni = new Alumni(driver);
+        Alumni al = new Alumni(driver);
         driver.get("https://search.brave.com");
-        alumni.act("type 'selenium' into the search field, then press 'Enter'");
-        alumni.check("page title contains selenium");
-        alumni.check("search results contain selenium.dev");
-        alumni.quit();
+        al.act("type 'selenium' into the search field, then press 'Enter'");
+        al.check("page title contains selenium");
+        al.check("search results contain selenium.dev");
+        al.quit();
     }
 }
 ```
