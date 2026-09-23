@@ -21,7 +21,6 @@ from ..tools.press_key_tool import PressKeyTool
 from ..tools.type_tool import TypeTool
 from ..tools.upload_tool import UploadTool
 from .base_driver import BaseDriver
-from .cdp_network_monitor import CdpNetworkMonitor
 from .keys import Key
 from .selenium_cdp_connection import SeleniumCdpConnection
 from .waiter import WAITER_SCRIPT, WAITER_SNAPSHOT_SCRIPT, wait_for_page_to_load
@@ -45,12 +44,11 @@ class SeleniumDriver(BaseDriver):
         self._shadow_child_to_host_map: dict[int, int] = {}
         self._patch_driver(driver)
         self._enable_target_auto_attach()
-        self.network_monitor = CdpNetworkMonitor()
         self.cdp_connection: SeleniumCdpConnection | None = None
         try:
             self.cdp_connection = SeleniumCdpConnection(driver.capabilities, WAITER_SCRIPT)
         except Exception as error:
-            logger.debug(f"Could not subscribe to CDP network events: {error}")
+            logger.debug(f"Could not connect to CDP to inject the waiter script: {error}")
             self.driver.execute_cdp_cmd(  # type: ignore[attr-defined]
                 "Page.addScriptToEvaluateOnNewDocument",
                 {"source": WAITER_SCRIPT, "runImmediately": True},
@@ -359,14 +357,7 @@ class SeleniumDriver(BaseDriver):
     @retry(JavascriptException, tries=2, delay=0.1, backoff=2)  # type: ignore[reportArgumentType]
     def _wait_for_page_to_load(self):
         logger.debug("Waiting for page to finish loading:")
-        network_monitor = self.network_monitor
-        if self.cdp_connection:
-            self.cdp_connection.activate(self.driver.current_window_handle)
-            network_monitor = self.cdp_connection.active_monitor
-        loaded, pending = wait_for_page_to_load(
-            network_monitor,
-            self._waiter_snapshot,
-        )
+        loaded, pending = wait_for_page_to_load(self._waiter_snapshot)
         if not loaded:
             logger.debug(f"  <- Timed out waiting for page to load; pending requests: {pending}")
         else:

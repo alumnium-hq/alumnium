@@ -26,13 +26,8 @@ import { Env } from "../Env.ts";
 import { Telemetry } from "../telemetry/Telemetry.ts";
 import { TreeDevDrillError } from "../tree/dev/TreeDevDrillError.ts";
 import { retry } from "../utils/retry.ts";
-import {
-  CdpNetworkMonitor,
-  WAITER_SNAPSHOT_SCRIPT,
-  waitForPageStability,
-} from "./CdpNetworkMonitor.ts";
+import { WAITER_SNAPSHOT_SCRIPT, waitForPageStability } from "./PageWaiter.ts";
 import { waiterScriptSource } from "./scripts/bundledScripts.ts";
-import { PlaywrightNetworkMonitor } from "./PlaywrightNetworkMonitor.ts";
 
 const { tracer, logger } = Telemetry.get(import.meta.url);
 const { span } = tracer.dec();
@@ -78,14 +73,6 @@ const CONTEXT_WAS_DESTROYED_ERROR = "Execution context was destroyed";
 const NEW_TAB_DELAY = 200;
 
 const WAITER_SCRIPT = waiterScriptSource; // await readScript("waiter.js");
-const NETWORK_EVENTS = [
-  "Network.requestWillBeSent",
-  "Network.responseReceived",
-  "Network.dataReceived",
-  "Network.loadingFinished",
-  "Network.loadingFailed",
-] as const;
-
 const RETRY_OPTIONS: retry.Options = {
   maxAttempts: 2,
   backOff: 500,
@@ -95,14 +82,8 @@ const RETRY_OPTIONS: retry.Options = {
 export class PlaywrightDriver extends BaseDriver {
   private client!: CDPSession;
   private cdpReady: Promise<void>;
-  private networkMonitor: CdpNetworkMonitor;
-  #network: PlaywrightNetworkMonitor;
   #pageSessions = new Map<Page, Promise<CDPSession>>();
   #pageOopifFrameIds = new WeakMap<Page, Map<string, string>>();
-  #attachingFrames = new Set<Frame>();
-  private networkSessions = new Map<Frame, CDPSession>();
-  private networkFrameIds = new WeakMap<Frame, number>();
-  private nextNetworkFrameId = 1;
   private cdpGeneration = 0;
   page: Page;
   private trackedPages = new Set<Page>();
@@ -129,8 +110,6 @@ export class PlaywrightDriver extends BaseDriver {
   constructor(page: Page) {
     super();
     this.page = page;
-    this.#network = new PlaywrightNetworkMonitor(page.context());
-    this.networkMonitor = this.#network.forPage(page);
     this.cdpReady = Promise.resolve(
       this.page.context().addInitScript({ content: WAITER_SCRIPT }),
     ).then(() => this.initCDPSession());
@@ -142,9 +121,6 @@ export class PlaywrightDriver extends BaseDriver {
   private trackPage(page: Page): void {
     if (this.trackedPages.has(page)) return;
     this.trackedPages.add(page);
-    page.on("frameattached", (frame) => void this.attachNetworkFrame(frame));
-    page.on("framenavigated", (frame) => void this.attachNetworkFrame(frame));
-    page.on("framedetached", (frame) => this.detachNetworkFrame(frame));
     page.on("close", () => this.onPageClose(page));
   }
 
@@ -152,9 +128,9 @@ export class PlaywrightDriver extends BaseDriver {
     logger.debug(`New tab opened: ${page.url()}`);
     this.trackPage(page);
     this.newTabAction?.pages.push(page);
-    void this.#initPageNetwork(page).catch((error) => {
+    void this.#initPageSession(page).catch((error) => {
       logger.debug(
-        `Could not initialize new tab network tracking: ${String(error)}`,
+        `Could not initialize new tab CDP session: ${String(error)}`,
       );
     });
   }
@@ -162,9 +138,6 @@ export class PlaywrightDriver extends BaseDriver {
   private onPageClose(page: Page): void {
     logger.debug(`Page closed: ${page.url()}`);
     this.trackedPages.delete(page);
-    for (const frame of this.networkSessions.keys()) {
-      if (frame.page() === page) this.detachNetworkFrame(frame);
-    }
     const session = this.#pageSessions.get(page);
     this.#pageSessions.delete(page);
     this.#pageOopifFrameIds.delete(page);
@@ -188,19 +161,15 @@ export class PlaywrightDriver extends BaseDriver {
     const generation = ++this.cdpGeneration;
     const page = this.page;
     this.oopifFrames.clear();
-    const client = await this.#initPageNetwork(page);
+    const client = await this.#initPageSession(page);
     if (generation !== this.cdpGeneration || page !== this.page) {
       return;
     }
     this.client = client;
-    this.networkMonitor = this.#network.forPage(page);
     this.oopifFrameIds = this.#pageOopifFrameIds.get(page)!;
-    for (const frame of this.page.frames()) {
-      if (frame !== this.page.mainFrame()) await this.attachNetworkFrame(frame);
-    }
   }
 
-  #initPageNetwork(page: Page): Promise<CDPSession> {
+  #initPageSession(page: Page): Promise<CDPSession> {
     let session = this.#pageSessions.get(page);
     if (!session) {
       session = this.#createPageSession(page).catch((error) => {
@@ -213,12 +182,11 @@ export class PlaywrightDriver extends BaseDriver {
   }
 
   async #createPageSession(page: Page): Promise<CDPSession> {
-    const monitor = this.#network.forPage(page);
     const frameIds = new Map<string, string>();
     this.#pageOopifFrameIds.set(page, frameIds);
     const session = await page.context().newCDPSession(page);
     try {
-      await this.configureNetworkSession(session, monitor);
+      await this.configurePageSession(session, page);
       await this.enableTargetAutoAttach(session, frameIds);
       return session;
     } catch (error) {
@@ -227,87 +195,19 @@ export class PlaywrightDriver extends BaseDriver {
     }
   }
 
-  private async configureNetworkSession(
+  private async configurePageSession(
     session: CDPSession,
-    monitor: CdpNetworkMonitor,
-    sessionId = "",
+    page: Page,
   ): Promise<void> {
-    for (const event of NETWORK_EVENTS) {
-      session.on(event, (params) => monitor.process(event, params, sessionId));
-    }
     await session.send("Page.enable");
-    await session.send("Network.enable");
     await session.send("Page.addScriptToEvaluateOnNewDocument", {
       source: WAITER_SCRIPT,
       runImmediately: true,
     });
     session.on("Page.windowOpen", () => {
-      if (monitor === this.networkMonitor && this.newTabAction)
+      if (page === this.page && this.newTabAction)
         this.newTabAction.announced = true;
     });
-  }
-
-  private async attachNetworkFrame(frame: Frame): Promise<void> {
-    const page = frame.page();
-    if (
-      page !== this.page ||
-      frame === page.mainFrame() ||
-      this.networkSessions.has(frame) ||
-      this.#attachingFrames.has(frame)
-    )
-      return;
-    this.#attachingFrames.add(frame);
-    const monitor = this.#network.forPage(page);
-    let session: CDPSession | undefined;
-    try {
-      const frameTree = (await this.client.send(
-        "Page.getFrameTree",
-      )) as CDPFrameTree;
-      session = await page.context().newCDPSession(frame);
-      const sessionFrameTree = (await session.send(
-        "Page.getFrameTree",
-      )) as CDPFrameTree;
-      const sameProcessFrameIds = new Set(
-        this.getAllFrameIds(frameTree.frameTree),
-      );
-      if (sameProcessFrameIds.has(sessionFrameTree.frameTree.frame.id)) {
-        await session.detach();
-        return;
-      }
-      await this.configureNetworkSession(
-        session,
-        monitor,
-        this.networkFrameId(frame),
-      );
-      if (frame.isDetached() || page.isClosed()) {
-        monitor.clearSession(this.networkFrameId(frame));
-        await session.detach();
-        return;
-      }
-      this.networkSessions.set(frame, session);
-    } catch {
-      await session?.detach().catch(() => undefined);
-      // Same-process or destroyed frames are covered by the page session.
-    } finally {
-      this.#attachingFrames.delete(frame);
-    }
-  }
-
-  private detachNetworkFrame(frame: Frame): void {
-    const sessionId = this.networkFrameId(frame);
-    this.#network.clearSession(frame.page(), sessionId);
-    const session = this.networkSessions.get(frame);
-    if (session) void session.detach().catch(() => undefined);
-    this.networkSessions.delete(frame);
-  }
-
-  private networkFrameId(frame: Frame): string {
-    let id = this.networkFrameIds.get(frame);
-    if (!id) {
-      id = this.nextNetworkFrameId++;
-      this.networkFrameIds.set(frame, id);
-    }
-    return `frame:${id}`;
   }
 
   private async enableTargetAutoAttach(
@@ -841,7 +741,7 @@ export class PlaywrightDriver extends BaseDriver {
     return retry(RETRY_OPTIONS, async () => {
       await this.cdpReady;
       logger.debug("Waiting for page to finish loading:");
-      const result = await waitForPageStability(this.networkMonitor, () =>
+      const result = await waitForPageStability(() =>
         this.page.evaluate(WAITER_SNAPSHOT_SCRIPT),
       );
       if (!result.loaded) {

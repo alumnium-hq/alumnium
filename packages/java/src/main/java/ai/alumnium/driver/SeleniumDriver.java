@@ -42,7 +42,6 @@ public final class SeleniumDriver extends BaseDriver {
 
   private final WebDriver driver;
   private final HasCdp cdp;
-  private final CdpNetworkMonitor networkMonitor = new CdpNetworkMonitor();
   private SeleniumCdpConnection cdpConnection;
   private Map<Long, Long> shadowChildToHostMap = new HashMap<>();
   public boolean autoswitchToNewTab = true;
@@ -393,7 +392,7 @@ public final class SeleniumDriver extends BaseDriver {
       Capabilities capabilities = hasCapabilities.getCapabilities();
       cdpConnection = SeleniumCdpConnection.connect(capabilities, WAITER_SCRIPT);
     } catch (RuntimeException error) {
-      LOG.debug("Could not subscribe to CDP network events", error);
+      LOG.debug("Could not connect to CDP to inject the waiter script", error);
       executeCdp(
           "Page.addScriptToEvaluateOnNewDocument",
           Map.of("source", WAITER_SCRIPT, "runImmediately", true));
@@ -401,9 +400,6 @@ public final class SeleniumDriver extends BaseDriver {
   }
 
   private void waitForPageToLoad() {
-    if (cdpConnection != null) cdpConnection.activate(driver.getWindowHandle());
-    CdpNetworkMonitor activeMonitor =
-        cdpConnection == null ? networkMonitor : cdpConnection.activeMonitor();
     Retry.Options options = new Retry.Options();
     options.maxAttempts = 2;
     options.backOffMillis = 0L;
@@ -411,8 +407,7 @@ public final class SeleniumDriver extends BaseDriver {
       Retry.execute(
           options,
           () -> {
-            PageWaiter.Result result =
-                new PageWaiter(activeMonitor, this::waiterSnapshot).waitForPageStability();
+            PageWaiter.Result result = new PageWaiter(this::waiterSnapshot).waitForPageStability();
             if (!result.loaded()) {
               LOG.debug("Timed out waiting for page; pending requests: {}", result.pending());
             }
@@ -431,15 +426,7 @@ public final class SeleniumDriver extends BaseDriver {
       value = javascript.executeScript("return " + PageWaiter.WAITER_SNAPSHOT_SCRIPT);
     }
     if (!(value instanceof Map<?, ?> snapshot)) return null;
-    return new PageWaiter.Snapshot(
-        number(snapshot.get("lastMutationAt")),
-        number(snapshot.get("now")),
-        (int) number(snapshot.get("pendingTimeouts")),
-        String.valueOf(snapshot.get("readyState")));
-  }
-
-  private static long number(Object value) {
-    return value instanceof Number number ? number.longValue() : 0;
+    return PageWaiter.Snapshot.fromScript(snapshot);
   }
 
   private void withTabAutoswitch(Runnable action) {

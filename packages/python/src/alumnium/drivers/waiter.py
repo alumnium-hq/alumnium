@@ -4,8 +4,6 @@ from pathlib import Path
 from time import monotonic, sleep
 from typing import Callable
 
-from .cdp_network_monitor import CdpNetworkMonitor
-
 with open(Path(__file__).parent / "scripts/waiter.js") as waiter_file:
     WAITER_SCRIPT = waiter_file.read()
 
@@ -16,7 +14,6 @@ WAITER_POLL_SECONDS = 0.01
 
 
 def wait_for_page_to_load(
-    monitor: CdpNetworkMonitor,
     snapshot: Callable[[], dict | None],
     idle: float = WAITER_IDLE_SECONDS,
     timeout: float = WAITER_TIMEOUT_SECONDS,
@@ -27,16 +24,10 @@ def wait_for_page_to_load(
     pending: list[str] = []
 
     while monotonic() < deadline:
-        pending = monitor.pending()
-        if not pending and monotonic() - started_at >= idle and monitor.idle_for >= idle:
+        if monotonic() - started_at >= idle:
             state = snapshot()
-            if (
-                state
-                and state.get("readyState") == "complete"
-                and (state.get("now", 0) - state.get("lastMutationAt", 0)) / 1000 >= idle
-                and not state.get("pendingTimeouts", 0)
-                and not monitor.pending()
-            ):
+            pending = state.get("pendingRequests", []) if state else []
+            if state and _is_stable(state, idle):
                 return True, []
         poll(WAITER_POLL_SECONDS)
 
@@ -44,7 +35,6 @@ def wait_for_page_to_load(
 
 
 async def wait_for_page_to_load_async(
-    monitor: CdpNetworkMonitor,
     snapshot: Callable,
     idle: float = WAITER_IDLE_SECONDS,
     timeout: float = WAITER_TIMEOUT_SECONDS,
@@ -54,17 +44,22 @@ async def wait_for_page_to_load_async(
     pending: list[str] = []
 
     while monotonic() < deadline:
-        pending = monitor.pending()
-        if not pending and monotonic() - started_at >= idle and monitor.idle_for >= idle:
+        if monotonic() - started_at >= idle:
             state = await snapshot()
-            if (
-                state
-                and state.get("readyState") == "complete"
-                and (state.get("now", 0) - state.get("lastMutationAt", 0)) / 1000 >= idle
-                and not state.get("pendingTimeouts", 0)
-                and not monitor.pending()
-            ):
+            pending = state.get("pendingRequests", []) if state else []
+            if state and _is_stable(state, idle):
                 return True, []
         await async_sleep(WAITER_POLL_SECONDS)
 
     return False, pending
+
+
+def _is_stable(state: dict, idle: float) -> bool:
+    now = state.get("now", 0)
+    last_activity_at = max(state.get("lastMutationAt", 0), state.get("lastRequestAt", 0))
+    return (
+        state.get("readyState") == "complete"
+        and (now - last_activity_at) / 1000 >= idle
+        and not state.get("pendingTimeouts", 0)
+        and not state.get("pendingRequests")
+    )
