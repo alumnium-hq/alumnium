@@ -110,14 +110,21 @@ export class AppiumDriver extends BaseDriver {
       Tab: SeleniumKey.TAB,
     };
 
+    const mappedKey = keyMap[key];
+    if (!mappedKey) {
+      throw new Error(
+        `Unsupported key: "${key}". Supported keys are: ${Object.keys(keyMap).join(", ")}`,
+      );
+    }
+
     // Simulate ActionChains behavior
     await this.driver.performActions([
       {
         type: "key",
         id: "keyboard",
         actions: [
-          { type: "keyDown", value: keyMap[key] },
-          { type: "keyUp", value: keyMap[key] },
+          { type: "keyDown", value: mappedKey },
+          { type: "keyUp", value: mappedKey },
         ],
       },
     ]);
