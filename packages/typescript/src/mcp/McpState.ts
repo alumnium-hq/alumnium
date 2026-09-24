@@ -30,22 +30,25 @@ export namespace McpState {
 export abstract class McpState {
   // Global state for driver management
   private static drivers: Record<string, McpState.Driver> = {}; // id -> driver state
+  private static pendingIds = new Set<string>(); // ids claimed but not yet registered
 
   private static cleanupHooksRegistered = false;
   private static cleanupAllPromise: Promise<void> | null = null;
 
   /**
    * Generate a unique driver ID from the given base by appending an
-   * incrementing `-N` suffix (starting at 1) until an unregistered ID is found.
-   * This keeps concurrent starts in the same second from colliding.
+   * incrementing `-N` suffix (starting at 1) until an unclaimed ID is found.
+   * The ID is reserved immediately so concurrent starts cannot claim the
+   * same ID before registration completes.
    */
   static generateDriverId(base: string): string {
     let suffix = 1;
     let id = `${base}-${suffix}`;
-    while (this.drivers[id]) {
+    while (this.drivers[id] || this.pendingIds.has(id)) {
       suffix++;
       id = `${base}-${suffix}`;
     }
+    this.pendingIds.add(id);
     return id;
   }
 
@@ -59,6 +62,7 @@ export abstract class McpState {
     artifactsStore: McpArtifactsStore,
   ): void {
     this.registerCleanupHooks();
+    this.pendingIds.delete(id);
 
     this.drivers[id] = {
       al,
@@ -157,6 +161,7 @@ export abstract class McpState {
 
   static clear() {
     this.drivers = {};
+    this.pendingIds.clear();
     this.cleanupAllPromise = null;
   }
 
