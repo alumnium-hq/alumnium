@@ -385,6 +385,10 @@ export const startMcpTool = McpTool.define("start", {
       navigationPolicy,
     });
 
+    // Register driver in global state before the first navigation so a
+    // failure below still leaves a tracked driver that exit hooks can clean up
+    McpState.registerDriver(id, al, driver, artifactsStore);
+
     // Apply driver options to Alumnium driver
     if (Object.keys(driverSettings).length) {
       logger.debug(`Applying driver options: {driverSettings}`, {
@@ -409,9 +413,6 @@ export const startMcpTool = McpTool.define("start", {
       logger.info(`Navigating to baseUrl: ${baseUrl}`);
       await al.driver.visit(baseUrl);
     }
-
-    // Register driver in global state
-    McpState.registerDriver(id, al, driver, artifactsStore);
 
     const model = await al.model();
 
