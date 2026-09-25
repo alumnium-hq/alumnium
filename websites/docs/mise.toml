@@ -9,6 +9,7 @@ run = "bun run astro-check"
 
 [tasks.build]
 run = "bun run astro build"
+depends = ["fetch/github"]
 
 [tasks."dev:build"]
 run = "fnox exec -- bun run astro preview"
@@ -40,6 +41,9 @@ run = '''
 curl https://raw.githubusercontent.com/steel-dev/leaderboard/refs/heads/main/src/data/webvoyager.json > \
   ./src/data/webvoyager.json
 '''
+
+[tasks."fetch/github"]
+run = "bun scripts/fetchGitHubMetadata.ts"
 
 [tasks."fetch/asciinema"]
 run = "bun scripts/fetchAsciinemaMetadata.ts"

@@ -33,6 +33,8 @@ jobs:
       - run: mise //websites/docs:generate/install-scripts
       - run: mise //websites/docs:test/install-scripts
       - run: mise //websites/docs:build
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
       - uses: cloudflare/wrangler-action@v4
         id: deployment
         with:

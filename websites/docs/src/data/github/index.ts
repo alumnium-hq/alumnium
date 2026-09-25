@@ -136,10 +136,10 @@ export abstract class GitHubData {
       .sort((a, b) => b.contributions - a.contributions);
   }
 
-  static async fetchReleases(): Promise<GitHubData.Release[]> {
+  static async fetchReleases(token?: string): Promise<GitHubData.Release[]> {
     const releasesApiUrl = `${GitHubData.repositoryApiUrl(githubRepositoryUrl)}/releases?per_page=30`;
     const response = await fetch(releasesApiUrl, {
-      headers: GitHubData.headers(),
+      headers: GitHubData.headers(token),
     });
 
     if (!response.ok)
