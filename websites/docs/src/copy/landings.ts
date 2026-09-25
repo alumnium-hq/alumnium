@@ -501,7 +501,9 @@ const sections = {
 
             copy: md`
               Let coding agents drive and verify web or mobile applications
-              without filling their context with low-level UI details.
+              without filling their context with low-level UI details. Or,
+              if you are tokenmaxxing, use the MCP server _direct_ mode to
+              make coding agents faster.
 
               Connect an MCP-compatible coding agent, or build your own agent on
               top of Alumnium's MCP tools. The server uses local stdio transport.
@@ -1986,10 +1988,10 @@ const sections = {
 export const ttLandings = {
   banners: {
     sota: {
-      href: "/blog/webvoyager-benchmark/",
+      href: "/blog/release-0230/",
 
       headline: langs({
-        en: "SOTA on WebVoyager with 98.5%",
+        en: "v0.23 with direct MCP mode, 10x faster, Maestro",
       }),
     },
   },

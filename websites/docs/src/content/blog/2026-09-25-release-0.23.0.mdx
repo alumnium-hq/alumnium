@@ -1,0 +1,141 @@
+---
+title: Alumnium v0.23 - direct MCP mode, 10x faster synchronization, Maestro, and AI SDK with new models
+pubDate: 2026-09-25
+description: Alumnium v0.23 released with a direct MCP mode, 10x faster synchronization, a Maestro driver for iOS and Android, a migration to the AI SDK, and upgraded default models
+author:
+  name: Alex Rodionov
+  image: alex_rodionov.jpeg
+tags: ["release notes"]
+---
+
+import mcpModes from "../../assets/mcp-modes.svg";
+import maestroDriver from "../../assets/maestro-driver.png";
+
+Alumnium [v0.23][1] brings a new "direct" MCP mode, 10x faster synchronization, and [Maestro][6] support in MCP for iOS and Android. It also migrates the core from [LangChain.js][7] to the [AI SDK][8]. It's available through [Maven Central][2], [npm][3], [PyPI][4], and [Docker][5].
+
+## Direct MCP Mode
+
+Alumnium has always operated as a lightweight agent that receives natural language instructions about what to `do`, `get`, or `check` and then uses AI to translate them into tool calls for the application under test. This delegation is reliable, cheap, and [capable][9]. It's also fast when used directly from code with [caching][10] enabled. However, things get more complicated when you pair Alumnium with a coding assistant via MCP.
+
+In this case, every step that the coding assistant wants to take requires at least two LLM requests:
+
+1. A request to the coding assistant's LLM to produce a `do` tool call.
+1. A request to Alumnium's LLM to translate the `do` instruction into a plan _(if the planner is enabled)_.
+1. One or more requests to Alumnium's LLM to translate each planned step into driver tool calls.
+1. A request to Alumnium's LLM to summarize how the application changed after executing all steps _(if change analysis is enabled)_.
+
+These requests might seem excessive at first, but they reduce the coding assistant's token usage and the overall cost. It's a classic trade-off between **speed and cost**. Alumnium was designed to favor cheaper execution so it could be used to run thousands of tests. Yet cost isn't a concern for many companies, especially AI labs with effectively unlimited token budgets.
+
+In addition to the default **agentic** mode of operation, we're adding a **direct** mode that bypasses all LLM requests from Alumnium. It exposes Alumnium's internal toolset directly to the coding assistant. In this mode, the coding assistant fetches the accessibility tree directly into its context and then decides which URL to open, which elements to click, what to type, etc. Here is a comparison of the two modes, both using Sonnet 5 for the same testing task:
+
+<video
+  class="rounded-xl"
+  alt="A screen recording of Alumnium direct and agentic MCP modes"
+  controls
+  muted
+  width="60%"
+>
+  <source src="/videos/mcp-modes.mp4" type="video/mp4" />
+  <source src="/videos/mcp-modes.webm" type="video/webm" />
+</video>
+
+When using direct MCP mode, you're trading higher costs and token usage for shorter execution times. Tests run faster but burn more tokens and ultimately cost more. You can see roughly a 2x difference across the board:
+
+<img
+  src={mcpModes.src}
+  class="rounded-xl"
+  alt="Comparison of Alumnium direct and agentic MCP modes"
+/>
+
+To use direct MCP mode, simply run the server with `alumnium mcp --mode direct` and then prompt your agent as usual. Direct mode works the same way for web, iOS, and Android platforms. Check out our [revamped MCP documentation][11] for more details and enjoy tokenmaxxing!
+
+## 10x Faster Synchronization
+
+Synchronization lets Alumnium wait until the application is stable before capturing its state. Without it, tests are flaky, either because `do` is incomplete (e.g., a button we'd like to click hasn't appeared yet) or `check` runs prematurely, leading to false positives or negatives. The overall approach to synchronization is to wait for network requests to complete and the DOM to settle. There is, of course, more nuance to it, but this is the core idea.
+
+The caveat is that you never know exactly when to _start waiting_. If you check too early, network requests might not have started yet, making everything look stable. A quiet moment doesn't guarantee that the application has finished updating, so synchronization has to rely on heuristics. To compensate, Alumnium gives the application some headroom before synchronization starts. This used to be a generous 500 ms, but we've now managed to get it all the way down to 50 ms without sacrificing quality. We made this possible by improving the synchronization algorithm and injecting it before the application loads, ensuring we don't miss requests or DOM mutations due to race conditions. As a result, overall synchronization times are reduced by ~10x:
+
+- _P50_: 586 ms → 50 ms
+- _P90_: 1000 ms → 81 ms
+- _P95_: 1070 ms → 268 ms
+- _P99_: 3040 ms → 1520 ms
+
+## Maestro
+
+Alumnium's support for running tests on iOS and Android platforms now goes beyond Appium with a new driver for [Maestro][6]. The Alumnium integration is built on top of the Maestro CLI, which provides the closest equivalent to the programmatic APIs that other drivers rely on.
+
+To start using Maestro, install the [Maestro CLI][12], set up [Alumnium MCP][11], and then run your coding assistant with the Maestro driver.
+
+```bash
+export ALUMNIUM_DRIVER=maestro
+claude  # replace with your coding assistant command
+```
+
+Once the assistant is connected, you can start iOS and Android sessions as usual:
+
+> _Test YouTube search filters for "Type" on Android._
+
+<img
+  src={maestroDriver.src}
+  alt="Claude Code testing YouTube search filters on Android using Alumnium and Maestro"
+/>
+
+To simplify switching between Appium and Maestro, Alumnium now provides a consistent set of options that map to Appium capabilities or Maestro commands:
+
+```jsonc
+{
+  "alumnium:options": {
+    "app": "...", // bundle identifier or path to .app/.ipa/.apk
+    "appArguments": ["..."], // launch arguments to pass to the app
+    "appEnvironment": { "...": "..." }, // launch environment for the app
+    "device": "...", // emulator/device UDID or name
+  },
+}
+```
+
+## Migration to AI SDK
+
+Alumnium used [LangChain][13] from the very beginning, later migrating to [LangChain.js][7] as we transitioned to a TypeScript core. It allowed us to quickly experiment with new model providers, prompting techniques, and other LLM-specific features. However, it also brought additional complexity to the project, making it harder to maintain and extend. One example was poor type support, which led us to create a [unified type schema][14] for all supported models as we struggled to ensure that all LLMs behaved consistently.
+
+Over time, we closely watched the development of the [AI SDK][8], and eventually it became clear that it would greatly simplify the Alumnium codebase while also providing a rich feature set for our AI-driven testing capabilities. This release completes the long transition from LangChain to the AI SDK. No action is required from users, as Alumnium's functionality remains the same.
+
+## Model Upgrades
+
+Alongside the migration to the AI SDK, we've replaced default models that were deprecated or no longer available:
+
+| Provider             | Old Model               | New Model             |
+| -------------------- | ----------------------- | --------------------- |
+| DeepSeek             | deepseek-reasoner       | deepseek-flash        |
+| Google               | gemini-3.1-flash-lite   | gemini-3.5-flash-lite |
+| MistralAI            | mistral-medium-2505     | mistral-medium-3-5    |
+| OpenAI, Azure, Codex | gpt-5-nano              | gpt-5.6-luna          |
+| xAI                  | grok-4-1-fast-reasoning | grok-4.3              |
+
+We have also added native support for [OpenRouter][15], defaulting to the GPT-5.6 Luna model:
+
+```bash
+export ALUMNIUM_MODEL="openrouter/openai/gpt-5.6-luna"
+export OPENROUTER_API_KEY="sk-or-v1-..."
+```
+
+## Coming Next
+
+We hope to finish `alumnium test`, a CLI tool for running tests written in Markdown using Alumnium, in the next release. We are also planning to replace outdated models such as Llama with modern alternatives (e.g., Muse Spark). On top of that, we're working on automatically gathering artifacts and usage statistics during test execution, allowing you to build beautiful and detailed reports from Alumnium test runs.
+
+Stay tuned!
+
+[1]: https://github.com/alumnium-hq/alumnium/releases/tag/0.23.0
+[2]: https://central.sonatype.com/artifact/ai.alumnium/alumnium
+[3]: https://www.npmjs.com/package/alumnium
+[4]: https://pypi.org/project/alumnium/
+[5]: https://hub.docker.com/r/alumnium/alumnium
+[6]: https://maestro.dev
+[7]: https://github.com/langchain-ai/langchainjs
+[8]: https://ai-sdk.dev
+[9]: /blog/webvoyager-benchmark/
+[10]: /docs/guides/caching/
+[11]: /docs/mcp/overview/
+[12]: https://docs.maestro.dev/maestro-cli/how-to-install-maestro-cli
+[13]: https://github.com/langchain-ai/langchain
+[14]: https://github.com/alumnium-hq/alumnium/pull/299
+[15]: https://openrouter.ai
