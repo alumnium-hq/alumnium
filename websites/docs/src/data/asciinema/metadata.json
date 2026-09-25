@@ -11,16 +11,22 @@
     "cols": 83,
     "rows": 19
   },
-  "https://asciinema.org/a/ykvDh9Pkp7U0safp.cast": {
-    "src": "https://asciinema.org/a/ykvDh9Pkp7U0safp.cast",
-    "version": 2,
-    "cols": 83,
-    "rows": 19
+  "https://asciinema.org/a/Bfj6PLTAuuNT6Arc.cast": {
+    "src": "https://asciinema.org/a/Bfj6PLTAuuNT6Arc.cast",
+    "version": 3,
+    "cols": 50,
+    "rows": 15
   },
-  "https://asciinema.org/a/8vVioaoB2TIsLlAc.cast": {
-    "src": "https://asciinema.org/a/8vVioaoB2TIsLlAc.cast",
-    "version": 2,
-    "cols": 83,
-    "rows": 19
+  "https://asciinema.org/a/WNcWXxKilSzvm6TJ.cast": {
+    "src": "https://asciinema.org/a/WNcWXxKilSzvm6TJ.cast",
+    "version": 3,
+    "cols": 146,
+    "rows": 68
+  },
+  "https://asciinema.org/a/1p2JMgXY65jQbTrB.cast": {
+    "src": "https://asciinema.org/a/1p2JMgXY65jQbTrB.cast",
+    "version": 3,
+    "cols": 146,
+    "rows": 68
   }
 }
