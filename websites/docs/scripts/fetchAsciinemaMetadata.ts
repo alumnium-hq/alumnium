@@ -4,8 +4,9 @@ import { fileURLToPath } from "node:url";
 
 interface AsciicastHeader {
   version: number;
-  width: number;
-  height: number;
+  width?: number;
+  height?: number;
+  term?: { cols?: number; rows?: number };
 }
 
 interface RecordingMetadata {
@@ -35,20 +36,18 @@ async function fetchHeader(src: string): Promise<RecordingMetadata> {
   const firstLine = (await response.text()).split("\n", 1)[0];
   const header = JSON.parse(firstLine) as Partial<AsciicastHeader>;
 
+  const cols = header.term?.cols ?? header.width;
+  const rows = header.term?.rows ?? header.height;
+
   if (
     typeof header.version !== "number" ||
-    typeof header.width !== "number" ||
-    typeof header.height !== "number"
+    typeof cols !== "number" ||
+    typeof rows !== "number"
   ) {
     throw new Error(`Invalid asciicast header for ${src}`);
   }
 
-  return {
-    src,
-    version: header.version,
-    cols: header.width,
-    rows: header.height,
-  };
+  return { src, version: header.version, cols, rows };
 }
 
 const recordings = await readRecordings();

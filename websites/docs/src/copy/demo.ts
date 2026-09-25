@@ -1,23 +1,30 @@
+import type { PlayerOptions } from "asciinema-player";
 import { langs, type I18n } from "./i18n";
+
+// Recorded at 146x68, which renders tiny text; reflow into a smaller terminal.
+const testRunnerOptions = { cols: 70, rows: 20 };
 
 export const ttDemo = {
   "demo-test-runner": [
     demoTab({
       id: "record",
       label: langs({ en: "Recording" }),
-      src: "https://asciinema.org/a/ixXpWF5XCyFEMjMo.cast",
+      src: "https://asciinema.org/a/Bfj6PLTAuuNT6Arc.cast",
+      options: testRunnerOptions,
     }),
 
     demoTab({
       id: "run",
       label: langs({ en: "Running" }),
-      src: "https://asciinema.org/a/ykvDh9Pkp7U0safp.cast",
+      src: "https://asciinema.org/a/WNcWXxKilSzvm6TJ.cast",
+      options: testRunnerOptions,
     }),
 
     demoTab({
       id: "self-healing",
       label: langs({ en: "Self-Healing" }),
-      src: "https://asciinema.org/a/8vVioaoB2TIsLlAc.cast",
+      src: "https://asciinema.org/a/1p2JMgXY65jQbTrB.cast",
+      options: testRunnerOptions,
     }),
   ] as const,
 
@@ -32,6 +39,7 @@ export namespace TtDemo {
     id: Id;
     label: I18n.FullLangsMap<string>;
     src: DemoSrc;
+    options?: PlayerOptions;
   }
 
   export type DemoSrc = keyof typeof import("#/data/asciinema/metadata.json");

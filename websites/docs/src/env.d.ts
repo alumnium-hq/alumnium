@@ -16,6 +16,8 @@ declare module "*.svg" {
 declare module "asciinema-player" {
   export interface PlayerOptions {
     // See: https://docs.asciinema.org/manual/player/options/
+    cols?: number;
+    rows?: number;
     preload?: boolean;
     theme?: string;
   }

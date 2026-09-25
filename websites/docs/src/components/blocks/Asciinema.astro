@@ -46,9 +46,12 @@ const LINE_HEIGHT = 1.3333333333; // em
 const PLAYER_BAR_HEIGHT = 32; // px
 const FONT_SIZE = 16; // px
 
-const width = metadata.cols * CH + PLAYER_CANVAS_BORDER_WIDTH * FONT_SIZE * 2;
+const cols = optionsProp?.cols ?? metadata.cols;
+const rows = optionsProp?.rows ?? metadata.rows;
+
+const width = cols * CH + PLAYER_CANVAS_BORDER_WIDTH * FONT_SIZE * 2;
 const height =
-  metadata.rows * LINE_HEIGHT * FONT_SIZE +
+  rows * LINE_HEIGHT * FONT_SIZE +
   PLAYER_CANVAS_BORDER_WIDTH * FONT_SIZE * 2 +
   PLAYER_BAR_HEIGHT;
 
