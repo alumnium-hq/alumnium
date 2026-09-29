@@ -18,7 +18,8 @@ const { src, label, aspectRatio = "4 / 3", musicLicense, muted } = Astro.props;
     aria-label={label}
     muted={!!muted}
   >
-    <source src={src} />
+    <source src={`${src}.mp4`} />
+    <source src={`${src}.webm`} />
   </video>
 
   <button class="play" type="button" aria-label={label}>
