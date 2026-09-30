@@ -2,7 +2,7 @@ import pytest
 
 from alumnium.alumni import Alumni
 from alumnium.artifacts_store import ArtifactsStore
-from alumnium.metrics import TokenUsage, record_metrics
+from alumnium.metrics import Tokens, TokenUsage, record_metrics
 
 # A valid 1x1 transparent PNG, base64-encoded.
 PNG_1X1 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
@@ -18,10 +18,12 @@ class _FakeClient:
     """Stands in for HttpClient: accrues a cumulative token total the decorator diffs against."""
 
     def __init__(self):
-        self.usage_total = TokenUsage()
+        self.tokens_total = Tokens()
 
     def spend(self, input_tokens: int) -> None:
-        self.usage_total = self.usage_total + TokenUsage(input_tokens=input_tokens, total_tokens=input_tokens)
+        self.tokens_total = self.tokens_total + Tokens(
+            total=TokenUsage(input_tokens=input_tokens, total_tokens=input_tokens)
+        )
 
 
 def _make_alumni(tmp_path, capture_screenshots: bool = True) -> Alumni:
@@ -69,7 +71,7 @@ def test_record_metrics_passed_captures_tokens_and_artifact(tmp_path):
     assert step.kind == "do"
     assert step.label == "click button"
     assert step.outcome == "passed"
-    assert step.tokens.input_tokens == 7
+    assert step.tokens.total.input_tokens == 7
     assert step.finished_at >= step.started_at
     assert step.duration >= 0
     assert len(step.artifacts) == 1
@@ -86,7 +88,7 @@ def test_record_metrics_failed_on_exception_and_reraises(tmp_path):
     assert al._steps[0].outcome == "failed"
     assert al._steps[0].kind == "check"
     # Tokens spent before the failure are still attributed to the step.
-    assert al._steps[0].tokens.input_tokens == 3
+    assert al._steps[0].tokens.total.input_tokens == 3
 
 
 def test_record_metrics_skips_screenshots_when_disabled(tmp_path):
@@ -104,8 +106,8 @@ def test_record_metrics_reports_only_each_step_own_token_delta(tmp_path):
     do(al, "click button")
     get(al, "cart total again")
 
-    assert al.client.usage_total.input_tokens == 91
-    assert [step.tokens.input_tokens for step in al._steps] == [42, 7, 42]
+    assert al.client.tokens_total.total.input_tokens == 91
+    assert [step.tokens.total.input_tokens for step in al._steps] == [42, 7, 42]
 
 
 def test_record_metrics_records_zero_tokens_for_a_call_that_spends_nothing(tmp_path):
@@ -113,16 +115,16 @@ def test_record_metrics_records_zero_tokens_for_a_call_that_spends_nothing(tmp_p
     do(al, "click button")
     check_no_spend(al, "nothing happens")
 
-    assert [step.tokens.input_tokens for step in al._steps] == [7, 0]
+    assert [step.tokens.total.input_tokens for step in al._steps] == [7, 0]
 
 
 def test_metrics_property_reports_session_totals_and_ordered_steps(tmp_path):
     al = _make_alumni(tmp_path)
-    al.client.usage_total = TokenUsage(input_tokens=8)  # e.g. a find() call that is not a recorded step
+    al.client.tokens_total = Tokens(total=TokenUsage(input_tokens=8))  # e.g. a find() call that is not a recorded step
     get(al, "cart total")
 
     metrics = al.metrics
-    assert metrics.tokens.input_tokens == 50
+    assert metrics.tokens.total.input_tokens == 50
     assert len(metrics.steps) == 1
     assert metrics.steps[0].kind == "get"
     assert metrics.last is metrics.steps[-1]

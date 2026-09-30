@@ -23,13 +23,15 @@ al.check("the todo list contains 'Buy milk'")
 
 m = al.metrics
 m.duration               # total session duration (seconds)
-m.tokens                 # session token usage (input_tokens, output_tokens, total_tokens, ...)
+m.tokens.total           # session token usage (input_tokens, output_tokens, total_tokens, ...)
+m.tokens.cached          # the part replayed from Alumnium's response cache (not billed)
+m.tokens.paid            # total - cached: tokens actually sent to the model provider
 
 step = m.steps[0]        # first call (the do())
 step.kind                # "do" | "check" | "get"
 step.outcome             # "passed" | "failed" (failed = the call raised)
 step.duration            # seconds
-step.tokens.input_tokens # per-step token usage
+step.tokens.total.input_tokens # per-step token usage (same total/cached/paid shape)
 step.artifacts           # list[Artifact(path, kind, mime)] — screenshots, when enabled
 
 m.last                   # the most recent step (== m.steps[-1])

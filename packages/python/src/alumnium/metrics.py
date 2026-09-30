@@ -46,6 +46,37 @@ class TokenUsage:
 
 
 @dataclass
+class Tokens:
+    """Token usage for a single call or a whole session.
+
+    `total` is everything the agents consumed; `cached` is the part of it replayed from Alumnium's
+    response cache, which the model provider did not bill. Mirrors the server's `LlmTokens` schema.
+    """
+
+    total: TokenUsage = field(default_factory=TokenUsage)
+    cached: TokenUsage = field(default_factory=TokenUsage)
+
+    @property
+    def paid(self) -> TokenUsage:
+        """Tokens actually sent to the model provider (`total - cached`)."""
+        return self.total - self.cached
+
+    @staticmethod
+    def from_dict(data: dict[str, dict[str, int]] | None) -> "Tokens":
+        data = data or {}
+        return Tokens(
+            total=TokenUsage.from_dict(data.get("total")),
+            cached=TokenUsage.from_dict(data.get("cached")),
+        )
+
+    def __add__(self, other: "Tokens") -> "Tokens":
+        return Tokens(total=self.total + other.total, cached=self.cached + other.cached)
+
+    def __sub__(self, other: "Tokens") -> "Tokens":
+        return Tokens(total=self.total - other.total, cached=self.cached - other.cached)
+
+
+@dataclass
 class Artifact:
     """A file captured during a step (screenshot, trace, ...), typed so consumers route by kind/mime."""
 
@@ -67,7 +98,7 @@ class StepMetrics:
     started_at: float
     finished_at: float
     duration: float
-    tokens: TokenUsage = field(default_factory=TokenUsage)
+    tokens: Tokens = field(default_factory=Tokens)
     artifacts: list[Artifact] = field(default_factory=list)
 
 
@@ -78,7 +109,7 @@ class SessionMetrics:
     started_at: float
     finished_at: float
     duration: float
-    tokens: TokenUsage = field(default_factory=TokenUsage)
+    tokens: Tokens = field(default_factory=Tokens)
     steps: list[StepMetrics] = field(default_factory=list)
 
     @property
@@ -102,7 +133,7 @@ def record_metrics(method: FunctionType):
     def wrapper(self: "Alumni", label: str, *args, **kwargs):
         started_at = time.time()
         monotonic_start = time.monotonic()
-        usage_before = self.client.usage_total
+        tokens_before = self.client.tokens_total
         outcome: Literal["passed", "failed"] = "passed"
         try:
             return method(self, label, *args, **kwargs)
@@ -120,7 +151,7 @@ def record_metrics(method: FunctionType):
                     started_at=started_at,
                     finished_at=time.time(),
                     duration=duration,
-                    tokens=self.client.usage_total - usage_before,
+                    tokens=self.client.tokens_total - tokens_before,
                     artifacts=[artifact] if artifact is not None else [],
                 )
             )

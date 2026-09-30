@@ -55,3 +55,29 @@ export function createLlmUsageStats(): LlmUsageStats {
     cache: createLlmUsage(),
   };
 }
+
+/**
+ * Per-call token usage reported to clients. `cached` is the part of `total`
+ * that was replayed from the Alumnium response cache and not billed by the
+ * model provider, so paid tokens are `total - cached`.
+ */
+export const LlmTokens = z.object({
+  total: LlmUsage,
+  cached: LlmUsage,
+});
+
+export type LlmTokens = z.infer<typeof LlmTokens>;
+
+/**
+ * Compute the per-call tokens as the difference between two cumulative
+ * session stats snapshots (taken before and after an agent invocation).
+ */
+export function diffLlmUsageStats(
+  after: LlmUsageStats,
+  before: LlmUsageStats,
+): LlmTokens {
+  return {
+    total: subtractLlmUsage(after.total, before.total),
+    cached: subtractLlmUsage(after.cache, before.cache),
+  };
+}

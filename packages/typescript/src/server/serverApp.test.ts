@@ -200,7 +200,7 @@ describe("serverApp", () => {
           "Step 2: Enter 'Buy milk'",
           "Step 3: Press Enter",
         ],
-        usage: createLlmUsage(),
+        tokens: { total: createLlmUsage(), cached: createLlmUsage() },
       });
     });
 
@@ -251,7 +251,7 @@ describe("serverApp", () => {
           { args: { id: 9, text: "Buy milk" }, name: "type" },
         ],
         explanation: "Clicking the element and typing text",
-        usage: createLlmUsage(),
+        tokens: { total: createLlmUsage(), cached: createLlmUsage() },
       });
     });
   });
@@ -273,7 +273,7 @@ describe("serverApp", () => {
         explanation:
           "Found the requested information in the accessibility tree",
         result: "true",
-        usage: createLlmUsage(),
+        tokens: { total: createLlmUsage(), cached: createLlmUsage() },
       });
     });
   });

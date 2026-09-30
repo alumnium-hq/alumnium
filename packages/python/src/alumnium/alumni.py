@@ -294,7 +294,7 @@ class Alumni:
             started_at=self._metrics_started_at,
             finished_at=finished_at,
             duration=finished_at - self._metrics_started_at,
-            tokens=self.client.usage_total,
+            tokens=self.client.tokens_total,
             steps=list(self._steps),
         )
 
