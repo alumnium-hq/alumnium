@@ -1,0 +1,143 @@
+# Default values for the Alumnium server chart.
+
+# NOTE: Sessions are kept in memory, so each client must keep talking to the
+# same pod. Keep a single replica unless `service.sessionAffinity` is set to
+# `ClientIP` and your ingress is configured for sticky sessions.
+replicaCount: 1
+
+image:
+  repository: alumnium/alumnium
+  pullPolicy: IfNotPresent
+  # Defaults to the chart appVersion.
+  tag: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+# Alumnium server configuration, rendered as environment variables.
+config:
+  # ALUMNIUM_MODEL, e.g. "anthropic", "openai/gpt-5.1", "ollama". Empty uses the server default.
+  model: ""
+  # ALUMNIUM_CACHE: "filesystem" or "false".
+  cache: "filesystem"
+  # ALUMNIUM_LOG_LEVEL. Empty uses the server default.
+  logLevel: ""
+
+# Provider API keys and other sensitive env vars, stored in a chart-managed Secret.
+# Example:
+#   secrets:
+#     ANTHROPIC_API_KEY: sk-ant-...
+secrets: {}
+
+# Use a pre-existing Secret (loaded via envFrom) instead of, or in addition to, `secrets`.
+existingSecret: ""
+
+# Extra environment variables for the server container.
+env: []
+#  - name: ALUMNIUM_OLLAMA_URL
+#    value: http://ollama:11434
+
+# Extra envFrom sources for the server container.
+envFrom: []
+
+# Extra arguments appended to `alumnium server --host 0.0.0.0 --port <service.port>`.
+extraArgs: []
+
+serviceAccount:
+  create: true
+  automount: false
+  annotations: {}
+  # Defaults to the fullname template when `create` is true.
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+# Matches the image's non-root `alumnium` user (65532). Writable paths
+# (/app/.alumnium, /tmp) are mounted as volumes, so the root filesystem can be read-only.
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 65532
+  runAsGroup: 65532
+  fsGroup: 65532
+  fsGroupChangePolicy: OnRootMismatch
+  seccompProfile:
+    type: RuntimeDefault
+
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop:
+      - ALL
+
+service:
+  type: ClusterIP
+  port: 8013
+  # Set to "ClientIP" to pin clients to a pod when running more than one replica.
+  sessionAffinity: None
+  annotations: {}
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: alumnium.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+  #  - secretName: alumnium-tls
+  #    hosts:
+  #      - alumnium.local
+
+# Filesystem cache for LLM responses and elements, mounted at /app/.alumnium/cache.
+persistence:
+  enabled: false
+  # Use an existing PVC instead of creating one.
+  existingClaim: ""
+  storageClass: ""
+  accessModes:
+    - ReadWriteOnce
+  size: 1Gi
+  annotations: {}
+
+resources: {}
+  # requests:
+  #   cpu: 100m
+  #   memory: 256Mi
+  # limits:
+  #   memory: 1Gi
+
+livenessProbe:
+  httpGet:
+    path: /v1/health
+    port: http
+  periodSeconds: 10
+  failureThreshold: 3
+
+readinessProbe:
+  httpGet:
+    path: /v1/health
+    port: http
+  periodSeconds: 5
+  failureThreshold: 3
+
+startupProbe:
+  httpGet:
+    path: /v1/health
+    port: http
+  periodSeconds: 2
+  failureThreshold: 30
+
+# Long-running LLM requests may be in flight when a pod is stopped.
+terminationGracePeriodSeconds: 60
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+volumes: []
+volumeMounts: []
