@@ -1,8 +1,8 @@
 import pytest
 
-from alumnium.alumni import Alumni, record_metrics
+from alumnium.alumni import Alumni
 from alumnium.artifacts_store import ArtifactsStore
-from alumnium.metrics import TokenUsage
+from alumnium.metrics import TokenUsage, record_metrics
 
 # A valid 1x1 transparent PNG, base64-encoded.
 PNG_1X1 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="

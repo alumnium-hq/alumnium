@@ -47,7 +47,7 @@ class BaseDriver(ABC):
 
     def save_trace(self, path: Path) -> bool:
         """
-        Stops the driver trace started at initialization and writes it to the given path.
+        Stops the trace started at initialization and writes it to the given path.
 
         Returns False when the driver does not support tracing or tracing was not started.
         """

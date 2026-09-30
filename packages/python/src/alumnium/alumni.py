@@ -1,10 +1,7 @@
 import time
 from asyncio import AbstractEventLoop
-from functools import wraps
 from os import getenv
 from pathlib import Path
-from types import FunctionType
-from typing import Literal, cast
 
 from appium.webdriver.webdriver import WebDriver as Appium
 from playwright.async_api import Page as PageAsync
@@ -15,9 +12,9 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from . import (
     ARTIFACTS_DIR,
     CAPTURE_SCREENSHOTS,
+    CAPTURE_TRACE,
     CHANGE_ANALYSIS,
     DELAY,
-    DRIVER_TRACE,
     EXCLUDE_ATTRIBUTES,
     PLANNER,
     RETRIES,
@@ -33,53 +30,12 @@ from .drivers.playwright_async_driver import PlaywrightAsyncDriver
 from .drivers.playwright_driver import PlaywrightDriver
 from .drivers.selenium_driver import SeleniumDriver
 from .logutils import get_logger
-from .metrics import Artifact, SessionMetrics, SessionTokens, StepMetrics, TokenUsage
+from .metrics import Artifact, SessionMetrics, SessionTokens, StepMetrics, TokenUsage, record_metrics
 from .models import Model
 from .result import DoResult, DoStep
 from .tools import BaseTool
 
 logger = get_logger(__name__)
-
-
-def record_metrics(method: FunctionType):
-    """
-    Records one `StepMetrics` entry per public `do()`/`check()`/`get()` call.
-
-    Wraps the retried method, so the recorded duration and token usage cover every attempt and the
-    outcome is decided by whether the call ultimately raised. The step kind is the method name and
-    the label is its first argument (the goal, statement, or data description).
-    """
-
-    kind = cast(Literal["do", "check", "get"], method.__name__)
-
-    @wraps(method)
-    def wrapper(self: "Alumni", label: str, *args, **kwargs):
-        started_at = time.time()
-        monotonic_start = time.monotonic()
-        usage_before = self.client.usage_total
-        outcome: Literal["passed", "failed"] = "passed"
-        try:
-            return method(self, label, *args, **kwargs)
-        except Exception:
-            outcome = "failed"
-            raise
-        finally:
-            duration = time.monotonic() - monotonic_start
-            artifact = self._capture_screenshot(label)
-            self._steps.append(
-                StepMetrics(
-                    kind=kind,
-                    label=label,
-                    outcome=outcome,
-                    started_at=started_at,
-                    finished_at=time.time(),
-                    duration=duration,
-                    tokens=self.client.usage_total - usage_before,
-                    artifacts=[artifact] if artifact is not None else [],
-                )
-            )
-
-    return wrapper
 
 
 class Alumni:
@@ -93,18 +49,18 @@ class Alumni:
         change_analysis: bool | None = None,
         exclude_attributes: set[str] | None = None,
         capture_screenshots: bool | None = None,
-        driver_trace: bool | None = None,
+        capture_trace: bool | None = None,
     ):
         planner = planner if planner is not None else PLANNER
         self.change_analysis = change_analysis if change_analysis is not None else CHANGE_ANALYSIS
         exclude_attributes = exclude_attributes if exclude_attributes is not None else EXCLUDE_ATTRIBUTES
         self.capture_screenshots = capture_screenshots if capture_screenshots is not None else CAPTURE_SCREENSHOTS
-        driver_trace = driver_trace if driver_trace is not None else DRIVER_TRACE
+        capture_trace = capture_trace if capture_trace is not None else CAPTURE_TRACE
 
         if isinstance(driver, Appium):
             self.driver = AppiumDriver(driver)
         elif isinstance(driver, Page):
-            self.driver = PlaywrightDriver(driver, driver_trace=driver_trace)
+            self.driver = PlaywrightDriver(driver, capture_trace=capture_trace)
         elif (
             isinstance(driver, tuple) and isinstance(driver[0], PageAsync) and isinstance(driver[1], AbstractEventLoop)
         ):
@@ -146,7 +102,7 @@ class Alumni:
         self._metrics_started_at = time.time()
 
     def quit(self) -> None:
-        # Write the driver trace while the session and driver are still alive.
+        # Write the captured trace while the session and driver are still alive.
         self.driver.save_trace(self._artifacts.trace_path)
         self.client.quit()
         self.driver.quit()
@@ -324,13 +280,6 @@ class Alumni:
         Clears the learn examples.
         """
         self.client.clear_examples()
-
-    @property
-    def stats(self) -> dict[str, dict[str, int]]:
-        """
-        Returns the stats of the session.
-        """
-        return self.client.stats
 
     @property
     def metrics(self) -> SessionMetrics:

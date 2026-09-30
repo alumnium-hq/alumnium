@@ -38,10 +38,10 @@ m.last                   # the most recent step (== m.steps[-1])
 Artifact capture is opt-in, because screenshots and traces slow down execution:
 
 ```python
-al = Alumni(driver, capture_screenshots=True, driver_trace=True)
+al = Alumni(driver, capture_screenshots=True, capture_trace=True)
 ```
 
-With `capture_screenshots` enabled, a screenshot is saved after every call and attached to that step's `artifacts`. With `driver_trace` enabled, the Playwright driver records a trace for the whole session and writes it to `trace.zip` on `al.quit()`. Leave `driver_trace` off if you start tracing on the Playwright context yourself. Both are written under `al.artifacts_dir`; see [`ALUMNIUM_ARTIFACTS_DIR`](#alumnium_artifacts_dir).
+With `capture_screenshots` enabled, a screenshot is saved after every call and attached to that step's `artifacts`. With `capture_trace` enabled, the Playwright driver records a trace for the whole session and writes it to `trace.zip` on `al.quit()`. Leave `capture_trace` off if you start tracing on the Playwright context yourself. Both are written under `al.artifacts_dir`; see [`ALUMNIUM_ARTIFACTS_DIR`](#alumnium_artifacts_dir).
 
 Read `al.metrics` before calling `al.quit()` for server-authoritative session token totals. The existing `al.stats` property is unchanged.
 
@@ -78,9 +78,9 @@ Set to `true` to enable analysis of UI changes made by `do()`. When enabled, Alu
 
 Delay in seconds between retries when an action fails. Default is `0.5`.
 
-### `ALUMNIUM_DRIVER_TRACE`
+### `ALUMNIUM_CAPTURE_TRACE`
 
-Set to `true` to record a driver-level trace for the session. Currently only the Playwright driver implements this: it starts a Playwright trace (with screenshots and snapshots) when `Alumni()` is created and writes it to `trace.zip` under `al.artifacts_dir` on `al.quit()`. Other drivers ignore it. Default is `false`, so Alumnium never interferes with tracing you start yourself. Equivalent to the `driver_trace` option of `Alumni()`. Unrelated to [`ALUMNIUM_TRACE`](#alumnium_trace), which controls OpenTelemetry tracing.
+Set to `true` to record a driver-level trace for the session. Currently only the Playwright driver implements this: it starts a Playwright trace (with screenshots and snapshots) when `Alumni()` is created and writes it to `trace.zip` under `al.artifacts_dir` on `al.quit()`. Other drivers ignore it. Default is `false`, so Alumnium never interferes with tracing you start yourself. Equivalent to the `capture_trace` option of `Alumni()`. Unrelated to [`ALUMNIUM_TRACE`](#alumnium_trace), which controls OpenTelemetry tracing.
 
 ### `ALUMNIUM_EXCLUDE_ATTRIBUTES`
 

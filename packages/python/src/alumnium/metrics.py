@@ -1,6 +1,12 @@
+import time
 from dataclasses import dataclass, field
+from functools import wraps
 from pathlib import Path
-from typing import Literal
+from types import FunctionType
+from typing import TYPE_CHECKING, Literal, cast
+
+if TYPE_CHECKING:
+    from .alumni import Alumni
 
 # Field names mirror the server's `LlmUsage` schema (packages/typescript/src/llm/llmSchema.ts)
 # verbatim so the server -> client -> reporter layers cannot drift.
@@ -99,3 +105,44 @@ class SessionMetrics:
     def last(self) -> StepMetrics | None:
         """The most recently recorded step, or None if no calls have been made."""
         return self.steps[-1] if self.steps else None
+
+
+def record_metrics(method: FunctionType):
+    """
+    Records one `StepMetrics` entry per public `do()`/`check()`/`get()` call.
+
+    Wraps the retried method, so the recorded duration and token usage cover every attempt and the
+    outcome is decided by whether the call ultimately raised. The step kind is the method name and
+    the label is its first argument (the goal, statement, or data description).
+    """
+
+    kind = cast(Literal["do", "check", "get"], method.__name__)
+
+    @wraps(method)
+    def wrapper(self: "Alumni", label: str, *args, **kwargs):
+        started_at = time.time()
+        monotonic_start = time.monotonic()
+        usage_before = self.client.usage_total
+        outcome: Literal["passed", "failed"] = "passed"
+        try:
+            return method(self, label, *args, **kwargs)
+        except Exception:
+            outcome = "failed"
+            raise
+        finally:
+            duration = time.monotonic() - monotonic_start
+            artifact = self._capture_screenshot(label)
+            self._steps.append(
+                StepMetrics(
+                    kind=kind,
+                    label=label,
+                    outcome=outcome,
+                    started_at=started_at,
+                    finished_at=time.time(),
+                    duration=duration,
+                    tokens=self.client.usage_total - usage_before,
+                    artifacts=[artifact] if artifact is not None else [],
+                )
+            )
+
+    return wrapper

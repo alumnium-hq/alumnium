@@ -263,7 +263,7 @@ def after_scenario(context, scenario):
             )
             formatter.embed(
                 mime_type="text/plain",
-                data=f"Usage: {context.al.stats}",
+                data=f"Usage: {context.al.metrics.tokens}",
                 caption="Tokens used",
             )
 

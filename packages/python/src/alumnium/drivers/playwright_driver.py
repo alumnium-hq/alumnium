@@ -2,6 +2,7 @@ from base64 import b64encode
 from contextlib import contextmanager
 from dataclasses import dataclass, field
 from os import getenv
+from pathlib import Path
 from time import monotonic
 from urllib.parse import urlparse
 
@@ -35,7 +36,7 @@ class PlaywrightDriver(BaseDriver):
     NOT_SELECTABLE_ERROR = "Element is not a <select> element"
     CONTEXT_WAS_DESTROYED_ERROR = "Execution context was destroyed"
 
-    def __init__(self, page: Page, driver_trace: bool = False):
+    def __init__(self, page: Page, capture_trace: bool = False):
         self.page = page
         self.autoswitch_to_new_tab = True
         self.full_page_screenshot = FULL_PAGE_SCREENSHOT
@@ -57,7 +58,7 @@ class PlaywrightDriver(BaseDriver):
         self._setup_page_tracking(page)
         self.page.context.add_init_script(script=WAITER_SCRIPT)
         self._init_cdp_session()
-        if driver_trace:
+        if capture_trace:
             self._start_tracing()
 
     @property
