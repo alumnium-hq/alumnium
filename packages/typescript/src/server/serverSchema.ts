@@ -93,7 +93,7 @@ export const CreatePlanBody = CacheableRequestBody.extend({
 export const CreatePlanResponse = z.object({
   explanation: z.string(),
   steps: z.array(z.string()),
-  // Per-call token usage consumed by this request (`cached` is the part replayed from the response cache) (absent when the planner is disabled).
+  // Absent when the planner is disabled.
   tokens: LlmTokens.optional(),
 });
 
@@ -111,7 +111,6 @@ export const PlanStepActionsResponse = z.object({
   explanation: z.string(),
   // TODO: Define proper types
   actions: z.array(z.record(z.string(), z.any())),
-  // Per-call token usage consumed by this request (`cached` is the part replayed from the response cache).
   tokens: LlmTokens.optional(),
 });
 
@@ -139,7 +138,6 @@ export const ExecuteStatementBody = CacheableRequestBody.extend({
 export const ExecuteStatementResponse = z.object({
   result: z.union([z.string(), z.array(z.string())]),
   explanation: z.string(),
-  // Per-call token usage consumed by this request (`cached` is the part replayed from the response cache).
   tokens: LlmTokens.optional(),
 });
 

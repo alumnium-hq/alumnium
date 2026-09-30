@@ -68,10 +68,6 @@ export const LlmTokens = z.object({
 
 export type LlmTokens = z.infer<typeof LlmTokens>;
 
-/**
- * Compute the per-call tokens as the difference between two cumulative
- * session stats snapshots (taken before and after an agent invocation).
- */
 export function diffLlmUsageStats(
   after: LlmUsageStats,
   before: LlmUsageStats,

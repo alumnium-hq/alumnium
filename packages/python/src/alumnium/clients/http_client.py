@@ -33,8 +33,7 @@ class HttpClient:
         self._server_pid: str | None = None
         self.base_url = self._resolve_url(url)
         self.session_id = None
-        # Cumulative token usage across all plan/step/statement calls in this session.
-        # Reassigned, never mutated in place, so callers can hold a snapshot and diff against it.
+        # Reassigned, never mutated in place, so callers can snapshot it and diff later.
         self.tokens_total = Tokens()
 
         tool_schemas = convert_tools_to_schemas(tools)

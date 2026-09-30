@@ -95,7 +95,6 @@ class Alumni:
 
         self.cache = Cache(self.client)
 
-        # Execution metrics + artifacts (issue #293).
         self._artifacts = ArtifactsStore(str(self.client.session_id), ARTIFACTS_DIR or None)
         self._steps: list[StepMetrics] = []
         self._step_counter = 0
@@ -284,7 +283,7 @@ class Alumni:
     @property
     def metrics(self) -> SessionMetrics:
         """
-        Returns per-step execution metrics for the session (issue #293).
+        Returns per-step execution metrics for the session.
 
         Steps are ordered by call: ``metrics.steps[i]`` is the i-th do()/check()/get() call.
         Session tokens cover every call to the server, including ``find()`` and ``area()``.

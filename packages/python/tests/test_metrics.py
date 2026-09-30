@@ -18,7 +18,6 @@ def test_token_usage_add_is_pure():
     b = TokenUsage(input_tokens=4, output_tokens=5, total_tokens=6, reasoning=7)
     total = a + b
     assert total == TokenUsage(input_tokens=5, output_tokens=7, total_tokens=9, reasoning=7)
-    # Operands are not mutated.
     assert a.input_tokens == 1
     assert b.reasoning == 7
 
@@ -28,7 +27,6 @@ def test_token_usage_sub_is_pure():
     before = TokenUsage(input_tokens=4, output_tokens=3, total_tokens=7)
     delta = after - before
     assert delta == TokenUsage(input_tokens=6, output_tokens=5, total_tokens=11, reasoning=4)
-    # Operands are not mutated.
     assert after.input_tokens == 10
     assert before.input_tokens == 4
 
