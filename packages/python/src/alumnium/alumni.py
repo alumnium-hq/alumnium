@@ -30,7 +30,7 @@ from .drivers.playwright_async_driver import PlaywrightAsyncDriver
 from .drivers.playwright_driver import PlaywrightDriver
 from .drivers.selenium_driver import SeleniumDriver
 from .logutils import get_logger
-from .metrics import Artifact, SessionMetrics, SessionTokens, StepMetrics, TokenUsage, record_metrics
+from .metrics import Artifact, SessionMetrics, StepMetrics, record_metrics
 from .models import Model
 from .result import DoResult, DoStep
 from .tools import BaseTool
@@ -287,22 +287,14 @@ class Alumni:
         Returns per-step execution metrics for the session (issue #293).
 
         Steps are ordered by call: ``metrics.steps[i]`` is the i-th do()/check()/get() call.
-        Read before ``quit()`` for server-authoritative session token totals.
+        Session tokens cover every call to the server, including ``find()`` and ``area()``.
         """
         finished_at = time.time()
-        try:
-            tokens = SessionTokens.from_dict(self.client.stats)
-        except Exception as e:
-            logger.debug(f"Falling back to summed step tokens for session metrics: {e}")
-            total = TokenUsage()
-            for step in self._steps:
-                total = total + step.tokens
-            tokens = SessionTokens(total=total)
         return SessionMetrics(
             started_at=self._metrics_started_at,
             finished_at=finished_at,
             duration=finished_at - self._metrics_started_at,
-            tokens=tokens,
+            tokens=self.client.usage_total,
             steps=list(self._steps),
         )
 

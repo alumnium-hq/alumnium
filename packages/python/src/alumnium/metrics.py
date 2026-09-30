@@ -46,26 +46,6 @@ class TokenUsage:
 
 
 @dataclass
-class SessionTokens:
-    """Session-level token usage, mirroring the server's `LlmUsageStats` shape.
-
-    `cache` is a sibling of `total` (the cache-attributable subset). The MCP server exposes this as
-    "cached"; the library standardises on the server's "cache" name.
-    """
-
-    total: TokenUsage = field(default_factory=TokenUsage)
-    cache: TokenUsage = field(default_factory=TokenUsage)
-
-    @staticmethod
-    def from_dict(data: dict[str, dict[str, int]] | None) -> "SessionTokens":
-        data = data or {}
-        return SessionTokens(
-            total=TokenUsage.from_dict(data.get("total")),
-            cache=TokenUsage.from_dict(data.get("cache")),
-        )
-
-
-@dataclass
 class Artifact:
     """A file captured during a step (screenshot, trace, ...), typed so consumers route by kind/mime."""
 
@@ -98,7 +78,7 @@ class SessionMetrics:
     started_at: float
     finished_at: float
     duration: float
-    tokens: SessionTokens = field(default_factory=SessionTokens)
+    tokens: TokenUsage = field(default_factory=TokenUsage)
     steps: list[StepMetrics] = field(default_factory=list)
 
     @property

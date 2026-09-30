@@ -222,15 +222,6 @@ class HttpClient:
         )
         response.raise_for_status()
 
-    @property
-    def stats(self):
-        response = get(
-            f"{self.base_url}/v1/sessions/{self.session_id}/stats",
-            timeout=30,
-        )
-        response.raise_for_status()
-        return response.json()
-
     def _resolve_url(self, url_option: str | None) -> str:
         if url_option:
             return url_option.rstrip("/")

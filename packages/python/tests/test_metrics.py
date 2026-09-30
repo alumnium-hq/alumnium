@@ -1,4 +1,4 @@
-from alumnium.metrics import SessionMetrics, SessionTokens, StepMetrics, TokenUsage
+from alumnium.metrics import SessionMetrics, StepMetrics, TokenUsage
 
 
 def test_token_usage_from_dict_defaults_and_ignores_unknown():
@@ -37,12 +37,6 @@ def test_token_usage_sub_does_not_clamp():
     """Mirrors the server's `subtractLlmUsage`, which subtracts field-wise without clamping."""
     delta = TokenUsage(input_tokens=1) - TokenUsage(input_tokens=4)
     assert delta.input_tokens == -3
-
-
-def test_session_tokens_from_dict_mirrors_server_shape():
-    tokens = SessionTokens.from_dict({"total": {"input_tokens": 10}, "cache": {"cache_read": 2}})
-    assert tokens.total.input_tokens == 10
-    assert tokens.cache.cache_read == 2
 
 
 def test_session_metrics_last():

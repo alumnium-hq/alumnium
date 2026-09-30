@@ -17,23 +17,18 @@ class _FakeDriver:
 class _FakeClient:
     """Stands in for HttpClient: accrues a cumulative token total the decorator diffs against."""
 
-    def __init__(self, stats: dict):
-        self._stats = stats
+    def __init__(self):
         self.usage_total = TokenUsage()
 
     def spend(self, input_tokens: int) -> None:
         self.usage_total = self.usage_total + TokenUsage(input_tokens=input_tokens, total_tokens=input_tokens)
 
-    @property
-    def stats(self) -> dict:
-        return self._stats
 
-
-def _make_alumni(tmp_path, stats: dict | None = None, capture_screenshots: bool = True) -> Alumni:
+def _make_alumni(tmp_path, capture_screenshots: bool = True) -> Alumni:
     """Build an Alumni instance without a live server/driver to exercise metrics recording."""
     al = object.__new__(Alumni)
     al.driver = _FakeDriver()
-    al.client = _FakeClient(stats or {"total": {}, "cache": {}})
+    al.client = _FakeClient()
     al.capture_screenshots = capture_screenshots
     al._artifacts = ArtifactsStore("sess", str(tmp_path))
     al._steps = []
@@ -121,13 +116,13 @@ def test_record_metrics_records_zero_tokens_for_a_call_that_spends_nothing(tmp_p
     assert [step.tokens.input_tokens for step in al._steps] == [7, 0]
 
 
-def test_metrics_property_uses_server_totals_and_ordered_steps(tmp_path):
-    al = _make_alumni(tmp_path, stats={"total": {"input_tokens": 42}, "cache": {"cache_read": 3}})
+def test_metrics_property_reports_session_totals_and_ordered_steps(tmp_path):
+    al = _make_alumni(tmp_path)
+    al.client.usage_total = TokenUsage(input_tokens=8)  # e.g. a find() call that is not a recorded step
     get(al, "cart total")
 
     metrics = al.metrics
-    assert metrics.tokens.total.input_tokens == 42
-    assert metrics.tokens.cache.cache_read == 3
+    assert metrics.tokens.input_tokens == 50
     assert len(metrics.steps) == 1
     assert metrics.steps[0].kind == "get"
     assert metrics.last is metrics.steps[-1]

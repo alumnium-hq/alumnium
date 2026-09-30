@@ -23,7 +23,7 @@ al.check("the todo list contains 'Buy milk'")
 
 m = al.metrics
 m.duration               # total session duration (seconds)
-m.tokens.total           # session token usage (input_tokens, output_tokens, total_tokens, ...)
+m.tokens                 # session token usage (input_tokens, output_tokens, total_tokens, ...)
 
 step = m.steps[0]        # first call (the do())
 step.kind                # "do" | "check" | "get"
@@ -42,8 +42,6 @@ al = Alumni(driver, capture_screenshots=True, capture_trace=True)
 ```
 
 With `capture_screenshots` enabled, a screenshot is saved after every call and attached to that step's `artifacts`. With `capture_trace` enabled, the Playwright driver records a trace for the whole session and writes it to `trace.zip` on `al.quit()`. Leave `capture_trace` off if you start tracing on the Playwright context yourself. Both are written under `al.artifacts_dir`; see [`ALUMNIUM_ARTIFACTS_DIR`](#alumnium_artifacts_dir).
-
-Read `al.metrics` before calling `al.quit()` for server-authoritative session token totals. The existing `al.stats` property is unchanged.
 
 ## Environment Variables
 
