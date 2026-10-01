@@ -141,7 +141,19 @@ depends = [
   "//packages/java:lint",
   "//packages/python:lint",
   "//packages/typescript:lint",
+  "chart/check",
 ]
+
+[tasks."chart/check"]
+description = "Check that the Helm chart appVersion matches the package version"
+run = '''
+expected=$(mise //packages/typescript:version)
+actual=$(sed -n 's/^appVersion: "\(.*\)"$/\1/p' charts/alumnium/Chart.yaml)
+if [ "$actual" != "$expected" ]; then
+  echo "charts/alumnium/Chart.yaml appVersion is \"$actual\", expected \"$expected\"" >&2
+  exit 1
+fi
+'''
 
 [tasks."lint/fix"]
 description = "Fix linting issues in all packages"

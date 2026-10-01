@@ -70,9 +70,10 @@ spec:
             - name: ALUMNIUM_MODEL
               value: {{ . | quote }}
             {{- end }}
-            {{- with .Values.config.cache }}
+            {{- /* NOTE: `with` would skip a boolean `false`, which must disable the cache. */}}
+            {{- if ne (toString .Values.config.cache) "" }}
             - name: ALUMNIUM_CACHE
-              value: {{ . | quote }}
+              value: {{ .Values.config.cache | toString | quote }}
             {{- end }}
             {{- with .Values.config.logLevel }}
             - name: ALUMNIUM_LOG_LEVEL

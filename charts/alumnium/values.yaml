@@ -19,7 +19,7 @@ fullnameOverride: ""
 config:
   # ALUMNIUM_MODEL, e.g. "anthropic", "openai/gpt-5.1", "ollama". Empty uses the server default.
   model: ""
-  # ALUMNIUM_CACHE: "filesystem" or "false".
+  # ALUMNIUM_CACHE: "filesystem" or false. Empty uses the server default.
   cache: "filesystem"
   # ALUMNIUM_LOG_LEVEL. Empty uses the server default.
   logLevel: ""
