@@ -79,10 +79,18 @@ service:
   sessionAffinity: None
   annotations: {}
 
+# NOTE: The server has no authentication. Anyone who can reach the Ingress can
+# make LLM calls billed to the configured provider keys. See the README.
 ingress:
   enabled: false
+  # e.g. "traefik". Empty uses the cluster's default IngressClass.
   className: ""
   annotations: {}
+  #  # Traefik: serve only over HTTPS.
+  #  traefik.ingress.kubernetes.io/router.entrypoints: websecure
+  #  traefik.ingress.kubernetes.io/router.tls: "true"
+  #  # cert-manager: issue the certificate stored in `tls[].secretName`.
+  #  cert-manager.io/cluster-issuer: letsencrypt
   hosts:
     - host: alumnium.local
       paths:
