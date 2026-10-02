@@ -1,4 +1,4 @@
-import { getFileSink } from "@logtape/file";
+import { getFileSink, type FileSinkOptions } from "@logtape/file";
 import {
   configure,
   dispose,
@@ -172,10 +172,8 @@ export abstract class Logger {
   }
 
   static async #config(): Promise<LogtapeConfig<string, string>> {
-    if (this.#path) {
-      await ensureDir(path.dirname(this.#path));
-      if (Env.ALUMNIUM_PRUNE_LOGS) await fs.rm(this.#path, { force: true });
-    }
+    if (this.#path && Env.ALUMNIUM_PRUNE_LOGS)
+      await fs.rm(this.#path, { force: true });
 
     const depth = Env.ALUMNIUM_LOG_OBJECTS_DEPTH;
     const maxStringLength = Env.ALUMNIUM_LOG_MAX_STR_LENGTH;
@@ -195,7 +193,7 @@ export abstract class Logger {
     const sinks: Logger.Sinks = {
       console: consoleSink,
       main: this.#path
-        ? getFileSink(this.#path, {
+        ? await this.#lazyFileSink(this.#path, {
             bufferSize: Env.ALUMNIUM_LOG_BUFFER_SIZE,
             formatter: getTextFormatter({
               value: (value) => inspect(value, { depth, maxStringLength }),
@@ -236,6 +234,30 @@ export abstract class Logger {
         },
       ],
     };
+  }
+
+  /**
+   * Creates a file sink that defers creating the log directory and file until
+   * the first record is written. It prevents creating empty log files when
+   * nothing gets logged (e.g., MCP server started in an arbitrary directory).
+   */
+  static async #lazyFileSink(
+    filePath: string,
+    options: FileSinkOptions,
+  ): Promise<Sink & Disposable> {
+    const fileSink = getFileSink(filePath, { ...options, lazy: true });
+    let dirReady = false;
+    const sink: Sink = async (record) => {
+      if (!dirReady) {
+        await ensureDir(path.dirname(filePath));
+        dirReady = true;
+      }
+      fileSink(record);
+    };
+
+    return Object.assign(sink, {
+      [Symbol.dispose]: () => fileSink[Symbol.dispose](),
+    });
   }
 
   static #logger(): LoggerSchema.Like {
