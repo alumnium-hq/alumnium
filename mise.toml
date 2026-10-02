@@ -1,6 +1,6 @@
 monorepo_root = true
 [monorepo]
-config_roots = [".", "packages/*", "websites/*", "telemetry", "assets"]
+config_roots = [".", "packages/*", "charts/*", "websites/*", "telemetry", "assets"]
 
 [tools]
 # TypeScript
@@ -141,6 +141,7 @@ depends = [
   "//packages/java:lint",
   "//packages/python:lint",
   "//packages/typescript:lint",
+  "//charts/alumnium:lint",
 ]
 
 [tasks."lint/fix"]

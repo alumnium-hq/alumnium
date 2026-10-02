@@ -1,0 +1,44 @@
+Alumnium server has been deployed.
+
+{{- if .Values.ingress.enabled }}
+
+Server URL:
+{{- range .Values.ingress.hosts }}
+  http{{ if $.Values.ingress.tls }}s{{ end }}://{{ .host }}
+{{- end }}
+{{- else if eq .Values.service.type "LoadBalancer" }}
+
+Get the server URL (the external IP may take a few minutes to appear):
+  export SERVICE_IP=$(kubectl get svc --namespace {{ .Release.Namespace }} {{ include "alumnium.fullname" . }} -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
+  echo http://$SERVICE_IP:{{ .Values.service.port }}
+{{- else if eq .Values.service.type "NodePort" }}
+
+Get the server URL:
+  export NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ include "alumnium.fullname" . }})
+  export NODE_IP=$(kubectl get nodes --namespace {{ .Release.Namespace }} -o jsonpath="{.items[0].status.addresses[0].address}")
+  echo http://$NODE_IP:$NODE_PORT
+{{- else }}
+
+In-cluster URL:
+  http://{{ include "alumnium.fullname" . }}.{{ .Release.Namespace }}.svc:{{ .Values.service.port }}
+
+Access it locally:
+  kubectl port-forward --namespace {{ .Release.Namespace }} svc/{{ include "alumnium.fullname" . }} {{ .Values.service.port }}:{{ .Values.service.port }}
+  curl http://127.0.0.1:{{ .Values.service.port }}/v1/health
+{{- end }}
+
+Point Alumnium clients at it with:
+  export ALUMNIUM_SERVER_URL=<server URL>
+
+{{- if and (not .Values.secrets) (not .Values.existingSecret) (not .Values.envFrom) }}
+
+WARNING: No provider credentials configured. Set `secrets` (e.g. ANTHROPIC_API_KEY)
+or `existingSecret` unless your model provider needs none (e.g. Ollama).
+{{- end }}
+{{- if gt (int .Values.replicaCount) 1 }}
+{{- if ne .Values.service.sessionAffinity "ClientIP" }}
+
+WARNING: Sessions are stored in memory per pod. With replicaCount > 1, set
+service.sessionAffinity=ClientIP and configure sticky sessions on your ingress.
+{{- end }}
+{{- end }}

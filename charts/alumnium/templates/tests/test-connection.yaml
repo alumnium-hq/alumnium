@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "alumnium.fullname" . }}-test-connection"
+  labels:
+    {{- include "alumnium.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 100
+    seccompProfile:
+      type: RuntimeDefault
+  containers:
+    - name: curl
+      image: curlimages/curl:8.10.1
+      securityContext:
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+        capabilities:
+          drop:
+            - ALL
+      args:
+        - --fail
+        - --silent
+        - --show-error
+        - http://{{ include "alumnium.fullname" . }}:{{ .Values.service.port }}/v1/health
+  restartPolicy: Never
