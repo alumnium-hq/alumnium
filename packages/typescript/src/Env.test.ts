@@ -7,8 +7,8 @@ import {
   it,
   vi,
 } from "vitest";
-import z from "zod";
 import { Env } from "./Env.ts";
+import { defaultModelProvider } from "./Model.ts";
 
 afterEach(() => {
   vi.unstubAllEnvs();
@@ -27,6 +27,36 @@ describe("Env", () => {
   it("applies the schema default when the variable is unset", () => {
     vi.stubEnv("ALUMNIUM_CACHE", undefined);
     expect(Env.ALUMNIUM_CACHE).toBe("filesystem");
+  });
+
+  it("uses driver and model defaults when their variables are empty", () => {
+    vi.stubEnv("ALUMNIUM_DRIVER", "");
+    vi.stubEnv("ALUMNIUM_MODEL", "");
+    expect(Env.ALUMNIUM_DRIVER).toBe("selenium");
+    expect(Env.ALUMNIUM_MODEL.provider).toBe(defaultModelProvider);
+  });
+
+  it("treats empty optional paths and credentials as unset", () => {
+    vi.stubEnv("ALUMNIUM_CACHE_PATH", "");
+    vi.stubEnv("OPENAI_API_KEY", "");
+    expect(Env.ALUMNIUM_CACHE_PATH).toBeUndefined();
+    expect(Env.OPENAI_API_KEY).toBeUndefined();
+  });
+
+  it.each([
+    ["", true],
+    ["false", false],
+    ["0", false],
+  ])("parses boolean settings %s as %s", (input, expected) => {
+    vi.stubEnv("ALUMNIUM_MCP_RECORD_VIDEOS", input);
+    vi.stubEnv("ALUMNIUM_PLANNER", input);
+    expect(Env.ALUMNIUM_MCP_RECORD_VIDEOS).toBe(expected);
+    expect(Env.ALUMNIUM_PLANNER).toBe(expected);
+  });
+
+  it("preserves whitespace in nonempty values", () => {
+    vi.stubEnv("OPENAI_API_KEY", " ");
+    expect(Env.OPENAI_API_KEY).toBe(" ");
   });
 
   it("reads a literal value", () => {
@@ -55,6 +85,7 @@ describe("Env", () => {
 
     it.each([
       [undefined, 8],
+      ["", 8],
       ["0", 0],
       ["3", 3],
     ])("parses model retries %s as %s", (input, expected) => {
@@ -72,6 +103,7 @@ describe("Env", () => {
 
     it.each([
       [undefined, 90],
+      ["", 90],
       ["0.5", 0.5],
       ["120", 120],
     ])("parses model timeout %s as %s", (input, expected) => {
@@ -128,6 +160,13 @@ describe("Env", () => {
   });
 
   describe("command expansion", () => {
+    it("treats empty command output as unset", () => {
+      vi.stubEnv("OPENAI_API_KEY", "$(printf '')");
+      vi.stubEnv("ALUMNIUM_MODEL", "$(printf '')");
+      expect(Env.OPENAI_API_KEY).toBeUndefined();
+      expect(Env.ALUMNIUM_MODEL.provider).toBe(defaultModelProvider);
+    });
+
     it("expands a whole-value command substitution", () => {
       vi.stubEnv("OPENAI_API_KEY", "$(echo hello)");
       expect(Env.OPENAI_API_KEY).toBe("hello");

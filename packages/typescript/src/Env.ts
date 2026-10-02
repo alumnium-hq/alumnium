@@ -514,7 +514,7 @@ function envVar<Type>(
   if (!(name in cachedVars)) {
     // oxlint-disable-next-line no-process-env -- We need it to read env vars
     const envVal = expandEnvCommand(name, process.env[name], isSecretVar);
-    const parsedVar = Schema.safeParse(envVal);
+    const parsedVar = Schema.safeParse(envVal || undefined);
 
     if (!parsedVar.success) {
       const maskedVal = maskedValue(envVal, isSecretVar);
