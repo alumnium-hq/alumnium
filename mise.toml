@@ -4,7 +4,7 @@ config_roots = [".", "packages/*", "websites/*", "telemetry", "assets"]
 
 [tools]
 # TypeScript
-bun = "latest"
+bun = "1.3.14"
 node = "lts"
 
 # Python
