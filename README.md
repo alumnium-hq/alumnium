@@ -25,9 +25,15 @@ https://github.com/user-attachments/assets/d191674e-4e67-41a4-b8fa-1e2f383aed77
 
 ```sh
 curl -LsSf https://alumnium.ai/install.sh | sh
-# then add to your agent
+```
+
+Then add to your agent:
+
+```sh
 claude mcp add alumnium --env OPENAI_API_KEY=... -- alumnium mcp
 ```
+
+See [MCP documentation][10] for configuration, different MCP modes, and running over HTTP.
 
 ### Java
 
@@ -141,3 +147,4 @@ Alumnium is a member of the [TestMu AI][5] Open Source Program, which supports t
 [7]: https://alumnium.ai/blog/webvoyager-benchmark/
 [8]: https://alumnium.ai/docs/guides/mcp/
 [9]: packages/java/src/test/java/ai/alumnium/system
+[10]: https://alumnium.ai/docs/mcp/overview/

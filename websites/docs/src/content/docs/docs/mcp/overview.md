@@ -106,6 +106,22 @@ code --add-mcp '{
   }'
 ```
 
+### Self-hosted HTTP Server
+
+Run the MCP server on your infrastructure with streamable HTTP transport:
+
+```bash
+OPENAI_API_KEY=... alumnium mcp --transport http
+```
+
+You can change host and port to bind using `--host` and `--port` respectively. By default, `127.0.0.1:8014` is used.
+
+Once running, you can connect to the MCP user using `/mcp` endpoint, e.g. for Claude Code:
+
+```bash
+claude mcp add --transport http alumnium http://localhost:8014/mcp
+```
+
 ## Session Management
 
 ### `start`

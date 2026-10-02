@@ -28,39 +28,34 @@ export namespace McpState {
 }
 
 export abstract class McpState {
-  // Global state for driver management
-  private static drivers: Record<string, McpState.Driver> = {}; // id -> driver state
+  static #drivers: Record<string, McpState.Driver> = {}; // id -> driver state
+  static #nextDriverId = 1;
 
-  private static cleanupHooksRegistered = false;
-  private static cleanupAllPromise: Promise<void> | null = null;
+  static #cleanupHooksRegistered = false;
+  static #cleanupAllPromise: Promise<void> | null = null;
 
   /**
    * Generate a unique driver ID from the given base by appending an
-   * incrementing `-N` suffix (starting at 1) until an unregistered ID is found.
-   * This keeps concurrent starts in the same second from colliding.
+   * incrementing `-N` suffix. Advance the counter before driver initialization
+   * so concurrent starts cannot receive the same ID before registration.
    */
   static generateDriverId(base: string): string {
-    let suffix = 1;
-    let id = `${base}-${suffix}`;
-    while (this.drivers[id]) {
-      suffix++;
-      id = `${base}-${suffix}`;
+    let id = `${base}-${this.#nextDriverId++}`;
+    while (this.#drivers[id]) {
+      id = `${base}-${this.#nextDriverId++}`;
     }
     return id;
   }
 
-  /**
-   * Register a new driver instance.
-   */
   static registerDriver(
     id: string,
     al: Alumni,
     mcpDriver: McpDriver,
     artifactsStore: McpArtifactsStore,
   ): void {
-    this.registerCleanupHooks();
+    this.#registerCleanupHooks();
 
-    this.drivers[id] = {
+    this.#drivers[id] = {
       al,
       mcpDriver,
       artifactsStore: artifactsStore,
@@ -70,9 +65,6 @@ export abstract class McpState {
     logger.debug(`Registered driver ${id}`);
   }
 
-  /**
-   * Get driver's Alumni instance by driver ID.
-   */
   static getDriverAlumni(id: string): Alumni {
     const driverState = this.getDriverState(id);
     return driverState.al;
@@ -90,11 +82,8 @@ export abstract class McpState {
     return newStepCounter;
   }
 
-  /**
-   * Get driver state by ID.
-   */
   static getDriverState(id: string): McpState.Driver {
-    const driverState = this.drivers[id];
+    const driverState = this.#drivers[id];
     if (!driverState) {
       logger.error(`Driver state for ${id} not found`);
       // NOTE: This error is required for the controlling agent calling MCP.
@@ -103,9 +92,6 @@ export abstract class McpState {
     return driverState;
   }
 
-  /**
-   * Clean up driver and return artifacts directory and stats.
-   */
   @span("mcp.driver.shutdown", (id) => ({ "mcp.driver.id": id }))
   static async cleanupDriver(id: string): Promise<[string, LlmUsageStats]> {
     const driverState = this.getDriverState(id);
@@ -130,19 +116,23 @@ export abstract class McpState {
     );
     logger.info(`Driver ${id}: Token stats saved to ${statsPath}`);
 
-    await al.quit();
+    try {
+      await al.quit();
+    } finally {
+      // MCP owns the browser, including any other tabs opened by this session.
+      if (al.driver instanceof PlaywrightDriver)
+        await al.driver.page.context().browser()?.close();
+    }
 
-    delete this.drivers[id];
-
+    delete this.#drivers[id];
     tracer.end(id);
-
     logger.debug(`Driver ${id} cleanup complete`);
 
     return [driverState.artifactsStore.dir, stats];
   }
 
   static async cleanupAllDrivers(): Promise<void> {
-    const ids = Object.keys(this.drivers);
+    const ids = Object.keys(this.#drivers);
     await Promise.all(
       ids.map(async (id) => {
         logger.debug(`Exit hook: stopping driver ${id}`);
@@ -156,37 +146,35 @@ export abstract class McpState {
   }
 
   static clear() {
-    this.drivers = {};
-    this.cleanupAllPromise = null;
+    this.#drivers = {};
+    this.#nextDriverId = 1;
+    this.#cleanupAllPromise = null;
   }
 
-  private static registerCleanupHooks(): void {
-    if (this.cleanupHooksRegistered) return;
+  static #registerCleanupHooks(): void {
+    if (this.#cleanupHooksRegistered) return;
 
-    process.once("beforeExit", () => void this.cleanupAllDriversOnce());
-
+    process.once("beforeExit", () => void this.#cleanupAllDriversOnce());
     process.once(
       "SIGINT",
-      () => void this.cleanupAllDriversOnce().finally(() => process.exit(0)),
+      () => void this.#cleanupAllDriversOnce().finally(() => process.exit(0)),
     );
-
     process.once(
       "SIGTERM",
-      () => void this.cleanupAllDriversOnce().finally(() => process.exit(0)),
+      () => void this.#cleanupAllDriversOnce().finally(() => process.exit(0)),
     );
 
     logger.debug("Registered MCP cleanup hooks");
-
-    this.cleanupHooksRegistered = true;
+    this.#cleanupHooksRegistered = true;
   }
 
-  private static cleanupAllDriversOnce(): Promise<void> {
-    if (!this.cleanupAllPromise) {
-      this.cleanupAllPromise = this.cleanupAllDrivers().finally(() => {
-        this.cleanupAllPromise = null;
+  static #cleanupAllDriversOnce(): Promise<void> {
+    if (!this.#cleanupAllPromise) {
+      this.#cleanupAllPromise = this.cleanupAllDrivers().finally(() => {
+        this.#cleanupAllPromise = null;
       });
     }
 
-    return this.cleanupAllPromise;
+    return this.#cleanupAllPromise;
   }
 }

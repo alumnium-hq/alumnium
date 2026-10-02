@@ -190,9 +190,12 @@ export async function createPlaywrightDriver(
     : undefined;
 
   let context: BrowserContext;
+  // McpState handles signals so traces and usage are saved before browsers close.
   if (profileDir) {
     context = await chromium.launchPersistentContext(profileDir, {
       headless,
+      handleSIGINT: false,
+      handleSIGTERM: false,
       ...deviceOptions,
       ...(videosDir ? { recordVideo: { dir: videosDir } } : {}),
       extraHTTPHeaders: globalHeaders,
@@ -202,6 +205,8 @@ export async function createPlaywrightDriver(
   } else {
     const browser = await chromium.launch({
       headless,
+      handleSIGINT: false,
+      handleSIGTERM: false,
       ...(executablePath ? { executablePath } : {}),
       ...(proxy ? { proxy } : {}),
     });
