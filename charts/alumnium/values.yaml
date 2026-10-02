@@ -54,13 +54,14 @@ serviceAccount:
 podAnnotations: {}
 podLabels: {}
 
-# Matches the image's non-root `alumnium` user (65532). Writable paths
-# (/app/.alumnium, /tmp) are mounted as volumes, so the root filesystem can be read-only.
+# Runs as the image's non-root `alumnium` user (999). A numeric UID is required for
+# Kubernetes to verify `runAsNonRoot`. fsGroup makes the mounted volumes writable. Writable
+# paths (/app/.alumnium, /tmp) are mounted as volumes, so the root filesystem can be read-only.
 podSecurityContext:
   runAsNonRoot: true
-  runAsUser: 65532
-  runAsGroup: 65532
-  fsGroup: 65532
+  runAsUser: 999
+  runAsGroup: 999
+  fsGroup: 999
   fsGroupChangePolicy: OnRootMismatch
   seccompProfile:
     type: RuntimeDefault

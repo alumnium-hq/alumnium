@@ -99,4 +99,4 @@ The server keeps sessions in memory, so a client must reach the same pod for its
 
 ## Security
 
-The server runs as non-root UID/GID `65532` with a read-only root filesystem, no capabilities, no privilege escalation, and the `RuntimeDefault` seccomp profile. This matches the image's `alumnium` user. Because the root filesystem is read-only, the chart mounts writable `emptyDir` volumes at `/app/.alumnium` (logs and store) and `/tmp` (also used as `$HOME`). The cache volume sits on top at `/app/.alumnium/cache`. Change `podSecurityContext` / `securityContext` to pick a different UID.
+The server runs as the image's non-root `alumnium` user (UID/GID `999`) with a read-only root filesystem, no capabilities, no privilege escalation, and the `RuntimeDefault` seccomp profile. `fsGroup` makes the mounted volumes writable for this UID, so any non-root UID works. Because the root filesystem is read-only, the chart mounts writable `emptyDir` volumes at `/app/.alumnium` (logs and store) and `/tmp` (also used as `$HOME`). The cache volume sits on top at `/app/.alumnium/cache`. Change `podSecurityContext` / `securityContext` to pick a different UID.
