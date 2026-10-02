@@ -14,6 +14,7 @@ uv = "latest"
 # Tools
 fnox = "latest"
 gh = "latest" # GitHub CLI
+helm = "latest" # Kubernetes package manager
 ruff = "latest" # Python formatter
 shfmt = "latest" # .sh formatter
 oxfmt = "latest" # TS formatter

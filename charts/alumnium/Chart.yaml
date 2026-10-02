@@ -3,7 +3,7 @@ name: alumnium
 description: Alumnium server — AI-powered test automation backend used by Alumnium clients.
 type: application
 version: 0.1.0
-appVersion: "0.23.0"
+appVersion: "0.23.1"
 home: https://alumnium.ai
 sources:
   - https://github.com/alumnium-hq/alumnium
