@@ -8,7 +8,9 @@ import { directMcpTools } from "./tools/directMcpTools.ts";
 
 import { McpServer as Server } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
 import type { McpMode } from "./McpMode.ts";
+import type { McpTransport } from "./McpTransport.ts";
 import { ALUMNIUM_VERSION } from "../package.ts";
 import { Logger } from "../telemetry/Logger.ts";
 import { checkMcpTool } from "./tools/checkMcpTool.ts";
@@ -41,29 +43,86 @@ const DIRECT_MCP_TOOLS = [
 export namespace McpServer {
   export interface Props {
     mode?: McpMode;
+    transport?: McpTransport;
+    host?: string;
+    port?: number;
   }
 }
 
-/**
- * MCP Server that wraps Alumnium functionality for AI agents.
- */
 export class McpServer {
-  #server: Server;
+  #mode: McpMode;
+  #transport: McpTransport;
+  #host: string;
+  #port: number;
 
-  constructor({ mode = "agentic" }: McpServer.Props = {}) {
-    this.#server = new Server({ name: "alumnium", version: ALUMNIUM_VERSION });
-    this.#registerTools(mode);
+  constructor({
+    mode = "agentic",
+    transport = "stdio",
+    host = "127.0.0.1",
+    port = 8014,
+  }: McpServer.Props = {}) {
+    this.#mode = mode;
+    this.#transport = transport;
+    this.#host = host;
+    this.#port = port;
     logger.info("MCP server initialized");
+  }
+
+  async run(): Promise<void> {
+    if (this.#transport === "http") {
+      const server = Bun.serve({
+        hostname: this.#host,
+        port: this.#port,
+        idleTimeout: 0,
+        fetch: (request) => this.#handleRequest(request),
+      });
+      logger.info(`Started MCP server at ${new URL("/mcp", server.url)}`);
+    } else {
+      logger.info("Starting MCP server with stdio transport");
+      await this.#createServer().connect(new StdioServerTransport());
+    }
+  }
+
+  async #handleRequest(request: Request): Promise<Response> {
+    const url = new URL(request.url);
+    if (url.pathname !== "/mcp") return new Response(null, { status: 404 });
+
+    const origin = request.headers.get("origin");
+    if (origin !== null && origin !== url.origin)
+      return new Response(null, { status: 403 });
+
+    if (request.method !== "POST")
+      return new Response(null, { status: 405, headers: { Allow: "POST" } });
+
+    // Stateless MCP transports must be created per request. Browser and mobile
+    // sessions remain in McpState until stop is called or the process exits.
+    const server = this.#createServer();
+    const transport = new WebStandardStreamableHTTPServerTransport({
+      enableJsonResponse: true,
+    });
+    try {
+      await server.connect(transport);
+      return await transport.handleRequest(request);
+    } finally {
+      await server.close();
+    }
+  }
+
+  #createServer(): Server {
+    const server = new Server({ name: "alumnium", version: ALUMNIUM_VERSION });
+    this.#registerTools(server);
+    return server;
   }
 
   /**
    * Register all MCP tools.
    */
-  #registerTools(mode: McpMode) {
-    const tools = mode === "direct" ? DIRECT_MCP_TOOLS : AGENTIC_MCP_TOOLS;
+  #registerTools(server: Server) {
+    const tools =
+      this.#mode === "direct" ? DIRECT_MCP_TOOLS : AGENTIC_MCP_TOOLS;
     tools.forEach((toolDef) => {
       const { name, description, inputSchema, execute } = toolDef;
-      this.#server.registerTool(
+      server.registerTool(
         toolDef.name,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         { description, inputSchema: inputSchema as any },
@@ -82,11 +141,5 @@ export class McpServer {
         },
       );
     });
-  }
-
-  async run(): Promise<void> {
-    logger.info("Starting MCP server with stdio transport");
-    const transport = new StdioServerTransport();
-    await this.#server.connect(transport);
   }
 }
