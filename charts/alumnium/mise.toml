@@ -1,10 +1,13 @@
 [tasks.lint]
-description = "Check that the Helm chart appVersion matches the package version"
-run = '''
+description = "Lint the Helm chart and check that appVersion matches the package version"
+run = [
+  "helm lint .",
+  '''
 expected=$(mise //packages/typescript:version)
 actual=$(sed -n 's/^appVersion: "\(.*\)"$/\1/p' Chart.yaml)
 if [ "$actual" != "$expected" ]; then
   echo "charts/alumnium/Chart.yaml appVersion is \"$actual\", expected \"$expected\"" >&2
   exit 1
 fi
-'''
+''',
+]
