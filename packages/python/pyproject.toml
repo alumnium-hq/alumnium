@@ -29,7 +29,7 @@ authors = [
     { email = "tati.shep@gmail.com", name = "Tatiana Shepeleva" },
 ]
 dependencies = [
-    "alumnium-cli==0.23.0; (sys_platform == 'linux' or sys_platform == 'darwin' or sys_platform == 'win32') and (platform_machine == 'x86_64' or platform_machine == 'amd64' or platform_machine == 'AMD64' or platform_machine == 'aarch64' or platform_machine == 'arm64' or platform_machine == 'ARM64')",
+    "alumnium-cli==0.23.1; (sys_platform == 'linux' or sys_platform == 'darwin' or sys_platform == 'win32') and (platform_machine == 'x86_64' or platform_machine == 'amd64' or platform_machine == 'AMD64' or platform_machine == 'aarch64' or platform_machine == 'arm64' or platform_machine == 'ARM64')",
     "appium-python-client>=5.1.1,<6.0.0",
     "playwright>=1.49,<2.0",
     "portpicker>=1.6.0",
@@ -40,12 +40,12 @@ dependencies = [
     "selenium>=4.0,<5.0",
     "websocket-client>=1.8,<2.0",
 ]
-description = "Pave the way towards AI-powered test automation."
+description = "End-to-End Testing with AI for Agents and Engineers"
 license = "MIT"
 name = "alumnium"
 readme = "README.md"
 requires-python = ">=3.10,<4.0"
-version = "0.23.0"
+version = "0.23.1"
 
 [project.scripts]
 alumnium = "alumnium.cli:main"

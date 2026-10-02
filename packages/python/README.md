@@ -6,7 +6,7 @@
     </p>
 </h1>
 <p align="center">
-    Pave the way towards AI-powered test automation.
+    End-to-End Testing with AI for Agents and Engineers
     <br />
     <a href="#installation">Installation</a>
     ·

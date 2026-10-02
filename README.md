@@ -1,6 +1,6 @@
 <h1>
     <p align="center">
-        <img src="https://raw.githubusercontent.com/alumnium-hq/alumnium.github.io/efb2afaf0ced7ec07c241445e7b381914281edaf/src/assets/logo.svg" height="128" alt="Logo" />
+        <img src="https://raw.githubusercontent.com/alumnium-hq/alumnium/78721defa276aec9029f9dcf7cd8e95fd9f7f312/assets/exports/logomark.svg" height="128" alt="Logo" />
         <br />
         Alumnium
     </p>
@@ -17,7 +17,7 @@
 
 Alumnium is an AI-native library and MCP for end-to-end testing. It builds upon the existing test automation ecosystem and simplifies interactions with applications, providing more robust mechanisms for verifying assertions. It works with Appium, Maestro, Playwright, or Selenium and gives you [state-of-the-art][7] capabilities.
 
-https://github.com/user-attachments/assets/461050ba-f219-4ae2-bf5c-65faeb12b77e
+https://github.com/user-attachments/assets/d191674e-4e67-41a4-b8fa-1e2f383aed77
 
 ## Installation
 
@@ -33,8 +33,8 @@ claude mcp add alumnium --env OPENAI_API_KEY=... -- alumnium mcp
 
 ```groovy
 dependencies {
-  testImplementation 'ai.alumnium:alumnium:0.21.0'
-  testRuntimeOnly    'ai.alumnium:alumnium-cli-darwin-arm64:0.21.0'
+  testImplementation 'ai.alumnium:alumnium:0.23.1'
+  testRuntimeOnly    'ai.alumnium:alumnium-cli-darwin-arm64:0.23.1'
   // Add other platforms as needed
 }
 ```
