@@ -261,6 +261,21 @@ const telemetryPathsRewritePlugin: BunPlugin = {
   },
 };
 
+// Bun 1.4 wraps external ESM default exports incorrectly in CommonJS builds.
+// Bundle filenamify and its dependency so Node receives the default function.
+const cjsFilenamifyPlugin: BunPlugin = {
+  name: "cjs-filenamify",
+  setup(build) {
+    build.onResolve(
+      { filter: /^(filenamify|filename-reserved-regex)$/ },
+      (args) => ({
+        path: Bun.resolveSync(args.path, args.resolveDir),
+        external: false,
+      }),
+    );
+  },
+};
+
 // @wdio/utils/build/index.js sets client.capabilities only when `scopeType.name === "Browser"`.
 // Bun's bundler may rename the internal `Browser` function during compilation, breaking this
 // string comparison. We patch it to use reference equality against SCOPE_TYPES.browser instead.
@@ -441,7 +456,6 @@ async function main() {
           outdir: DIST_NPM_MAIN_PKG_DIR,
           sourcemap: true,
           target: "node",
-          plugins: [telemetryPathsRewritePlugin],
           packages: "external",
           files: TYPES_SCAN_STUB_FILES,
         };
@@ -452,6 +466,10 @@ async function main() {
               ...baseBuildConfig,
               entrypoints: [MAIN_NPM_SRC_CLIENT_PATH],
               format,
+              plugins: [
+                telemetryPathsRewritePlugin,
+                ...(format === "cjs" ? [cjsFilenamifyPlugin] : []),
+              ],
               naming: `[dir]/[name].${format === "esm" ? "js" : "cjs"}`,
             }),
           ),

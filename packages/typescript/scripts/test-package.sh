@@ -100,6 +100,13 @@ for module in "${MODULES[@]}"; do
 }
 EOF
 
+	# Override Alumnium's optional CLI dependency too; otherwise pnpm can install
+	# the registry version for Alumnium even with a local top-level dependency.
+	cat >>pnpm-workspace.yaml <<EOF
+overrides:
+  "$CLI_PKG_NAME": "file:$CLI_TARBALL"
+EOF
+
 	if pnpm_output=$(pnpm install 2>&1); then
 		echo "🟢 Package OK: dependencies installed successfully"
 	else
