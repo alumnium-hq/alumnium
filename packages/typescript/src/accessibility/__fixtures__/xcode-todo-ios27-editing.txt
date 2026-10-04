@@ -1,0 +1,66 @@
+Device orientation: Unknown
+------------------------
+Application bundle identifier: com.ayodeji.TodoList
+Application UI orientation: Portrait
+Application, pid: 94372, label: 'Do Stuf'
+ Window, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+  Other, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+   Other, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+    Other, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+     Other, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+      Other, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+       NavigationBar, {{0.0, 62.0}, {402.0, 110.3}}, identifier: 'Todo List📝', hitPoint: {201.0, 117.2}
+        Other, {{20.0, 66.0}, {36.0, 36.0}}, hitPoint: {38.0, 84.0}
+         Other, {{20.0, 66.0}, {36.0, 36.0}}, hitPoint: {38.0, 84.0}
+          Button, {{20.0, 66.0}, {36.0, 36.0}}, identifier: 'checkmark', label: 'Done', Selected, hitPoint: {38.0, 84.0}
+        Other, {{339.3, 66.0}, {42.7, 36.0}}, hitPoint: {360.7, 84.0}
+         Other, {{339.3, 66.0}, {42.7, 36.0}}, hitPoint: {360.7, 84.0}
+          Button, {{339.3, 66.0}, {42.7, 36.0}}, label: 'Add', hitPoint: {360.7, 84.0}
+        StaticText, {{16.0, 116.0}, {180.3, 52.3}}, label: 'Todo List📝', hitPoint: {106.2, 142.2}
+       Other, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+        Other, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+         Other, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+          Other, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+           CollectionView, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+            Other, {{-16.0, -1575.7}, {434.0, 3672.7}}, hitPoint: {201.0, 437.0}
+            Other, {{0.0, -0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+             Other, {{0.0, 0.0}, {402.0, 156.0}}, hitPoint: {201.0, 78.0}
+            Other, {{0.0, -0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+            Cell, {{16.0, 172.3}, {370.0, 78.3}}, hitPoint: {201.0, 211.5}
+             Other, {{16.0, 172.3}, {370.0, 78.3}}, hitPoint: {201.0, 211.5}
+              Other, {{16.0, 172.3}, {370.0, 78.3}}, hitPoint: {201.0, 211.5}
+             Other, {{56.0, 172.3}, {290.0, 78.3}}, hitPoint: {201.0, 211.5}
+              Other, {{56.0, 172.3}, {290.0, 78.3}}, hitPoint: {201.0, 211.5}
+               Other, {{56.0, 172.3}, {290.0, 78.3}}, hitPoint: {201.0, 211.5}
+                Image, {{74.0, 200.7}, {22.0, 22.0}}, identifier: 'circle', label: 'Circle', hitPoint: {85.0, 211.7}
+                StaticText, {{106.0, 195.3}, {80.3, 32.3}}, label: 'Buy milk', hitPoint: {146.2, 211.5}
+             Button, {{344.5, 189.3}, {27.0, 44.0}}, label: 'Reorder Circle', hitPoint: {358.0, 211.3}
+              Image, {{344.5, 203.8}, {27.0, 15.0}}, identifier: 'line.horizontal.3', label: 'drag', hitPoint: {358.0, 211.3}
+             Other, {{31.2, 198.7}, {25.7, 25.7}}, hitPoint: {44.0, 211.5}
+              Image, {{31.2, 198.7}, {25.7, 25.7}}, identifier: 'minus.circle.fill', label: 'remove', hitPoint: {44.0, 211.5}
+             Other, {{31.2, 198.7}, {25.7, 25.7}}, hitPoint: {44.0, 211.5}
+              Image, {{31.2, 198.7}, {25.7, 25.7}}, identifier: 'minus.circle.fill', label: 'remove', hitPoint: {44.0, 211.5}
+            Cell, {{16.0, 250.7}, {370.0, 78.3}}, hitPoint: {201.0, 289.8}
+             Other, {{16.0, 250.7}, {370.0, 78.3}}, hitPoint: {201.0, 289.8}
+              Other, {{16.0, 250.7}, {370.0, 78.3}}, hitPoint: {201.0, 289.8}
+             Other, {{56.0, 250.7}, {290.0, 78.3}}, hitPoint: {201.0, 289.8}
+              Other, {{56.0, 250.7}, {290.0, 78.3}}, hitPoint: {201.0, 289.8}
+               Other, {{56.0, 250.7}, {290.0, 78.3}}, hitPoint: {201.0, 289.8}
+                Image, {{74.0, 279.0}, {22.0, 22.0}}, identifier: 'circle', label: 'Circle', hitPoint: {85.0, 290.0}
+                StaticText, {{106.0, 273.7}, {96.7, 32.3}}, label: 'Buy bread', hitPoint: {154.3, 289.8}
+             Button, {{344.5, 267.7}, {27.0, 44.0}}, label: 'Reorder Circle', hitPoint: {358.0, 289.7}
+              Image, {{344.5, 282.2}, {27.0, 15.0}}, identifier: 'line.horizontal.3', label: 'drag', hitPoint: {358.0, 289.7}
+             Other, {{31.2, 277.0}, {25.7, 25.7}}, hitPoint: {44.0, 289.8}
+              Image, {{31.2, 277.0}, {25.7, 25.7}}, identifier: 'minus.circle.fill', label: 'remove', hitPoint: {44.0, 289.8}
+             Other, {{31.2, 277.0}, {25.7, 25.7}}, hitPoint: {44.0, 289.8}
+              Image, {{31.2, 277.0}, {25.7, 25.7}}, identifier: 'minus.circle.fill', label: 'remove', hitPoint: {44.0, 289.8}
+            Other, {{106.0, 249.7}, {264.0, 1.0}}, hitPoint: {238.0, 250.2}
+            Other, {{369.0, 116.0}, {30.0, 696.0}}, label: 'Vertical scroll bar, 1 page', value: 0%, hitPoint: {384.0, 464.0}
+             Other, {{396.0, 610.0}, {3.0, 199.0}}, hitPoint: {397.5, 709.5}
+            Other, {{369.0, 116.0}, {30.0, 696.0}}, label: 'Vertical scroll bar, 1 page', value: 0%, hitPoint: {384.0, 464.0}
+             Other, {{396.0, 610.0}, {3.0, 199.0}}, hitPoint: {397.5, 709.5}
+       Toolbar, {{0.0, 0.0}, {402.0, 874.0}}, identifier: 'Toolbar', label: 'Toolbar', hitPoint: {201.0, 437.0}
+        Other, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+ Window, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+  Other, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+   Other, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}

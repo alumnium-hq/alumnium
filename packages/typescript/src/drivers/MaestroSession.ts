@@ -1,13 +1,14 @@
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
-import { spawn } from "node:child_process";
 import os from "node:os";
 import path from "node:path";
 import z from "zod";
 import { ALUMNIUM_VERSION } from "../package.ts";
 import { Logger } from "../telemetry/Logger.ts";
+import { spawn } from "../utils/process.ts";
 import { sleep } from "../utils/timers.ts";
 import { lit } from "smollit";
+import { SimulatorWindow } from "./SimulatorWindow.ts";
 
 const logger = Logger.get(import.meta.url);
 
@@ -40,6 +41,8 @@ export namespace MaestroSession {
     appId: string;
     /** Maestro device id, i.e. a simulator UDID. Defaults to the first connected device. */
     deviceId?: string | undefined;
+    /** Hide the macOS Simulator window. Defaults to false. iOS simulators only. */
+    headless?: boolean | undefined;
     /** Path to the `maestro` executable. Defaults to `~/.maestro/bin/maestro`. */
     executablePath?: string | undefined;
     /** Arguments the app is launched with. */
@@ -86,6 +89,8 @@ export class MaestroSession {
   readonly #executablePath: string;
   readonly #launchEnv: Record<string, string>;
   readonly #launchArgs: string[];
+  readonly #headless: boolean;
+  readonly #simulatorWindow = new SimulatorWindow();
 
   constructor(props: MaestroSession.Props) {
     this.appId = props.appId;
@@ -95,6 +100,7 @@ export class MaestroSession {
       path.join(os.homedir(), ".maestro", "bin", "maestro");
     this.#launchEnv = props.launchEnv ?? {};
     this.#launchArgs = props.launchArgs ?? [];
+    this.#headless = props.headless ?? false;
   }
 
   get deviceId(): string {
@@ -108,8 +114,13 @@ export class MaestroSession {
 
   static async start(props: MaestroSession.Props): Promise<MaestroSession> {
     const session = new MaestroSession(props);
-    await session.#connect();
-    return session;
+    try {
+      await session.#connect();
+      return session;
+    } catch (error) {
+      await session.close().catch(() => {});
+      throw error;
+    }
   }
 
   async #connect(): Promise<void> {
@@ -142,6 +153,7 @@ export class MaestroSession {
       if (output) logger.warn(`Maestro MCP server exited:\n${output}`);
     };
 
+    this.#client = client;
     try {
       await client.connect(transport);
     } catch (error) {
@@ -149,7 +161,6 @@ export class MaestroSession {
         `Maestro MCP server failed to start: ${error}\n${await this.#describeLauncherFailure(env)}`,
       );
     }
-    this.#client = client;
 
     transport.stderr?.on("data", (chunk: unknown) => {
       const text = String(chunk);
@@ -162,6 +173,9 @@ export class MaestroSession {
     this.#deviceId = device.device_id;
     this.#os = MaestroSession.Os.safeParse(device.platform).data ?? "ios";
     logger.info(`Using Maestro device ${device.name} (${this.#os})`);
+    if (this.#os === "ios" && device.type === "simulator") {
+      await this.#simulatorWindow.open(this.deviceId, this.#headless);
+    }
   }
 
   async #resolveDevice(): Promise<MaestroSession.Device> {
@@ -265,16 +279,18 @@ export class MaestroSession {
       `Launching ${this.appId} via simctl with ${Object.keys(this.#launchEnv).length} env var(s)`,
     );
 
-    const child = await this.#spawn("xcrun", args, {
-      // oxlint-disable-next-line node/no-process-env
-      ...process.env,
-      // simctl forwards SIMCTL_CHILD_-prefixed variables to the app it launches.
-      ...Object.fromEntries(
-        Object.entries(this.#launchEnv).map(([key, value]) => [
-          `SIMCTL_CHILD_${key}`,
-          value,
-        ]),
-      ),
+    const child = await spawn("xcrun", args, {
+      env: {
+        // oxlint-disable-next-line node/no-process-env
+        ...process.env,
+        // simctl forwards SIMCTL_CHILD_-prefixed variables to the app it launches.
+        ...Object.fromEntries(
+          Object.entries(this.#launchEnv).map(([key, value]) => [
+            `SIMCTL_CHILD_${key}`,
+            value,
+          ]),
+        ),
+      },
     });
 
     if (child.status !== 0) {
@@ -287,32 +303,11 @@ export class MaestroSession {
 
   async #describeLauncherFailure(env: NodeJS.ProcessEnv): Promise<string> {
     try {
-      const probe = await this.#spawn(this.#executablePath, ["--version"], env);
+      const probe = await spawn(this.#executablePath, ["--version"], { env });
       return `\`${this.#executablePath} --version\` exited with ${probe.status}: ${(probe.stderr || probe.stdout).trim()}`;
     } catch (error) {
       return `\`${this.#executablePath}\` could not be run: ${error}`;
     }
-  }
-
-  #spawn(
-    command: string,
-    args: string[],
-    env: NodeJS.ProcessEnv,
-  ): Promise<{ status: number | null; stdout: string; stderr: string }> {
-    return new Promise((resolve, reject) => {
-      const child = spawn(command, args, {
-        env,
-        stdio: ["ignore", "pipe", "pipe"],
-      });
-      let stdout = "";
-      let stderr = "";
-      child.stdout.setEncoding("utf-8");
-      child.stderr.setEncoding("utf-8");
-      child.stdout.on("data", (chunk: string) => (stdout += chunk));
-      child.stderr.on("data", (chunk: string) => (stderr += chunk));
-      child.on("error", reject);
-      child.on("close", (status) => resolve({ status, stdout, stderr }));
-    });
   }
 
   async #waitForAndroidWindow(timeoutMs = 30_000): Promise<void> {
@@ -395,9 +390,14 @@ export class MaestroSession {
     const client = this.#client;
     this.#client = undefined;
     this.#closing = true;
-    if (!client) return;
-    logger.debug("Closing Maestro MCP session");
-    await client.close();
+    try {
+      if (client) {
+        logger.debug("Closing Maestro MCP session");
+        await client.close();
+      }
+    } finally {
+      await this.#simulatorWindow.close();
+    }
   }
 
   //#region MCP plumbing

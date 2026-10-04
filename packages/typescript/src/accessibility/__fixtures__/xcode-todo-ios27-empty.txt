@@ -1,0 +1,37 @@
+Device orientation: Unknown
+------------------------
+Application bundle identifier: com.ayodeji.TodoList
+Application UI orientation: Portrait
+Application, pid: 17552, label: 'Do Stuf'
+ Window, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+  Other, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+   Other, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+    Other, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+     Other, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+      Other, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+       NavigationBar, {{0.0, 62.0}, {402.0, 110.3}}, identifier: 'Todo List📝', hitPoint: {201.0, 117.2}
+        Other, {{20.0, 66.0}, {41.3, 36.0}}, hitPoint: {40.7, 84.0}
+         Other, {{20.0, 66.0}, {41.3, 36.0}}, hitPoint: {40.7, 84.0}
+          Button, {{20.0, 66.0}, {41.3, 36.0}}, label: 'Edit', hitPoint: {40.7, 84.0}
+        Other, {{339.3, 66.0}, {42.7, 36.0}}, hitPoint: {360.7, 84.0}
+         Other, {{339.3, 66.0}, {42.7, 36.0}}, hitPoint: {360.7, 84.0}
+          Button, {{339.3, 66.0}, {42.7, 36.0}}, label: 'Add', hitPoint: {360.7, 84.0}
+        StaticText, {{16.0, 116.0}, {180.3, 52.3}}, label: 'Todo List📝', hitPoint: {106.2, 142.2}
+       Other, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+        Other, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+         Other, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+          Other, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+           ScrollView, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+            Other, {{0.0, -0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+             Other, {{0.0, 0.0}, {402.0, 156.0}}, hitPoint: {201.0, 78.0}
+            Other, {{0.0, -0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+            Other, {{0.0, 172.3}, {402.0, 257.0}}, hitPoint: {201.0, 300.8}
+             StaticText, {{79.7, 212.3}, {242.7, 41.7}}, label: 'There are no items!', hitPoint: {201.0, 233.2}
+             StaticText, {{41.8, 256.0}, {318.3, 50.3}}, label: 'Are you are productive person? Click the add button to add items to your Todo List!', hitPoint: {201.0, 281.2}
+             Button, {{57.1, 324.6}, {287.9, 60.5}}, label: 'Add Something📝', hitPoint: {201.0, 354.9}
+            Other, {{369.0, 116.0}, {30.0, 696.0}}, label: 'Vertical scroll bar, 1 page', value: 0%, hitPoint: {384.0, 464.0}
+             Other, {{396.0, 529.7}, {3.0, 279.3}}, hitPoint: {397.5, 669.3}
+            Other, {{369.0, 116.0}, {30.0, 696.0}}, label: 'Vertical scroll bar, 1 page', value: 0%, hitPoint: {384.0, 464.0}
+             Other, {{396.0, 529.7}, {3.0, 279.3}}, hitPoint: {397.5, 669.3}
+       Toolbar, {{0.0, 0.0}, {402.0, 874.0}}, identifier: 'Toolbar', label: 'Toolbar', hitPoint: {201.0, 437.0}
+        Other, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}

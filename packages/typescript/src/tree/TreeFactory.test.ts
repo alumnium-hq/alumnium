@@ -12,6 +12,10 @@ describe("TreeFactory.kindFor", () => {
     expect(TreeFactory.kindFor("android", "appium")).toBe("uiautomator2");
   });
 
+  it("processes Xcode's native roles through the XCUITest tree", () => {
+    expect(TreeFactory.kindFor("ios", "xcode")).toBe("xcode");
+  });
+
   it("uses the Maestro tree on either OS when Maestro drives it", () => {
     expect(TreeFactory.kindFor("ios", "maestro")).toBe("maestro");
     expect(TreeFactory.kindFor("android", "maestro")).toBe("maestro");

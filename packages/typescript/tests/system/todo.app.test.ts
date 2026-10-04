@@ -1,6 +1,7 @@
 import type { Alumni } from "alumnium";
 import { describe, inject } from "vitest";
 import { baseIt } from "./helpers.ts";
+import { Env } from "../../src/Env.ts";
 
 describe("Native To Do application", () => {
   const it = baseIt.override("setup", async ({ setup, skip }) => {
@@ -10,7 +11,7 @@ describe("Native To Do application", () => {
       if (!isMobile) skip("The native To Do app is only driven on mobile");
 
       await Promise.all(
-        inject("maestroOs") === "android"
+        os() === "android"
           ? [
               al.learn('create a new task "this is Al"', [
                 'type "this is Al" in "Title" textbox',
@@ -45,7 +46,8 @@ describe("Native To Do application", () => {
     };
   });
 
-  const os = () => inject("maestroOs");
+  const os = () =>
+    Env.ALUMNIUM_DRIVER === "xcode" ? "ios" : inject("maestroOs");
 
   const createTask = async (al: Alumni, title: string) => {
     await al.do("click add button");

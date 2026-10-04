@@ -14,6 +14,8 @@ import {
   MaestroSession,
   PlaywrightDriver,
   SeleniumDriver,
+  XcodeDriver,
+  XcodeSession,
 } from "../drivers/index.ts";
 import { Env } from "../Env.ts";
 import { LlmUsageStats } from "../llm/llmSchema.ts";
@@ -43,7 +45,12 @@ export type AlumniOptions = Alumni.Options;
 export type VisionOptions = Alumni.VisionOptions;
 
 export namespace Alumni {
-  export type Driver = WebDriver | Page | Browser | MaestroSession;
+  export type Driver =
+    | WebDriver
+    | Page
+    | Browser
+    | MaestroSession
+    | XcodeSession;
 
   export interface Options {
     url?: string | undefined;
@@ -101,6 +108,8 @@ export class Alumni {
       this.driver = new AppiumDriver(driver as Browser);
     } else if (driver instanceof MaestroSession) {
       this.driver = new MaestroDriver(driver);
+    } else if (driver instanceof XcodeSession) {
+      this.driver = new XcodeDriver(driver);
     } else {
       throw new Error(`Unsupported driver type '${typeof driver}'`);
     }

@@ -1,0 +1,16 @@
+Device orientation: Portrait
+------------------------
+Application bundle identifier: com.ayodeji.TodoList
+Application UI orientation: Portrait
+Application, pid: 456, label: 'TodoList'
+  Window, {{0.0, 0.0}, {393.0, 852.0}}, hitPoint: {196.5, 426.0}
+    NavigationBar, {{0.0, 59.0}, {393.0, 44.0}}, identifier: 'New Task'
+      Button, {{16.0, 65.0}, {70.0, 30.0}}, label: 'Back', hitPoint: {51.0, 80.0}
+      Button, {{307.0, 65.0}, {70.0, 30.0}}, identifier: 'save-task', label: 'Save', enabled: false
+    Other, {{0.0, 103.0}, {393.0, 300.0}}, hitPoint: {196.5, 253.0}
+      TextField, {{16.0, 120.0}, {361.0, 44.0}}, identifier: 'task-title', label: 'Title', value: 'Buy milk', placeholderValue: 'Task title', focused: true, hitPoint: {196.5, 142.0}
+      TextView, {{16.0, 180.0}, {361.0, 100.0}}, identifier: 'task-notes', label: 'Notes', value: 'Bring a bag', hitPoint: {196.5, 230.0}
+      Slider, {{16.0, 300.0}, {361.0, 30.0}}, identifier: 'priority', label: 'Priority', value: '50%', hitPoint: {196.5, 315.0}
+    Keyboard, {{0.0, 550.0}, {393.0, 302.0}}, hitPoint: {196.5, 701.0}
+      Key, {{10.0, 560.0}, {30.0, 40.0}}, label: 'q', hitPoint: {25.0, 580.0}
+      Button, {{290.0, 760.0}, {90.0, 40.0}}, label: 'Done', hitPoint: {335.0, 780.0}

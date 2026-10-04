@@ -1,0 +1,16 @@
+Device orientation: Portrait
+------------------------
+Application bundle identifier: com.ayodeji.TodoList
+Application UI orientation: Portrait
+Application, pid: 123, label: 'TodoList'
+  Window, {{0.0, 0.0}, {393.0, 852.0}}, hitPoint: {196.5, 426.0}
+    NavigationBar, {{0.0, 59.0}, {393.0, 96.0}}, identifier: 'Todo List', hitPoint: {196.5, 107.0}
+      StaticText, {{16.0, 105.0}, {200.0, 40.0}}, label: 'Todo List', hitPoint: {116.0, 125.0}
+      Button, {{340.0, 65.0}, {40.0, 40.0}}, identifier: 'add-task', label: 'Add Task', hitPoint: {360.0, 85.0}
+    Table, {{0.0, 155.0}, {393.0, 650.0}}, hitPoint: {196.5, 480.0}
+      Cell, {{0.0, 155.0}, {393.0, 60.0}}, label: 'Buy milk', hitPoint: {196.5, 185.0}
+        Switch, {{16.0, 165.0}, {50.0, 30.0}}, identifier: 'milk-completed', label: 'Completed', value: '0', enabled: true, selected: false, hitPoint: {41.0, 180.0}
+        StaticText, {{80.0, 165.0}, {150.0, 30.0}}, label: 'Buy milk', hitPoint: {155.0, 180.0}
+      Cell, {{0.0, 215.0}, {393.0, 60.0}}, label: 'Alice’s bread & <butter>', hitPoint: {196.5, 245.0}
+        Switch, {{16.0, 225.0}, {50.0, 30.0}}, label: 'Completed', value: '1', enabled: false, selected: true
+        StaticText, {{80.0, 225.0}, {250.0, 30.0}}, label: 'Alice’s bread & <butter>', hitPoint: {205.0, 240.0}

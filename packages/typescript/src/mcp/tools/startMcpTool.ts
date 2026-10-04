@@ -86,7 +86,7 @@ export const startMcpTool = McpTool.define("start", {
           Example file path: "/path/to/capabilities.json".
 
           Alumnium-specific options go in "alumnium:options":
-            - "app" (string) — the mobile app to run (iOS bundle id, Android package name, or path/URL to install);
+            - "app" (string) — the mobile app to run: an iOS bundle id or Android package name (e.g. "com.example.app"); path to .app/.ipa/.apk (Appium and Maestro); path to .xcodeproj/.xcworkspace (Xcode); cloud provider URL (e.g. "lt://123-456") (Appium);
             - "appArguments" (string[]) — command-line arguments to launch the mobile app with, e.g. ["-UITesting"];
             - "appEnvironment" (object) — environment variables to launch the mobile app with, e.g. {"API_URL": "https://staging.example.com"};
             - "appReset" (boolean, default false) — wipe the app's state before launching it;
@@ -99,7 +99,7 @@ export const startMcpTool = McpTool.define("start", {
             - "executablePath" (string) — path to a custom Chrome executable;
             - "fullPageScreenshot" (boolean, default false) — capture full-page screenshots.
             - "headers" (object) — extra HTTP headers, supported for Selenium and Playwright. A string value is sent with every request, e.g. {"Authorization": "Bearer token"}; an object value is sent only to hosts matching the key, e.g. {".example.com": {"X-Feature": "on"}};
-            - "headless" (boolean, default false) — run browser headless, supported for Selenium and Playwright;
+            - "headless" (boolean, default false) — run browsers/simulators headless, supported for Maestro, Playwright, Selenium, and Xcode;
             - "navigationPolicy" (object) — domain allowlist/denylist for navigation, e.g. {"allowedDomains": ["(^|\\.)example\\.com$"], "deniedDomains": ["internal"]}. Both fields are string[] of case-insensitive regex patterns matched against the hostname and full URL. When "allowedDomains" is non-empty, only matching URLs are allowed; otherwise everything is allowed except "deniedDomains" matches. Link-local/metadata IPs and file:// are always blocked;
             - "newTabTimeout" (number, default 10000) — maximum ms to wait after a new tab is announced, Playwright only;
             - "permissions" (string[]) — browser permissions to grant, Playwright only, e.g. ["camera"];
@@ -258,6 +258,9 @@ export const startMcpTool = McpTool.define("start", {
 
     // Shared mobile options, translated per driver in `createMobileDriver`.
     const mobileOptions: McpDriver.MobileOptions = {
+      ...(typeof alumniumOptions["headless"] === "boolean" && {
+        headless: alumniumOptions["headless"],
+      }),
       ...(typeof alumniumOptions["app"] === "string" && {
         app: alumniumOptions["app"],
       }),
@@ -342,7 +345,10 @@ export const startMcpTool = McpTool.define("start", {
             {
               "mcp.driver.id": id,
               "driver.kind":
-                Env.ALUMNIUM_DRIVER === "maestro" ? "maestro" : "appium",
+                Env.ALUMNIUM_DRIVER === "maestro" ||
+                Env.ALUMNIUM_DRIVER === "xcode"
+                  ? Env.ALUMNIUM_DRIVER
+                  : "appium",
               "driver.platform": platform,
             },
             () =>
@@ -369,16 +375,19 @@ export const startMcpTool = McpTool.define("start", {
     tracer.span("mcp.driver.active", { "mcp.driver.id": id }, id);
 
     const al = new Alumni(driver, {
-      extraTools: [
-        DragSliderTool,
-        ExecuteJavascriptTool,
-        NavigateBackTool,
-        NavigateToUrlTool,
-        PrintToPdfTool,
-        ScrollTool,
-        SwitchToNextTabTool,
-        SwitchToPreviousTabTool,
-      ],
+      extraTools:
+        Env.ALUMNIUM_DRIVER === "xcode"
+          ? []
+          : [
+              DragSliderTool,
+              ExecuteJavascriptTool,
+              NavigateBackTool,
+              NavigateToUrlTool,
+              PrintToPdfTool,
+              ScrollTool,
+              SwitchToNextTabTool,
+              SwitchToPreviousTabTool,
+            ],
       planner,
       changeAnalysis,
       excludeAttributes,

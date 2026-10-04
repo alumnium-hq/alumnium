@@ -47,7 +47,9 @@ export default defineConfig({
             ? ["tests/system/setup.appium.ts"]
             : isMaestro
               ? ["tests/system/setup.maestro.ts"]
-              : [],
+              : driverKind === "xcode"
+                ? ["tests/system/setup.xcode.ts"]
+                : [],
           setupFiles: ["tests/system/setup.ts"],
           pool: "threads",
           fileParallelism: !isMobile,

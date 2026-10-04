@@ -4,13 +4,20 @@ import { ServerChromiumAccessibilityTree } from "../server/accessibility/ServerC
 import { ServerMaestroAccessibilityTree } from "../server/accessibility/ServerMaestroAccessibilityTree.ts";
 import { ServerUIAutomator2AccessibilityTree } from "../server/accessibility/ServerUIAutomator2AccessibilityTree.ts";
 import { ServerXCUITestAccessibilityTree } from "../server/accessibility/ServerXCUITestAccessibilityTree.ts";
+import { ServerXcodeAccessibilityTree } from "../server/accessibility/ServerXcodeAccessibilityTree.ts";
 
 export namespace TreeFactory {
   export type Kind = (typeof TreeFactory.kinds)[number];
 }
 
 export abstract class TreeFactory {
-  static kinds = ["chromium", "xcuitest", "uiautomator2", "maestro"] as const;
+  static kinds = [
+    "chromium",
+    "xcuitest",
+    "uiautomator2",
+    "maestro",
+    "xcode",
+  ] as const;
 
   static kindFor(
     platform: Driver.Platform,
@@ -23,6 +30,7 @@ export abstract class TreeFactory {
       case "ios":
       case "android":
         if (driver === "maestro") return "maestro";
+        if (driver === "xcode") return "xcode";
         return platform === "ios" ? "xcuitest" : "uiautomator2";
     }
   }
@@ -44,6 +52,9 @@ export abstract class TreeFactory {
 
       case "xcuitest":
         return new ServerXCUITestAccessibilityTree(xml);
+
+      case "xcode":
+        return new ServerXcodeAccessibilityTree(xml);
     }
   }
 }

@@ -1,0 +1,95 @@
+Device orientation: Unknown
+------------------------
+Application bundle identifier: com.ayodeji.TodoList
+Application UI orientation: Portrait
+Application, pid: 17552, label: 'Do Stuf'
+ Window, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+  Other, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+   Other, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+    Other, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+     Other, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+      Other, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+       NavigationBar, {{0.0, 62.0}, {402.0, 110.3}}, identifier: 'Add an Item🖋️', hitPoint: {201.0, 117.2}
+        Button, {{16.0, 62.0}, {44.0, 44.0}}, identifier: 'BackButton', label: 'Todo List📝', hitPoint: {38.0, 84.0}
+        StaticText, {{16.0, 116.0}, {226.3, 52.3}}, label: 'Add an Item🖋️', hitPoint: {129.2, 142.2}
+       Other, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+        Other, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+         Other, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+          Other, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+           ScrollView, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+            Other, {{0.0, -0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+             Other, {{0.0, 0.0}, {402.0, 156.0}}, hitPoint: {201.0, 78.0}
+            Other, {{0.0, -0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+            Other, {{0.0, 172.3}, {402.0, 146.0}}, hitPoint: {201.0, 245.3}
+             TextField, {{30.0, 201.0}, {342.0, 26.0}}, placeholderValue: 'Type something Here ...', value: Buy milk, Keyboard Focused, hitPoint: {201.0, 214.0}
+             Button, {{14.0, 249.3}, {374.0, 55.0}}, label: 'SAVE', hitPoint: {201.0, 276.8}
+            Other, {{369.0, 116.0}, {30.0, 430.0}}, label: 'Vertical scroll bar, 1 page', value: 0%, hitPoint: {384.0, 331.0}
+             Other, {{396.0, 346.7}, {3.0, 196.3}}, hitPoint: {397.5, 444.8}
+            Other, {{369.0, 116.0}, {30.0, 430.0}}, label: 'Vertical scroll bar, 1 page', value: 0%, hitPoint: {384.0, 331.0}
+             Other, {{396.0, 346.7}, {3.0, 196.3}}, hitPoint: {397.5, 444.8}
+       Toolbar, {{0.0, 0.0}, {402.0, 874.0}}, identifier: 'Toolbar', label: 'Toolbar', hitPoint: {201.0, 437.0}
+        Other, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+ Window, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+  Other, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+   Other, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+   Other, {{0.0, 546.0}, {402.0, 328.0}}, hitPoint: {201.0, 710.0}
+    Other, {{0.0, 546.0}, {402.0, 328.0}}, identifier: 'inputView', hitPoint: {201.0, 710.0}
+ Window, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+  Other, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+   Other, {{0.0, 546.0}, {402.0, 328.0}}, hitPoint: {201.0, 710.0}
+    Other, {{0.0, 546.0}, {402.0, 44.0}}, identifier: 'SystemInputAssistantView', hitPoint: {201.0, 568.0}
+     Other, {{0.0, 546.0}, {402.0, 44.0}}, hitPoint: {201.0, 568.0}
+      Other, {{0.0, 546.0}, {402.0, 44.0}}, identifier: 'CenterPageView', hitPoint: {201.0, 568.0}
+       Other, {{0.0, -54.0}, {402.0, 1244.0}}, hitPoint: {201.0, 437.0}
+        ScrollView, {{0.0, 546.0}, {402.0, 44.0}}, hitPoint: {201.0, 568.0}
+       Other, {{0.0, 546.0}, {402.0, 44.0}}, hitPoint: {201.0, 568.0}
+        Other, {{0.0, 546.0}, {402.0, 44.0}}, hitPoint: {201.0, 568.0}
+         Other, {{0.0, 546.0}, {402.0, 44.0}}, label: 'Typing Predictions', hitPoint: {201.0, 568.0}
+          Other, {{0.0, 546.0}, {402.0, 44.0}}, hitPoint: {201.0, 568.0}
+           Other, {{0.0, 546.0}, {402.0, 44.0}}, hitPoint: {201.0, 568.0}
+            Button, {{0.0, 546.0}, {134.0, 44.0}}, hitPoint: {67.0, 568.0}
+            Button, {{134.0, 546.0}, {134.0, 44.0}}, hitPoint: {201.0, 568.0}
+            Button, {{268.0, 546.0}, {134.0, 44.0}}, hitPoint: {335.0, 568.0}
+    Other, {{0.0, 546.0}, {402.0, 329.0}}, hitPoint: {201.0, 710.0}
+     Other, {{0.0, 546.0}, {402.0, 329.0}}, hitPoint: {201.0, 710.0}
+      Other, {{0.0, 546.0}, {402.0, 329.0}}, hitPoint: {201.0, 710.0}
+    Other, {{0.0, 590.0}, {402.0, 226.0}}, hitPoint: {201.0, 703.0}
+     Keyboard, {{0.0, 590.0}, {402.0, 226.0}}, hitPoint: {201.0, 703.0}
+      Other, {{0.0, 590.0}, {402.0, 226.0}}, hitPoint: {201.0, 703.0}
+       Other, {{0.0, 590.0}, {402.0, 226.0}}, identifier: 'UIKeyboardLayoutStar Preview', hitPoint: {201.0, 703.0}
+        Key, {{4.7, 597.0}, {39.3, 54.0}}, label: 'Q', hitPoint: {24.3, 624.0}
+        Key, {{44.0, 597.0}, {39.7, 54.0}}, label: 'W', hitPoint: {63.8, 624.0}
+        Key, {{83.7, 597.0}, {39.3, 54.0}}, label: 'E', hitPoint: {103.3, 624.0}
+        Key, {{123.0, 597.0}, {39.7, 54.0}}, label: 'R', hitPoint: {142.8, 624.0}
+        Key, {{162.7, 597.0}, {39.3, 54.0}}, label: 'T', hitPoint: {182.3, 624.0}
+        Key, {{202.0, 597.0}, {39.7, 54.0}}, label: 'Y', hitPoint: {221.8, 624.0}
+        Key, {{241.7, 597.0}, {39.3, 54.0}}, label: 'U', hitPoint: {261.3, 624.0}
+        Key, {{281.0, 597.0}, {39.7, 54.0}}, label: 'I', hitPoint: {300.8, 624.0}
+        Key, {{320.7, 597.0}, {39.3, 54.0}}, label: 'O', hitPoint: {340.3, 624.0}
+        Key, {{360.0, 597.0}, {39.7, 54.0}}, label: 'P', hitPoint: {379.8, 624.0}
+        Key, {{24.3, 651.0}, {39.3, 54.0}}, label: 'A', hitPoint: {44.0, 678.0}
+        Key, {{63.7, 651.0}, {39.7, 54.0}}, label: 'S', hitPoint: {83.5, 678.0}
+        Key, {{103.3, 651.0}, {39.3, 54.0}}, label: 'D', hitPoint: {123.0, 678.0}
+        Key, {{142.7, 651.0}, {39.7, 54.0}}, label: 'F', hitPoint: {162.5, 678.0}
+        Key, {{182.3, 651.0}, {39.3, 54.0}}, label: 'G', hitPoint: {202.0, 678.0}
+        Key, {{221.7, 651.0}, {39.7, 54.0}}, label: 'H', hitPoint: {241.5, 678.0}
+        Key, {{261.3, 651.0}, {39.3, 54.0}}, label: 'J', hitPoint: {281.0, 678.0}
+        Key, {{300.7, 651.0}, {39.7, 54.0}}, label: 'K', hitPoint: {320.5, 678.0}
+        Key, {{340.3, 651.0}, {39.3, 54.0}}, label: 'L', hitPoint: {360.0, 678.0}
+        Button, {{4.7, 705.0}, {51.3, 54.0}}, identifier: 'shift', label: 'shift', Selected, hitPoint: {30.3, 732.0}
+        Key, {{63.7, 705.0}, {39.7, 54.0}}, label: 'Z', hitPoint: {83.5, 732.0}
+        Key, {{103.3, 705.0}, {39.3, 54.0}}, label: 'X', hitPoint: {123.0, 732.0}
+        Key, {{142.7, 705.0}, {39.7, 54.0}}, label: 'C', hitPoint: {162.5, 732.0}
+        Key, {{182.3, 705.0}, {39.3, 54.0}}, label: 'V', hitPoint: {202.0, 732.0}
+        Key, {{221.7, 705.0}, {39.7, 54.0}}, label: 'B', hitPoint: {241.5, 732.0}
+        Key, {{261.3, 705.0}, {39.3, 54.0}}, label: 'N', hitPoint: {281.0, 732.0}
+        Key, {{300.7, 705.0}, {39.7, 54.0}}, label: 'M', hitPoint: {320.5, 732.0}
+        Key, {{348.0, 705.0}, {51.7, 54.0}}, identifier: 'delete', label: 'delete', hitPoint: {373.8, 732.0}
+        Key, {{4.7, 759.0}, {49.3, 54.0}}, identifier: 'more', label: 'numbers', hitPoint: {29.3, 786.0}
+        Button, {{54.0, 759.0}, {49.3, 54.0}}, identifier: 'emoji', label: 'Emoji', hitPoint: {78.7, 786.0}
+        Key, {{103.3, 759.0}, {197.3, 54.0}}, identifier: 'space', label: 'space', hitPoint: {202.0, 786.0}
+        Button, {{300.7, 759.0}, {99.0, 54.0}}, identifier: 'Return', label: 'return', hitPoint: {350.2, 786.0}
+    Other, {{0.0, 590.0}, {402.0, 284.0}}, hitPoint: {201.0, 732.0}
+     Button, {{8.5, 805.7}, {68.1, 68.7}}, label: 'Next keyboard', value: العربية, hitPoint: {42.5, 839.8}
+     Button, {{325.4, 805.4}, {68.1, 68.7}}, identifier: 'dictation', label: 'Dictate', hitPoint: {359.5, 839.7}
+     Button, {{325.4, 805.4}, {68.1, 68.7}}, identifier: 'dictation', label: 'Dictate', hitPoint: {359.5, 839.7}

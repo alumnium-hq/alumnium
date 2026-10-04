@@ -1,0 +1,45 @@
+Device orientation: Unknown
+------------------------
+Application bundle identifier: com.ayodeji.TodoList
+Application UI orientation: Portrait
+Application, pid: 17552, label: 'Do Stuf'
+ Window, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+  Other, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+   Other, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+    Other, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+     Other, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+      Other, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+       NavigationBar, {{0.0, 62.0}, {402.0, 110.3}}, identifier: 'Todo List📝', hitPoint: {201.0, 117.2}
+        Other, {{20.0, 66.0}, {41.3, 36.0}}, hitPoint: {40.7, 84.0}
+         Other, {{20.0, 66.0}, {41.3, 36.0}}, hitPoint: {40.7, 84.0}
+          Button, {{20.0, 66.0}, {41.3, 36.0}}, label: 'Edit', hitPoint: {40.7, 84.0}
+        Other, {{339.3, 66.0}, {42.7, 36.0}}, hitPoint: {360.7, 84.0}
+         Other, {{339.3, 66.0}, {42.7, 36.0}}, hitPoint: {360.7, 84.0}
+          Button, {{339.3, 66.0}, {42.7, 36.0}}, label: 'Add', hitPoint: {360.7, 84.0}
+        StaticText, {{16.0, 116.0}, {180.3, 52.3}}, label: 'Todo List📝', hitPoint: {106.2, 142.2}
+       Other, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+        Other, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+         Other, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+          Other, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+           CollectionView, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+            Other, {{-16.0, -1575.7}, {434.0, 3594.3}}, hitPoint: {201.0, 437.0}
+            Other, {{0.0, -0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+             Other, {{0.0, 0.0}, {402.0, 156.0}}, hitPoint: {201.0, 78.0}
+            Other, {{0.0, -0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+            Cell, {{16.0, 172.3}, {370.0, 78.3}}, hitPoint: {201.0, 211.5}
+             Other, {{16.0, 172.3}, {370.0, 78.3}}, hitPoint: {201.0, 211.5}
+              Other, {{16.0, 172.3}, {370.0, 78.3}}, hitPoint: {201.0, 211.5}
+             Other, {{16.0, 172.3}, {370.0, 78.3}}, hitPoint: {201.0, 211.5}
+              Other, {{16.0, 172.3}, {370.0, 78.3}}, hitPoint: {201.0, 211.5}
+               Other, {{16.0, 172.3}, {370.0, 78.3}}, hitPoint: {201.0, 211.5}
+                Image, {{34.0, 200.7}, {22.0, 22.0}}, identifier: 'circle', label: 'Circle', hitPoint: {45.0, 211.7}
+                StaticText, {{66.0, 195.3}, {80.3, 32.3}}, label: 'Buy milk', hitPoint: {106.2, 211.5}
+            Other, {{369.0, 116.0}, {30.0, 696.0}}, label: 'Vertical scroll bar, 1 page', value: 0%, hitPoint: {384.0, 464.0}
+             Other, {{396.0, 688.3}, {3.0, 120.7}}, hitPoint: {397.5, 748.7}
+            Other, {{369.0, 116.0}, {30.0, 696.0}}, label: 'Vertical scroll bar, 1 page', value: 0%, hitPoint: {384.0, 464.0}
+             Other, {{396.0, 688.3}, {3.0, 120.7}}, hitPoint: {397.5, 748.7}
+       Toolbar, {{0.0, 0.0}, {402.0, 874.0}}, identifier: 'Toolbar', label: 'Toolbar', hitPoint: {201.0, 437.0}
+        Other, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+ Window, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+  Other, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
+   Other, {{0.0, 0.0}, {402.0, 874.0}}, hitPoint: {201.0, 437.0}
