@@ -16,6 +16,7 @@
 
 # Build Artifacts
 **/dist/
+/cloud/
 /websites/docs/public/install.sh
 /websites/docs/public/install.ps1
 

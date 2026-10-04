@@ -73,7 +73,9 @@ export const directMcpTools = ACTOR_TOOLS.map((Tool) => {
   return McpTool.define(name, {
     description: `${description} Returns the current accessibility tree after the action. Use element IDs from this tree for the next action.`,
     inputSchema,
-    async execute(input) {
+    async execute(input, { policy }) {
+      if (policy.allowAction && !policy.allowAction(Tool))
+        throw new Error(`Action ${name} is unavailable in this server`);
       const { id: sessionId, ...inputArgs } = inputSchema.parse(input);
       const id = z.string().parse(sessionId);
       const state = McpState.getDriverState(id);
@@ -103,7 +105,7 @@ export const directMcpTools = ACTOR_TOOLS.map((Tool) => {
 
       return [
         { type: "text", text: result },
-        ...(await fetchAccessibilityTreeMcpTool.execute({ id })),
+        ...(await fetchAccessibilityTreeMcpTool.execute({ id }, policy)),
       ];
     },
   });

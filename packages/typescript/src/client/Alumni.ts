@@ -50,6 +50,7 @@ export namespace Alumni {
     model?: Model | undefined;
     llm?: LanguageModel | undefined;
     extraTools?: ToolClass[];
+    allowAction?: ((tool: ToolClass) => boolean) | undefined;
     planner?: boolean | undefined;
     changeAnalysis?: boolean | undefined;
     excludeAttributes?: string[] | undefined;
@@ -113,6 +114,7 @@ export class Alumni {
       ...this.driver.supportedTools,
       ...(options.extraTools || []),
     ])) {
+      if (options.allowAction && !options.allowAction(tool)) continue;
       this.tools[tool.name] = tool;
     }
 

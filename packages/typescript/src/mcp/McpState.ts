@@ -11,6 +11,7 @@ import { LlmUsageStats } from "../llm/llmSchema.ts";
 import { Telemetry } from "../telemetry/Telemetry.ts";
 import type { McpArtifactsStore } from "./McpArtifactsStore.ts";
 import type { McpDriver } from "./mcpDrivers.ts";
+import { McpDriverCleanupError } from "./McpDriverCleanupError.ts";
 
 const { logger, tracer } = Telemetry.get(import.meta.url);
 const { span } = tracer.dec();
@@ -30,6 +31,40 @@ export namespace McpState {
 export abstract class McpState {
   static #drivers: Record<string, McpState.Driver> = {}; // id -> driver state
   static #nextDriverId = 1;
+  static #starting = 0;
+  static #cleanupFailed = false;
+  static #stopping: Record<string, Promise<[string, LlmUsageStats]>> = {};
+
+  /** Reserve before awaiting initialization; stopping drivers still occupy a slot. */
+  static async startDriver<T>(
+    limit: number | undefined,
+    start: () => Promise<T>,
+  ): Promise<T> {
+    if (this.#cleanupFailed)
+      throw new Error(
+        "Driver cleanup failed. Restart this server before starting another session.",
+      );
+    if (
+      limit !== undefined &&
+      Object.keys(this.#drivers).length + this.#starting >= limit
+    )
+      throw new Error(
+        `This server allows at most ${limit} active browser session(s). Stop the current session first.`,
+      );
+    this.#starting++;
+    try {
+      return await start();
+    } catch (error) {
+      if (error instanceof McpDriverCleanupError) this.#cleanupFailed = true;
+      throw error;
+    } finally {
+      this.#starting--;
+    }
+  }
+
+  static markCleanupFailed(): void {
+    this.#cleanupFailed = true;
+  }
 
   static #cleanupHooksRegistered = false;
   static #cleanupAllPromise: Promise<void> | null = null;
@@ -94,38 +129,52 @@ export abstract class McpState {
 
   @span("mcp.driver.shutdown", (id) => ({ "mcp.driver.id": id }))
   static async cleanupDriver(id: string): Promise<[string, LlmUsageStats]> {
+    if (this.#stopping[id]) return this.#stopping[id];
+    const stopping = this.#cleanupDriver(id);
+    this.#stopping[id] = stopping;
+    try {
+      return await stopping;
+    } finally {
+      delete this.#stopping[id];
+    }
+  }
+
+  static async #cleanupDriver(id: string): Promise<[string, LlmUsageStats]> {
     const driverState = this.getDriverState(id);
 
     logger.debug(`Cleaning up driver ${id}`);
 
     const { al } = driverState;
-    const stats = await al.getStats();
-
-    if (al.driver instanceof PlaywrightDriver) {
-      logger.debug(`Driver ${id}: Stopping Playwright tracing`);
-
-      const tracePath =
-        await driverState.artifactsStore.ensureFilePath("trace.zip");
-      await al.driver.page.context().tracing.stop({ path: tracePath });
-    }
-
-    // Save token stats to JSON file
-    const statsPath = await driverState.artifactsStore.writeJson(
-      "token-stats.json",
-      stats,
-    );
-    logger.info(`Driver ${id}: Token stats saved to ${statsPath}`);
-
+    let stats: LlmUsageStats;
     try {
-      await al.quit();
-    } finally {
-      // MCP owns the browser, including any other tabs opened by this session.
-      if (al.driver instanceof PlaywrightDriver)
-        await al.driver.page.context().browser()?.close();
-    }
+      stats = await al.getStats();
 
-    delete this.#drivers[id];
-    tracer.end(id);
+      if (al.driver instanceof PlaywrightDriver) {
+        logger.debug(`Driver ${id}: Stopping Playwright tracing`);
+
+        const tracePath =
+          await driverState.artifactsStore.ensureFilePath("trace.zip");
+        await al.driver.page.context().tracing.stop({ path: tracePath });
+      }
+
+      // Save token stats to JSON file
+      const statsPath = await driverState.artifactsStore.writeJson(
+        "token-stats.json",
+        stats,
+      );
+      logger.info(`Driver ${id}: Token stats saved to ${statsPath}`);
+    } finally {
+      try {
+        await al.quit();
+      } finally {
+        // MCP owns the browser, including any other tabs opened by this session.
+        if (al.driver instanceof PlaywrightDriver)
+          await al.driver.page.context().browser()?.close();
+      }
+
+      delete this.#drivers[id];
+      tracer.end(id);
+    }
     logger.debug(`Driver ${id} cleanup complete`);
 
     return [driverState.artifactsStore.dir, stats];
@@ -148,6 +197,9 @@ export abstract class McpState {
   static clear() {
     this.#drivers = {};
     this.#nextDriverId = 1;
+    this.#starting = 0;
+    this.#cleanupFailed = false;
+    this.#stopping = {};
     this.#cleanupAllPromise = null;
   }
 

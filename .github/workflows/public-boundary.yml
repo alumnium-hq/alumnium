@@ -1,0 +1,15 @@
+name: Public source boundary
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Reject private source in the public repository
+        run: |
+          if test -n "$(git ls-files -- cloud)"; then
+            echo "The cloud directory belongs in its own private repository."
+            exit 1
+          fi

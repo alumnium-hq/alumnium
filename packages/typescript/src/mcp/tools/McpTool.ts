@@ -2,6 +2,7 @@ import z from "zod";
 import { Logger } from "../../telemetry/Logger.ts";
 import type { LoggerSchema } from "../../telemetry/LoggerSchema.ts";
 import { Telemetry } from "../../telemetry/Telemetry.ts";
+import type { McpPolicy } from "../McpPolicy.ts";
 
 const { tracer, logger } = Telemetry.get(import.meta.url);
 
@@ -26,10 +27,12 @@ export namespace McpTool {
 
   export type DefinitionExecuteFn<Input> = (
     input: z.infer<Input>,
+    policy?: McpPolicy,
   ) => Promise<Output>;
 
   export interface ExecuteHelpers {
     logger: LoggerSchema.Like;
+    policy: McpPolicy;
   }
 
   export type OutputContent = z.infer<typeof McpTool.OutputContent>;
@@ -52,7 +55,7 @@ export abstract class McpTool {
     props: McpTool.DefineProps<Input>,
   ): McpTool.Definition<Name, Input> {
     // Instrument with input/output logging
-    const execute = async (input: z.infer<Input>) =>
+    const execute = async (input: z.infer<Input>, policy: McpPolicy = {}) =>
       tracer.span("mcp.tool.invoke", { "mcp.tool.name": name }, async () => {
         const parsedInput = McpTool.IdInput.safeParse(input);
         const id = parsedInput.data?.id;
@@ -64,7 +67,10 @@ export abstract class McpTool {
         executeLogger.info("Executing");
         executeLogger.debug(`  -> Input: {input}`, { input });
 
-        const result = await props.execute(input, { logger: executeLogger });
+        const result = await props.execute(input, {
+          logger: executeLogger,
+          policy,
+        });
 
         executeLogger.info("Completed");
         executeLogger.debug("  -> Result: {result}", { result });

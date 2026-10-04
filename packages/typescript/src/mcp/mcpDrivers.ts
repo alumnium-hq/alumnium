@@ -15,6 +15,7 @@ import {
 import type { Driver } from "../drivers/Driver.ts";
 import { MaestroSession } from "../drivers/MaestroSession.ts";
 import { Env } from "../Env.ts";
+import { McpDriverCleanupError } from "./McpDriverCleanupError.ts";
 import { FileStore } from "../FileStore/FileStore.ts";
 import { ensurePlaywrightChromiumInstalled } from "../standalone/installPlaywrightBrowsers.ts";
 import { Logger } from "../telemetry/Logger.ts";
@@ -64,6 +65,7 @@ export namespace McpDriver {
   }
 
   export interface DriverOptions {
+    configureContext?: (context: BrowserContext) => Promise<void>;
     cookies?: Cookies;
     /**
      * Either the name of a Playwright device preset (e.g. `"Pixel 7"`), resolved via
@@ -210,52 +212,92 @@ export async function createPlaywrightDriver(
       ...(executablePath ? { executablePath } : {}),
       ...(proxy ? { proxy } : {}),
     });
-    context = await browser.newContext({
-      ...deviceOptions,
-      ...(videosDir ? { recordVideo: { dir: videosDir } } : {}),
-      extraHTTPHeaders: globalHeaders,
-    });
-  }
-
-  if (hasScopedHeaders) {
-    await context.route(
-      (url) => Object.keys(scopedHeadersFor(scopedHeaders, url)).length > 0,
-      (route) =>
-        route.fallback({
-          headers: {
-            ...route.request().headers(),
-            ...scopedHeadersFor(scopedHeaders, new URL(route.request().url())),
-          },
-        }),
-    );
-  }
-
-  await context.tracing.start({
-    screenshots: true,
-    snapshots: true,
-    // Capturing call-site sources fails in the Bun single-file executable
-    // because the recorded paths (e.g. /$bunfs/root/...) do not exist on disk.
-    sources: false,
-  });
-
-  if (cookies) {
-    logger.debug("Adding cookies: {cookies}", { cookies });
-    for (const cookie of cookies) {
-      cookie["path"] ??= "/";
+    try {
+      context = await browser.newContext({
+        ...deviceOptions,
+        ...(videosDir ? { recordVideo: { dir: videosDir } } : {}),
+        extraHTTPHeaders: globalHeaders,
+      });
+    } catch (error) {
+      try {
+        await browser.close();
+      } catch (cause) {
+        throw new McpDriverCleanupError("Browser cleanup failed", { cause });
+      }
+      throw error;
     }
-    await context.addCookies(cookies);
   }
 
-  if (permissions) {
-    logger.debug("Granting permissions: {permissions}", { permissions });
-    await context.grantPermissions(permissions);
+  try {
+    await driverOptions.configureContext?.(context);
+    if (hasScopedHeaders) {
+      await context.route(
+        (url) => Object.keys(scopedHeadersFor(scopedHeaders, url)).length > 0,
+        (route) =>
+          route.fallback({
+            headers: {
+              ...route.request().headers(),
+              ...scopedHeadersFor(
+                scopedHeaders,
+                new URL(route.request().url()),
+              ),
+            },
+          }),
+      );
+    }
+
+    await context.tracing.start({
+      screenshots: true,
+      snapshots: true,
+      // Capturing call-site sources fails in the Bun single-file executable
+      // because the recorded paths (e.g. /$bunfs/root/...) do not exist on disk.
+      sources: false,
+    });
+
+    if (cookies) {
+      logger.debug("Adding cookies: {cookies}", { cookies });
+      for (const cookie of cookies) {
+        cookie["path"] ??= "/";
+      }
+      await context.addCookies(cookies);
+    }
+
+    if (permissions) {
+      logger.debug("Granting permissions: {permissions}", { permissions });
+      await context.grantPermissions(permissions);
+    }
+
+    // Persistent context typically loads with a page.
+    const page = context.pages()[0] ?? (await context.newPage());
+
+    logger.debug("Playwright driver created successfully");
+    return page;
+  } catch (error) {
+    try {
+      const browser = context.browser();
+      if (browser) await browser.close();
+      else await context.close();
+    } catch (cause) {
+      throw new McpDriverCleanupError("Browser cleanup failed", { cause });
+    }
+    throw error;
   }
+}
 
-  // Persistent context typically loads with a page.
-  const page = context.pages()[0] ?? (await context.newPage());
-
-  logger.debug("Playwright driver created successfully");
-  return page;
+/** Close a driver that failed before it could be registered in McpState. */
+export async function closeMcpDriver(driver: McpDriver): Promise<void> {
+  if ("context" in driver) {
+    const context = driver.context();
+    const browser = context.browser();
+    if (browser) await browser.close();
+    else await context.close();
+  } else if ("deleteSession" in driver) {
+    await driver.deleteSession();
+  } else if ("quit" in driver) {
+    await driver.quit();
+  } else {
+    await driver.close();
+  }
 }
 
 /**
