@@ -1,0 +1,618 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`XcodeAccessibilityTree > preserves raw IDs when scoped to a subtree 1`] = `
+"<Cell raw_id="7" name="Buy milk" label="Buy milk">
+  <Switch raw_id="8" name="milk-completed" identifier="milk-completed" label="Completed" value="0" enabled="true" selected="false" />
+  <StaticText raw_id="9" name="Buy milk" label="Buy milk" />
+</Cell>"
+`;
+
+exports[`XcodeAccessibilityTree > renders the todo-editor hierarchy as XML 1`] = `
+"<Application raw_id="1" name="TodoList" label="TodoList">
+  <Window raw_id="2" name="">
+    <NavigationBar raw_id="3" name="New Task" identifier="New Task">
+      <Button raw_id="4" name="Back" label="Back" />
+      <Button raw_id="5" name="save-task" identifier="save-task" label="Save" enabled="false" />
+    </NavigationBar>
+    <Other raw_id="6" name="">
+      <TextField raw_id="7" name="task-title" identifier="task-title" label="Title" value="Buy milk" placeholderValue="Task title" focused="true" />
+      <TextView raw_id="8" name="task-notes" identifier="task-notes" label="Notes" value="Bring a bag" />
+      <Slider raw_id="9" name="priority" identifier="priority" label="Priority" value="50%" />
+    </Other>
+    <Keyboard raw_id="10" name="">
+      <Key raw_id="11" name="q" label="q" />
+      <Button raw_id="12" name="Done" label="Done" />
+    </Keyboard>
+  </Window>
+</Application>"
+`;
+
+exports[`XcodeAccessibilityTree > renders the todo-editor hierarchy as XML 2`] = `
+"<Application name="TodoList" id=1>
+  <Window id=2>
+    <NavigationBar name="New Task" id=3>
+      <Button name="Back" id=4 />
+      <Button name="save-task" id=5 label="Save" enabled="false" />
+    </NavigationBar>
+    <div id=6>
+      <TextField name="task-title" id=7 label="Title" value="Buy milk" placeholderValue="Task title" focused />
+      <TextView name="task-notes" id=8 label="Notes" value="Bring a bag" />
+      <Slider name="priority" id=9 label="Priority" value="50%" />
+    </div>
+    <Keyboard id=10>
+      <Key name="q" id=11 />
+      <Button name="Done" id=12 />
+    </Keyboard>
+  </Window>
+</Application>"
+`;
+
+exports[`XcodeAccessibilityTree > renders the todo-ios27-editing hierarchy as XML 1`] = `
+"<Application raw_id="1" name="Do Stuf" label="Do Stuf">
+  <Window raw_id="2" name="">
+    <Other raw_id="3" name="">
+      <Other raw_id="4" name="">
+        <Other raw_id="5" name="">
+          <Other raw_id="6" name="">
+            <Other raw_id="7" name="">
+              <NavigationBar raw_id="8" name="Todo List📝" identifier="Todo List📝">
+                <Other raw_id="9" name="">
+                  <Other raw_id="10" name="">
+                    <Button raw_id="11" name="checkmark" identifier="checkmark" label="Done" selected="true" />
+                  </Other>
+                </Other>
+                <Other raw_id="12" name="">
+                  <Other raw_id="13" name="">
+                    <Button raw_id="14" name="Add" label="Add" />
+                  </Other>
+                </Other>
+                <StaticText raw_id="15" name="Todo List📝" label="Todo List📝" />
+              </NavigationBar>
+              <Other raw_id="16" name="">
+                <Other raw_id="17" name="">
+                  <Other raw_id="18" name="">
+                    <Other raw_id="19" name="">
+                      <CollectionView raw_id="20" name="">
+                        <Other raw_id="21" name="" />
+                        <Other raw_id="22" name="">
+                          <Other raw_id="23" name="" />
+                        </Other>
+                        <Other raw_id="24" name="" />
+                        <Cell raw_id="25" name="">
+                          <Other raw_id="26" name="">
+                            <Other raw_id="27" name="" />
+                          </Other>
+                          <Other raw_id="28" name="">
+                            <Other raw_id="29" name="">
+                              <Other raw_id="30" name="">
+                                <Image raw_id="31" name="circle" identifier="circle" label="Circle" />
+                                <StaticText raw_id="32" name="Buy milk" label="Buy milk" />
+                              </Other>
+                            </Other>
+                          </Other>
+                          <Button raw_id="33" name="Reorder Circle" label="Reorder Circle">
+                            <Image raw_id="34" name="line.horizontal.3" identifier="line.horizontal.3" label="drag" />
+                          </Button>
+                          <Other raw_id="35" name="">
+                            <Image raw_id="36" name="minus.circle.fill" identifier="minus.circle.fill" label="remove" />
+                          </Other>
+                          <Other raw_id="37" name="">
+                            <Image raw_id="38" name="minus.circle.fill" identifier="minus.circle.fill" label="remove" />
+                          </Other>
+                        </Cell>
+                        <Cell raw_id="39" name="">
+                          <Other raw_id="40" name="">
+                            <Other raw_id="41" name="" />
+                          </Other>
+                          <Other raw_id="42" name="">
+                            <Other raw_id="43" name="">
+                              <Other raw_id="44" name="">
+                                <Image raw_id="45" name="circle" identifier="circle" label="Circle" />
+                                <StaticText raw_id="46" name="Buy bread" label="Buy bread" />
+                              </Other>
+                            </Other>
+                          </Other>
+                          <Button raw_id="47" name="Reorder Circle" label="Reorder Circle">
+                            <Image raw_id="48" name="line.horizontal.3" identifier="line.horizontal.3" label="drag" />
+                          </Button>
+                          <Other raw_id="49" name="">
+                            <Image raw_id="50" name="minus.circle.fill" identifier="minus.circle.fill" label="remove" />
+                          </Other>
+                          <Other raw_id="51" name="">
+                            <Image raw_id="52" name="minus.circle.fill" identifier="minus.circle.fill" label="remove" />
+                          </Other>
+                        </Cell>
+                        <Other raw_id="53" name="" />
+                        <Other raw_id="54" name="Vertical scroll bar, 1 page" label="Vertical scroll bar, 1 page" value="0%">
+                          <Other raw_id="55" name="" />
+                        </Other>
+                        <Other raw_id="56" name="Vertical scroll bar, 1 page" label="Vertical scroll bar, 1 page" value="0%">
+                          <Other raw_id="57" name="" />
+                        </Other>
+                      </CollectionView>
+                    </Other>
+                  </Other>
+                </Other>
+              </Other>
+              <Toolbar raw_id="58" name="Toolbar" identifier="Toolbar" label="Toolbar">
+                <Other raw_id="59" name="" />
+              </Toolbar>
+            </Other>
+          </Other>
+        </Other>
+      </Other>
+    </Other>
+  </Window>
+  <Window raw_id="60" name="">
+    <Other raw_id="61" name="">
+      <Other raw_id="62" name="" />
+    </Other>
+  </Window>
+</Application>"
+`;
+
+exports[`XcodeAccessibilityTree > renders the todo-ios27-editing hierarchy as XML 2`] = `
+"<Application name="Do Stuf" id=1>
+  <Window id=2>
+    <NavigationBar id=8>
+      <Button name="checkmark" id=11 label="Done" selected />
+      <Button name="Add" id=14 />
+      <div id=15>Todo List📝</div>
+    </NavigationBar>
+    <CollectionView id=20>
+      <Cell id=25>
+        <div id=30>
+          <Image name="circle" id=31 label="Circle" />
+          <div id=32>Buy milk</div>
+        </div>
+        <Button name="Reorder Circle" id=33>
+          <Image name="line.horizontal.3" id=34 label="drag" />
+        </Button>
+        <Image name="minus.circle.fill" id=36 label="remove" />
+        <Image name="minus.circle.fill" id=38 label="remove" />
+      </Cell>
+      <Cell id=39>
+        <div id=44>
+          <Image name="circle" id=45 label="Circle" />
+          <div id=46>Buy bread</div>
+        </div>
+        <Button name="Reorder Circle" id=47>
+          <Image name="line.horizontal.3" id=48 label="drag" />
+        </Button>
+        <Image name="minus.circle.fill" id=50 label="remove" />
+        <Image name="minus.circle.fill" id=52 label="remove" />
+      </Cell>
+      <div name="Vertical scroll bar, 1 page" id=54 value="0%" />
+      <div name="Vertical scroll bar, 1 page" id=56 value="0%" />
+    </CollectionView>
+    <Toolbar name="Toolbar" id=58 />
+  </Window>
+  <Window id=60 />
+</Application>"
+`;
+
+exports[`XcodeAccessibilityTree > renders the todo-ios27-empty hierarchy as XML 1`] = `
+"<Application raw_id="1" name="Do Stuf" label="Do Stuf">
+  <Window raw_id="2" name="">
+    <Other raw_id="3" name="">
+      <Other raw_id="4" name="">
+        <Other raw_id="5" name="">
+          <Other raw_id="6" name="">
+            <Other raw_id="7" name="">
+              <NavigationBar raw_id="8" name="Todo List📝" identifier="Todo List📝">
+                <Other raw_id="9" name="">
+                  <Other raw_id="10" name="">
+                    <Button raw_id="11" name="Edit" label="Edit" />
+                  </Other>
+                </Other>
+                <Other raw_id="12" name="">
+                  <Other raw_id="13" name="">
+                    <Button raw_id="14" name="Add" label="Add" />
+                  </Other>
+                </Other>
+                <StaticText raw_id="15" name="Todo List📝" label="Todo List📝" />
+              </NavigationBar>
+              <Other raw_id="16" name="">
+                <Other raw_id="17" name="">
+                  <Other raw_id="18" name="">
+                    <Other raw_id="19" name="">
+                      <ScrollView raw_id="20" name="">
+                        <Other raw_id="21" name="">
+                          <Other raw_id="22" name="" />
+                        </Other>
+                        <Other raw_id="23" name="" />
+                        <Other raw_id="24" name="">
+                          <StaticText raw_id="25" name="There are no items!" label="There are no items!" />
+                          <StaticText raw_id="26" name="Are you are productive person? Click the add button to add items to your Todo List!" label="Are you are productive person? Click the add button to add items to your Todo List!" />
+                          <Button raw_id="27" name="Add Something📝" label="Add Something📝" />
+                        </Other>
+                        <Other raw_id="28" name="Vertical scroll bar, 1 page" label="Vertical scroll bar, 1 page" value="0%">
+                          <Other raw_id="29" name="" />
+                        </Other>
+                        <Other raw_id="30" name="Vertical scroll bar, 1 page" label="Vertical scroll bar, 1 page" value="0%">
+                          <Other raw_id="31" name="" />
+                        </Other>
+                      </ScrollView>
+                    </Other>
+                  </Other>
+                </Other>
+              </Other>
+              <Toolbar raw_id="32" name="Toolbar" identifier="Toolbar" label="Toolbar">
+                <Other raw_id="33" name="" />
+              </Toolbar>
+            </Other>
+          </Other>
+        </Other>
+      </Other>
+    </Other>
+  </Window>
+</Application>"
+`;
+
+exports[`XcodeAccessibilityTree > renders the todo-ios27-empty hierarchy as XML 2`] = `
+"<Application name="Do Stuf" id=1>
+  <Window id=2>
+    <NavigationBar id=8>
+      <Button name="Edit" id=11 />
+      <Button name="Add" id=14 />
+      <div id=15>Todo List📝</div>
+    </NavigationBar>
+    <ScrollView id=20>
+      <div id=24>
+        <div id=25>There are no items!</div>
+        <div id=26>Are you are productive person? Click the add button to add items to your Todo List!</div>
+        <Button name="Add Something📝" id=27 />
+      </div>
+      <div name="Vertical scroll bar, 1 page" id=28 value="0%" />
+      <div name="Vertical scroll bar, 1 page" id=30 value="0%" />
+    </ScrollView>
+    <Toolbar name="Toolbar" id=32 />
+  </Window>
+</Application>"
+`;
+
+exports[`XcodeAccessibilityTree > renders the todo-ios27-focused hierarchy as XML 1`] = `
+"<Application raw_id="1" name="Do Stuf" label="Do Stuf">
+  <Window raw_id="2" name="">
+    <Other raw_id="3" name="">
+      <Other raw_id="4" name="">
+        <Other raw_id="5" name="">
+          <Other raw_id="6" name="">
+            <Other raw_id="7" name="">
+              <NavigationBar raw_id="8" name="Add an Item🖋️" identifier="Add an Item🖋️">
+                <Button raw_id="9" name="BackButton" identifier="BackButton" label="Todo List📝" />
+                <StaticText raw_id="10" name="Add an Item🖋️" label="Add an Item🖋️" />
+              </NavigationBar>
+              <Other raw_id="11" name="">
+                <Other raw_id="12" name="">
+                  <Other raw_id="13" name="">
+                    <Other raw_id="14" name="">
+                      <ScrollView raw_id="15" name="">
+                        <Other raw_id="16" name="">
+                          <Other raw_id="17" name="" />
+                        </Other>
+                        <Other raw_id="18" name="" />
+                        <Other raw_id="19" name="">
+                          <TextField raw_id="20" name="" placeholderValue="Type something Here ..." value="Buy milk" focused="true" />
+                          <Button raw_id="21" name="SAVE" label="SAVE" />
+                        </Other>
+                        <Other raw_id="22" name="Vertical scroll bar, 1 page" label="Vertical scroll bar, 1 page" value="0%">
+                          <Other raw_id="23" name="" />
+                        </Other>
+                        <Other raw_id="24" name="Vertical scroll bar, 1 page" label="Vertical scroll bar, 1 page" value="0%">
+                          <Other raw_id="25" name="" />
+                        </Other>
+                      </ScrollView>
+                    </Other>
+                  </Other>
+                </Other>
+              </Other>
+              <Toolbar raw_id="26" name="Toolbar" identifier="Toolbar" label="Toolbar">
+                <Other raw_id="27" name="" />
+              </Toolbar>
+            </Other>
+          </Other>
+        </Other>
+      </Other>
+    </Other>
+  </Window>
+  <Window raw_id="28" name="">
+    <Other raw_id="29" name="">
+      <Other raw_id="30" name="" />
+      <Other raw_id="31" name="">
+        <Other raw_id="32" name="inputView" identifier="inputView" />
+      </Other>
+    </Other>
+  </Window>
+  <Window raw_id="33" name="">
+    <Other raw_id="34" name="">
+      <Other raw_id="35" name="">
+        <Other raw_id="36" name="SystemInputAssistantView" identifier="SystemInputAssistantView">
+          <Other raw_id="37" name="">
+            <Other raw_id="38" name="CenterPageView" identifier="CenterPageView">
+              <Other raw_id="39" name="">
+                <ScrollView raw_id="40" name="" />
+              </Other>
+              <Other raw_id="41" name="">
+                <Other raw_id="42" name="">
+                  <Other raw_id="43" name="Typing Predictions" label="Typing Predictions">
+                    <Other raw_id="44" name="">
+                      <Other raw_id="45" name="">
+                        <Button raw_id="46" name="" />
+                        <Button raw_id="47" name="" />
+                        <Button raw_id="48" name="" />
+                      </Other>
+                    </Other>
+                  </Other>
+                </Other>
+              </Other>
+            </Other>
+          </Other>
+        </Other>
+        <Other raw_id="49" name="">
+          <Other raw_id="50" name="">
+            <Other raw_id="51" name="" />
+          </Other>
+        </Other>
+        <Other raw_id="52" name="">
+          <Keyboard raw_id="53" name="">
+            <Other raw_id="54" name="">
+              <Other raw_id="55" name="UIKeyboardLayoutStar Preview" identifier="UIKeyboardLayoutStar Preview">
+                <Key raw_id="56" name="Q" label="Q" />
+                <Key raw_id="57" name="W" label="W" />
+                <Key raw_id="58" name="E" label="E" />
+                <Key raw_id="59" name="R" label="R" />
+                <Key raw_id="60" name="T" label="T" />
+                <Key raw_id="61" name="Y" label="Y" />
+                <Key raw_id="62" name="U" label="U" />
+                <Key raw_id="63" name="I" label="I" />
+                <Key raw_id="64" name="O" label="O" />
+                <Key raw_id="65" name="P" label="P" />
+                <Key raw_id="66" name="A" label="A" />
+                <Key raw_id="67" name="S" label="S" />
+                <Key raw_id="68" name="D" label="D" />
+                <Key raw_id="69" name="F" label="F" />
+                <Key raw_id="70" name="G" label="G" />
+                <Key raw_id="71" name="H" label="H" />
+                <Key raw_id="72" name="J" label="J" />
+                <Key raw_id="73" name="K" label="K" />
+                <Key raw_id="74" name="L" label="L" />
+                <Button raw_id="75" name="shift" identifier="shift" label="shift" selected="true" />
+                <Key raw_id="76" name="Z" label="Z" />
+                <Key raw_id="77" name="X" label="X" />
+                <Key raw_id="78" name="C" label="C" />
+                <Key raw_id="79" name="V" label="V" />
+                <Key raw_id="80" name="B" label="B" />
+                <Key raw_id="81" name="N" label="N" />
+                <Key raw_id="82" name="M" label="M" />
+                <Key raw_id="83" name="delete" identifier="delete" label="delete" />
+                <Key raw_id="84" name="more" identifier="more" label="numbers" />
+                <Button raw_id="85" name="emoji" identifier="emoji" label="Emoji" />
+                <Key raw_id="86" name="space" identifier="space" label="space" />
+                <Button raw_id="87" name="Return" identifier="Return" label="return" />
+              </Other>
+            </Other>
+          </Keyboard>
+        </Other>
+        <Other raw_id="88" name="">
+          <Button raw_id="89" name="Next keyboard" label="Next keyboard" value="العربية" />
+          <Button raw_id="90" name="dictation" identifier="dictation" label="Dictate" />
+          <Button raw_id="91" name="dictation" identifier="dictation" label="Dictate" />
+        </Other>
+      </Other>
+    </Other>
+  </Window>
+</Application>"
+`;
+
+exports[`XcodeAccessibilityTree > renders the todo-ios27-focused hierarchy as XML 2`] = `
+"<Application name="o tuf" id=1>
+  <Window id=2>
+    <NavigationBar id=8>
+      <Button name="BackButton" id=9 label="Todo List📝" />
+      <div id=10>Add an Item🖋️</div>
+    </NavigationBar>
+    <ScrollView id=15>
+      <div id=19>
+        <TextField id=20 placeholderValue="Type something Here ..." value="Buy milk" focused />
+        <Button name="SAVE" id=21 />
+      </div>
+      <div name="Vertical scroll bar, 1 page" id=22 value="0%" />
+      <div name="Vertical scroll bar, 1 page" id=24 value="0%" />
+    </ScrollView>
+    <Toolbar name="Toolbar" id=26 />
+  </Window>
+  <Window id=28>
+    <div name="inputView" id=32 />
+  </Window>
+  <Window id=33>
+    <div name="SystemInputAssistantView" id=36>
+      <div name="CenterPageView" id=38>
+        <ScrollView id=40 />
+        <div name="Typing Predictions" id=43>
+          <Button id=46 />
+          <Button id=47 />
+          <Button id=48 />
+        </div>
+      </div>
+    </div>
+    <Keyboard id=53>
+      <div name="eyboardayouttar review" id=55>
+        <Key name="Q" id=56 />
+        <Key name="W" id=57 />
+        <Key name="E" id=58 />
+        <Key name="R" id=59 />
+        <Key name="T" id=60 />
+        <Key name="Y" id=61 />
+        <Key name="U" id=62 />
+        <Key name="I" id=63 />
+        <Key name="O" id=64 />
+        <Key name="P" id=65 />
+        <Key name="A" id=66 />
+        <Key name="S" id=67 />
+        <Key name="D" id=68 />
+        <Key name="F" id=69 />
+        <Key name="G" id=70 />
+        <Key name="H" id=71 />
+        <Key name="J" id=72 />
+        <Key name="K" id=73 />
+        <Key name="L" id=74 />
+        <Button name="shift" id=75 selected />
+        <Key name="Z" id=76 />
+        <Key name="X" id=77 />
+        <Key name="C" id=78 />
+        <Key name="V" id=79 />
+        <Key name="B" id=80 />
+        <Key name="N" id=81 />
+        <Key name="M" id=82 />
+        <Key name="delete" id=83 />
+        <Key name="more" id=84 label="numbers" />
+        <Button name="emoji" id=85 label="Emoji" />
+        <Key name="space" id=86 />
+        <Button name="Return" id=87 label="return" />
+      </div>
+    </Keyboard>
+    <div id=88>
+      <Button name="Next keyboard" id=89 value="العربية" />
+      <Button name="dictation" id=90 label="Dictate" />
+      <Button name="dictation" id=91 label="Dictate" />
+    </div>
+  </Window>
+</Application>"
+`;
+
+exports[`XcodeAccessibilityTree > renders the todo-ios27-populated hierarchy as XML 1`] = `
+"<Application raw_id="1" name="Do Stuf" label="Do Stuf">
+  <Window raw_id="2" name="">
+    <Other raw_id="3" name="">
+      <Other raw_id="4" name="">
+        <Other raw_id="5" name="">
+          <Other raw_id="6" name="">
+            <Other raw_id="7" name="">
+              <NavigationBar raw_id="8" name="Todo List📝" identifier="Todo List📝">
+                <Other raw_id="9" name="">
+                  <Other raw_id="10" name="">
+                    <Button raw_id="11" name="Edit" label="Edit" />
+                  </Other>
+                </Other>
+                <Other raw_id="12" name="">
+                  <Other raw_id="13" name="">
+                    <Button raw_id="14" name="Add" label="Add" />
+                  </Other>
+                </Other>
+                <StaticText raw_id="15" name="Todo List📝" label="Todo List📝" />
+              </NavigationBar>
+              <Other raw_id="16" name="">
+                <Other raw_id="17" name="">
+                  <Other raw_id="18" name="">
+                    <Other raw_id="19" name="">
+                      <CollectionView raw_id="20" name="">
+                        <Other raw_id="21" name="" />
+                        <Other raw_id="22" name="">
+                          <Other raw_id="23" name="" />
+                        </Other>
+                        <Other raw_id="24" name="" />
+                        <Cell raw_id="25" name="">
+                          <Other raw_id="26" name="">
+                            <Other raw_id="27" name="" />
+                          </Other>
+                          <Other raw_id="28" name="">
+                            <Other raw_id="29" name="">
+                              <Other raw_id="30" name="">
+                                <Image raw_id="31" name="circle" identifier="circle" label="Circle" />
+                                <StaticText raw_id="32" name="Buy milk" label="Buy milk" />
+                              </Other>
+                            </Other>
+                          </Other>
+                        </Cell>
+                        <Other raw_id="33" name="Vertical scroll bar, 1 page" label="Vertical scroll bar, 1 page" value="0%">
+                          <Other raw_id="34" name="" />
+                        </Other>
+                        <Other raw_id="35" name="Vertical scroll bar, 1 page" label="Vertical scroll bar, 1 page" value="0%">
+                          <Other raw_id="36" name="" />
+                        </Other>
+                      </CollectionView>
+                    </Other>
+                  </Other>
+                </Other>
+              </Other>
+              <Toolbar raw_id="37" name="Toolbar" identifier="Toolbar" label="Toolbar">
+                <Other raw_id="38" name="" />
+              </Toolbar>
+            </Other>
+          </Other>
+        </Other>
+      </Other>
+    </Other>
+  </Window>
+  <Window raw_id="39" name="">
+    <Other raw_id="40" name="">
+      <Other raw_id="41" name="" />
+    </Other>
+  </Window>
+</Application>"
+`;
+
+exports[`XcodeAccessibilityTree > renders the todo-ios27-populated hierarchy as XML 2`] = `
+"<Application name="Do Stuf" id=1>
+  <Window id=2>
+    <NavigationBar id=8>
+      <Button name="Edit" id=11 />
+      <Button name="Add" id=14 />
+      <div id=15>Todo List📝</div>
+    </NavigationBar>
+    <CollectionView id=20>
+      <Cell id=25>
+        <Image name="circle" id=31 label="Circle" />
+        <div id=32>Buy milk</div>
+      </Cell>
+      <div name="Vertical scroll bar, 1 page" id=33 value="0%" />
+      <div name="Vertical scroll bar, 1 page" id=35 value="0%" />
+    </CollectionView>
+    <Toolbar name="Toolbar" id=37 />
+  </Window>
+  <Window id=39 />
+</Application>"
+`;
+
+exports[`XcodeAccessibilityTree > renders the todo-list hierarchy as XML 1`] = `
+"<Application raw_id="1" name="TodoList" label="TodoList">
+  <Window raw_id="2" name="">
+    <NavigationBar raw_id="3" name="Todo List" identifier="Todo List">
+      <StaticText raw_id="4" name="Todo List" label="Todo List" />
+      <Button raw_id="5" name="add-task" identifier="add-task" label="Add Task" />
+    </NavigationBar>
+    <Table raw_id="6" name="">
+      <Cell raw_id="7" name="Buy milk" label="Buy milk">
+        <Switch raw_id="8" name="milk-completed" identifier="milk-completed" label="Completed" value="0" enabled="true" selected="false" />
+        <StaticText raw_id="9" name="Buy milk" label="Buy milk" />
+      </Cell>
+      <Cell raw_id="10" name="Alice’s bread &amp; &lt;butter&#x3E;" label="Alice’s bread &amp; &lt;butter&#x3E;">
+        <Switch raw_id="11" name="Completed" label="Completed" value="1" enabled="false" selected="true" />
+        <StaticText raw_id="12" name="Alice’s bread &amp; &lt;butter&#x3E;" label="Alice’s bread &amp; &lt;butter&#x3E;" />
+      </Cell>
+    </Table>
+  </Window>
+</Application>"
+`;
+
+exports[`XcodeAccessibilityTree > renders the todo-list hierarchy as XML 2`] = `
+"<Application name="TodoList" id=1>
+  <Window id=2>
+    <NavigationBar id=3>
+      <div id=4>Todo List</div>
+      <Button name="add-task" id=5 label="Add Task" />
+    </NavigationBar>
+    <Table id=6>
+      <Cell id=7>
+        <Switch name="milk-completed" id=8 label="Completed" value=0 selected="false" />
+        <div id=9>Buy milk</div>
+      </Cell>
+      <Cell id=10>
+        <Switch name="Completed" id=11 value=1 enabled="false" selected />
+        <div id=12>Alice’s bread &amp; &lt;butter&gt;</div>
+      </Cell>
+    </Table>
+  </Window>
+</Application>"
+`;

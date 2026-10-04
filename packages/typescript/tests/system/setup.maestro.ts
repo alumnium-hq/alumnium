@@ -48,9 +48,6 @@ export async function setup(project: TestProject) {
   if (os === "android") {
     await exec(adb(), ["-s", deviceId, "install", "-r", app.path]);
   } else {
-    // `simctl boot` brings the device up headlessly. Open the Simulator window too, so a run can
-    // be watched rather than just inferred from the log.
-    await showSimulator();
     // A cold simulator on a CI runner can take minutes to accept its first install.
     await exec("xcrun", ["simctl", "install", deviceId, app.path], 300_000);
   }
@@ -112,15 +109,6 @@ async function bootedSimulator(): Promise<string> {
   // finished booting can stall, so wait for the boot to complete.
   await exec("xcrun", ["simctl", "bootstatus", candidate.udid, "-b"], 300_000);
   return candidate.udid;
-}
-
-/** Brings the Simulator window to the front. Failing to do so must not fail the run. */
-async function showSimulator(): Promise<void> {
-  try {
-    await exec("open", ["-a", "Simulator"]);
-  } catch (error) {
-    console.warn(`Could not open the Simulator window: ${error}`);
-  }
 }
 
 interface SimctlDevice {

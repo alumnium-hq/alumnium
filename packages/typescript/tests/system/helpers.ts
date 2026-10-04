@@ -4,6 +4,7 @@ import {
   MaestroDriver,
   MaestroSession,
   Model,
+  XcodeSession,
   type Element,
 } from "alumnium";
 import { never } from "alwaysly";
@@ -99,9 +100,6 @@ export async function useSetup(props: useSetup.Props): Promise<Setup> {
     maestroDriver.hideKeyboardAfterTyping = isAndroid;
   }
 
-  const model = await al.model();
-  const isMobile = Driver.isMobile(driverId);
-
   onTestFinished(async (ctx) => {
     const passed = ctx.task.result?.state === "pass";
     if (passed) {
@@ -116,6 +114,9 @@ export async function useSetup(props: useSetup.Props): Promise<Setup> {
 
     await al.quit();
   });
+
+  const model = await al.model();
+  const isMobile = Driver.isMobile(driverId);
 
   return { driver, driverId, isMobile, al, $, model };
 }
@@ -174,6 +175,15 @@ async function createDriver(driverId: Driver.Id): Promise<Alumni.Driver> {
       });
       await session.launchApp({ clearState: true });
       return session;
+    }
+
+    case "xcode": {
+      // Each native test starts with an empty task list, including on retries.
+      return XcodeSession.start({
+        appPath: inject("xcodeAppPath"),
+        device: inject("xcodeDeviceId"),
+        appReset: true,
+      });
     }
 
     default:
@@ -291,6 +301,9 @@ function createHelpers(
         case "maestro":
           throw new Error("Maestro has no element handles");
 
+        case "xcode":
+          throw new Error("Xcode has no element handles");
+
         default:
           driverId satisfies never;
       }
@@ -310,6 +323,9 @@ function createHelpers(
 
         case "maestro":
           throw new Error("Maestro has no element handles");
+
+        case "xcode":
+          throw new Error("Xcode has no element handles");
 
         default:
           driverId satisfies never;

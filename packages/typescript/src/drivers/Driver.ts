@@ -53,10 +53,15 @@ export abstract class Driver {
 
   static MaestroKind = z.literal(this.maestroKind);
 
+  static xcodeKind = "xcode" as const;
+
+  static XcodeKind = z.literal(this.xcodeKind);
+
   static kinds = [
     ...this.chromiumKinds,
     this.appiumKind,
     this.maestroKind,
+    this.xcodeKind,
   ] as const;
 
   static Kind = z.enum(this.kinds);
@@ -65,6 +70,7 @@ export abstract class Driver {
     .union([
       this.ChromiumKind,
       this.MaestroKind,
+      this.XcodeKind,
       z.templateLiteral([this.AppiumKind, "-", this.MobileOs]),
     ])
     .default("selenium");
@@ -78,6 +84,8 @@ export abstract class Driver {
   }
 
   static isMobile(kind: Driver.Id): boolean {
-    return this.isAppium(kind) || this.isMaestro(kind);
+    return (
+      this.isAppium(kind) || this.isMaestro(kind) || kind === this.xcodeKind
+    );
   }
 }

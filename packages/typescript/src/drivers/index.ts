@@ -10,3 +10,5 @@ export * from "./MaestroDriver.ts";
 export * from "./MaestroSession.ts";
 export * from "./PlaywrightDriver.ts";
 export * from "./SeleniumDriver.ts";
+export * from "./XcodeDriver.ts";
+export * from "./XcodeSession.ts";

@@ -91,22 +91,31 @@ const mocks = vi.hoisted(() => {
 
 const mobileMocks = vi.hoisted(() => {
   const launchApp = vi.fn(async (_options: { clearState: boolean }) => {});
+  const close = vi.fn(async () => {});
   const maestroStart = vi.fn(async (props: Record<string, unknown>) => ({
     props,
     launchApp,
+    close,
   }));
   const updateSettings = vi.fn(async () => {});
+  const xcodeStart = vi.fn(async (props: Record<string, unknown>) => ({
+    props,
+  }));
   const remote = vi.fn(async (options: { capabilities: unknown }) => ({
     capabilities: options.capabilities,
     updateSettings,
   }));
-  return { launchApp, maestroStart, remote, updateSettings };
+  return { launchApp, close, maestroStart, xcodeStart, remote, updateSettings };
 });
 
 vi.mock("webdriverio", () => ({ remote: mobileMocks.remote }));
 
 vi.mock("../drivers/MaestroSession.ts", () => ({
   MaestroSession: { start: mobileMocks.maestroStart },
+}));
+
+vi.mock("../drivers/XcodeSession.ts", () => ({
+  XcodeSession: { start: mobileMocks.xcodeStart },
 }));
 
 vi.mock("selenium-webdriver", () => ({
@@ -667,5 +676,125 @@ describe("createMobileDriver", () => {
       ),
     ).rejects.toThrow(/App must be specified/);
     expect(mobileMocks.maestroStart).not.toHaveBeenCalled();
+  });
+
+  it.each([false, true])("passes headless=%s to Maestro", async (headless) => {
+    vi.stubEnv("ALUMNIUM_DRIVER", "maestro");
+    Env.reset();
+    await createMobileDriver("ios", {}, null, { app: "com.todo", headless });
+    expect(mobileMocks.maestroStart).toHaveBeenCalledWith(
+      expect.objectContaining({ headless }),
+    );
+  });
+
+  it("closes a Maestro session if app launch fails", async () => {
+    vi.stubEnv("ALUMNIUM_DRIVER", "maestro");
+    Env.reset();
+    mobileMocks.launchApp.mockRejectedValueOnce(new Error("Launch failed"));
+    await expect(
+      createMobileDriver("ios", {}, null, { app: "com.todo", headless: false }),
+    ).rejects.toThrow("Launch failed");
+    expect(mobileMocks.close).toHaveBeenCalledOnce();
+  });
+});
+
+describe("Xcode mobile sessions", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.stubEnv("ALUMNIUM_DRIVER", "xcode");
+    Env.reset();
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    Env.reset();
+  });
+
+  it("routes simulator and launch options to Xcode without starting Appium", async () => {
+    await createMobileDriver("ios", {}, null, {
+      app: "/tmp/Todo.xcodeproj",
+      device: "iPhone 16",
+      appArguments: ["-UITesting"],
+      appEnvironment: { API_URL: "https://staging.example.com" },
+    });
+    expect(mobileMocks.xcodeStart).toHaveBeenCalledWith({
+      appPath: "/tmp/Todo.xcodeproj",
+      device: "iPhone 16",
+      launchArgs: ["-UITesting"],
+      launchEnv: { API_URL: "https://staging.example.com" },
+    });
+    expect(mobileMocks.remote).not.toHaveBeenCalled();
+    expect(mobileMocks.maestroStart).not.toHaveBeenCalled();
+  });
+
+  it.each(["Todo.xcodeproj", "Todo.xcworkspace"])(
+    "resolves a relative %s app path without an explicit bundle id",
+    async (app) => {
+      await createMobileDriver("ios", {}, null, { app });
+      expect(mobileMocks.xcodeStart).toHaveBeenCalledWith({
+        appPath: `${process.cwd()}/${app}`,
+        device: undefined,
+        launchArgs: undefined,
+        launchEnv: undefined,
+      });
+    },
+  );
+
+  it("classifies Xcode as a mobile driver", () => {
+    expect(Driver.Id.parse("xcode")).toBe("xcode");
+    expect(Driver.isMobile("xcode")).toBe(true);
+  });
+
+  it.each([false, true])("passes headless=%s to Xcode", async (headless) => {
+    await createMobileDriver("ios", {}, null, { app: "com.todo", headless });
+    expect(mobileMocks.xcodeStart).toHaveBeenCalledWith(
+      expect.objectContaining({ headless }),
+    );
+  });
+
+  it.each([false, true])("passes appReset=%s to Xcode", async (appReset) => {
+    await createMobileDriver("ios", {}, null, { app: "com.todo", appReset });
+    expect(mobileMocks.xcodeStart).toHaveBeenCalledWith(
+      expect.objectContaining({ appReset }),
+    );
+  });
+
+  it("accepts a local .app with launch arguments and environment without a workspace", async () => {
+    await createMobileDriver("ios", {}, null, {
+      app: "/tmp/Todo List.app",
+      appArguments: ["-UITesting"],
+      appEnvironment: { TESTING: "true" },
+    });
+    expect(mobileMocks.xcodeStart).toHaveBeenCalledWith({
+      appPath: "/tmp/Todo List.app",
+      device: undefined,
+      launchArgs: ["-UITesting"],
+      launchEnv: { TESTING: "true" },
+    });
+  });
+
+  it("keeps bundle IDs ending in .app as installed app identifiers", async () => {
+    await createMobileDriver("ios", {}, null, { app: "com.example.app" });
+    expect(mobileMocks.xcodeStart).toHaveBeenCalledWith(
+      expect.objectContaining({ appId: "com.example.app" }),
+    );
+  });
+
+  it("rejects unsupported platforms, remote apps, and missing app options", async () => {
+    await expect(
+      createMobileDriver("android", {}, null, { app: "com.todo" }),
+    ).rejects.toThrow("iOS simulators");
+    await expect(
+      createMobileDriver("ios", {}, null, {
+        app: "https://example.com/Todo.app",
+      }),
+    ).rejects.toThrow("local .app");
+    await expect(
+      createMobileDriver("ios", {}, null, { app: "/tmp/Todo.ipa" }),
+    ).rejects.toThrow("local .app");
+    await expect(createMobileDriver("ios", {}, null, {})).rejects.toThrow(
+      "Xcode requires app",
+    );
+    expect(mobileMocks.xcodeStart).not.toHaveBeenCalled();
   });
 });

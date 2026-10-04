@@ -334,7 +334,7 @@ const sections = {
 
       copy: txt`
         Alumnium works with web applications through Selenium or Playwright and
-        with iOS and Android applications through Appium or Maestro.
+        with iOS and Android applications through Appium, Maestro, or Xcode.
 
         Reuse plain-language instructions across supported platforms, with
         platform-specific adjustments when the applications behave differently.

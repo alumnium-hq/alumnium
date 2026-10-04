@@ -12,8 +12,14 @@ import type { ToolCall } from "../tools/BaseTool.ts";
 
 export interface SessionRequest {
   platform: "chromium" | "ios" | "android";
-  /** Optional since Java/Python only support Appium. */
-  driver?: "selenium" | "playwright" | "appium" | "maestro" | undefined;
+  /** Optional since Java/Python don't support Maestro/Xcode. */
+  driver?:
+    | "selenium"
+    | "playwright"
+    | "appium"
+    | "maestro"
+    | "xcode"
+    | undefined;
   provider: string | undefined;
   name?: string | undefined;
   tools: { [key: string]: any }[];

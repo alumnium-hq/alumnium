@@ -3,6 +3,7 @@
  */
 
 import { existsSync } from "node:fs";
+import path from "node:path";
 import type { BrowserContext, Page } from "playwright-core";
 import { chromium, devices } from "playwright-core";
 import { Builder, type WebDriver } from "selenium-webdriver";
@@ -14,6 +15,7 @@ import {
 
 import type { Driver } from "../drivers/Driver.ts";
 import { MaestroSession } from "../drivers/MaestroSession.ts";
+import { XcodeSession } from "../drivers/XcodeSession.ts";
 import { Env } from "../Env.ts";
 import { FileStore } from "../FileStore/FileStore.ts";
 import { ensurePlaywrightChromiumInstalled } from "../standalone/installPlaywrightBrowsers.ts";
@@ -23,7 +25,12 @@ import { proxyFromEnv } from "./proxyFromEnv.ts";
 
 const logger = Logger.get(import.meta.url);
 
-export type McpDriver = Page | WebDriver | WebdriverIoBrowser | MaestroSession;
+export type McpDriver =
+  | Page
+  | WebDriver
+  | WebdriverIoBrowser
+  | MaestroSession
+  | XcodeSession;
 
 export namespace McpDriver {
   type PlaywrightCookie = Parameters<BrowserContext["addCookies"]>[0][number];
@@ -35,7 +42,8 @@ export namespace McpDriver {
     /**
      * The mobile app to run. Either an identifier of an installed app — an iOS bundle id or an
      * Android package name — or, for Appium, a reference to an app to install: a local `.app`/
-     * `.apk`/`.ipa` path, a URL, or a cloud id such as `lt://…`.
+     * `.apk`/`.ipa` path, a URL, or a cloud id such as `lt://…`. Xcode also accepts local `.app`,
+     * `.xcodeproj`, and `.xcworkspace` paths.
      */
     app?: string | undefined;
     appArguments?: string[] | undefined;
@@ -47,6 +55,8 @@ export namespace McpDriver {
      * Maestro matches identifiers against its connected devices.
      */
     device?: string | undefined;
+    /** Hide the macOS Simulator window. Maestro and Xcode only. Default is false. */
+    headless?: boolean | undefined;
   }
 
   export interface Capabilities {
@@ -410,10 +420,52 @@ export async function createMobileDriver(
   logger.info(`Creating mobile driver for ${os} using ${driverKind}`);
   if (driverKind === "maestro") {
     return createMaestroDriver(os, mobileOptions);
+  } else if (driverKind === "xcode") {
+    return createXcodeDriver(os, mobileOptions);
   } else {
     translateToAppiumCapabilities(os, capabilities, mobileOptions);
     return createAppiumDriver(os, capabilities, serverUrl);
   }
+}
+
+export async function createXcodeDriver(
+  os: Driver.MobileOs,
+  {
+    app,
+    device,
+    appReset,
+    appArguments,
+    appEnvironment,
+    headless,
+  }: McpDriver.MobileOptions,
+): Promise<XcodeSession> {
+  if (os !== "ios") throw new Error("XcodeDriver supports iOS simulators only");
+  if (!app)
+    throw new Error(
+      "Xcode requires app: a bundle id or a local .app, .xcodeproj, or .xcworkspace path",
+    );
+  const appPath =
+    isAppReference(app) ||
+    /^[^.]+\.app$/i.test(app) ||
+    /\.(xcodeproj|xcworkspace)[\\/]?$/i.test(app)
+      ? app
+      : undefined;
+  if (
+    appPath &&
+    (!/\.(app|xcodeproj|xcworkspace)[\\/]?$/i.test(appPath) ||
+      /^[a-z][a-z0-9+.-]*:\/\//i.test(appPath))
+  )
+    throw new Error(
+      "Xcode requires a bundle id or a local .app, .xcodeproj, or .xcworkspace path",
+    );
+  return XcodeSession.start({
+    ...(appPath ? { appPath: path.resolve(appPath) } : { appId: app }),
+    device,
+    launchArgs: appArguments,
+    launchEnv: appEnvironment,
+    ...(appReset !== undefined && { appReset }),
+    ...(headless !== undefined && { headless }),
+  });
 }
 
 function translateToAppiumCapabilities(
@@ -503,6 +555,7 @@ export async function createMaestroDriver(
     appReset,
     appArguments,
     appEnvironment,
+    headless,
   }: McpDriver.MobileOptions,
 ): Promise<MaestroSession> {
   if (app === undefined) {
@@ -522,6 +575,7 @@ export async function createMaestroDriver(
 
   const session = await MaestroSession.start({
     appId: app,
+    ...(headless !== undefined && { headless }),
     ...(appArguments !== undefined && { launchArgs: appArguments }),
     ...(appEnvironment !== undefined && { launchEnv: appEnvironment }),
     // Which device to drive is per-session state; unset means Maestro's first connected device.
@@ -534,9 +588,13 @@ export async function createMaestroDriver(
   // Maestro acts on whatever is on screen, so the app has to be brought up explicitly.
   const clearState = appReset === true;
   logger.info(`Launching ${app} (clearState=${clearState})`);
-  await session.launchApp({ clearState });
-
-  return session;
+  try {
+    await session.launchApp({ clearState });
+    return session;
+  } catch (error) {
+    await session.close().catch(() => {});
+    throw error;
+  }
 }
 
 /**
