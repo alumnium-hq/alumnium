@@ -71,6 +71,13 @@ export class CliSessionRegistry extends FileStore {
       await fs.rm(this.socketPath(name), { force: true });
   }
 
+  /**
+   * Removes only the entry file, leaving the socket alone.
+   */
+  async removeEntryFile(name: string): Promise<void> {
+    await this.remove(`${name}.json`);
+  }
+
   removeEntrySync(name: string) {
     fsSync.rmSync(this.resolve(`${name}.json`), { force: true });
     if (process.platform !== "win32")

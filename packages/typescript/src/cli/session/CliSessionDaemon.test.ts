@@ -1,3 +1,4 @@
+import { always } from "alwaysly";
 import fs from "node:fs/promises";
 import net from "node:net";
 import { describe, expect, it, vi } from "vitest";
@@ -199,6 +200,28 @@ describe("CliSessionDaemon", () => {
 
     await vi.waitFor(() => expect(onExit).toHaveBeenCalledWith(0));
     expect(stop).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps the registry entry and socket of a successor daemon", async () => {
+    // NOTE: Windows removes named pipes together with the owning process.
+    if (process.platform === "win32") return;
+    const { registry } = setup.cur;
+    const { daemon, socketPath } = await startDaemon();
+
+    // Simulate a successor daemon taking over the same session.
+    await fs.rm(socketPath);
+    await fs.writeFile(socketPath, "");
+    const entry = await registry.readEntry("default");
+    always(entry);
+    await registry.writeEntry({ ...entry, pid: process.pid + 1 });
+
+    await daemon.terminate(true);
+
+    expect(await registry.readEntry("default")).toMatchObject({
+      pid: process.pid + 1,
+    });
+    await expect(fs.stat(socketPath)).resolves.toBeDefined();
+    await fs.rm(socketPath, { force: true });
   });
 
   it("terminates only once", async () => {

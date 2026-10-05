@@ -41,6 +41,7 @@ export class CliSessionDaemon {
   #queue: Promise<unknown> = Promise.resolve();
   #idleTimer: ReturnType<typeof setTimeout> | undefined;
   #watchTimer: ReturnType<typeof setInterval> | undefined;
+  #socketIno: number | undefined;
   #closed = false;
   #terminating = false;
 
@@ -179,8 +180,25 @@ export class CliSessionDaemon {
     this.#closed = true;
     clearTimeout(this.#idleTimer);
     clearInterval(this.#watchTimer);
-    this.#server.close();
-    await this.#props.registry.removeEntry(this.#props.session);
+
+    // NOTE: A successor daemon may have taken over the session, so remove
+    // only what this daemon still owns.
+    const { registry, session } = this.#props;
+    if (await this.#ownsSocket()) {
+      // NOTE: Closing the server also unlinks its socket file.
+      this.#server.close();
+    } else {
+      this.#server.unref();
+    }
+    const entry = await registry.readEntry(session);
+    if (entry?.pid === process.pid) await registry.removeEntryFile(session);
+  }
+
+  async #ownsSocket(): Promise<boolean> {
+    if (this.#socketIno === undefined) return true;
+    const socketPath = this.#props.registry.socketPath(this.#props.session);
+    const stat = await fs.stat(socketPath).catch(() => undefined);
+    return stat?.ino === this.#socketIno;
   }
 
   #enqueue<Type>(fn: () => Promise<Type>): Promise<Type> {
@@ -204,6 +222,7 @@ export class CliSessionDaemon {
     if (process.platform === "win32") return;
 
     const { ino } = fsSync.statSync(socketPath);
+    this.#socketIno = ino;
     this.#watchTimer = setInterval(() => {
       if (fsSync.statSync(socketPath, { throwIfNoEntry: false })?.ino === ino)
         return;
