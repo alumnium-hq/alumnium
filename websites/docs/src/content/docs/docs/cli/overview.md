@@ -29,7 +29,7 @@ Chrome runs on Selenium by default. Set `ALUMNIUM_DRIVER=playwright` before `sta
 | `do <goal>` | Execute a goal on the current page. |
 | `check <statement> [--vision]` | Verify a statement. Exits with code `1` when it is false. |
 | `get <data> [--vision]` | Extract data from the page. |
-| `wait <seconds\|condition> [--timeout <seconds>]` | Wait for 1-30 seconds or until a condition is met. |
+| `wait <seconds\|condition> [--timeout <seconds>]` | Wait for 1-30 seconds or until a condition is met. Exits with code `0` even on timeout; check `status` (`met` or `timeout`) in the output. |
 | `fetch-accessibility-tree` | Print the accessibility tree. |
 | `stop [--save-cache]` | Stop the session and print the artifacts directory. |
 | `list` | List sessions and their status. |
@@ -38,7 +38,7 @@ Output is printed as JSON (XML for the accessibility tree). Errors are printed t
 
 ## Sessions
 
-Every command accepts `-s, --session <name>` (default: [`ALUMNIUM_CLI_SESSION`](/docs/reference#alumnium_cli_session) or `default`), so several sessions can run side by side. Sessions are tracked per project in `.alumnium/cli/` (under [`ALUMNIUM_STORE_DIR`](/docs/reference#alumnium_store_dir)), where `<session>.log` holds the background process output. Sessions stop automatically after [`ALUMNIUM_CLI_IDLE_TIMEOUT`](/docs/reference#alumnium_cli_idle_timeout) seconds without commands.
+Every command accepts `-s, --session <name>` (default: [`ALUMNIUM_CLI_SESSION`](/docs/reference#alumnium_cli_session) or `default`), so several sessions can run side by side. Session names are 1-24 letters, digits, `_` or `-`. Numeric names passed to `-s` are read as numbers, so `-s 007` selects session `7`; start names with a letter to avoid this. Sessions are tracked per project in `.alumnium/cli/` (under [`ALUMNIUM_STORE_DIR`](/docs/reference#alumnium_store_dir)), where `<session>.log` holds the background process output. Sessions stop automatically after [`ALUMNIUM_CLI_IDLE_TIMEOUT`](/docs/reference#alumnium_cli_idle_timeout) seconds without commands.
 
 ## Agent skill
 
