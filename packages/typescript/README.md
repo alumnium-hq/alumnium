@@ -45,6 +45,19 @@ await al.quit();
 
 Check out [documentation][1] and more [examples][2]!
 
+## CLI
+
+Drive a persistent session from the shell, for example from a coding agent:
+
+```sh
+npx alumnium cli start
+npx alumnium cli do "navigate to https://example.com"
+npx alumnium cli check "page shows Example Domain"
+npx alumnium cli stop
+```
+
+See the [CLI docs](https://alumnium.ai/docs/cli/overview/) for all commands.
+
 ## Contributing
 
 See the [contributing guidelines][4] for information on how to get involved in the project and develop locally.
