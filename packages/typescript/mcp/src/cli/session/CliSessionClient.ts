@@ -98,15 +98,19 @@ export class CliSessionClient {
     const entry = await this.#registry.readEntry(session);
     if (!entry) throw notRunningError(session);
 
-    if (checkVersion && entry.version !== ALUMNIUM_VERSION)
-      throw new Error(
-        `Session '${session}' was started by alumnium v${entry.version}, this is v${ALUMNIUM_VERSION}. Run \`${cliCommandLine(session, "stop")}\`, then \`${cliCommandLine(session, "start")}\`.`,
-      );
-
     const socket = await connect(entry.socketPath);
     if (!socket) {
       await this.#registry.removeEntry(session);
       throw notRunningError(session);
+    }
+
+    // NOTE: Checked after liveness, a dead session is "not running" whatever
+    // its version, and `stop` would say the same.
+    if (checkVersion && entry.version !== ALUMNIUM_VERSION) {
+      socket.destroy();
+      throw new Error(
+        `Session '${session}' was started by alumnium v${entry.version}, this is v${ALUMNIUM_VERSION}. Run \`${cliCommandLine(session, "stop")}\`, then \`${cliCommandLine(session, "start")}\`.`,
+      );
     }
 
     return sendRequest(session, socket, request);
@@ -198,8 +202,11 @@ async function spawnDaemon(
     },
   });
   fs.closeSync(log);
-  const exited = new Promise<number | null>((resolve) =>
-    child.once("exit", (code) => resolve(code)),
+  const exited = new Promise<{
+    code: number | null;
+    signal: NodeJS.Signals | null;
+  }>((resolve) =>
+    child.once("exit", (code, signal) => resolve({ code, signal })),
   );
   const failed = new Promise<Error>((resolve) => child.once("error", resolve));
   child.unref();
@@ -214,19 +221,25 @@ async function spawnDaemon(
     )
       return entry.startOutput;
 
+    const remaining = deadline - Date.now();
     const result = await Promise.race([
       exited,
       failed,
-      sleep(START_POLL_INTERVAL_MS),
+      sleep(Math.max(0, Math.min(START_POLL_INTERVAL_MS, remaining))),
     ]);
     if (result instanceof Error)
       throw new Error(
         `Session '${session}' failed to start: ${result.message}`,
       );
-    if (result !== undefined)
+    if (result !== undefined) {
+      const reason =
+        result.code !== null
+          ? `exit code ${result.code}`
+          : `killed by ${result.signal}`;
       throw new Error(
-        `Session '${session}' failed to start (exit code ${result})${readLog(logPath)}`,
+        `Session '${session}' failed to start (${reason})${readLog(logPath)}`,
       );
+    }
     if (Date.now() >= deadline) {
       child.kill();
       throw new Error(

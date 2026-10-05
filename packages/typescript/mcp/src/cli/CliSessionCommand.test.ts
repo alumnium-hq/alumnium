@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { pushMock } from "../../../alumnium/tests/unit/mocks.ts";
+import { pushMock, pushTeardown } from "../../../alumnium/tests/unit/mocks.ts";
 import {
   isCheckFailure,
   parseWaitFor,
@@ -118,14 +118,46 @@ describe("runCliSession", () => {
     "rejects invalid session name %j",
     async (name) => {
       const { run, exit } = setup();
-      vi.spyOn(console, "log").mockImplementation(() => {});
+      const log = vi.spyOn(console, "log").mockImplementation(() => {});
+      pushMock(log);
 
       await runCliSession(["get", "-s", name, "title"]);
 
       expect(run).not.toHaveBeenCalled();
+      expect(log.mock.calls.flat().join("\n")).toContain(
+        "Session name must be 1-24 letters, digits, '_' or '-'",
+      );
       expect(exit).toHaveBeenCalledWith(1);
     },
   );
+
+  it("rejects an invalid ALUMNIUM_CLI_SESSION without throwing on import", async () => {
+    vi.stubEnv("ALUMNIUM_CLI_SESSION", "../x");
+    vi.resetModules();
+    pushTeardown(() => {
+      vi.unstubAllEnvs();
+      vi.resetModules();
+    });
+    const { CliSessionClient: Client } =
+      await import("./session/CliSessionClient.ts");
+    const { runCliSession: run } = await import("./CliSessionCommand.ts");
+    const runSpy = vi.spyOn(Client.prototype, "run").mockResolvedValue("{}");
+    const exit = vi
+      .spyOn(process, "exit")
+      .mockImplementation(() => undefined as never);
+    const log = vi.spyOn(console, "log").mockImplementation(() => {});
+    // NOTE: The mocked `exit` returns, so the command then reports a TypeError.
+    capture(process.stderr);
+    pushMock(runSpy, exit, log);
+
+    await run(["get", "title"]);
+
+    expect(runSpy).not.toHaveBeenCalled();
+    expect(log.mock.calls.flat().join("\n")).toContain(
+      "Session name must be 1-24 letters, digits, '_' or '-'",
+    );
+    expect(exit).toHaveBeenCalledWith(1);
+  });
 
   it("reports missing arguments", async () => {
     const { run, exit, stderr } = setup();
@@ -158,6 +190,10 @@ describe("isCheckFailure", () => {
     expect(isCheckFailure('{"result":"success","explanation":"yes"}')).toBe(
       false,
     );
+  });
+
+  it("treats non-JSON output as a failure", () => {
+    expect(isCheckFailure("not json")).toBe(true);
   });
 });
 

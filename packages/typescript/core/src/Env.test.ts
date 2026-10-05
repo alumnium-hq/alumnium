@@ -202,6 +202,27 @@ describe("Env", () => {
     expect(Env.ALUMNIUM_CLI_IDLE_TIMEOUT).toBe(3600);
   });
 
+  it("allows disabling the CLI idle timeout with 0", () => {
+    vi.stubEnv("ALUMNIUM_CLI_IDLE_TIMEOUT", "0");
+    expect(Env.ALUMNIUM_CLI_IDLE_TIMEOUT).toBe(0);
+  });
+
+  it.each([
+    [undefined, false],
+    ["true", true],
+  ])("parses ALUMNIUM_CLI_DAEMONIZE %s as %s", (input, expected) => {
+    vi.stubEnv("ALUMNIUM_CLI_DAEMONIZE", input);
+    expect(Env.ALUMNIUM_CLI_DAEMONIZE).toBe(expected);
+  });
+
+  it.each([
+    [undefined, undefined],
+    ["work", "work"],
+  ])("reads ALUMNIUM_CLI_SESSION %s as %s", (input, expected) => {
+    vi.stubEnv("ALUMNIUM_CLI_SESSION", input);
+    expect(Env.ALUMNIUM_CLI_SESSION).toBe(expected);
+  });
+
   it("rejects CLI idle timeouts that timers cannot handle", () => {
     vi.stubEnv("ALUMNIUM_CLI_IDLE_TIMEOUT", "2147484");
     expect(() => Env.ALUMNIUM_CLI_IDLE_TIMEOUT).toThrow();

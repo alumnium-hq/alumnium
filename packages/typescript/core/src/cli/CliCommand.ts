@@ -58,7 +58,7 @@ export abstract class CliCommand {
           if (meta.positional) return;
 
           let defaultValue: string | undefined;
-          if (Arg instanceof z.ZodDefault)
+          if (Arg instanceof z.ZodDefault || Arg instanceof z.ZodPrefault)
             defaultValue = String(Arg.def.defaultValue);
 
           command = command.option(meta.syntax, meta.description, {

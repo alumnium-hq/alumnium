@@ -64,16 +64,17 @@ export class CliSessionDaemon {
     this.#driverId = id;
 
     const socketPath = registry.socketPath(session);
-    let rejectListen: (error: Error) => void = () => {};
     try {
       if (process.platform !== "win32")
         await fs.rm(socketPath, { force: true });
       await new Promise<void>((resolve, reject) => {
-        rejectListen = reject;
-        this.#server.once("error", reject);
-        this.#server.listen(socketPath, resolve);
+        const onListenError = (error: Error) => reject(error);
+        this.#server.once("error", onListenError);
+        this.#server.listen(socketPath, () => {
+          this.#server.removeListener("error", onListenError);
+          resolve();
+        });
       });
-      this.#server.removeListener("error", rejectListen);
       this.#server.on("error", (error) =>
         logger.error("Session server error: {error}", { error }),
       );
@@ -121,6 +122,10 @@ export class CliSessionDaemon {
    * Synchronous `process.on("exit")` cleanup. A successor daemon may have taken
    * over the session, so remove only what this daemon still owns. Does nothing
    * if `start` never listened on the socket.
+   *
+   * NOTE: An unknown socket inode counts as not owned here, unlike in
+   * `#ownsSocket`. This hook can't tell whether a successor daemon replaced
+   * the file, and `start` may have failed because one already holds it.
    */
   removeOwnedFilesSync() {
     const { registry, session } = this.#props;
@@ -155,26 +160,26 @@ export class CliSessionDaemon {
     this.#pokeIdleTimer();
 
     try {
-      const text = await this.#enqueue(() =>
-        tracer.span(
+      const text = await this.#enqueue(async () => {
+        // NOTE: Checked before the span, a late request isn't an errored span.
+        if (this.#closed) {
+          notRunning = true;
+          throw new Error(
+            `Session '${this.#props.session}' is not running. Run \`${cliCommandLine(this.#props.session, "start")}\` first.`,
+          );
+        }
+        return tracer.span(
           "cli.session.request",
           {
             "cli.session.name": this.#props.session,
             "cli.session.method": request.method,
           },
-          async () => {
-            if (this.#closed) {
-              notRunning = true;
-              throw new Error(
-                `Session '${this.#props.session}' is not running. Run \`${cliCommandLine(this.#props.session, "start")}\` first.`,
-              );
-            }
-            return request.method === "stop"
+          async () =>
+            request.method === "stop"
               ? this.#stop(request.params.saveCache)
-              : this.#run(request.params.tool, request.params.input);
-          },
-        ),
-      );
+              : this.#run(request.params.tool, request.params.input),
+        );
+      });
       await connection
         .send({ id: request.id, result: { text } })
         .catch(() => {});
@@ -236,6 +241,9 @@ export class CliSessionDaemon {
   }
 
   async #ownsSocket(): Promise<boolean> {
+    // NOTE: An unknown inode counts as owned here, unlike in
+    // `removeOwnedFilesSync`. `#watchSocket` hasn't run yet, so nothing could
+    // have replaced the socket, and this daemon must close its own server.
     if (this.#socketIno === undefined) return true;
     const socketPath = this.#props.registry.socketPath(this.#props.session);
     const stat = await fs.stat(socketPath).catch(() => undefined);

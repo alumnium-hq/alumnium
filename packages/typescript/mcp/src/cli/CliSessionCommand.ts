@@ -9,7 +9,9 @@ const DEFAULT_CAPABILITIES = '{"platformName":"chrome"}';
 
 const CheckOutput = z.object({ result: z.string() });
 
-const Session = CliSessionRegistry.SessionName.default(
+// NOTE: `prefault` validates the default, unlike `default`, so an invalid
+// ALUMNIUM_CLI_SESSION is rejected by the schema.
+const Session = CliSessionRegistry.SessionName.prefault(
   Env.ALUMNIUM_CLI_SESSION ?? "default",
 ).register(CliCommand.option, {
   name: "session",
@@ -258,7 +260,12 @@ export function parseWaitFor(value: string): number | string {
 }
 
 export function isCheckFailure(text: string): boolean {
-  return CheckOutput.safeParse(JSON.parse(text)).data?.result === "failure";
+  try {
+    return CheckOutput.safeParse(JSON.parse(text)).data?.result === "failure";
+  } catch {
+    // NOTE: Output that isn't JSON can't be a verified success.
+    return true;
+  }
 }
 
 /**

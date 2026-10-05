@@ -51,6 +51,28 @@ describe("SocketConnection", () => {
     await vi.waitFor(() => expect(messages).toEqual([{ text }]));
   });
 
+  it("delivers only messages before a malformed line, then closes", async () => {
+    const { client, remote } = await connectPair();
+    const connection = new SocketConnection(client);
+    const messages = collect(connection);
+    const onclose = vi.fn();
+    connection.onclose = onclose;
+
+    remote.write('{"a":1}\nnope\n{"a":2}\n');
+
+    await vi.waitFor(() => expect(onclose).toHaveBeenCalled());
+    expect(messages).toEqual([{ a: 1 }]);
+  });
+
+  it("skips blank lines between messages", async () => {
+    const { client, remote } = await connectPair();
+    const messages = collect(new SocketConnection(client));
+
+    remote.write('{"a":1}\n\n\n{"a":2}\n');
+
+    await vi.waitFor(() => expect(messages).toEqual([{ a: 1 }, { a: 2 }]));
+  });
+
   it("closes the connection on malformed input", async () => {
     const { client, remote } = await connectPair();
     const connection = new SocketConnection(client);

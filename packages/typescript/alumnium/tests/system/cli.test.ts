@@ -4,8 +4,7 @@ import { createServer } from "node:http";
 import type { AddressInfo } from "node:net";
 import os from "node:os";
 import { describe, it } from "vitest";
-import { Env } from "../../src/Env.ts";
-import { safePathJoin } from "../../src/utils/fs.ts";
+import { Env, safePathJoin } from "@alumnium/core/internal";
 
 const PAGE = `
   <title>CLI Counter</title>
@@ -85,7 +84,8 @@ describe("CLI", () => {
     // NOTE: test-system.sh sets ALUMNIUM_CACHE_PATH when verifying the cache.
     const cachePath =
       Env.ALUMNIUM_CACHE_PATH ?? safePathJoin(storeDir, "cache");
-    await expect(fs.stat(cachePath)).resolves.toBeTruthy();
+    // NOTE: The cache is a directory tree, so --save-cache wrote something.
+    expect((await fs.readdir(cachePath)).length).toBeGreaterThan(0);
 
     await expect
       .poll(() => isProcessRunning(pid), { timeout: 10_000 })
@@ -96,16 +96,21 @@ describe("CLI", () => {
     expect(after.stderr).toContain("Session 'default' is not running");
     expect(JSON.parse((await alumnium("list")).stdout)).toEqual([]);
 
+    function childEnv(): NodeJS.ProcessEnv {
+      // oxlint-disable-next-line no-process-env -- We need it to pass env vars
+      const { ALUMNIUM_CLI_SESSION: _session, ...env } = process.env;
+      return { ...env, ALUMNIUM_STORE_DIR: storeDir };
+    }
+
     function alumnium(
       ...args: string[]
     ): Promise<{ code: number; stdout: string; stderr: string }> {
       return new Promise((resolve) => {
         execFile(
           "bun",
-          ["src/cli/bin.ts", "cli", ...args],
+          ["cli/src/cli/bin.ts", "cli", ...args],
           {
-            // oxlint-disable-next-line no-process-env -- We need it to pass env vars
-            env: { ...process.env, ALUMNIUM_STORE_DIR: storeDir },
+            env: childEnv(),
             maxBuffer: 64 * 1024 * 1024,
           },
           (error, stdout, stderr) => {

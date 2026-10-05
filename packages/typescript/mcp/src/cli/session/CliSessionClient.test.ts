@@ -120,6 +120,16 @@ describe("CliSessionClient", () => {
     });
   });
 
+  it("reports a dead session from another version as not running", async () => {
+    const { client, registry } = setup.cur;
+    await registry.writeEntry({ ...entry(registry, "old"), version: "0.0.0" });
+
+    await expect(client.run("old", "echo", {})).rejects.toThrow(
+      "Session 'old' is not running",
+    );
+    expect(await registry.readEntry("old")).toBeUndefined();
+  });
+
   it("stops a session", async () => {
     const { client, registry, stop } = setup.cur;
     await startDaemon();
@@ -206,6 +216,37 @@ describe("CliSessionClient", () => {
       await expect(
         new CliSessionClient(registry).start("default", { capabilities: "{}" }),
       ).rejects.toThrow("Session 'default' failed to start: spawn ENOENT");
+    });
+
+    it("reports the signal when the daemon is killed", async () => {
+      const { registry } = setup.cur;
+      const child = fakeChild();
+      spawnMock.mockImplementation(() => {
+        queueMicrotask(() => child.emit("exit", null, "SIGKILL"));
+        return child;
+      });
+      pushMock(spawnMock);
+
+      await expect(
+        new CliSessionClient(registry).start("default", {
+          capabilities: "{}",
+        }),
+      ).rejects.toThrow("failed to start (killed by SIGKILL)");
+    });
+
+    it("does not overshoot the start deadline", async () => {
+      const { registry } = setup.cur;
+      spawnMock.mockReturnValue(fakeChild());
+      pushMock(spawnMock);
+
+      const startedAt = Date.now();
+      await expect(
+        new CliSessionClient(registry, 30).start("default", {
+          capabilities: "{}",
+        }),
+      ).rejects.toThrow("did not start within");
+
+      expect(Date.now() - startedAt).toBeLessThan(150);
     });
 
     it("kills the daemon when it does not start in time", async () => {

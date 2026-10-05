@@ -13,7 +13,9 @@ describe("CliCommand", () => {
     });
   });
 
-  it("keeps numeric-looking values as strings", async () => {
+  // NOTE: cac casts numeric option values (`-t 007` arrives as 7), the
+  // `z.coerce.string()` in the schema is what keeps them strings.
+  it("keeps numeric-looking values as strings with schema coercion", async () => {
     const { cli, action } = setup();
     await parse(cli, ["greet", "42", "-t", "7"]);
     expect(action.mock.calls[0]?.[0].args).toEqual({
@@ -21,6 +23,47 @@ describe("CliCommand", () => {
       loud: false,
       tag: "7",
     });
+  });
+
+  it("receives numeric option values from cac as numbers", async () => {
+    const action = vi.fn(async (_props: { args: unknown }) => {});
+    const command = CliCommand.define({
+      name: "raw",
+      description: "Raw option",
+      Args: z.object({
+        tag: z.unknown().register(CliCommand.option, {
+          name: "tag",
+          syntax: "-t, --tag <tag>",
+          description: "Tag",
+        }),
+      }),
+      action,
+    });
+    const cli = cac("test");
+    command.register(cli);
+
+    await parse(cli, ["raw", "-t", "007"]);
+    expect(action.mock.calls[0]?.[0].args).toEqual({ tag: 7 });
+  });
+
+  it("shows prefault defaults as cac option defaults", () => {
+    const command = CliCommand.define({
+      name: "pref",
+      description: "Prefault",
+      Args: z.object({
+        tag: z.string().prefault("fallback").register(CliCommand.option, {
+          name: "tag",
+          syntax: "-t, --tag <tag>",
+          description: "Tag",
+        }),
+      }),
+      action: async () => {},
+    });
+    const cli = cac("test");
+    command.register(cli);
+
+    const option = cli.commands[0]?.options.find(({ name }) => name === "tag");
+    expect(option?.config.default).toBe("fallback");
   });
 
   it("passes variadic positional arguments", async () => {

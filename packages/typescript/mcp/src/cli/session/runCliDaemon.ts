@@ -37,13 +37,14 @@ export async function runCliDaemon(props: runCliDaemon.Props): Promise<void> {
   await Logger.initEnv({ logger });
 
   const registry = new CliSessionRegistry();
+  const stop = cliTool(stopMcpTool);
 
   const daemon = new CliSessionDaemon({
     session,
     registry,
     start: cliTool(startMcpTool),
     startInput: { capabilities, server_url: serverUrl },
-    stop: cliTool(stopMcpTool),
+    stop,
     tools: {
       check: cliTool(checkMcpTool),
       do: cliTool(doMcpTool),
@@ -61,9 +62,19 @@ export async function runCliDaemon(props: runCliDaemon.Props): Promise<void> {
   // NOTE: Node exits on SIGTERM without emitting `exit`. The client kills a
   // daemon that missed its start deadline this way, and so does `kill <pid>`.
   // Not delivered on Windows, where `kill()` terminates the process outright.
-  process.once("SIGTERM", () => {
-    if (daemon.driverId) void daemon.terminate(true);
-    else void exit(143);
+  //
+  // NOTE: Before `start` finishes, `terminate` would race the rest of it, so
+  // stop the driver directly and never wait for `start`, it may be hung.
+  let started = false;
+  let aborting = false;
+  process.once("SIGTERM", async () => {
+    if (started) {
+      void daemon.terminate(true);
+      return;
+    }
+    aborting = true;
+    if (daemon.driverId) await stop({ id: daemon.driverId }).catch(() => {});
+    await exit(143);
   });
 
   try {
@@ -72,7 +83,10 @@ export async function runCliDaemon(props: runCliDaemon.Props): Promise<void> {
     const { driver } = McpState.getDriverAlumni(daemon.driverId);
     if (driver instanceof PlaywrightDriver)
       driver.page.context().on("close", () => void daemon.terminate(false));
+    started = true;
   } catch (error) {
+    // NOTE: The SIGTERM handler owns the exit, `start` failed because of it.
+    if (aborting) return;
     logger.error("Failed to start session: {error}", { error });
     // NOTE: Goes to the session log file, `start` prints it on failure.
     console.error(error instanceof Error ? error.message : String(error));

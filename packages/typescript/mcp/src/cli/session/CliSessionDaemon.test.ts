@@ -10,6 +10,7 @@ import {
   setupBeforeEach,
 } from "../../../../alumnium/tests/unit/mocks.ts";
 import type { McpTool } from "../../mcp/tools/McpTool.ts";
+import { CliProtocol } from "./CliProtocol.ts";
 import { CliSessionDaemon } from "./CliSessionDaemon.ts";
 import { CliSessionRegistry } from "./CliSessionRegistry.ts";
 import { SocketConnection } from "./SocketConnection.ts";
@@ -46,6 +47,16 @@ describe("CliSessionDaemon", () => {
     pushTeardown(() => daemon.terminate(false));
     const startText = await daemon.start();
     return { daemon, startText, socketPath: registry.socketPath("default") };
+  }
+
+  /**
+   * `onMessage` enqueues a request right after parsing it, so a parsed message
+   * is an enqueued request.
+   */
+  function spyOnParsedRequests() {
+    const parsed = vi.spyOn(CliProtocol.Request, "safeParse");
+    pushMock(parsed);
+    return parsed;
   }
 
   function useFakeTimers() {
@@ -142,6 +153,7 @@ describe("CliSessionDaemon", () => {
     });
     const { socketPath } = await startDaemon();
 
+    const parsed = spyOnParsedRequests();
     const running = request(socketPath, run(1, "echo", { goal: "x" }));
     await vi.waitFor(() => expect(echo).toHaveBeenCalled());
     const stopping = request(socketPath, {
@@ -149,7 +161,11 @@ describe("CliSessionDaemon", () => {
       method: "stop",
       params: { saveCache: true },
     });
-    await new Promise((resolve) => setTimeout(resolve, 50));
+    await vi.waitFor(() =>
+      expect(parsed).toHaveBeenCalledWith(
+        expect.objectContaining({ method: "stop" }),
+      ),
+    );
     expect(stop).not.toHaveBeenCalled();
 
     gate.resolve();
@@ -313,6 +329,7 @@ describe("CliSessionDaemon", () => {
     });
     const { daemon, socketPath } = await startDaemon();
 
+    const parsed = spyOnParsedRequests();
     const running = request(socketPath, run(1, "echo", {}));
     await vi.waitFor(() => expect(echo).toHaveBeenCalled());
     const stopping = request(socketPath, {
@@ -320,7 +337,11 @@ describe("CliSessionDaemon", () => {
       method: "stop",
       params: { saveCache: false },
     });
-    await new Promise((resolve) => setTimeout(resolve, 50));
+    await vi.waitFor(() =>
+      expect(parsed).toHaveBeenCalledWith(
+        expect.objectContaining({ method: "stop" }),
+      ),
+    );
     const terminating = daemon.terminate(true);
     gate.resolve();
 
@@ -344,6 +365,7 @@ describe("CliSessionDaemon", () => {
     });
     const { socketPath } = await startDaemon();
 
+    const parsed = spyOnParsedRequests();
     const running = request(socketPath, run(1, "echo", {}));
     await vi.waitFor(() => expect(echo).toHaveBeenCalled());
     const stopping = request(socketPath, {
@@ -352,7 +374,9 @@ describe("CliSessionDaemon", () => {
       params: { saveCache: false },
     });
     const late = request(socketPath, run(3, "echo", {}));
-    await new Promise((resolve) => setTimeout(resolve, 50));
+    await vi.waitFor(() =>
+      expect(parsed).toHaveBeenCalledWith(expect.objectContaining({ id: 3 })),
+    );
     gate.resolve();
 
     await running;
