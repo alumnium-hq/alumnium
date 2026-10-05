@@ -27,6 +27,8 @@ In agentic mode, the MCP Server exposes Alumnium's core automation capabilities:
 
 Perform [actions][6] in the application using natural language commands and return summary of the performed steps. Alumnium automatically captures screenshot upon completion and stores it in the artifacts directory.
 
+`do` also accepts optional `step` and `attempt` numbers, and `check` accepts an optional `step`. Alumnium ignores them; they exist so a calling agent can label each call with the test step it belongs to and which retry it is, and tooling that reads the agent's transcript can group calls by them.
+
 ### `check`
 
 [Verify][7] application state and run assertions using natural language commands. Returns the result of the check along with explanation the verification was evaluated. Alumnium automatically captures screenshot upon completion and stores it in the artifacts directory.
