@@ -5,9 +5,9 @@ import {
   createMockDir,
   pushTeardown,
   setupBeforeEach,
-} from "../../../tests/unit/mocks.ts";
+} from "../../../../alumnium/tests/unit/mocks.ts";
+import { ALUMNIUM_VERSION } from "@alumnium/core/internal";
 import type { McpTool } from "../../mcp/tools/McpTool.ts";
-import { ALUMNIUM_VERSION } from "../../package.ts";
 import { CliSessionClient, cliCommandLine } from "./CliSessionClient.ts";
 import { CliSessionDaemon } from "./CliSessionDaemon.ts";
 import { CliSessionRegistry } from "./CliSessionRegistry.ts";

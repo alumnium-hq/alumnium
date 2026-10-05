@@ -2,10 +2,12 @@ import { spawn } from "node:child_process";
 import fs from "node:fs";
 import net from "node:net";
 import z from "zod";
-import { isSingleFileExecutable } from "../../bundle.ts";
-import { ALUMNIUM_VERSION } from "../../package.ts";
-import { ensureDir } from "../../utils/fs.ts";
-import { sleep } from "../../utils/timers.ts";
+import {
+  ALUMNIUM_VERSION,
+  ensureDir,
+  isSingleFileExecutable,
+  sleep,
+} from "@alumnium/core/internal";
 import { CliProtocol } from "./CliProtocol.ts";
 import { CliSessionRegistry } from "./CliSessionRegistry.ts";
 import { SocketConnection } from "./SocketConnection.ts";
@@ -171,8 +173,6 @@ async function spawnDaemon(
     ...(isSingleFileExecutable() ? [] : process.argv.slice(1, 2)),
     "cli",
     "start",
-    "--session",
-    session,
     "--capabilities",
     props.capabilities,
     ...(props.serverUrl ? ["--server-url", props.serverUrl] : []),
@@ -186,6 +186,8 @@ async function spawnDaemon(
       // oxlint-disable-next-line no-process-env -- We need it to pass env vars
       ...process.env,
       ALUMNIUM_CLI_DAEMONIZE: z.stringbool().encode(true),
+      // NOTE: Not a `--session` argument, cac would cast `007` to the number 7.
+      ALUMNIUM_CLI_SESSION: session,
     },
   });
   fs.closeSync(log);

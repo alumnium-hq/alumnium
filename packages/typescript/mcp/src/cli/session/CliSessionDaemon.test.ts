@@ -1,12 +1,14 @@
 import { always } from "alwaysly";
+import fsSync from "node:fs";
 import fs from "node:fs/promises";
 import net from "node:net";
 import { describe, expect, it, vi } from "vitest";
 import {
   createMockDir,
+  pushMock,
   pushTeardown,
   setupBeforeEach,
-} from "../../../tests/unit/mocks.ts";
+} from "../../../../alumnium/tests/unit/mocks.ts";
 import type { McpTool } from "../../mcp/tools/McpTool.ts";
 import { CliSessionDaemon } from "./CliSessionDaemon.ts";
 import { CliSessionRegistry } from "./CliSessionRegistry.ts";
@@ -222,6 +224,84 @@ describe("CliSessionDaemon", () => {
     });
     await expect(fs.stat(socketPath)).resolves.toBeDefined();
     await fs.rm(socketPath, { force: true });
+  });
+
+  describe("removeOwnedFilesSync", () => {
+    it("removes its own entry and socket", async () => {
+      // NOTE: Windows removes named pipes together with the owning process.
+      if (process.platform === "win32") return;
+      const { registry } = setup.cur;
+      const { daemon, socketPath } = await startDaemon();
+
+      daemon.removeOwnedFilesSync();
+
+      expect(await registry.readEntry("default")).toBeUndefined();
+      await expect(fs.stat(socketPath)).rejects.toThrow();
+    });
+
+    it("keeps the entry and socket of a successor daemon", async () => {
+      if (process.platform === "win32") return;
+      const { registry } = setup.cur;
+      const { daemon, socketPath } = await startDaemon();
+
+      await fs.rm(socketPath);
+      await fs.writeFile(socketPath, "");
+      const entry = await registry.readEntry("default");
+      always(entry);
+      await registry.writeEntry({ ...entry, pid: process.pid + 1 });
+
+      daemon.removeOwnedFilesSync();
+
+      expect(await registry.readEntry("default")).toMatchObject({
+        pid: process.pid + 1,
+      });
+      await expect(fs.stat(socketPath)).resolves.toBeDefined();
+      await fs.rm(socketPath, { force: true });
+    });
+
+    it("keeps files of a live daemon when its own start failed", async () => {
+      if (process.platform === "win32") return;
+      const { registry, start, stop, onExit } = setup.cur;
+      const socketPath = registry.socketPath("default");
+      // Another live daemon owns the session.
+      await registry.writeEntry({
+        name: "default",
+        version: "1.0.0",
+        pid: process.pid + 1,
+        socketPath,
+        driverId: "other",
+        platform: "chrome",
+        startedAt: 1,
+        startOutput: "{}",
+      });
+      const failing = new CliSessionDaemon({
+        session: "default",
+        registry,
+        start,
+        startInput: {},
+        stop,
+        tools: {},
+        idleTimeoutMs: 0,
+        onExit,
+      });
+      const listen = vi
+        .spyOn(net.Server.prototype, "listen")
+        .mockImplementationOnce(function (this: net.Server) {
+          fsSync.writeFileSync(socketPath, "");
+          queueMicrotask(() => this.emit("error", new Error("EADDRINUSE")));
+          return this;
+        });
+      pushMock(listen);
+      pushTeardown(() => fs.rm(socketPath, { force: true }));
+
+      await expect(failing.start()).rejects.toThrow("EADDRINUSE");
+      failing.removeOwnedFilesSync();
+
+      expect(await registry.readEntry("default")).toMatchObject({
+        pid: process.pid + 1,
+      });
+      await expect(fs.stat(socketPath)).resolves.toBeDefined();
+    });
   });
 
   it("terminates only once", async () => {

@@ -2,9 +2,8 @@ import fsSync from "node:fs";
 import fs from "node:fs/promises";
 import net from "node:net";
 import z from "zod";
+import { ALUMNIUM_VERSION, Telemetry } from "@alumnium/core/internal";
 import type { McpTool } from "../../mcp/tools/McpTool.ts";
-import { ALUMNIUM_VERSION } from "../../package.ts";
-import { Telemetry } from "../../telemetry/Telemetry.ts";
 import { CliProtocol } from "./CliProtocol.ts";
 import type { CliSessionRegistry } from "./CliSessionRegistry.ts";
 import { SocketConnection } from "./SocketConnection.ts";
@@ -107,6 +106,23 @@ export class CliSessionDaemon {
     } finally {
       await this.#props.onExit(0);
     }
+  }
+
+  /**
+   * Synchronous `process.on("exit")` cleanup. A successor daemon may have taken
+   * over the session, so remove only what this daemon still owns. Does nothing
+   * if `start` never listened on the socket.
+   */
+  removeOwnedFilesSync() {
+    const { registry, session } = this.#props;
+    const socketPath = registry.socketPath(session);
+    if (
+      this.#socketIno !== undefined &&
+      fsSync.statSync(socketPath, { throwIfNoEntry: false })?.ino ===
+        this.#socketIno
+    )
+      fsSync.rmSync(socketPath, { force: true });
+    registry.removeEntryFileSyncIfOwned(session, process.pid);
   }
 
   #onConnection(socket: net.Socket) {

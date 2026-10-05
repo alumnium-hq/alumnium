@@ -1,6 +1,9 @@
 import fs from "node:fs/promises";
 import { describe, expect, it } from "vitest";
-import { createMockDir, setupBeforeEach } from "../../../tests/unit/mocks.ts";
+import {
+  createMockDir,
+  setupBeforeEach,
+} from "../../../../alumnium/tests/unit/mocks.ts";
 import { CliSessionRegistry } from "./CliSessionRegistry.ts";
 
 describe("CliSessionRegistry", () => {

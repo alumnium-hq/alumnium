@@ -1,8 +1,8 @@
 import net from "node:net";
 import os from "node:os";
 import { describe, expect, it, vi } from "vitest";
-import { pushTeardown } from "../../../tests/unit/mocks.ts";
-import { safePathJoin } from "../../utils/fs.ts";
+import { safePathJoin } from "@alumnium/core/internal";
+import { pushTeardown } from "../../../../alumnium/tests/unit/mocks.ts";
 import { SocketConnection } from "./SocketConnection.ts";
 
 let nextId = 1;
