@@ -142,15 +142,17 @@ describe("runCliSession", () => {
       await import("./session/CliSessionClient.ts");
     const { runCliSession: run } = await import("./CliSessionCommand.ts");
     const runSpy = vi.spyOn(Client.prototype, "run").mockResolvedValue("{}");
-    const exit = vi
-      .spyOn(process, "exit")
-      .mockImplementation(() => undefined as never);
+    class ExitCalled extends Error {}
+    // NOTE: Throws like a real exit that stops execution.
+    const exit = vi.spyOn(process, "exit").mockImplementation(() => {
+      throw new ExitCalled();
+    });
     const log = vi.spyOn(console, "log").mockImplementation(() => {});
-    // NOTE: The mocked `exit` returns, so the command then reports a TypeError.
+    // NOTE: Keeps the reported error out of the test output.
     capture(process.stderr);
     pushMock(runSpy, exit, log);
 
-    await run(["get", "title"]);
+    await expect(run(["get", "title"])).rejects.toBeInstanceOf(ExitCalled);
 
     expect(runSpy).not.toHaveBeenCalled();
     expect(log.mock.calls.flat().join("\n")).toContain(

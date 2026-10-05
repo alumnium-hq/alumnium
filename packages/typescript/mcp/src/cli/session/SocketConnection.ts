@@ -1,5 +1,7 @@
 import type net from "node:net";
 
+const MAX_LINE_LENGTH = 64 * 1024 * 1024;
+
 /**
  * Newline-delimited JSON messages over a socket.
  */
@@ -9,9 +11,11 @@ export class SocketConnection {
 
   #socket: net.Socket;
   #buffer = "";
+  #maxLineLength: number;
 
-  constructor(socket: net.Socket) {
+  constructor(socket: net.Socket, maxLineLength = MAX_LINE_LENGTH) {
     this.#socket = socket;
+    this.#maxLineLength = maxLineLength;
     socket.setEncoding("utf8");
     socket.on("data", (chunk: string) => this.#onData(chunk));
     socket.on("close", () => this.onclose?.());
@@ -38,16 +42,21 @@ export class SocketConnection {
       const line = this.#buffer.slice(0, end);
       this.#buffer = this.#buffer.slice(end + 1);
       if (line) {
-        let message: unknown;
         try {
-          message = JSON.parse(line);
+          const message: unknown = JSON.parse(line);
+          this.onmessage?.(message);
         } catch {
+          // NOTE: Malformed input or a throwing handler, stop processing.
+          this.#buffer = "";
           this.close();
           return;
         }
-        this.onmessage?.(message);
       }
       end = this.#buffer.indexOf("\n");
+    }
+    if (this.#buffer.length > this.#maxLineLength) {
+      this.#buffer = "";
+      this.close();
     }
   }
 }

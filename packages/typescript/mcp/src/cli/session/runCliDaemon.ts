@@ -1,6 +1,6 @@
 import type z from "zod";
 import { PlaywrightDriver } from "@alumnium/playwright";
-import { Env, Logger, Tracer } from "@alumnium/core/internal";
+import { Env, Logger, sleep, Tracer } from "@alumnium/core/internal";
 import { McpState } from "../../mcp/McpState.ts";
 import { checkMcpTool } from "../../mcp/tools/checkMcpTool.ts";
 import { doMcpTool } from "../../mcp/tools/doMcpTool.ts";
@@ -14,6 +14,8 @@ import { CliSessionDaemon } from "./CliSessionDaemon.ts";
 import { CliSessionRegistry } from "./CliSessionRegistry.ts";
 
 const logger = Logger.get(import.meta.url);
+
+const ABORT_STOP_TIMEOUT_MS = 10_000;
 
 export namespace runCliDaemon {
   export interface Props {
@@ -73,7 +75,13 @@ export async function runCliDaemon(props: runCliDaemon.Props): Promise<void> {
       return;
     }
     aborting = true;
-    if (daemon.driverId) await stop({ id: daemon.driverId }).catch(() => {});
+    // NOTE: Bounded, a hung stop must not keep the daemon alive, the client
+    // sends only one SIGTERM.
+    if (daemon.driverId)
+      await Promise.race([
+        stop({ id: daemon.driverId }).catch(() => {}),
+        sleep(ABORT_STOP_TIMEOUT_MS),
+      ]);
     await exit(143);
   });
 

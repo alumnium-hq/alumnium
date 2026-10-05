@@ -83,6 +83,43 @@ describe("SocketConnection", () => {
 
     await vi.waitFor(() => expect(onclose).toHaveBeenCalled());
   });
+
+  it("closes the connection when a handler throws and drops later messages", async () => {
+    const { client, remote } = await connectPair();
+    const connection = new SocketConnection(client);
+    const onmessage = vi.fn(() => {
+      throw new Error("boom");
+    });
+    connection.onmessage = onmessage;
+    const onclose = vi.fn();
+    connection.onclose = onclose;
+
+    remote.write('{"a":1}\n{"a":2}\n');
+
+    await vi.waitFor(() => expect(onclose).toHaveBeenCalled());
+    expect(onmessage).toHaveBeenCalledTimes(1);
+  });
+
+  it("closes the connection when a line exceeds the limit", async () => {
+    const { client, remote } = await connectPair();
+    const connection = new SocketConnection(client, 1024);
+    const onclose = vi.fn();
+    connection.onclose = onclose;
+
+    remote.write("x".repeat(2048));
+
+    await vi.waitFor(() => expect(onclose).toHaveBeenCalled());
+  });
+
+  it("delivers a message within the line limit", async () => {
+    const { client, remote } = await connectPair();
+    const messages = collect(new SocketConnection(client, 1024));
+    const text = "x".repeat(1000 - '{"text":""}'.length);
+
+    remote.write(`${JSON.stringify({ text })}\n`);
+
+    await vi.waitFor(() => expect(messages).toEqual([{ text }]));
+  });
 });
 
 async function connectPair() {

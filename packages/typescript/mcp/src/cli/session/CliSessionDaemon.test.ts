@@ -373,6 +373,11 @@ describe("CliSessionDaemon", () => {
       method: "stop",
       params: { saveCache: false },
     });
+    await vi.waitFor(() =>
+      expect(parsed).toHaveBeenCalledWith(
+        expect.objectContaining({ method: "stop" }),
+      ),
+    );
     const late = request(socketPath, run(3, "echo", {}));
     await vi.waitFor(() =>
       expect(parsed).toHaveBeenCalledWith(expect.objectContaining({ id: 3 })),
@@ -388,6 +393,43 @@ describe("CliSessionDaemon", () => {
     });
     expect(echo).toHaveBeenCalledTimes(1);
     expect(stop).toHaveBeenCalledTimes(1);
+  });
+
+  it("closes the connection on a malformed request and keeps serving", async () => {
+    const { echo } = setup.cur;
+    const { socketPath } = await startDaemon();
+
+    const connection = new SocketConnection(net.createConnection(socketPath));
+    const onmessage = vi.fn();
+    const onclose = vi.fn();
+    connection.onmessage = onmessage;
+    connection.onclose = onclose;
+    await connection.send({ id: 1, method: "nope" });
+
+    await vi.waitFor(() => expect(onclose).toHaveBeenCalled());
+    expect(onmessage).not.toHaveBeenCalled();
+    expect(echo).not.toHaveBeenCalled();
+    expect(await request(socketPath, run(2, "echo", {}))).toMatchObject({
+      id: 2,
+      result: {},
+    });
+  });
+
+  it("reports a failing stop and exits with 1", async () => {
+    const { stop, onExit } = setup.cur;
+    stop.mockRejectedValueOnce(new Error("stop failed"));
+    const { socketPath } = await startDaemon();
+
+    expect(
+      await request(socketPath, {
+        id: 1,
+        method: "stop",
+        params: { saveCache: false },
+      }),
+    ).toEqual({ id: 1, error: "stop failed" });
+
+    await vi.waitFor(() => expect(onExit).toHaveBeenCalledWith(1));
+    expect(onExit).toHaveBeenCalledTimes(1);
   });
 
   it("survives server errors after listening", async () => {

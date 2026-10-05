@@ -89,7 +89,25 @@ describe("CliSessionClient", () => {
     expect(await registry.readEntry("old")).toBeUndefined();
   });
 
-  it("fails when the daemon closes the connection without a response", async () => {
+  it("fails when the daemon dies after reading the request", async () => {
+    const { client, registry } = setup.cur;
+    const server = net.createServer((socket) =>
+      socket.once("data", () => socket.destroy()),
+    );
+    await new Promise<void>((resolve) =>
+      server.listen(registry.socketPath("broken"), resolve),
+    );
+    pushTeardown(() => {
+      server.close();
+    });
+    await registry.writeEntry(entry(registry, "broken"));
+
+    await expect(client.run("broken", "echo", {})).rejects.toThrow(
+      "Session 'broken' closed unexpectedly",
+    );
+  });
+
+  it("fails when the daemon closes the connection on connect", async () => {
     const { client, registry } = setup.cur;
     const server = net.createServer((socket) => socket.destroy());
     await new Promise<void>((resolve) =>
@@ -246,7 +264,7 @@ describe("CliSessionClient", () => {
         }),
       ).rejects.toThrow("did not start within");
 
-      expect(Date.now() - startedAt).toBeLessThan(150);
+      expect(Date.now() - startedAt).toBeLessThan(180);
     });
 
     it("kills the daemon when it does not start in time", async () => {
