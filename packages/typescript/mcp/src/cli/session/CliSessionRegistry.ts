@@ -26,7 +26,7 @@ export class CliSessionRegistry extends FileStore {
     );
 
   static Entry = z.object({
-    name: z.string(),
+    name: CliSessionRegistry.SessionName,
     version: z.string(),
     pid: z.number(),
     socketPath: z.string(),
@@ -60,7 +60,11 @@ export class CliSessionRegistry extends FileStore {
 
   async readEntry(name: string): Promise<CliSessionRegistry.Entry | undefined> {
     const text = await this.readText(`${name}.json`);
-    return CliSessionRegistry.Entry.safeParse(text && parseJson(text)).data;
+    const entry = CliSessionRegistry.Entry.safeParse(
+      text && parseJson(text),
+    ).data;
+    // NOTE: A mismatched name would make callers touch another session's files.
+    return entry?.name === name ? entry : undefined;
   }
 
   async writeEntry(entry: CliSessionRegistry.Entry): Promise<void> {

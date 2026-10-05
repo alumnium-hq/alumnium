@@ -46,6 +46,20 @@ describe("CliSessionRegistry", () => {
     expect(await registry.listEntries()).toEqual([]);
   });
 
+  it("ignores entries whose name is not their file name", async () => {
+    const { registry } = setup.cur;
+    await fs.writeFile(
+      registry.resolve("a.json"),
+      JSON.stringify(entry("../../victim")),
+    );
+    await fs.writeFile(registry.resolve("c.json"), JSON.stringify(entry("b")));
+
+    expect(await registry.readEntry("a")).toBeUndefined();
+    expect(await registry.readEntry("c")).toBeUndefined();
+    expect(await registry.listEntries()).toEqual([]);
+    expect(await fs.readdir(registry.dir)).toEqual(["a.json", "c.json"]);
+  });
+
   it("reads nothing from a missing dir", async () => {
     const registry = new CliSessionRegistry("/nonexistent/alumnium-cli");
     expect(await registry.readEntry("default")).toBeUndefined();

@@ -13,6 +13,7 @@ import { CliSessionRegistry } from "./CliSessionRegistry.ts";
 import { SocketConnection } from "./SocketConnection.ts";
 
 const START_POLL_INTERVAL_MS = 200;
+const START_TIMEOUT_MS = 600_000;
 
 export namespace CliSessionClient {
   export interface StartProps {
@@ -32,9 +33,14 @@ export namespace CliSessionClient {
  */
 export class CliSessionClient {
   #registry: CliSessionRegistry;
+  #startTimeoutMs: number;
 
-  constructor(registry = new CliSessionRegistry()) {
+  constructor(
+    registry = new CliSessionRegistry(),
+    startTimeoutMs = START_TIMEOUT_MS,
+  ) {
     this.#registry = registry;
+    this.#startTimeoutMs = startTimeoutMs;
   }
 
   run(
@@ -81,7 +87,7 @@ export class CliSessionClient {
       await this.#registry.removeEntry(session);
     }
 
-    return spawnDaemon(this.#registry, session, props);
+    return spawnDaemon(this.#registry, session, props, this.#startTimeoutMs);
   }
 
   async #request(
@@ -163,6 +169,7 @@ async function spawnDaemon(
   registry: CliSessionRegistry,
   session: string,
   props: CliSessionClient.StartProps,
+  startTimeoutMs: number,
 ): Promise<string> {
   await ensureDir(registry.dir);
   const logPath = registry.logPath(session);
@@ -194,8 +201,10 @@ async function spawnDaemon(
   const exited = new Promise<number | null>((resolve) =>
     child.once("exit", (code) => resolve(code)),
   );
+  const failed = new Promise<Error>((resolve) => child.once("error", resolve));
   child.unref();
 
+  const deadline = Date.now() + startTimeoutMs;
   for (;;) {
     const entry = await registry.readEntry(session);
     if (
@@ -205,12 +214,29 @@ async function spawnDaemon(
     )
       return entry.startOutput;
 
-    const code = await Promise.race([exited, sleep(START_POLL_INTERVAL_MS)]);
-    if (code !== undefined) {
-      const logText = fs.readFileSync(logPath, "utf-8").trim();
+    const result = await Promise.race([
+      exited,
+      failed,
+      sleep(START_POLL_INTERVAL_MS),
+    ]);
+    if (result instanceof Error)
       throw new Error(
-        `Session '${session}' failed to start (exit code ${code})${logText ? `:\n${logText}` : ""}`,
+        `Session '${session}' failed to start: ${result.message}`,
+      );
+    if (result !== undefined)
+      throw new Error(
+        `Session '${session}' failed to start (exit code ${result})${readLog(logPath)}`,
+      );
+    if (Date.now() >= deadline) {
+      child.kill();
+      throw new Error(
+        `Session '${session}' did not start within ${Math.round(startTimeoutMs / 1000)} seconds${readLog(logPath)}`,
       );
     }
   }
+}
+
+function readLog(logPath: string): string {
+  const logText = fs.readFileSync(logPath, "utf-8").trim();
+  return logText ? `:\n${logText}` : "";
 }

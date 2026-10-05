@@ -1,8 +1,11 @@
 import { always } from "alwaysly";
+import { EventEmitter } from "node:events";
+import fs from "node:fs/promises";
 import net from "node:net";
 import { describe, expect, it, vi } from "vitest";
 import {
   createMockDir,
+  pushMock,
   pushTeardown,
   setupBeforeEach,
 } from "../../../../alumnium/tests/unit/mocks.ts";
@@ -11,6 +14,10 @@ import type { McpTool } from "../../mcp/tools/McpTool.ts";
 import { CliSessionClient, cliCommandLine } from "./CliSessionClient.ts";
 import { CliSessionDaemon } from "./CliSessionDaemon.ts";
 import { CliSessionRegistry } from "./CliSessionRegistry.ts";
+
+const spawnMock = vi.hoisted(() => vi.fn());
+
+vi.mock("node:child_process", () => ({ spawn: spawnMock }));
 
 describe("CliSessionClient", () => {
   const setup = setupBeforeEach(async () => {
@@ -151,6 +158,69 @@ describe("CliSessionClient", () => {
       { name: "old", status: "stale" },
     ]);
     expect(await registry.readEntry("old")).toBeUndefined();
+  });
+
+  it("does not remove files for entries with mismatched names", async () => {
+    const dir = await createMockDir();
+    const registry = new CliSessionRegistry(`${dir.path}/cli/nested`);
+    const client = new CliSessionClient(registry);
+    await fs.mkdir(registry.dir, { recursive: true });
+    const victim = `${dir.path}/victim.json`;
+    await fs.writeFile(victim, "keep");
+    await fs.writeFile(
+      registry.resolve("a.json"),
+      JSON.stringify(entry(registry, "../../victim")),
+    );
+    await fs.writeFile(registry.resolve("b.json"), "keep");
+    await fs.writeFile(
+      registry.resolve("c.json"),
+      JSON.stringify(entry(registry, "b")),
+    );
+
+    expect(await client.list()).toEqual([]);
+
+    expect(await fs.readFile(victim, "utf-8")).toBe("keep");
+    expect(await fs.readFile(registry.resolve("b.json"), "utf-8")).toBe("keep");
+    expect(await fs.readdir(registry.dir)).toContain("a.json");
+    expect(await fs.readdir(registry.dir)).toContain("c.json");
+  });
+
+  describe("start", () => {
+    function fakeChild() {
+      return Object.assign(new EventEmitter(), {
+        pid: 424_242,
+        kill: vi.fn(),
+        unref: vi.fn(),
+      });
+    }
+
+    it("fails when the daemon cannot be spawned", async () => {
+      const { registry } = setup.cur;
+      const child = fakeChild();
+      spawnMock.mockImplementation(() => {
+        queueMicrotask(() => child.emit("error", new Error("spawn ENOENT")));
+        return child;
+      });
+      pushMock(spawnMock);
+
+      await expect(
+        new CliSessionClient(registry).start("default", { capabilities: "{}" }),
+      ).rejects.toThrow("Session 'default' failed to start: spawn ENOENT");
+    });
+
+    it("kills the daemon when it does not start in time", async () => {
+      const { registry } = setup.cur;
+      const child = fakeChild();
+      spawnMock.mockReturnValue(child);
+      pushMock(spawnMock);
+
+      await expect(
+        new CliSessionClient(registry, 300).start("default", {
+          capabilities: "{}",
+        }),
+      ).rejects.toThrow("Session 'default' did not start within 0 seconds");
+      expect(child.kill).toHaveBeenCalled();
+    });
   });
 
   it("formats command lines", () => {
