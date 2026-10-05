@@ -54,6 +54,29 @@ export const Env = {
   },
 
   /**
+   * Internal: set by `alumnium cli start` on the spawned process to make it
+   * the session daemon.
+   */
+  get ALUMNIUM_CLI_DAEMONIZE() {
+    return envVar("ALUMNIUM_CLI_DAEMONIZE", z.stringbool().default(false));
+  },
+
+  /**
+   * Seconds without commands after which a CLI session stops; 0 disables.
+   * Limited by the maximum timer delay (2^31 - 1 ms).
+   */
+  get ALUMNIUM_CLI_IDLE_TIMEOUT() {
+    return envVar(
+      "ALUMNIUM_CLI_IDLE_TIMEOUT",
+      z.coerce.number().int().min(0).max(2_147_483).default(3600),
+    );
+  },
+
+  get ALUMNIUM_CLI_SESSION() {
+    return envVar("ALUMNIUM_CLI_SESSION", z.string().optional());
+  },
+
+  /**
    * Pre-installed Cursor SDK node_modules tree for compiled binaries in
    * air-gapped environments; skips the download-on-first-use install.
    */

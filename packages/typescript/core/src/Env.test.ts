@@ -196,4 +196,14 @@ describe("Env", () => {
       expect(() => Env.OPENAI_API_KEY).toThrow();
     });
   });
+
+  it("defaults the CLI idle timeout to an hour", () => {
+    vi.stubEnv("ALUMNIUM_CLI_IDLE_TIMEOUT", undefined);
+    expect(Env.ALUMNIUM_CLI_IDLE_TIMEOUT).toBe(3600);
+  });
+
+  it("rejects CLI idle timeouts that timers cannot handle", () => {
+    vi.stubEnv("ALUMNIUM_CLI_IDLE_TIMEOUT", "2147484");
+    expect(() => Env.ALUMNIUM_CLI_IDLE_TIMEOUT).toThrow();
+  });
 });
