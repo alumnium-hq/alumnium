@@ -14,11 +14,17 @@ export class CacheStore extends FileStore {
   #subDir: string;
   #appOverride: AppId | undefined;
 
-  constructor(sessionContext: SessionContext, model: Model, subDir?: string) {
+  constructor(
+    sessionContext: SessionContext,
+    model: Model,
+    subDir?: string,
+    appOverride?: AppId,
+  ) {
     super(FileStore.DYNAMIC_DIR_SYMBOL);
     this.#sessionContext = sessionContext;
     this.#model = model;
     this.#subDir = subDir || "";
+    this.#appOverride = appOverride;
   }
 
   override get dir(): string {
@@ -33,11 +39,11 @@ export class CacheStore extends FileStore {
   }
 
   override subStore(subDir: string, appOverride?: AppId): CacheStore {
-    this.#appOverride = appOverride;
     return new CacheStore(
       this.#sessionContext,
       this.#model,
       safePathJoin(this.#subDir, subDir),
+      appOverride ?? this.#appOverride,
     );
   }
 }

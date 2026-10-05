@@ -102,6 +102,21 @@ describe(ResponseCache, () => {
     });
   });
 
+  it("saves entries under the app they were recorded on", async () => {
+    const { cache, cacheDir, request1, sessionContext } = await setup();
+    const result = AiSdkFactory.generateResult({ text: "Hi there" });
+
+    await cache.update(request1, result);
+    sessionContext.update({ app: "other-app" as AppId });
+    await cache.save();
+
+    const files = await cacheDir.flatTree();
+    expect(files).toEqual([
+      "test-app/openai/test/responses/first/request.json",
+      "test-app/openai/test/responses/first/response.json",
+    ]);
+  });
+
   it("keeps concurrent staged saves independent", async () => {
     const { cache, cacheStore, request1, request2, sessionContext } =
       await setup();
