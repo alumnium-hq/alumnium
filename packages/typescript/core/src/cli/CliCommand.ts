@@ -37,34 +37,25 @@ export abstract class CliCommand {
     const definition: CliCommand.Definition<z.infer<ArgsSchema>> = {
       name,
       description,
-
-      action: async (rawArgs) => {
-        const argsResult = Args.safeParse(rawArgs);
-
-        if (argsResult.error) {
-          const { error } = argsResult;
-          printError(error, Args);
-
-          if (definition.cli) {
-            console.log(`${ansi.blue("Help:")}\n`);
-            definition.cli.outputHelp();
-          }
-
-          process.exit(1);
-        }
-
-        const args = argsResult.data;
-        const logFilenameHint = logFilenameHintFor(name);
-        await action({ args, logFilenameHint });
-      },
+      action: runAction,
 
       register: (cli: CAC) => {
         definition.cli = cli;
-        let command = cli.command(name, description);
 
-        Object.values(Args.shape).forEach((Arg) => {
+        const fields = Object.entries(Args.shape).map(([key, Arg]) => {
           const meta = CliCommand.option.get(Arg);
           always(meta);
+          return { key, Arg, meta };
+        });
+        const positionals = fields.filter(({ meta }) => meta.positional);
+
+        let command = cli.command(
+          [name, ...positionals.map(({ meta }) => meta.syntax)].join(" "),
+          description,
+        );
+
+        fields.forEach(({ Arg, meta }) => {
+          if (meta.positional) return;
 
           let defaultValue: string | undefined;
           if (Arg instanceof z.ZodDefault)
@@ -75,16 +66,47 @@ export abstract class CliCommand {
           });
         });
 
-        command.action(definition.action);
+        // NOTE: cac passes positional arguments first and the options object last.
+        command.action((...params: unknown[]) => {
+          const rawArgs: Record<string, unknown> = Object.assign(
+            {},
+            params.at(-1),
+          );
+          positionals.forEach(({ key }, index) => {
+            rawArgs[key] = params[index];
+          });
+          return runAction(rawArgs);
+        });
       },
     };
     return definition;
+
+    async function runAction(rawArgs: unknown) {
+      const argsResult = Args.safeParse(rawArgs);
+
+      if (argsResult.error) {
+        const { error } = argsResult;
+        printError(error, Args);
+
+        if (definition.cli) {
+          console.log(`${ansi.blue("Help:")}\n`);
+          definition.cli.outputHelp();
+        }
+
+        process.exit(1);
+      }
+
+      const args = argsResult.data;
+      const logFilenameHint = logFilenameHintFor(name);
+      await action({ args, logFilenameHint });
+    }
   }
 
   static option = z.registry<{
     name: string;
     syntax: string;
     description: string;
+    positional?: boolean;
   }>();
 }
 
