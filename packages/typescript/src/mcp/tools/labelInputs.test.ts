@@ -28,10 +28,19 @@ describe("do and check labels", () => {
     ).toBe(true);
   });
 
-  it("rejects non-positive labels", () => {
+  it("accepts step 0 for setup before the first step", () => {
+    expect(
+      doMcpTool.inputSchema.safeParse({ id: "1", goal: "x", step: 0 }).success,
+    ).toBe(true);
+  });
+
+  it("rejects attempt 0 and negative steps", () => {
     expect(
       doMcpTool.inputSchema.safeParse({ id: "1", goal: "x", attempt: 0 })
         .success,
+    ).toBe(false);
+    expect(
+      doMcpTool.inputSchema.safeParse({ id: "1", goal: "x", step: -1 }).success,
     ).toBe(false);
   });
 });

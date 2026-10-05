@@ -77,10 +77,10 @@ export const doMcpTool = McpTool.define("do", {
     step: z
       .number()
       .int()
-      .positive()
+      .nonnegative()
       .optional()
       .describe(
-        "Optional number of the test step this action belongs to. Not used by Alumnium; recorded in the tool call so callers can attribute it.",
+        "Optional number of the test step this action belongs to, or 0 for setup before the first step. Not used by Alumnium; recorded in the tool call so callers can attribute it.",
       ),
 
     attempt: z
