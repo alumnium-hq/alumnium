@@ -58,6 +58,14 @@ export async function runCliDaemon(props: runCliDaemon.Props): Promise<void> {
   // NOTE: Removes only the files this daemon owns, see the method.
   process.on("exit", () => daemon.removeOwnedFilesSync());
 
+  // NOTE: Node exits on SIGTERM without emitting `exit`. The client kills a
+  // daemon that missed its start deadline this way, and so does `kill <pid>`.
+  // Not delivered on Windows, where `kill()` terminates the process outright.
+  process.once("SIGTERM", () => {
+    if (daemon.driverId) void daemon.terminate(true);
+    else void exit(143);
+  });
+
   try {
     await daemon.start();
 

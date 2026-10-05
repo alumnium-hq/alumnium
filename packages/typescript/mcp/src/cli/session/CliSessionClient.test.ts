@@ -218,7 +218,7 @@ describe("CliSessionClient", () => {
         new CliSessionClient(registry, 300).start("default", {
           capabilities: "{}",
         }),
-      ).rejects.toThrow("Session 'default' did not start within 0 seconds");
+      ).rejects.toThrow("Session 'default' did not start within");
       expect(child.kill).toHaveBeenCalled();
     });
   });

@@ -304,6 +304,90 @@ describe("CliSessionDaemon", () => {
     });
   });
 
+  it("stops once when terminated while a stop request is queued", async () => {
+    const { echo, stop, onExit } = setup.cur;
+    const gate = Promise.withResolvers<void>();
+    echo.mockImplementation(async (input) => {
+      await gate.promise;
+      return output(input);
+    });
+    const { daemon, socketPath } = await startDaemon();
+
+    const running = request(socketPath, run(1, "echo", {}));
+    await vi.waitFor(() => expect(echo).toHaveBeenCalled());
+    const stopping = request(socketPath, {
+      id: 2,
+      method: "stop",
+      params: { saveCache: false },
+    });
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    const terminating = daemon.terminate(true);
+    gate.resolve();
+
+    expect(await running).toMatchObject({ id: 1, result: {} });
+    expect(await stopping).toEqual({
+      id: 2,
+      result: { text: JSON.stringify({ stopped: "drv-1" }) },
+    });
+    await terminating;
+    expect(stop).toHaveBeenCalledTimes(1);
+    expect(onExit).toHaveBeenCalledTimes(1);
+    expect(onExit).toHaveBeenCalledWith(0);
+  });
+
+  it("rejects requests queued behind a stop", async () => {
+    const { echo, stop } = setup.cur;
+    const gate = Promise.withResolvers<void>();
+    echo.mockImplementation(async (input) => {
+      await gate.promise;
+      return output(input);
+    });
+    const { socketPath } = await startDaemon();
+
+    const running = request(socketPath, run(1, "echo", {}));
+    await vi.waitFor(() => expect(echo).toHaveBeenCalled());
+    const stopping = request(socketPath, {
+      id: 2,
+      method: "stop",
+      params: { saveCache: false },
+    });
+    const late = request(socketPath, run(3, "echo", {}));
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    gate.resolve();
+
+    await running;
+    await stopping;
+    expect(await late).toEqual({
+      id: 3,
+      error:
+        "Session 'default' is not running. Run `alumnium cli start` first.",
+    });
+    expect(echo).toHaveBeenCalledTimes(1);
+    expect(stop).toHaveBeenCalledTimes(1);
+  });
+
+  it("survives server errors after listening", async () => {
+    let server: net.Server | undefined;
+    const listen = net.Server.prototype.listen;
+    const spy = vi
+      .spyOn(net.Server.prototype, "listen")
+      .mockImplementationOnce(function (this: net.Server, ...args) {
+        server = this;
+        return listen.apply(this, args as Parameters<net.Server["listen"]>);
+      });
+    pushMock(spy);
+    await startDaemon();
+    always(server);
+    // NOTE: Keeps the logged errors out of the test output.
+    pushMock(vi.spyOn(console, "error").mockImplementation(() => {}));
+
+    expect(() => {
+      server?.emit("error", new Error("boom 1"));
+      server?.emit("error", new Error("boom 2"));
+    }).not.toThrow();
+    expect(server.listenerCount("error")).toBe(1);
+  });
+
   it("terminates only once", async () => {
     const { stop, onExit } = setup.cur;
     const { daemon } = await startDaemon();
