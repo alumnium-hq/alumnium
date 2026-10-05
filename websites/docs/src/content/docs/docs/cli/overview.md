@@ -23,16 +23,16 @@ Chrome runs on Selenium by default. Set `ALUMNIUM_DRIVER=playwright` before `sta
 
 ## Commands
 
-| Command | Description |
-| --- | --- |
+| Command                                                    | Description                                                                                                                                           |
+| ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `start [--capabilities <json\|file>] [--server-url <url>]` | Start a session. Capabilities default to `{"platformName":"chrome"}` and accept the same options as the MCP [`start`](/docs/mcp/overview#start) tool. |
-| `do <goal>` | Execute a goal on the current page. |
-| `check <statement> [--vision]` | Verify a statement. Exits with code `1` when it is false. |
-| `get <data> [--vision]` | Extract data from the page. |
-| `wait <seconds\|condition> [--timeout <seconds>]` | Wait for 1-30 seconds or until a condition is met. Exits with code `0` even on timeout; check `status` (`met` or `timeout`) in the output. |
-| `fetch-accessibility-tree` | Print the accessibility tree. |
-| `stop [--save-cache]` | Stop the session and print the artifacts directory. |
-| `list` | List sessions and their status. |
+| `do <goal>`                                                | Execute a goal on the current page.                                                                                                                   |
+| `check <statement> [--vision]`                             | Verify a statement. Exits with code `1` when it is false.                                                                                             |
+| `get <data> [--vision]`                                    | Extract data from the page.                                                                                                                           |
+| `wait <seconds\|condition> [--timeout <seconds>]`          | Wait for 1-30 seconds or until a condition is met. Exits with code `0` even on timeout; check `status` (`met` or `timeout`) in the output.            |
+| `fetch-accessibility-tree`                                 | Print the accessibility tree.                                                                                                                         |
+| `stop [--save-cache]`                                      | Stop the session and print the artifacts directory (screenshots; with Playwright also a trace and a video unless `ALUMNIUM_MCP_RECORD_VIDEOS=false`). |
+| `list`                                                     | List sessions and their status.                                                                                                                       |
 
 Output is printed as JSON (XML for the accessibility tree). Errors are printed to stderr and exit with code `1`.
 

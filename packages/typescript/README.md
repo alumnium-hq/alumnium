@@ -56,7 +56,7 @@ npx alumnium cli check "page shows Example Domain"
 npx alumnium cli stop
 ```
 
-See the [CLI docs](https://alumnium.ai/docs/cli/overview/) for all commands.
+See the [CLI docs][6] for all commands.
 
 ## Contributing
 
@@ -67,3 +67,4 @@ See the [contributing guidelines][4] for information on how to get involved in t
 [3]: https://alumnium.ai/docs/getting-started/configuration/
 [4]: https://github.com/alumnium-hq/alumnium/tree/main/CONTRIBUTING.md
 [5]: https://www.lambdatest.com/
+[6]: https://alumnium.ai/docs/cli/overview/

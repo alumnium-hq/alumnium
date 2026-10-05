@@ -19,16 +19,16 @@ npx alumnium cli stop --save-cache                       # always stop when done
 
 ## Commands
 
-| Command                                                    | Purpose                                                                                                                                 |
-| ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `start [--capabilities <json\|file>] [--server-url <url>]` | Start a session. Capabilities use the MCP `start` format, e.g. `'{"platformName":"ios","alumnium:options":{"app":"com.example.app"}}'`. |
-| `do <goal>`                                                | Perform a goal on the current page/screen.                                                                                              |
-| `check <statement> [--vision]`                             | Verify a statement; prints `{"result":"success"\|"failure","explanation":…}`.                                                           |
-| `get <data> [--vision]`                                    | Extract data.                                                                                                                           |
-| `wait <seconds\|condition> [--timeout <s>]`                | Wait 1-30 seconds or until a condition holds. Exits 0 even on timeout; read `status` (`met` or `timeout`).                              |
-| `fetch-accessibility-tree`                                 | Print the current accessibility tree (for debugging).                                                                                   |
-| `stop [--save-cache]`                                      | Stop the session; prints the artifacts directory (screenshots; with Playwright also a trace and video).                                 |
-| `list`                                                     | List sessions and their status.                                                                                                         |
+| Command                                                    | Purpose                                                                                                                                            |
+| ---------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `start [--capabilities <json\|file>] [--server-url <url>]` | Start a session. Capabilities use the MCP `start` format, e.g. `'{"platformName":"ios","alumnium:options":{"app":"com.example.app"}}'`.            |
+| `do <goal>`                                                | Perform a goal on the current page/screen.                                                                                                         |
+| `check <statement> [--vision]`                             | Verify a statement; prints `{"result":"success"\|"failure","explanation":…}`.                                                                      |
+| `get <data> [--vision]`                                    | Extract data.                                                                                                                                      |
+| `wait <seconds\|condition> [--timeout <s>]`                | Wait 1-30 seconds or until a condition holds. Exits 0 even on timeout; read `status` (`met` or `timeout`).                                         |
+| `fetch-accessibility-tree`                                 | Print the current accessibility tree (for debugging).                                                                                              |
+| `stop [--save-cache]`                                      | Stop the session; prints the artifacts directory (screenshots; with Playwright also a trace and video, unless `ALUMNIUM_MCP_RECORD_VIDEOS=false`). |
+| `list`                                                     | List sessions and their status.                                                                                                                    |
 
 ## Rules
 
@@ -37,4 +37,4 @@ npx alumnium cli stop --save-cache                       # always stop when done
 - Use `check` exit codes to verify outcomes instead of parsing explanations.
 - Always `stop` when finished. Idle sessions stop after `ALUMNIUM_CLI_IDLE_TIMEOUT` seconds (default 3600).
 - Use `-s <name>` (or `ALUMNIUM_CLI_SESSION`) to run several sessions at once, e.g. web and mobile. Names are 1-24 letters, digits, `_` or `-`; start them with a letter (`-s 007` becomes `7`).
-- If `start` fails, the error includes the daemon log, which is also at `.alumnium/cli/<session>.log`.
+- If `start` fails, the error includes the daemon log, which is also at `.alumnium/cli/<session>.log` (under `ALUMNIUM_STORE_DIR`).
