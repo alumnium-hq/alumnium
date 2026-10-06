@@ -73,6 +73,24 @@ export const doMcpTool = McpTool.define("do", {
       .describe(
         "Natural language description of what to do on the current page. Do NOT combine actions that span multiple pages in a single goal.",
       ),
+
+    step: z
+      .number()
+      .int()
+      .nonnegative()
+      .optional()
+      .describe(
+        "Optional number of the test step this action belongs to, or 0 for setup before the first step. Not used by Alumnium; recorded in the tool call so callers can attribute it.",
+      ),
+
+    attempt: z
+      .number()
+      .int()
+      .positive()
+      .optional()
+      .describe(
+        "Optional attempt number: 1 for a new action, 2 and up when retrying the same action. Not used by Alumnium; recorded in the tool call so callers can group retries.",
+      ),
   }),
 
   async execute(input, { logger }) {

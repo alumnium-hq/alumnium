@@ -20,6 +20,15 @@ export const checkMcpTool = McpTool.define("check", {
       .boolean()
       .default(false)
       .describe("Use screenshot for verification"),
+
+    step: z
+      .number()
+      .int()
+      .nonnegative()
+      .optional()
+      .describe(
+        "Optional number of the test step this check belongs to, or 0 for setup before the first step. Not used by Alumnium; recorded in the tool call so callers can attribute it.",
+      ),
   }),
 
   async execute(input, { logger }) {
