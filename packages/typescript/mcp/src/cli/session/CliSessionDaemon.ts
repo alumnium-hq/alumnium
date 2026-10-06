@@ -42,6 +42,7 @@ export class CliSessionDaemon {
   #idleTimer: ReturnType<typeof setTimeout> | undefined;
   #watchTimer: ReturnType<typeof setInterval> | undefined;
   #socketIno: number | undefined;
+  #inFlight = 0;
   #closed = false;
   #terminating = false;
   #exited = false;
@@ -58,9 +59,15 @@ export class CliSessionDaemon {
     const { session, registry, start, startInput, stop } = this.#props;
 
     const startOutput = outputText(await start(startInput));
-    const { id, platform_name: platform } = StartOutput.parse(
-      JSON.parse(startOutput),
-    );
+    let parsed: z.infer<typeof StartOutput>;
+    try {
+      parsed = StartOutput.parse(JSON.parse(startOutput));
+    } catch (error) {
+      // NOTE: Without a driver id there is nothing to stop.
+      logger.debug("Unparsable start output: {error}", { error });
+      throw error;
+    }
+    const { id, platform_name: platform } = parsed;
     this.#driverId = id;
 
     const socketPath = registry.socketPath(session);
@@ -79,21 +86,22 @@ export class CliSessionDaemon {
       this.#server.on("error", (error) =>
         logger.error("Session server error: {error}", { error }),
       );
+      await registry.writeEntry({
+        name: session,
+        version: ALUMNIUM_VERSION,
+        pid: process.pid,
+        socketPath,
+        driverId: id,
+        platform,
+        startedAt: Date.now(),
+        startOutput,
+      });
     } catch (error) {
+      // NOTE: Closing a listening server also unlinks its socket file.
+      this.#server.close();
       await stop({ id }).catch(() => {});
       throw error;
     }
-
-    await registry.writeEntry({
-      name: session,
-      version: ALUMNIUM_VERSION,
-      pid: process.pid,
-      socketPath,
-      driverId: id,
-      platform,
-      startedAt: Date.now(),
-      startOutput,
-    });
 
     this.#pokeIdleTimer();
     this.#watchSocket(socketPath);
@@ -166,6 +174,7 @@ export class CliSessionDaemon {
     const request = parsed.data;
     let exitCode = 0;
     let notRunning = false;
+    this.#inFlight++;
     this.#pokeIdleTimer();
 
     try {
@@ -201,6 +210,7 @@ export class CliSessionDaemon {
         })
         .catch(() => {});
     } finally {
+      this.#inFlight--;
       this.#pokeIdleTimer();
     }
 
@@ -282,7 +292,8 @@ export class CliSessionDaemon {
 
   #pokeIdleTimer() {
     clearTimeout(this.#idleTimer);
-    if (this.#closed || !this.#props.idleTimeoutMs) return;
+    if (this.#closed || this.#inFlight > 0 || !this.#props.idleTimeoutMs)
+      return;
 
     this.#idleTimer = setTimeout(() => {
       logger.info(`Session ${this.#props.session} is idle, stopping`);

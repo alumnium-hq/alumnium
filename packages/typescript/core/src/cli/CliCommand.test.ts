@@ -36,14 +36,21 @@ describe("CliCommand", () => {
           syntax: "-t, --tag <tag>",
           description: "Tag",
         }),
+        label: z.coerce.string().register(CliCommand.option, {
+          name: "label",
+          syntax: "-l, --label <label>",
+          description: "Label",
+        }),
       }),
       action,
     });
     const cli = cac("test");
     command.register(cli);
 
-    await parse(cli, ["raw", "-t", "007"]);
-    expect(action.mock.calls[0]?.[0].args).toEqual({ tag: 7 });
+    await parse(cli, ["raw", "-t", "007", "-l", "7"]);
+    const args = action.mock.calls[0]?.[0].args;
+    expect(args).toEqual({ tag: 7, label: "7" });
+    expect(args).toHaveProperty("label", "7");
   });
 
   it("shows prefault defaults as cac option defaults", () => {

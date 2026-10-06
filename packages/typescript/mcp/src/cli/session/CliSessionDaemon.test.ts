@@ -206,6 +206,58 @@ describe("CliSessionDaemon", () => {
     expect(onExit).not.toHaveBeenCalled();
   });
 
+  it("does not stop on idle while a request is in flight", async () => {
+    useFakeTimers();
+    const { echo, stop, onExit } = setup.cur;
+    const gate = Promise.withResolvers<void>();
+    const started = Promise.withResolvers<void>();
+    echo.mockImplementation(async (input) => {
+      started.resolve();
+      await gate.promise;
+      return output(input);
+    });
+    const { socketPath } = await startDaemon({ idleTimeoutMs: 60_000 });
+
+    const pending = request(socketPath, run(1, "echo", {}));
+    await started.promise;
+    await vi.advanceTimersByTimeAsync(120_000);
+    expect(onExit).not.toHaveBeenCalled();
+    expect(stop).not.toHaveBeenCalled();
+
+    gate.resolve();
+    await pending;
+    // NOTE: Fake timers leave real I/O alone, let a wrongly queued stop run.
+    for (let i = 0; i < 20; i++) await fs.stat(socketPath);
+    await vi.advanceTimersByTimeAsync(59_000);
+    expect(onExit).not.toHaveBeenCalled();
+
+    await vi.advanceTimersByTimeAsync(1_000);
+    await vi.waitFor(() => expect(onExit).toHaveBeenCalledWith(0));
+    expect(stop).toHaveBeenCalledWith({ id: "drv-1", save_cache: false });
+  });
+
+  it("stops the driver and removes the socket when registering fails", async () => {
+    const { registry, stop } = setup.cur;
+    vi.spyOn(registry, "writeEntry").mockRejectedValue(new Error("disk full"));
+    pushMock(vi.mocked(registry.writeEntry));
+
+    await expect(startDaemon()).rejects.toThrow("disk full");
+
+    expect(stop).toHaveBeenCalledWith({ id: "drv-1" });
+    expect(fsSync.existsSync(registry.socketPath("default"))).toBe(false);
+  });
+
+  it("rejects unparsable start output without listening", async () => {
+    // NOTE: Without a driver id there is nothing to stop.
+    const { registry, start, stop } = setup.cur;
+    start.mockResolvedValue([{ type: "text", text: "not json" }]);
+
+    await expect(startDaemon()).rejects.toThrow();
+
+    expect(stop).not.toHaveBeenCalled();
+    expect(fsSync.existsSync(registry.socketPath("default"))).toBe(false);
+  });
+
   it("stops the driver when its socket file is removed", async () => {
     // NOTE: Windows removes named pipes together with the owning process.
     if (process.platform === "win32") return;
