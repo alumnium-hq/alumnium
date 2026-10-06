@@ -35,6 +35,7 @@ npx alumnium cli stop --save-cache                       # always stop when done
 - Run `start` before anything else. Errors tell you exactly which command to run.
 - Keep each `do` to the current page. For multi-page flows, issue one `do` per page.
 - Use `check` exit codes to verify outcomes instead of parsing explanations.
+- Run every command from the same directory: sessions live in `./.alumnium/cli` (or set an absolute `ALUMNIUM_STORE_DIR`). After a `cd`, commands report "not running" even though the browser is still open.
 - Always `stop` when finished. Idle sessions stop after `ALUMNIUM_CLI_IDLE_TIMEOUT` seconds (default 3600).
 - Use `-s <name>` (or `ALUMNIUM_CLI_SESSION`) to run several sessions at once, e.g. web and mobile. Names are 1-24 letters, digits, `_` or `-`; start them with a letter (`-s 007` becomes `7`).
 - If `start` fails, the error includes the daemon log, which is also at `.alumnium/cli/<session>.log` (under `ALUMNIUM_STORE_DIR`).

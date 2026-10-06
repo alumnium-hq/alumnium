@@ -930,6 +930,11 @@ ${pkg.packageJson.description}. See [the main \`alumnium\` package page](https:/
 
     copyAssets(isMain ? CORE_PKG_ASSETS : COMMON_PKG_ASSETS, dir),
 
+    isMain &&
+      fs.cp(path.join(pkg.dir, "skills"), path.join(dir, "skills"), {
+        recursive: true,
+      }),
+
     !isMain && fs.writeFile(path.join(dir, "README.md"), readmeMd),
   ]);
 
@@ -948,7 +953,7 @@ ${pkg.packageJson.description}. See [the main \`alumnium\` package page](https:/
     repository: mainPackageJson?.repository,
     ...packageJson,
     version: ALUMNIUM_VERSION,
-    files: ["src", "README.md", "LICENSE.md"],
+    files: ["src", ...(isMain ? ["skills"] : []), "README.md", "LICENSE.md"],
     exports: Object.fromEntries(
       entries.map(([subpath, entryPath]) => {
         const basePath = `./${path.relative(pkg.dir, entryPath).replace(/\.ts$/, "")}`;
