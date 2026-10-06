@@ -22,7 +22,7 @@ describe("Drag and Drop", () => {
   it("works", async ({ expect, setup }) => {
     const { al, $ } = await setup();
 
-    await $.navigate("https://the-internet.herokuapp.com/drag_and_drop");
+    await $.navigate("the-internet/drag-and-drop.html");
 
     const initialOrder = await al.get(
       "titles of squares ordered from left to right",

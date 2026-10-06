@@ -2,15 +2,13 @@ package ai.alumnium.system;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.io.File;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 
 @DisabledIfEnvironmentVariable(named = "ALUMNIUM_DRIVER", matches = "appium.*")
 public class ObscuredElementTest extends BaseTest {
 
-  private static final String OBSCURED_ELEMENT_URL =
-      new File("../python/examples/support/pages/obscured_element.html").toURI().toString();
+  private static final String OBSCURED_ELEMENT_URL = "obscured_element.html";
 
   @Test
   void testClickElementCoveredByStickyBar() {

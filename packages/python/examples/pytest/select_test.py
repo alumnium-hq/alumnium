@@ -20,7 +20,7 @@ def test_select_option(al, navigate):
             "retriever instructions (return `value` instead of `statement`)"
         )
 
-    navigate("https://the-internet.herokuapp.com/dropdown")
+    navigate("the-internet/dropdown.html")
 
     al.check("Option 1 is not selected")
     with raises(AssertionError):

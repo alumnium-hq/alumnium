@@ -1,0 +1,34 @@
+<!doctype html>
+<!-- Adapted from Sauce Labs the-internet for local tests. See README.md and LICENSE. -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>File Uploader</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="example">
+      <h3>File Uploader</h3>
+      <p>Choose a file on your system and then click upload.</p>
+      <form id="upload-form">
+        <input id="file-upload" type="file" name="file" required />
+        <br />
+        <input id="file-submit" type="submit" value="Upload" />
+      </form>
+      <div id="uploaded-files"></div>
+    </div>
+    <script>
+      document
+        .getElementById("upload-form")
+        .addEventListener("submit", async (event) => {
+          event.preventDefault();
+          const file = document.getElementById("file-upload").files[0];
+          await file.arrayBuffer();
+          document.querySelector("h3").textContent = "File Uploaded!";
+          document.getElementById("uploaded-files").textContent = file.name;
+          event.target.remove();
+        });
+    </script>
+  </body>
+</html>

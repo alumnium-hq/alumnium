@@ -26,7 +26,7 @@ def test_table_extraction(al, navigate):
     if al.model.provider == Provider.AWS_META:
         pytest.xfail("Table area instructions need more work")
 
-    navigate("https://the-internet.herokuapp.com/tables")
+    navigate("the-internet/tables.html")
 
     area = al.area("first table")
     assert area.get("Jason Doe's due amount") == "$100.00"
@@ -43,7 +43,7 @@ def test_table_sorting(al, navigate):
     if al.model.provider == Provider.AWS_META:
         pytest.xfail("Table area instructions need more work")
 
-    navigate("https://the-internet.herokuapp.com/tables")
+    navigate("the-internet/tables.html")
 
     table1 = al.area("first table")
     assert table1.get("first names") == ["John", "Frank", "Jason", "Tim"]
@@ -73,7 +73,7 @@ def test_table_sorting(al, navigate):
 
 
 def test_retrieval_of_unavailable_data(al, navigate):
-    navigate("https://the-internet.herokuapp.com/tables")
+    navigate("the-internet/tables.html")
 
     # This data is not available on the page.
     # Even though LLM knows the answer, it should not respond it.

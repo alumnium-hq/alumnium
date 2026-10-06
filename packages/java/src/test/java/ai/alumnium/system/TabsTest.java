@@ -4,7 +4,6 @@ import ai.alumnium.driver.PlaywrightDriver;
 import ai.alumnium.driver.SeleniumDriver;
 import ai.alumnium.tool.SwitchToNextTabTool;
 import ai.alumnium.tool.SwitchToPreviousTabTool;
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
@@ -19,8 +18,7 @@ public class TabsTest extends BaseTest {
     extraTools = List.of(SwitchToNextTabTool.class, SwitchToPreviousTabTool.class);
   }
 
-  private static final String MULTI_TAB_URL =
-      new File("../python/examples/support/pages/multi_tab_page.html").toURI().toString();
+  private static final String MULTI_TAB_URL = "multi_tab_page.html";
 
   @AfterEach
   void restoreTabs() {

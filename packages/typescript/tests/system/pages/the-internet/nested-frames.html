@@ -1,0 +1,12 @@
+<!doctype html>
+<!-- Adapted from Sauce Labs the-internet for local tests. See README.md and LICENSE. -->
+<html lang="en">
+  <head>
+    <title>Nested Frames</title>
+  </head>
+  <frameset frameborder="1" rows="50%,50%">
+    <frame src="frame-top.html" scrolling="no" name="frame-top" />
+    <frame src="frame-bottom.html" scrolling="no" name="frame-bottom" />
+    <noframes>Frames are not rendering.</noframes>
+  </frameset>
+</html>

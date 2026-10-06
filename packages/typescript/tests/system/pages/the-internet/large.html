@@ -1,0 +1,68 @@
+<!doctype html>
+<!-- Adapted from Sauce Labs the-internet for local tests. See README.md and LICENSE. -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Large & Deep DOM</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="example">
+      <h3>Large &amp; Deep DOM</h3>
+      <p>These examples are nested 50 levels deep.</p>
+      <h4>No Siblings</h4>
+      <div id="no-siblings-container"></div>
+      <h4>Siblings</h4>
+      <div id="siblings"></div>
+      <h4>Table</h4>
+      <table id="large-table">
+        <thead>
+          <tr></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <script>
+      // Build the upstream template's repeated content locally instead of using ERB.
+      let parent = document.getElementById("no-siblings-container");
+      for (let level = 0; level < 50; level++) {
+        const child = document.createElement("div");
+        parent.append(child);
+        parent = child;
+      }
+      parent.id = "no-siblings";
+      parent.textContent = "No siblings";
+
+      parent = document.getElementById("siblings");
+      for (let level = 1; level <= 50; level++) {
+        const nested = document.createElement("div");
+        parent.append(nested);
+        for (let item = 1; item <= 3; item++) {
+          const sibling = document.createElement("div");
+          sibling.id = `sibling-${level}.${item}`;
+          sibling.textContent = `${level}.${item}`;
+          nested.append(sibling);
+        }
+        parent = nested;
+      }
+
+      const table = document.getElementById("large-table");
+      for (let column = 1; column <= 50; column++) {
+        const header = document.createElement("th");
+        header.textContent = column;
+        table.tHead.rows[0].append(header);
+      }
+      for (let row = 1; row <= 50; row++) {
+        const tr = table.tBodies[0].insertRow();
+        for (let column = 1; column <= 50; column++) {
+          tr.insertCell().textContent = `${row}.${column}`;
+        }
+      }
+    </script>
+    <footer id="page-footer">
+      <hr />
+      Powered by Elemental Selenium
+    </footer>
+  </body>
+</html>

@@ -23,7 +23,7 @@ def file2():
 
 @mark.xfail("appium" in driver_type, reason="File upload is not implemented in Appium yet")
 def test_file_upload(al, file, navigate):
-    navigate("https://the-internet.herokuapp.com/upload")
+    navigate("the-internet/upload.html")
     al.do(f"upload '{file.name}'")
     al.do("click on 'Upload' button")
     assert al.get("heading") == "File Uploaded!"

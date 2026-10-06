@@ -12,8 +12,7 @@ import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 @DisabledIfEnvironmentVariable(named = "ALUMNIUM_DRIVER", matches = "appium.*")
 public class DragAndDropTest extends BaseTest {
 
-  private static final String DRAG_AND_DROP_URL =
-      "https://the-internet.herokuapp.com/drag_and_drop";
+  private static final String DRAG_AND_DROP_URL = "the-internet/drag-and-drop.html";
 
   @BeforeAll
   static void configure() {

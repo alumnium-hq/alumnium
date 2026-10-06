@@ -40,7 +40,7 @@ describe("File Upload", () => {
   it("should upload a single file", async ({ expect, setup }) => {
     const { al, $ } = await setup();
 
-    await $.navigate("https://the-internet.herokuapp.com/upload");
+    await $.navigate("the-internet/upload.html");
     await al.do(`upload '${testFile1}'`);
     await al.do("click on 'Upload' button");
 

@@ -20,15 +20,14 @@ describe("Navigation", () => {
       extraTools: [NavigateBackTool],
     });
 
-    await $.navigate("https://the-internet.herokuapp.com");
-    expect(await al.driver.url()).toBe("https://the-internet.herokuapp.com/");
+    const indexUrl = $.resolveUrl("the-internet/index.html");
+    await $.navigate(indexUrl);
+    expect(await al.driver.url()).toBe(indexUrl);
 
     await al.do("open typos");
-    expect(await al.driver.url()).toBe(
-      "https://the-internet.herokuapp.com/typos",
-    );
+    expect(await al.driver.url()).toBe($.resolveUrl("the-internet/typos.html"));
 
     await al.do("navigate back to the previous page");
-    expect(await al.driver.url()).toBe("https://the-internet.herokuapp.com/");
+    expect(await al.driver.url()).toBe(indexUrl);
   });
 });

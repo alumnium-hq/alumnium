@@ -1,0 +1,59 @@
+<!doctype html>
+<!-- Adapted from Sauce Labs the-internet for local tests. See README.md and LICENSE. -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dynamic Content</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="example">
+      <h3>Dynamic Content</h3>
+      <p>This example loads profile images and text after a short delay.</p>
+      <div id="content"></div>
+      <template id="profiles">
+        <div>
+          <img
+            src="images/profile-1.jpg"
+            alt="Profile 1"
+            width="82"
+            height="82"
+          />
+          Accusantium eius ut architecto neque vel voluptatem vel nam eos minus
+          ullam dolores voluptates enim sed voluptatem rerum qui sapiente
+          nesciunt aspernatur et accusamus laboriosam culpa tenetur hic aut
+          placeat error autem qui sunt.
+        </div>
+        <div>
+          <img
+            src="images/profile-5.jpg"
+            alt="Profile 2"
+            width="82"
+            height="82"
+          />
+          Omnis fugiat porro vero quas tempora quis eveniet ab officia
+          cupiditate culpa repellat debitis itaque possimus odit dolorum et iste
+          quibusdam quis dicta autem sint vel quo vel consequuntur dolorem nihil
+          neque sunt aperiam blanditiis.
+        </div>
+        <div>
+          <img
+            src="images/profile-7.jpg"
+            alt="Profile 3"
+            width="82"
+            height="82"
+          />
+          Content loaded successfully.
+        </div>
+      </template>
+    </div>
+    <script>
+      setTimeout(() => {
+        document
+          .getElementById("content")
+          .append(document.getElementById("profiles").content.cloneNode(true));
+      }, 500);
+    </script>
+  </body>
+</html>

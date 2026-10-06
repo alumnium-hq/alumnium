@@ -8,7 +8,7 @@ from pytest import mark
     reason="Frames support is only implemented for Playwright and Selenium currently",
 )
 def test_nested_frames(al, navigate):
-    navigate("https://the-internet.herokuapp.com/nested_frames")
+    navigate("the-internet/nested-frames.html")
 
     al.do("click MIDDLE text")
     assert al.get("text from all frames") == ["LEFT", "MIDDLE", "RIGHT", "BOTTOM"]

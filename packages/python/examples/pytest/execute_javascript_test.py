@@ -15,7 +15,7 @@ def test_execute_javascript_to_scroll(al_factory, navigate):
             "retriever instructions (return `value` instead of `statement`)"
         )
 
-    navigate("https://the-internet.herokuapp.com/large")
+    navigate("the-internet/large.html")
     al.check("'Powered by Elemental Selenium' is not present", vision=True)
     al.do("execute javascript 'window.scrollTo(0, document.body.scrollHeight)'")
     al.check("'Powered by Elemental Selenium' is present", vision=True)

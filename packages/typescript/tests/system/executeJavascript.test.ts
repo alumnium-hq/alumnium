@@ -20,7 +20,7 @@ describe("Execute JavaScript", () => {
     const { al, $ } = await setup({
       extraTools: [ExecuteJavascriptTool],
     });
-    await $.navigate("https://the-internet.herokuapp.com/large");
+    await $.navigate("the-internet/large.html");
 
     await al.check("'Powered by Elemental Selenium' is not present", {
       vision: true,

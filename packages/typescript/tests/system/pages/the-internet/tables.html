@@ -1,0 +1,206 @@
+<!doctype html>
+<!-- Adapted from Sauce Labs the-internet for local tests. See README.md and LICENSE. -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Data Tables</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="example">
+      <h3>Data Tables</h3>
+      <p>
+        Often times when you see a table it contains data which is sortable --
+        sometimes with actions that can be taken within each row (e.g. edit,
+        delete). And it can be challenging to automate interaction with sets of
+        data in a table depending on how it is constructed.
+      </p>
+
+      <h4>Example 1</h4>
+      <p>No Class or ID attributes to signify groupings of rows and columns</p>
+      <table id="table1" class="tablesorter">
+        <thead>
+          <tr>
+            <th aria-sort="none">
+              <button type="button"><span>Last Name</span></button>
+            </th>
+            <th aria-sort="none">
+              <button type="button"><span>First Name</span></button>
+            </th>
+            <th aria-sort="none">
+              <button type="button"><span>Email</span></button>
+            </th>
+            <th aria-sort="none">
+              <button type="button"><span>Due</span></button>
+            </th>
+            <th aria-sort="none">
+              <button type="button"><span>Web Site</span></button>
+            </th>
+            <th aria-sort="none">
+              <button type="button"><span>Action</span></button>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Smith</td>
+            <td>John</td>
+            <td>jsmith@gmail.com</td>
+            <td>$50.00</td>
+            <td>http://www.jsmith.com</td>
+            <td>
+              <a href="#edit">edit</a>
+              <a href="#delete">delete</a>
+            </td>
+          </tr>
+          <tr>
+            <td>Bach</td>
+            <td>Frank</td>
+            <td>fbach@yahoo.com</td>
+            <td>$51.00</td>
+            <td>http://www.frank.com</td>
+            <td>
+              <a href="#edit">edit</a>
+              <a href="#delete">delete</a>
+            </td>
+          </tr>
+          <tr>
+            <td>Doe</td>
+            <td>Jason</td>
+            <td>jdoe@hotmail.com</td>
+            <td>$100.00</td>
+            <td>http://www.jdoe.com</td>
+            <td>
+              <a href="#edit">edit</a>
+              <a href="#delete">delete</a>
+            </td>
+          </tr>
+          <tr>
+            <td>Conway</td>
+            <td>Tim</td>
+            <td>tconway@earthlink.net</td>
+            <td>$50.00</td>
+            <td>http://www.timconway.com</td>
+            <td>
+              <a href="#edit">edit</a>
+              <a href="#delete">delete</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h4>Example 2</h4>
+      <p>Class and ID attributes to signify groupings of rows and columns</p>
+      <table id="table2" class="tablesorter">
+        <thead>
+          <tr>
+            <th aria-sort="none">
+              <button type="button">
+                <span class="last-name">Last Name</span>
+              </button>
+            </th>
+            <th aria-sort="none">
+              <button type="button">
+                <span class="first-name">First Name</span>
+              </button>
+            </th>
+            <th aria-sort="none">
+              <button type="button"><span class="email">Email</span></button>
+            </th>
+            <th aria-sort="none">
+              <button type="button"><span class="dues">Due</span></button>
+            </th>
+            <th aria-sort="none">
+              <button type="button">
+                <span class="web-site">Web Site</span>
+              </button>
+            </th>
+            <th aria-sort="none">
+              <button type="button"><span class="action">Action</span></button>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="last-name">Smith</td>
+            <td class="first-name">John</td>
+            <td class="email">jsmith@gmail.com</td>
+            <td class="dues">$50.00</td>
+            <td class="web-site">http://www.jsmith.com</td>
+            <td class="action">
+              <a href="#edit">edit</a>
+              <a href="#delete">delete</a>
+            </td>
+          </tr>
+          <tr>
+            <td class="last-name">Bach</td>
+            <td class="first-name">Frank</td>
+            <td class="email">fbach@yahoo.com</td>
+            <td class="dues">$51.00</td>
+            <td class="web-site">http://www.frank.com</td>
+            <td class="action">
+              <a href="#edit">edit</a>
+              <a href="#delete">delete</a>
+            </td>
+          </tr>
+          <tr>
+            <td class="last-name">Doe</td>
+            <td class="first-name">Jason</td>
+            <td class="email">jdoe@hotmail.com</td>
+            <td class="dues">$100.00</td>
+            <td class="web-site">http://www.jdoe.com</td>
+            <td class="action">
+              <a href="#edit">edit</a>
+              <a href="#delete">delete</a>
+            </td>
+          </tr>
+          <tr>
+            <td class="last-name">Conway</td>
+            <td class="first-name">Tim</td>
+            <td class="email">tconway@earthlink.net</td>
+            <td class="dues">$50.00</td>
+            <td class="web-site">http://www.timconway.com</td>
+            <td class="action">
+              <a href="#edit">edit</a>
+              <a href="#delete">delete</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <script>
+      for (const table of document.querySelectorAll("table")) {
+        for (const header of table.tHead.rows[0].cells) {
+          header.addEventListener("click", () => {
+            const ascending = header.getAttribute("aria-sort") !== "ascending";
+            for (const other of table.tHead.rows[0].cells) {
+              other.setAttribute("aria-sort", "none");
+            }
+            header.setAttribute(
+              "aria-sort",
+              ascending ? "ascending" : "descending",
+            );
+            const rows = Array.from(table.tBodies[0].rows);
+            rows.sort((left, right) => {
+              const a = left.cells[header.cellIndex].textContent.trim();
+              const b = right.cells[header.cellIndex].textContent.trim();
+              const comparison =
+                header.cellIndex === 3
+                  ? Number(a.slice(1)) - Number(b.slice(1))
+                  : a.localeCompare(b);
+              return ascending ? comparison : -comparison;
+            });
+            table.tBodies[0].append(...rows);
+          });
+        }
+      }
+    </script>
+
+    <footer id="page-footer">
+      <hr />
+      Powered by Elemental Selenium
+    </footer>
+  </body>
+</html>
