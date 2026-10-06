@@ -34,6 +34,8 @@ Chrome runs on Selenium by default. Set `ALUMNIUM_DRIVER=playwright` before `sta
 | `stop [--save-cache]`                                      | Stop the session and print the artifacts directory (screenshots; with Playwright also a trace and a video unless `ALUMNIUM_MCP_RECORD_VIDEOS=false`). |
 | `list`                                                     | List sessions and their status.                                                                                                                       |
 
+`start` waits up to [`ALUMNIUM_CLI_START_TIMEOUT`](/docs/reference#alumnium_cli_start_timeout) seconds for the session to come up, which matters on a slow first start.
+
 Output is printed as JSON (XML for the accessibility tree). Errors are printed to stderr and exit with code `1`.
 
 ## Sessions

@@ -227,4 +227,36 @@ describe("Env", () => {
     vi.stubEnv("ALUMNIUM_CLI_IDLE_TIMEOUT", "2147484");
     expect(() => Env.ALUMNIUM_CLI_IDLE_TIMEOUT).toThrow();
   });
+
+  it("defaults the CLI start timeout to 10 minutes", () => {
+    vi.stubEnv("ALUMNIUM_CLI_START_TIMEOUT", undefined);
+    expect(Env.ALUMNIUM_CLI_START_TIMEOUT).toBe(600);
+  });
+
+  it("reads the CLI start timeout", () => {
+    vi.stubEnv("ALUMNIUM_CLI_START_TIMEOUT", "30");
+    expect(Env.ALUMNIUM_CLI_START_TIMEOUT).toBe(30);
+  });
+
+  it.each(["0", "-1", "1.5", "abc", "2147484"])(
+    "rejects CLI start timeout %s",
+    (input) => {
+      vi.stubEnv("ALUMNIUM_CLI_START_TIMEOUT", input);
+      expect(() => Env.ALUMNIUM_CLI_START_TIMEOUT).toThrow();
+    },
+  );
+
+  it("reads the internal CLI start capabilities and server URL", () => {
+    vi.stubEnv("ALUMNIUM_CLI_START_CAPABILITIES", "{}");
+    vi.stubEnv("ALUMNIUM_CLI_START_SERVER_URL", "http://x");
+    expect(Env.ALUMNIUM_CLI_START_CAPABILITIES).toBe("{}");
+    expect(Env.ALUMNIUM_CLI_START_SERVER_URL).toBe("http://x");
+  });
+
+  it("leaves the internal CLI start vars unset by default", () => {
+    vi.stubEnv("ALUMNIUM_CLI_START_CAPABILITIES", undefined);
+    vi.stubEnv("ALUMNIUM_CLI_START_SERVER_URL", undefined);
+    expect(Env.ALUMNIUM_CLI_START_CAPABILITIES).toBeUndefined();
+    expect(Env.ALUMNIUM_CLI_START_SERVER_URL).toBeUndefined();
+  });
 });

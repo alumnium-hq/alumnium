@@ -45,6 +45,7 @@ export class CliSessionRegistry extends FileStore {
   }
 
   socketPath(name: string): string {
+    validateName(name);
     const base = `alumnium-cli-${this.#hash}-${name}`;
     return process.platform === "win32"
       ? `\\\\.\\pipe\\${base}`
@@ -55,10 +56,12 @@ export class CliSessionRegistry extends FileStore {
    * Daemon stdout/stderr log path.
    */
   logPath(name: string): string {
+    validateName(name);
     return this.resolve(`${name}.log`);
   }
 
   async readEntry(name: string): Promise<CliSessionRegistry.Entry | undefined> {
+    validateName(name);
     const text = await this.readText(`${name}.json`);
     const entry = CliSessionRegistry.Entry.safeParse(
       text && parseJson(text),
@@ -68,10 +71,12 @@ export class CliSessionRegistry extends FileStore {
   }
 
   async writeEntry(entry: CliSessionRegistry.Entry): Promise<void> {
+    validateName(entry.name);
     await this.writeJson(`${entry.name}.json`, entry);
   }
 
   async removeEntry(name: string): Promise<void> {
+    validateName(name);
     await this.remove(`${name}.json`);
     if (process.platform !== "win32")
       await fs.rm(this.socketPath(name), { force: true });
@@ -81,6 +86,7 @@ export class CliSessionRegistry extends FileStore {
    * Removes only the entry file, leaving the socket alone.
    */
   async removeEntryFile(name: string): Promise<void> {
+    validateName(name);
     await this.remove(`${name}.json`);
   }
 
@@ -88,6 +94,7 @@ export class CliSessionRegistry extends FileStore {
    * Removes the entry file only if it belongs to the given process.
    */
   removeEntryFileSyncIfOwned(name: string, pid: number) {
+    validateName(name);
     const file = this.resolve(`${name}.json`);
     let text: string;
     try {
@@ -99,15 +106,31 @@ export class CliSessionRegistry extends FileStore {
       fsSync.rmSync(file, { force: true });
   }
 
+  /**
+   * Lists valid entries and deletes `*.json` files that are invalid or whose
+   * name doesn't match the file name. The dir is CLI-owned, other files (e.g.
+   * logs) are left alone.
+   */
   async listEntries(): Promise<CliSessionRegistry.Entry[]> {
     const files = await fs.readdir(this.dir).catch(() => []);
     const entries = await Promise.all(
       files
         .filter((file) => file.endsWith(".json"))
-        .map((file) => this.readEntry(path.basename(file, ".json"))),
+        .map(async (file) => {
+          const name = path.basename(file, ".json");
+          const entry = CliSessionRegistry.SessionName.safeParse(name).success
+            ? await this.readEntry(name)
+            : undefined;
+          if (!entry) await this.remove(file);
+          return entry;
+        }),
     );
     return entries.filter((entry) => entry !== undefined);
   }
+}
+
+function validateName(name: string) {
+  CliSessionRegistry.SessionName.parse(name);
 }
 
 function parseJson(text: string): unknown {

@@ -57,7 +57,34 @@ describe("CliSessionRegistry", () => {
     expect(await registry.readEntry("a")).toBeUndefined();
     expect(await registry.readEntry("c")).toBeUndefined();
     expect(await registry.listEntries()).toEqual([]);
-    expect(await fs.readdir(registry.dir)).toEqual(["a.json", "c.json"]);
+  });
+
+  it("removes invalid and mismatched entry files when listing", async () => {
+    const { registry } = setup.cur;
+    await fs.writeFile(registry.resolve("broken.json"), "{");
+    await fs.writeFile(
+      registry.resolve("foreign.json"),
+      JSON.stringify({ name: "foreign" }),
+    );
+    await fs.writeFile(
+      registry.resolve("a.json"),
+      JSON.stringify(entry("../../victim")),
+    );
+    await fs.writeFile(registry.resolve("c.json"), JSON.stringify(entry("b")));
+    await fs.writeFile(registry.resolve("bad name.json"), "{}");
+    await fs.writeFile(registry.resolve("broken.log"), "log");
+    await fs.writeFile(registry.resolve("notes.txt"), "notes");
+    await registry.writeEntry(entry("ok"));
+
+    expect((await registry.listEntries()).map(({ name }) => name)).toEqual([
+      "ok",
+    ]);
+
+    expect((await fs.readdir(registry.dir)).toSorted()).toEqual([
+      "broken.log",
+      "notes.txt",
+      "ok.json",
+    ]);
   });
 
   it("reads nothing from a missing dir", async () => {
@@ -94,6 +121,19 @@ describe("CliSessionRegistry", () => {
     await registry.removeEntry("default");
 
     await expect(fs.stat(socketPath)).rejects.toThrow();
+  });
+
+  it("rejects invalid session names", async () => {
+    const { registry } = setup.cur;
+    for (const name of ["", "../x", "a/b", "x".repeat(25)]) {
+      expect(() => registry.socketPath(name)).toThrow();
+      expect(() => registry.logPath(name)).toThrow();
+      await expect(registry.readEntry(name)).rejects.toThrow();
+      await expect(registry.writeEntry(entry(name))).rejects.toThrow();
+      await expect(registry.removeEntry(name)).rejects.toThrow();
+      await expect(registry.removeEntryFile(name)).rejects.toThrow();
+      expect(() => registry.removeEntryFileSyncIfOwned(name, 1)).toThrow();
+    }
   });
 
   it("validates session names", () => {

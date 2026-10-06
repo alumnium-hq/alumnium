@@ -151,6 +151,34 @@ describe("SocketConnection", () => {
     await vi.waitFor(() => expect(onclose).toHaveBeenCalled());
   });
 
+  it("delivers a line over a small limit only when the limit is Infinity", async () => {
+    const line = JSON.stringify({ text: "x".repeat(4096) });
+
+    // NOTE: The limit applies to the unterminated part of the buffer.
+    const limited = await connectPair();
+    const limitedConnection = new SocketConnection(limited.client, 1024);
+    const limitedMessages = collect(limitedConnection);
+    const onclose = vi.fn();
+    limitedConnection.onclose = onclose;
+    limited.remote.on("error", () => {});
+    limited.remote.write(line);
+    await vi.waitFor(() => expect(onclose).toHaveBeenCalled());
+    limited.remote.write("\n");
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    expect(limitedMessages).toEqual([]);
+
+    const unlimited = await connectPair();
+    const unlimitedMessages = collect(
+      new SocketConnection(unlimited.client, Infinity),
+    );
+    unlimited.remote.write(line);
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    unlimited.remote.write("\n");
+    await vi.waitFor(() =>
+      expect(unlimitedMessages).toEqual([JSON.parse(line)]),
+    );
+  });
+
   it("delivers a message within the line limit", async () => {
     const { client, remote } = await connectPair();
     const messages = collect(new SocketConnection(client, 1024));

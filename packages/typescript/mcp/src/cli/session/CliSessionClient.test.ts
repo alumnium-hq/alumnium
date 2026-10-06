@@ -188,7 +188,7 @@ describe("CliSessionClient", () => {
     expect(await registry.readEntry("old")).toBeUndefined();
   });
 
-  it("does not remove files for entries with mismatched names", async () => {
+  it("removes mismatched entry files but nothing outside the registry dir", async () => {
     const dir = await createMockDir();
     const registry = new CliSessionRegistry(`${dir.path}/cli/nested`);
     const client = new CliSessionClient(registry);
@@ -197,7 +197,7 @@ describe("CliSessionClient", () => {
     await fs.writeFile(victim, "keep");
     await fs.writeFile(
       registry.resolve("a.json"),
-      JSON.stringify(entry(registry, "../../victim")),
+      JSON.stringify({ ...entry(registry, "a"), name: "../../victim" }),
     );
     await fs.writeFile(registry.resolve("b.json"), "keep");
     await fs.writeFile(
@@ -208,9 +208,48 @@ describe("CliSessionClient", () => {
     expect(await client.list()).toEqual([]);
 
     expect(await fs.readFile(victim, "utf-8")).toBe("keep");
-    expect(await fs.readFile(registry.resolve("b.json"), "utf-8")).toBe("keep");
-    expect(await fs.readdir(registry.dir)).toContain("a.json");
-    expect(await fs.readdir(registry.dir)).toContain("c.json");
+    expect(await fs.readdir(registry.dir)).toEqual([]);
+  });
+
+  it.each(["EMFILE", "EACCES"])(
+    "surfaces %s connect errors without removing the session",
+    async (code) => {
+      const { client, registry } = setup.cur;
+      await registry.writeEntry(entry(registry, "busy"));
+      const socketPath = registry.socketPath("busy");
+      await fs.writeFile(socketPath, "");
+      vi.spyOn(net, "createConnection").mockImplementation(() => {
+        const socket = Object.assign(new EventEmitter(), {
+          destroy: vi.fn(),
+        });
+        queueMicrotask(() =>
+          socket.emit("error", Object.assign(new Error(code), { code })),
+        );
+        return socket as unknown as net.Socket;
+      });
+      pushTeardown(() => {
+        vi.restoreAllMocks();
+      });
+
+      await expect(client.run("busy", "echo", {})).rejects.toThrow(code);
+      await expect(client.list()).rejects.toThrow(code);
+      await expect(
+        client.start("busy", { capabilities: "{}" }),
+      ).rejects.toThrow(code);
+
+      expect(await registry.readEntry("busy")).toBeDefined();
+      await expect(fs.stat(socketPath)).resolves.toBeDefined();
+    },
+  );
+
+  it("treats a missing socket as a dead session", async () => {
+    const { client, registry } = setup.cur;
+    await registry.writeEntry(entry(registry, "gone"));
+
+    await expect(client.run("gone", "echo", {})).rejects.toThrow(
+      "is not running",
+    );
+    expect(await registry.readEntry("gone")).toBeUndefined();
   });
 
   describe("start", () => {
@@ -259,12 +298,52 @@ describe("CliSessionClient", () => {
 
       const startedAt = Date.now();
       await expect(
-        new CliSessionClient(registry, 30).start("default", {
+        // NOTE: The poll interval is far above the deadline and the assertion,
+        // so waiting a whole interval after the deadline would fail it.
+        new CliSessionClient(registry, 30, 2_000).start("default", {
           capabilities: "{}",
         }),
       ).rejects.toThrow("did not start within");
 
-      expect(Date.now() - startedAt).toBeLessThan(180);
+      expect(Date.now() - startedAt).toBeLessThan(1_000);
+    });
+
+    it("passes capabilities and the server URL through env, not argv", async () => {
+      const { registry } = setup.cur;
+      spawnMock.mockReturnValue(fakeChild());
+      pushMock(spawnMock);
+
+      await expect(
+        new CliSessionClient(registry, 1).start("default", {
+          capabilities: '{"platformName":"chrome"}',
+          serverUrl: "http://secret.example",
+        }),
+      ).rejects.toThrow("did not start within");
+
+      const [, args, options] = spawnMock.mock.calls[0] ?? [];
+      expect(args).not.toContain("--capabilities");
+      expect(args).not.toContain("--server-url");
+      expect(JSON.stringify(args)).not.toContain("secret.example");
+      expect(JSON.stringify(args)).not.toContain("platformName");
+      expect(options.env).toMatchObject({
+        ALUMNIUM_CLI_START_CAPABILITIES: '{"platformName":"chrome"}',
+        ALUMNIUM_CLI_START_SERVER_URL: "http://secret.example",
+      });
+    });
+
+    it("omits the server URL env var when there is none", async () => {
+      const { registry } = setup.cur;
+      spawnMock.mockReturnValue(fakeChild());
+      pushMock(spawnMock);
+
+      await expect(
+        new CliSessionClient(registry, 1).start("default", {
+          capabilities: "{}",
+        }),
+      ).rejects.toThrow("did not start within");
+
+      const [, , options] = spawnMock.mock.calls[0] ?? [];
+      expect(options.env).not.toHaveProperty("ALUMNIUM_CLI_START_SERVER_URL");
     });
 
     it("kills the daemon when it does not start in time", async () => {

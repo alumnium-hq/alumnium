@@ -77,6 +77,32 @@ export const Env = {
   },
 
   /**
+   * Internal: the session capabilities, passed to the spawned daemon instead
+   * of argv, where they would be visible in the process list.
+   */
+  get ALUMNIUM_CLI_START_CAPABILITIES() {
+    return envVar("ALUMNIUM_CLI_START_CAPABILITIES", z.string().optional());
+  },
+
+  /**
+   * Internal: the remote server URL, passed like the capabilities.
+   */
+  get ALUMNIUM_CLI_START_SERVER_URL() {
+    return envVar("ALUMNIUM_CLI_START_SERVER_URL", z.string().optional());
+  },
+
+  /**
+   * Seconds `alumnium cli start` waits for the session to start. Limited by
+   * the maximum timer delay (2^31 - 1 ms).
+   */
+  get ALUMNIUM_CLI_START_TIMEOUT() {
+    return envVar(
+      "ALUMNIUM_CLI_START_TIMEOUT",
+      z.coerce.number().int().min(1).max(2_147_483).default(600),
+    );
+  },
+
+  /**
    * Pre-installed Cursor SDK node_modules tree for compiled binaries in
    * air-gapped environments; skips the download-on-first-use install.
    */

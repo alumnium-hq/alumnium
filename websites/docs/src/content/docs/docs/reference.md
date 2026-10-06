@@ -103,6 +103,10 @@ Seconds without commands after which an [`alumnium cli`](/docs/cli/overview) ses
 
 Default session name for [`alumnium cli`](/docs/cli/overview) commands when `-s, --session` is not passed. Default is `default`.
 
+### `ALUMNIUM_CLI_START_TIMEOUT`
+
+Seconds [`alumnium cli start`](/docs/cli/overview) waits for the session to start before giving up. Default is `600`, maximum is `2147483`.
+
 ### `ALUMNIUM_DELAY`
 
 Delay in seconds between retries when an action fails. Default is `0.5`.

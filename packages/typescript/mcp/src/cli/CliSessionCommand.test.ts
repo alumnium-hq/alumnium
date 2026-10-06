@@ -7,7 +7,40 @@ import {
 } from "./CliSessionCommand.ts";
 import { CliSessionClient } from "./session/CliSessionClient.ts";
 
+const runCliDaemonMock = vi.hoisted(() => vi.fn());
+
+vi.mock("./session/runCliDaemon.ts", () => ({
+  runCliDaemon: runCliDaemonMock,
+}));
+
 describe("runCliSession", () => {
+  it("starts the daemon with capabilities and server URL from env", async () => {
+    setup();
+    vi.stubEnv("ALUMNIUM_CLI_DAEMONIZE", "true");
+    vi.stubEnv("ALUMNIUM_CLI_START_CAPABILITIES", '{"platformName":"ios"}');
+    vi.stubEnv("ALUMNIUM_CLI_START_SERVER_URL", "http://secret.example");
+    pushTeardown(() => {
+      vi.unstubAllEnvs();
+    });
+    runCliDaemonMock.mockImplementation(async () => {
+      // NOTE: Cleared before the daemon creates browser or driver children.
+      /* oxlint-disable no-process-env -- We check the real env */
+      expect(process.env.ALUMNIUM_CLI_START_CAPABILITIES).toBeUndefined();
+      expect(process.env.ALUMNIUM_CLI_START_SERVER_URL).toBeUndefined();
+      /* oxlint-enable no-process-env */
+    });
+
+    await runCliSession(["start", "--capabilities", "{}"]);
+
+    expect(runCliDaemonMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        session: "default",
+        capabilities: '{"platformName":"ios"}',
+        serverUrl: "http://secret.example",
+      }),
+    );
+  });
+
   it("joins unquoted goal words", async () => {
     const { run, exit, stdout } = setup('{"explanation":"done"}');
 

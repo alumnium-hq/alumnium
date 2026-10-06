@@ -55,7 +55,22 @@ const StartCommand = CliCommand.define({
   action: async ({ args, logFilenameHint }) => {
     if (Env.ALUMNIUM_CLI_DAEMONIZE) {
       const { runCliDaemon } = await import("./session/runCliDaemon.ts");
-      return runCliDaemon({ ...args, logFilenameHint });
+      // NOTE: The client passes these through env, not argv, to keep them out
+      // of the process list.
+      const capabilities =
+        Env.ALUMNIUM_CLI_START_CAPABILITIES ?? args.capabilities;
+      const serverUrl = Env.ALUMNIUM_CLI_START_SERVER_URL ?? args.serverUrl;
+      // NOTE: Browser and driver children must not inherit them.
+      /* oxlint-disable no-process-env -- We need it to clear env vars */
+      delete process.env.ALUMNIUM_CLI_START_CAPABILITIES;
+      delete process.env.ALUMNIUM_CLI_START_SERVER_URL;
+      /* oxlint-enable no-process-env */
+      return runCliDaemon({
+        session: args.session,
+        capabilities,
+        serverUrl,
+        logFilenameHint,
+      });
     }
 
     await respond(() => new CliSessionClient().start(args.session, args));

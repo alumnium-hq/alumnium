@@ -4,6 +4,7 @@ import net from "node:net";
 import z from "zod";
 import {
   ALUMNIUM_VERSION,
+  Env,
   ensureDir,
   isSingleFileExecutable,
   sleep,
@@ -13,7 +14,6 @@ import { CliSessionRegistry } from "./CliSessionRegistry.ts";
 import { SocketConnection } from "./SocketConnection.ts";
 
 const START_POLL_INTERVAL_MS = 200;
-const START_TIMEOUT_MS = 600_000;
 
 export namespace CliSessionClient {
   export interface StartProps {
@@ -34,13 +34,16 @@ export namespace CliSessionClient {
 export class CliSessionClient {
   #registry: CliSessionRegistry;
   #startTimeoutMs: number;
+  #pollIntervalMs: number;
 
   constructor(
     registry = new CliSessionRegistry(),
-    startTimeoutMs = START_TIMEOUT_MS,
+    startTimeoutMs = Env.ALUMNIUM_CLI_START_TIMEOUT * 1000,
+    pollIntervalMs = START_POLL_INTERVAL_MS,
   ) {
     this.#registry = registry;
     this.#startTimeoutMs = startTimeoutMs;
+    this.#pollIntervalMs = pollIntervalMs;
   }
 
   run(
@@ -87,7 +90,10 @@ export class CliSessionClient {
       await this.#registry.removeEntry(session);
     }
 
-    return spawnDaemon(this.#registry, session, props, this.#startTimeoutMs);
+    return spawnDaemon(this.#registry, session, props, {
+      timeoutMs: this.#startTimeoutMs,
+      pollIntervalMs: this.#pollIntervalMs,
+    });
   }
 
   async #request(
@@ -127,10 +133,19 @@ function notRunningError(session: string): Error {
   );
 }
 
+/**
+ * Resolves to `undefined` when the errors prove that nobody listens on the
+ * socket. Any other error (e.g. EMFILE, EACCES) says nothing about the
+ * session, so it is thrown.
+ */
 function connect(socketPath: string): Promise<net.Socket | undefined> {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     const socket = net.createConnection(socketPath, () => resolve(socket));
-    socket.once("error", () => resolve(undefined));
+    socket.once("error", (error: NodeJS.ErrnoException) =>
+      error.code === "ECONNREFUSED" || error.code === "ENOENT"
+        ? resolve(undefined)
+        : reject(error),
+    );
   });
 }
 
@@ -145,7 +160,9 @@ function sendRequest(
   socket: net.Socket,
   request: CliProtocol.Request,
 ): Promise<string> {
-  const connection = new SocketConnection(socket);
+  // NOTE: The line limit protects the daemon from requests, not the client
+  // from replies like a large accessibility tree.
+  const connection = new SocketConnection(socket, Infinity);
   return new Promise((resolve, reject) => {
     connection.onmessage = (message) => {
       connection.close();
@@ -173,7 +190,7 @@ async function spawnDaemon(
   registry: CliSessionRegistry,
   session: string,
   props: CliSessionClient.StartProps,
-  startTimeoutMs: number,
+  { timeoutMs, pollIntervalMs }: { timeoutMs: number; pollIntervalMs: number },
 ): Promise<string> {
   await ensureDir(registry.dir);
   const logPath = registry.logPath(session);
@@ -184,9 +201,6 @@ async function spawnDaemon(
     ...(isSingleFileExecutable() ? [] : process.argv.slice(1, 2)),
     "cli",
     "start",
-    "--capabilities",
-    props.capabilities,
-    ...(props.serverUrl ? ["--server-url", props.serverUrl] : []),
   ];
 
   const child = spawn(process.execPath, args, {
@@ -199,6 +213,11 @@ async function spawnDaemon(
       ALUMNIUM_CLI_DAEMONIZE: z.stringbool().encode(true),
       // NOTE: Not a `--session` argument, cac would cast `007` to the number 7.
       ALUMNIUM_CLI_SESSION: session,
+      // NOTE: Not argv, it would expose them in the process list.
+      ALUMNIUM_CLI_START_CAPABILITIES: props.capabilities,
+      ...(props.serverUrl && {
+        ALUMNIUM_CLI_START_SERVER_URL: props.serverUrl,
+      }),
     },
   });
   fs.closeSync(log);
@@ -211,7 +230,7 @@ async function spawnDaemon(
   const failed = new Promise<Error>((resolve) => child.once("error", resolve));
   child.unref();
 
-  const deadline = Date.now() + startTimeoutMs;
+  const deadline = Date.now() + timeoutMs;
   for (;;) {
     const entry = await registry.readEntry(session);
     if (
@@ -225,7 +244,7 @@ async function spawnDaemon(
     const result = await Promise.race([
       exited,
       failed,
-      sleep(Math.max(0, Math.min(START_POLL_INTERVAL_MS, remaining))),
+      sleep(Math.max(0, Math.min(pollIntervalMs, remaining))),
     ]);
     if (result instanceof Error)
       throw new Error(
@@ -243,7 +262,7 @@ async function spawnDaemon(
     if (Date.now() >= deadline) {
       child.kill();
       throw new Error(
-        `Session '${session}' did not start within ${Math.round(startTimeoutMs / 1000)} seconds${readLog(logPath)}`,
+        `Session '${session}' did not start within ${Math.round(timeoutMs / 1000)} seconds${readLog(logPath)}`,
       );
     }
   }
