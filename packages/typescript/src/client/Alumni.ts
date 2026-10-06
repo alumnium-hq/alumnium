@@ -165,8 +165,14 @@ export class Alumni {
     await this.driver.quit();
   }
 
-  @span("alumni.do", spanAttrs)
-  async do(goal: string): Promise<DoResult> {
+  @span("alumni.do", (_, options) => ({
+    "alumni.flavor": "alumni",
+    "alumni.method.args.vision": !!options?.vision,
+  }))
+  async do(
+    goal: string,
+    options: Alumni.VisionOptions = {},
+  ): Promise<DoResult> {
     return retry(async () => {
       const app = await this.driver.app();
 
@@ -180,6 +186,7 @@ export class Alumni {
         goal,
         accessibilityTree: initialAccessibilityTree.toStr(),
         app,
+        screenshot: options.vision ? await this.driver.screenshot() : undefined,
       });
 
       let finalExplanation = explanation;
@@ -191,12 +198,16 @@ export class Alumni {
         // Use initial tree for first step, fresh tree for subsequent steps.
         if (idx > 0) this.driver.resetAccessibilityTree();
         const accessibilityTree = await this.driver.getAccessibilityTree();
+        const screenshot = options.vision
+          ? await this.driver.screenshot()
+          : undefined;
         const { explanation: actorExplanation, actions } =
           await this.client.executeAction({
             goal,
             step,
             accessibilityTree: accessibilityTree.toStr(),
             app,
+            screenshot,
           });
 
         // When planner is off, explanation is just the goal — replace with actor's reasoning.

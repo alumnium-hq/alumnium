@@ -30,7 +30,7 @@ describe("Drag and Drop", () => {
     );
     expect(initialOrder).toEqual(["A", "B"]);
 
-    await al.do("move square A to square B");
+    await al.do("move square A to square B", { vision: true });
 
     const finalOrder = await al.get(
       "titles of squares ordered from left to right",

@@ -1,4 +1,4 @@
-import { dynamicTool, jsonSchema, type ToolSet } from "ai";
+import { dynamicTool, jsonSchema, type ModelMessage, type ToolSet } from "ai";
 import z from "zod";
 import type { Model } from "../../Model.ts";
 import type { LanguageModel } from "../../llm/LanguageModel.ts";
@@ -45,6 +45,7 @@ export class ActorAgent extends BaseAgent {
     goal: string,
     step: string,
     treeXml: string,
+    screenshot?: string,
   ): Promise<ActorAgent.InvokeResult> {
     if (!step.trim()) {
       return ["", []];
@@ -64,18 +65,22 @@ export class ActorAgent extends BaseAgent {
       treeXml,
     };
 
+    const prompt = pythonicFormat(this.prompts.user, {
+      goal,
+      step,
+      accessibility_tree: treeXml,
+    });
+    const content: Extract<ModelMessage, { role: "user" }>["content"] =
+      screenshot
+        ? [
+            { type: "text", text: prompt },
+            { type: "file", mediaType: "image/png", data: screenshot },
+          ]
+        : prompt;
+
     const response = await this.invokeModel({
       instructions: this.prompts.system,
-      messages: [
-        {
-          role: "user",
-          content: pythonicFormat(this.prompts.user, {
-            goal,
-            step,
-            accessibility_tree: treeXml,
-          }),
-        },
-      ],
+      messages: [{ role: "user", content }],
       tools: this.tools,
       meta,
     });

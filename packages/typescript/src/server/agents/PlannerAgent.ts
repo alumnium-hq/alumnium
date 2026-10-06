@@ -1,4 +1,4 @@
-import { Output } from "ai";
+import { Output, type ModelMessage } from "ai";
 import z from "zod";
 import type { Model } from "../../Model.ts";
 import type { LanguageModel } from "../../llm/LanguageModel.ts";
@@ -149,11 +149,16 @@ Actions: [${actionsStr}]`.trim();
    *
    * @param goal The goal to achieve
    * @param treeXml The accessibility tree XML
+   * @param screenshot An optional base64-encoded PNG of the current view
    * @returns A tuple of (explanation, actions) where explanation describes
    *   the reasoning and actions is the list of steps to achieve the goal.
    */
   @span("agent.invoke", { "agent.kind": "planner" })
-  async invoke(goal: string, treeXml: string): Promise<[string, string[]]> {
+  async invoke(
+    goal: string,
+    treeXml: string,
+    screenshot?: string,
+  ): Promise<[string, string[]]> {
     logger.info("Starting planning:");
     this.logData(logger, "in", {
       Goal: goal,
@@ -166,20 +171,24 @@ Actions: [${actionsStr}]`.trim();
       treeXml,
     };
 
+    const prompt = pythonicFormat(this.prompts.user, {
+      goal,
+      accessibility_tree: treeXml,
+    });
+    const content: Extract<ModelMessage, { role: "user" }>["content"] =
+      screenshot
+        ? [
+            { type: "text", text: prompt },
+            { type: "file", mediaType: "image/png", data: screenshot },
+          ]
+        : prompt;
+
     const result = await this.invokeModel({
       instructions: pythonicFormat(this.prompts.system, {
         tools: this.toolNames.join(", "),
         extra_examples: this.extraExamples,
       }),
-      messages: [
-        {
-          role: "user",
-          content: pythonicFormat(this.prompts.user, {
-            goal,
-            accessibility_tree: treeXml,
-          }),
-        },
-      ],
+      messages: [{ role: "user", content }],
       output: Output.object({ schema: PlannerAgent.Plan }),
       meta,
     });

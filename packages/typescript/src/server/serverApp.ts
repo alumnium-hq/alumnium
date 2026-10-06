@@ -129,6 +129,7 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                     await session.plannerAgent.invoke(
                       ctx.body.goal,
                       accessibilityTree.toXml(session.excludeAttributes),
+                      ctx.body.screenshot ?? undefined,
                     );
                   return {
                     explanation,
@@ -167,6 +168,7 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                   ctx.body.goal,
                   ctx.body.step,
                   accessibilityTree.toXml(session.excludeAttributes),
+                  ctx.body.screenshot ?? undefined,
                 );
                 return {
                   explanation,

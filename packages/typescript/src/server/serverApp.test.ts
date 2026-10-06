@@ -180,6 +180,28 @@ describe("serverApp", () => {
   });
 
   describe("POST /sessions/:session_id/plans", () => {
+    it.each([undefined, null, "cGxhbi1pbWFnZQ=="])(
+      "passes an optional screenshot to the planner (%s)",
+      async (screenshot) => {
+        const sessionId = await createSession();
+        const response = await serverApp.handle(
+          createRequest("POST", `/sessions/${sessionId}/plans`, {
+            app: "test",
+            goal: "open settings",
+            accessibility_tree: sampleAccessibilityTree,
+            screenshot,
+          }),
+        );
+
+        expect(response.status).toBe(200);
+        expect(PlannerAgent.prototype.invoke).toHaveBeenCalledWith(
+          "open settings",
+          expect.stringContaining("<RootWebArea"),
+          screenshot ?? undefined,
+        );
+      },
+    );
+
     it("plans actions", async () => {
       const sessionId = await createSession();
       const response = await serverApp.handle(
@@ -243,6 +265,35 @@ describe("serverApp", () => {
         }),
       );
       expect(response.status).toBe(200);
+      expect(await response.json()).toEqual({
+        actions: [
+          { args: { id: 9 }, name: "click" },
+          { args: { id: 9, text: "Buy milk" }, name: "type" },
+        ],
+        explanation: "Clicking the element and typing text",
+      });
+    });
+
+    it("passes the screenshot to the actor while preserving raw ID mapping and URL exclusion", async () => {
+      const sessionId = await createSession(["url"]);
+      const screenshot = "c2NyZWVuc2hvdA==";
+      const response = await serverApp.handle(
+        createRequest("POST", `/sessions/${sessionId}/steps`, {
+          app: "test",
+          goal: "create 'Buy milk' todo item",
+          step: "click New Todo Input field",
+          accessibility_tree: sampleAccessibilityTree,
+          screenshot,
+        }),
+      );
+
+      expect(response.status).toBe(200);
+      expect(ActorAgent.prototype.invoke).toHaveBeenCalledWith(
+        "create 'Buy milk' todo item",
+        "click New Todo Input field",
+        expect.not.stringContaining('url="'),
+        screenshot,
+      );
       expect(await response.json()).toEqual({
         actions: [
           { args: { id: 9 }, name: "click" },
@@ -414,13 +465,14 @@ describe("serverApp", () => {
   });
 });
 
-async function createSession() {
+async function createSession(excludeAttributes: string[] = []) {
   const response = await serverApp.handle(
     createRequest("POST", "/sessions", {
       provider: "anthropic",
       name: "claude-haiku-4-5-20251001",
       platform: "chromium",
       tools: getSampleToolSchemas(),
+      exclude_attributes: excludeAttributes,
     }),
   );
   return CreateSessionResponse.parse(await response.json()).session_id;

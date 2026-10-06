@@ -48,6 +48,7 @@ export namespace Client {
     goal: string;
     accessibilityTree: string;
     app: AppId;
+    screenshot?: string | undefined;
   }
 
   export interface AddExampleProps {
@@ -60,6 +61,7 @@ export namespace Client {
     step: string;
     accessibilityTree: string;
     app: AppId;
+    screenshot?: string | undefined;
   }
 
   export interface FindAreaProps {

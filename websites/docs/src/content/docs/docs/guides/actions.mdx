@@ -269,6 +269,37 @@ From now on, Alumnium knows what to do when told to delete a task.
   <source src="/videos/learn-2.webm" type="video/webm" />
 </video>
 
+## Vision
+
+Pass `vision` to include a current screenshot alongside the accessibility tree
+when choosing actions. This helps distinguish controls with the same accessible
+name or controls whose meaning is conveyed by an icon.
+Vision is disabled by default.
+
+<LanguageContent lang="java">
+
+```java
+al.act("open the settings menu", new Alumni.DoOptions().withVision(true));
+```
+
+</LanguageContent>
+
+<LanguageContent lang="python">
+
+```python
+al.do("open the settings menu", vision=True)
+```
+
+</LanguageContent>
+
+<LanguageContent lang="typescript">
+
+```typescript
+await al.do("open the settings menu", { vision: true });
+```
+
+</LanguageContent>
+
 ## Extra Tools
 
 Alumnium ships with a set of LLM tools that prove to be most useful for test automation. There are also tools that are disabled by default, but you can enable them (and implement your own) by passing them during initialization:

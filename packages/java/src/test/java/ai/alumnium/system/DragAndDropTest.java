@@ -29,7 +29,7 @@ public class DragAndDropTest extends BaseTest {
             new Alumni.GetOptions().withVision(true));
     Assertions.assertEquals(List.of("A", "B"), data);
 
-    al.act("move square A to square B");
+    al.act("move square A to square B", new Alumni.DoOptions().withVision(true));
 
     data =
         al.get(

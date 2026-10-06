@@ -1,6 +1,7 @@
 package ai.alumnium;
 
 import ai.alumnium.Alumni.CheckOptions;
+import ai.alumnium.Alumni.DoOptions;
 import ai.alumnium.Alumni.GetOptions;
 import ai.alumnium.accessibility.BaseAccessibilityTree;
 import ai.alumnium.client.Data;
@@ -71,17 +72,39 @@ public class Area {
    * @return the result of the action (explanation and executed steps)
    */
   public DoResult act(String goal) {
+    return act(goal, new DoOptions());
+  }
+
+  /**
+   * Act on the area, optionally including current screenshots when planning and choosing actions.
+   *
+   * @param goal the goal to act on
+   * @param opts the options for the action
+   * @return the result of the action (explanation and executed steps)
+   */
+  public DoResult act(String goal, DoOptions opts) {
     return Retry.execute(
         () -> {
+          boolean vision = opts != null && opts.vision();
           driver.setAccessibilityTree(accessibilityTree);
 
-          PlanResult response = client.planActions(goal, accessibilityTree.toStr(), driver.app());
+          PlanResult response =
+              client.planActions(
+                  goal,
+                  accessibilityTree.toStr(),
+                  driver.app(),
+                  vision ? driver.screenshot() : null);
           String explanation = response.explanation();
           List<String> steps = response.steps();
           List<DoStep> executedSteps = new ArrayList<>();
           for (String step : steps) {
             ActionResult actionResult =
-                client.executeAction(goal, step, accessibilityTree.toStr(), driver.app());
+                client.executeAction(
+                    goal,
+                    step,
+                    accessibilityTree.toStr(),
+                    driver.app(),
+                    vision ? driver.screenshot() : null);
 
             if (explanation.equals(goal)) {
               explanation = actionResult.explanation();

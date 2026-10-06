@@ -39,6 +39,7 @@ export interface PlanRequest {
   url?: string;
   title?: string;
   app: AppId;
+  screenshot?: string | undefined;
 }
 
 export interface PlanResponse {
@@ -51,6 +52,7 @@ export interface StepRequest {
   step: string;
   accessibility_tree: string;
   app: AppId;
+  screenshot?: string | undefined;
 }
 
 export interface StepResponse {

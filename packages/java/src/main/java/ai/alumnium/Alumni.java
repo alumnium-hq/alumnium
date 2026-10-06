@@ -121,12 +121,24 @@ public final class Alumni implements AutoCloseable {
    * reserved word in Java.
    */
   public DoResult act(String goal) {
-    return executeDo(goal);
+    return act(goal, new DoOptions());
+  }
+
+  /**
+   * Executes a goal, optionally including current screenshots when planning and choosing actions.
+   */
+  public DoResult act(String goal, DoOptions opts) {
+    return executeDo(goal, opts);
   }
 
   /** Alias for {@link #act(String)} - as close as possible to other clients {@code do}. */
   public DoResult do_(String goal) {
-    return executeDo(goal);
+    return act(goal);
+  }
+
+  /** Alias for {@link #act(String, DoOptions)}. */
+  public DoResult do_(String goal, DoOptions opts) {
+    return act(goal, opts);
   }
 
   /** Assert that the statement is true about the current view. */
@@ -259,9 +271,10 @@ public final class Alumni implements AutoCloseable {
   // ---------------------------------------------------------------
   // Internals
 
-  private DoResult executeDo(String goal) {
+  private DoResult executeDo(String goal, DoOptions opts) {
     return Retry.execute(
         () -> {
+          boolean vision = opts != null && opts.vision();
           String app = driver.app();
           // Start from a fresh snapshot; it stays cached until the next step resets it.
           driver.resetAccessibilityTree();
@@ -269,7 +282,8 @@ public final class Alumni implements AutoCloseable {
           String beforeTree = changeAnalysis ? initial.toStr() : null;
           String beforeUrl = changeAnalysis ? driver.url() : null;
 
-          HttpClient.PlanResult plan = client.planActions(goal, initial.toStr(), app);
+          HttpClient.PlanResult plan =
+              client.planActions(goal, initial.toStr(), app, vision ? driver.screenshot() : null);
           String explanation = plan.explanation();
 
           List<DoStep> executedSteps = new ArrayList<>();
@@ -281,7 +295,9 @@ public final class Alumni implements AutoCloseable {
               driver.resetAccessibilityTree();
             }
             BaseAccessibilityTree tree = driver.accessibilityTree();
-            HttpClient.ActionResult action = client.executeAction(goal, step, tree.toStr(), app);
+            HttpClient.ActionResult action =
+                client.executeAction(
+                    goal, step, tree.toStr(), app, vision ? driver.screenshot() : null);
 
             if (explanation.equals(goal)) {
               explanation = action.explanation();
@@ -377,6 +393,17 @@ public final class Alumni implements AutoCloseable {
 
     public Options withExcludeAttributes(Set<String> excludeAttributes) {
       return new Options(url, model, extraTools, planner, changeAnalysis, excludeAttributes);
+    }
+  }
+
+  /** Vision flag for {@link #act(String, DoOptions)}. */
+  public record DoOptions(boolean vision) {
+    public DoOptions() {
+      this(false);
+    }
+
+    public DoOptions withVision(boolean vision) {
+      return new DoOptions(vision);
     }
   }
 

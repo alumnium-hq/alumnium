@@ -85,7 +85,13 @@ class HttpClient:
         finally:
             self._stop_server()
 
-    def plan_actions(self, goal: str, accessibility_tree: str, app: str = "unknown") -> tuple[str, list[str]]:
+    def plan_actions(
+        self,
+        goal: str,
+        accessibility_tree: str,
+        app: str = "unknown",
+        screenshot: str | None = None,
+    ) -> tuple[str, list[str]]:
         """
         Plan actions to achieve a goal.
         Returns:
@@ -93,7 +99,12 @@ class HttpClient:
         """
         response = post(
             f"{self.base_url}/v1/sessions/{self.session_id}/plans",
-            json={"goal": goal, "accessibility_tree": accessibility_tree, "app": app},
+            json={
+                "goal": goal,
+                "accessibility_tree": accessibility_tree,
+                "app": app,
+                **({"screenshot": screenshot} if screenshot is not None else {}),
+            },
             timeout=120,
         )
         response.raise_for_status()
@@ -117,11 +128,22 @@ class HttpClient:
         response.raise_for_status()
 
     def execute_action(
-        self, goal: str, step: str, accessibility_tree: str, app: str = "unknown"
+        self,
+        goal: str,
+        step: str,
+        accessibility_tree: str,
+        app: str = "unknown",
+        screenshot: str | None = None,
     ) -> tuple[str, list[dict]]:
         response = post(
             f"{self.base_url}/v1/sessions/{self.session_id}/steps",
-            json={"goal": goal, "step": step, "accessibility_tree": accessibility_tree, "app": app},
+            json={
+                "goal": goal,
+                "step": step,
+                "accessibility_tree": accessibility_tree,
+                "app": app,
+                **({"screenshot": screenshot} if screenshot is not None else {}),
+            },
             timeout=120,
         )
         response.raise_for_status()

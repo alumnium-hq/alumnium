@@ -88,11 +88,12 @@ export class HttpClient extends Client {
   async planActions(
     props: Client.PlanActionsProps,
   ): Promise<Client.PlanActionsResult> {
-    const { goal, accessibilityTree, app } = props;
+    const { goal, accessibilityTree, app, screenshot } = props;
     const body: PlanRequest = {
       goal,
       accessibility_tree: accessibilityTree,
       app,
+      screenshot,
     };
     return this.#sessionFetch<PlanResponse>("POST", "/plans", body);
   }
@@ -122,12 +123,13 @@ export class HttpClient extends Client {
   async executeAction(
     props: Client.ExecuteActionProps,
   ): Promise<Client.ExecuteActionResult> {
-    const { goal, step, accessibilityTree, app } = props;
+    const { goal, step, accessibilityTree, app, screenshot } = props;
     const body: StepRequest = {
       goal,
       step,
       accessibility_tree: accessibilityTree,
       app,
+      screenshot,
     };
     return this.#sessionFetch<StepResponse>("POST", "/steps", body);
   }
