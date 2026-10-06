@@ -1,0 +1,34 @@
+<!doctype html>
+<!-- Adapted from Sauce Labs the-internet for local tests. See README.md and LICENSE. -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dropdown List</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="example">
+      <h3>Dropdown List</h3>
+      <select id="dropdown">
+        <option value="" disabled="disabled" selected="selected">
+          Please select an option
+        </option>
+        <option value="1">Option 1</option>
+        <option value="2">Option 2</option>
+      </select>
+    </div>
+    <script>
+      var dropdown = document.getElementById("dropdown");
+      dropdown.onchange = function (event) {
+        var options = dropdown.getElementsByTagName("option");
+        for (var i = 0; i < options.length; i++) {
+          options[i].removeAttribute("selected");
+        }
+        document
+          .querySelector(`#dropdown option[value='${event.target.value}']`)
+          .setAttribute("selected", "selected");
+      };
+    </script>
+  </body>
+</html>

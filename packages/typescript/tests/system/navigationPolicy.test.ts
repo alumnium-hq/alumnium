@@ -1,14 +1,9 @@
-import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe } from "vitest";
 import { NavigationBlockedError } from "../../src/NavigationPolicy.ts";
 import { baseIt } from "./helpers.ts";
 
-const dirname = path.dirname(fileURLToPath(import.meta.url));
-const fixturesDir = path.resolve(
-  dirname,
-  "../../../python/examples/support/pages",
-);
+const fixturesDir = fileURLToPath(new URL("./pages", import.meta.url));
 
 const ALLOWED_REAL_URL = "https://example.com/";
 const LOCAL_FILE_URL = "file:///etc/hosts";

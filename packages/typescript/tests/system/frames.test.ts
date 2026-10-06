@@ -17,7 +17,7 @@ describe("Frames", () => {
   it("nested frames", async ({ expect, setup }) => {
     const { al, $ } = await setup();
 
-    await $.navigate("https://the-internet.herokuapp.com/nested_frames");
+    await $.navigate("the-internet/nested-frames.html");
 
     await al.do("click MIDDLE text");
 

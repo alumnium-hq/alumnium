@@ -71,16 +71,12 @@ export async function useSetup(props: useSetup.Props): Promise<Setup> {
   const driverId = Env.ALUMNIUM_DRIVER;
   const driver = await createDriver(driverId);
 
-  const dirname = path.dirname(fileURLToPath(import.meta.url));
-
   const options: Alumni.Options = {
     ...props.options,
     url: Env.ALUMNIUM_SERVER_URL,
     navigationPolicy: {
       ...props.options?.navigationPolicy,
-      allowedFilePaths: [
-        path.resolve(dirname, "../../../python/examples/support/pages"),
-      ],
+      allowedFilePaths: [fileURLToPath(new URL("./pages", import.meta.url))],
     },
   };
 
@@ -237,13 +233,7 @@ function createHelpers(
       if (URL.canParse(url)) {
         return url;
       } else {
-        const dirname = path.dirname(fileURLToPath(import.meta.url));
-        return (
-          "file://" +
-          path.resolve(
-            path.join(dirname, `../../../python/examples/support/pages`, url),
-          )
-        );
+        return new URL(url, new URL("./pages/", import.meta.url)).href;
       }
     },
 

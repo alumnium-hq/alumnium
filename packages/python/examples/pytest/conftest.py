@@ -5,6 +5,7 @@ from pathlib import Path
 from threading import Thread
 from time import monotonic, sleep
 from typing import NamedTuple
+from urllib.parse import urljoin
 
 from appium.options.android import UiAutomator2Options
 from appium.options.ios import XCUITestOptions
@@ -189,13 +190,15 @@ def _create_al(driver, extra_tools=None):
     return al
 
 
-@fixture
-def navigate(al):
-    def __navigate(url: str):
-        if not url.startswith("http"):
-            url = f"file://{Path(__file__).parent.parent}/support/pages/{url}"
+@fixture(scope="session")
+def pages_dir():
+    return Path(__file__).resolve().parents[3] / "typescript/tests/system/pages"
 
-        al.driver.visit(url)
+
+@fixture
+def navigate(al, pages_dir):
+    def __navigate(url: str):
+        al.driver.visit(urljoin(pages_dir.as_uri() + "/", url))
 
     return __navigate
 

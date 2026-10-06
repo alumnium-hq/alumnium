@@ -19,7 +19,7 @@ describe("Select", () => {
 
   it("selects an option", async ({ expect, setup }) => {
     const { al, $ } = await setup();
-    await $.navigate("https://the-internet.herokuapp.com/dropdown");
+    await $.navigate("the-internet/dropdown.html");
 
     await al.check("Option 1 is not selected", { assert: expect.assert });
     await expect(al.check("Option 1 is selected")).rejects.toThrow();

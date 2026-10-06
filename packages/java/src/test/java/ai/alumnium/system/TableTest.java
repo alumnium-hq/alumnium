@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 
 public class TableTest extends BaseTest {
 
-  private static final String TABLE_URL = "https://the-internet.herokuapp.com/tables";
+  private static final String TABLE_URL = "the-internet/tables.html";
 
   @BeforeAll
   static void configure() {

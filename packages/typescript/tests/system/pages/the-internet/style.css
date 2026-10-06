@@ -1,0 +1,43 @@
+/* Local layout for the adapted the-internet examples. */
+body {
+  font-family: Arial, sans-serif;
+  color: #222;
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+h3 {
+  font-size: 24px;
+}
+table {
+  border-collapse: collapse;
+  margin-bottom: 24px;
+}
+th,
+td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+th {
+  background: #eee;
+  cursor: pointer;
+}
+th button {
+  border: 0;
+  background: transparent;
+  font-weight: bold;
+  cursor: pointer;
+}
+button,
+input,
+select {
+  font: inherit;
+  margin: 8px 0;
+  padding: 8px;
+}
+footer {
+  clear: both;
+  padding-top: 30px;
+  text-align: center;
+}

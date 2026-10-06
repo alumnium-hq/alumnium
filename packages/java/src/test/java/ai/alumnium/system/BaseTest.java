@@ -15,6 +15,7 @@ import io.appium.java_client.ios.options.XCUITestOptions;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.nio.file.Path;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
@@ -172,6 +173,9 @@ public class BaseTest {
   }
 
   protected static void navigate(String url) {
+    if (!URI.create(url).isAbsolute()) {
+      url = Path.of("../typescript/tests/system/pages", url).toUri().toString();
+    }
     al.driver().visit(url);
   }
 

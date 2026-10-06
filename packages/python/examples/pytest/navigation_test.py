@@ -1,3 +1,5 @@
+from urllib.parse import urljoin
+
 import pytest
 
 from alumnium import Provider
@@ -9,11 +11,12 @@ def test_navigate_back_uses_history(al_factory, navigate):
     if al.model.provider == Provider.MISTRALAI:
         pytest.xfail("Needs more work")
 
-    navigate("https://the-internet.herokuapp.com")
-    assert al.driver.url == "https://the-internet.herokuapp.com/"
+    navigate("the-internet/index.html")
+    index_url = al.driver.url
+    assert index_url.endswith("/the-internet/index.html")
 
     al.do("open typos")
-    assert al.driver.url == "https://the-internet.herokuapp.com/typos"
+    assert al.driver.url == urljoin(index_url, "typos.html")
 
     al.do("navigate back to the previous page")
-    assert al.driver.url == "https://the-internet.herokuapp.com/"
+    assert al.driver.url == index_url

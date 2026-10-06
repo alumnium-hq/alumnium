@@ -24,7 +24,7 @@ describe("Table", () => {
   it("supports extraction", async ({ expect, setup }) => {
     const { al, $ } = await setup();
 
-    await $.navigate("https://the-internet.herokuapp.com/tables");
+    await $.navigate("the-internet/tables.html");
 
     const area = await al.area("first table");
     expect(await area.get("Jason Doe's due amount")).toBe("$100.00");
@@ -36,7 +36,7 @@ describe("Table", () => {
   it("supports sorting", async ({ expect, setup }) => {
     const { al, $ } = await setup();
 
-    await $.navigate("https://the-internet.herokuapp.com/tables");
+    await $.navigate("the-internet/tables.html");
 
     let table1 = await al.area("first table");
     const table1FirstNames = await table1.get("first names");
@@ -112,7 +112,7 @@ describe("Table", () => {
   it("retrieval of unavailable data", async ({ expect, setup }) => {
     const { al, $ } = await setup();
 
-    await $.navigate("https://the-internet.herokuapp.com/tables");
+    await $.navigate("the-internet/tables.html");
 
     // This data is not available on the page.
     // Even though LLM knows the answer, it should not respond it.
