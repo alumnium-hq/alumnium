@@ -7,7 +7,7 @@ import type { McpTool } from "../../mcp/tools/McpTool.ts";
 import { CliProtocol } from "./CliProtocol.ts";
 import { cliCommandLine } from "./CliSessionClient.ts";
 import type { CliSessionRegistry } from "./CliSessionRegistry.ts";
-import { SocketConnection } from "./SocketConnection.ts";
+import { MAX_LINE_LENGTH, SocketConnection } from "./SocketConnection.ts";
 
 const { logger, tracer } = Telemetry.get(import.meta.url);
 
@@ -141,7 +141,7 @@ export class CliSessionDaemon {
   }
 
   #onConnection(socket: net.Socket) {
-    const connection = new SocketConnection(socket);
+    const connection = new SocketConnection(socket, MAX_LINE_LENGTH);
     connection.onmessage = (message) =>
       void this.#onMessage(connection, message).catch((error) =>
         logger.error("Failed to handle request: {error}", { error }),

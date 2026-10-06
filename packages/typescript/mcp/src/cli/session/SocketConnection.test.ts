@@ -1,13 +1,20 @@
 import net from "node:net";
 import os from "node:os";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { safePathJoin } from "@alumnium/core/internal";
 import { pushTeardown } from "../../../../alumnium/tests/unit/mocks.ts";
 import { SocketConnection } from "./SocketConnection.ts";
 
+const logger = vi.hoisted(() => ({ debug: vi.fn(), error: vi.fn() }));
+vi.mock("../../telemetry/Logger.ts", () => ({
+  Logger: { get: () => logger },
+}));
+
 let nextId = 1;
 
 describe("SocketConnection", () => {
+  beforeEach(() => vi.clearAllMocks());
+
   it("joins a message split across chunks", async () => {
     const { client, remote } = await connectPair();
     const messages = collect(new SocketConnection(client));
@@ -82,6 +89,8 @@ describe("SocketConnection", () => {
     remote.write("nope\n");
 
     await vi.waitFor(() => expect(onclose).toHaveBeenCalled());
+    expect(logger.debug).toHaveBeenCalledOnce();
+    expect(logger.error).not.toHaveBeenCalled();
   });
 
   it("closes the connection when a handler throws and drops later messages", async () => {
@@ -94,10 +103,54 @@ describe("SocketConnection", () => {
     const onclose = vi.fn();
     connection.onclose = onclose;
 
+    const peerEnded = new Promise<void>((resolve) => remote.on("end", resolve));
+
+    remote.write('{"a":1}\n{"a":2}\n');
+
+    await vi.waitFor(() => expect(onclose).toHaveBeenCalled());
+    await peerEnded;
+    expect(logger.error).toHaveBeenCalledOnce();
+    expect(logger.debug).not.toHaveBeenCalled();
+    expect(onmessage).toHaveBeenCalledTimes(1);
+  });
+
+  it("stops delivering messages in a chunk after close()", async () => {
+    const { client, remote } = await connectPair();
+    const connection = new SocketConnection(client);
+    const onmessage = vi.fn(() => connection.close());
+    connection.onmessage = onmessage;
+    const onclose = vi.fn();
+    connection.onclose = onclose;
+
     remote.write('{"a":1}\n{"a":2}\n');
 
     await vi.waitFor(() => expect(onclose).toHaveBeenCalled());
     expect(onmessage).toHaveBeenCalledTimes(1);
+  });
+
+  it("closes when an unterminated line exceeds the limit across small chunks", async () => {
+    const { client, remote } = await connectPair();
+    const connection = new SocketConnection(client, 1024);
+    const onclose = vi.fn();
+    connection.onclose = onclose;
+
+    for (let i = 0; i < 20 && !onclose.mock.calls.length; i++) {
+      remote.write("x".repeat(100));
+      await new Promise((resolve) => setTimeout(resolve, 5));
+    }
+
+    await vi.waitFor(() => expect(onclose).toHaveBeenCalled());
+  });
+
+  it("accepts a long line on an unlimited connection", async () => {
+    const { client, remote } = await connectPair();
+    const limited = new SocketConnection(remote, 1024);
+    const unlimited = new SocketConnection(client, Infinity);
+    const messages = collect(unlimited);
+    const text = "x".repeat(4096);
+
+    await limited.send({ text });
+    await vi.waitFor(() => expect(messages).toEqual([{ text }]));
   });
 
   it("closes the connection when a line exceeds the limit", async () => {

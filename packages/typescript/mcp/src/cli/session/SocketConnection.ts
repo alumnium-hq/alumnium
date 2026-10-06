@@ -1,6 +1,9 @@
 import type net from "node:net";
+import { Logger } from "../../telemetry/Logger.ts";
 
-const MAX_LINE_LENGTH = 64 * 1024 * 1024;
+const logger = Logger.get(import.meta.url);
+
+export const MAX_LINE_LENGTH = 64 * 1024 * 1024;
 
 /**
  * Newline-delimited JSON messages over a socket.
@@ -12,6 +15,7 @@ export class SocketConnection {
   #socket: net.Socket;
   #buffer = "";
   #maxLineLength: number;
+  #closed = false;
 
   constructor(socket: net.Socket, maxLineLength = MAX_LINE_LENGTH) {
     this.#socket = socket;
@@ -32,31 +36,53 @@ export class SocketConnection {
   }
 
   close() {
+    this.#closed = true;
     this.#socket.destroy();
   }
 
   #onData(chunk: string) {
+    if (this.#closed) return;
+    const start = this.#buffer.length;
     this.#buffer += chunk;
-    let end = this.#buffer.indexOf("\n");
+    let end = this.#buffer.indexOf("\n", start);
     while (end !== -1) {
       const line = this.#buffer.slice(0, end);
       this.#buffer = this.#buffer.slice(end + 1);
       if (line) {
+        let message: unknown;
         try {
-          const message: unknown = JSON.parse(line);
+          message = JSON.parse(line);
+        } catch (error) {
+          logger.debug("Malformed message, closing connection: {error}", {
+            error,
+          });
+          this.#abort();
+          return;
+        }
+        try {
           this.onmessage?.(message);
-        } catch {
-          // NOTE: Malformed input or a throwing handler, stop processing.
+        } catch (error) {
+          logger.error("Message handler failed, closing connection: {error}", {
+            error,
+          });
+          this.#abort();
+          return;
+        }
+        // NOTE: A handler may have closed the connection, drop the rest.
+        if (this.#closed) {
           this.#buffer = "";
-          this.close();
           return;
         }
       }
       end = this.#buffer.indexOf("\n");
     }
     if (this.#buffer.length > this.#maxLineLength) {
-      this.#buffer = "";
-      this.close();
+      this.#abort();
     }
+  }
+
+  #abort() {
+    this.#buffer = "";
+    this.close();
   }
 }

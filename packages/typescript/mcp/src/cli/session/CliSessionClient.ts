@@ -145,7 +145,7 @@ function sendRequest(
   socket: net.Socket,
   request: CliProtocol.Request,
 ): Promise<string> {
-  const connection = new SocketConnection(socket);
+  const connection = new SocketConnection(socket, Infinity);
   return new Promise((resolve, reject) => {
     connection.onmessage = (message) => {
       connection.close();
