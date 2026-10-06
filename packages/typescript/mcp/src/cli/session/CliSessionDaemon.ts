@@ -75,6 +75,7 @@ export class CliSessionDaemon {
           resolve();
         });
       });
+      if (process.platform !== "win32") await fs.chmod(socketPath, 0o600);
       this.#server.on("error", (error) =>
         logger.error("Session server error: {error}", { error }),
       );
@@ -210,16 +211,31 @@ export class CliSessionDaemon {
     toolName: string,
     input: Record<string, unknown>,
   ): Promise<string> {
-    const tool = this.#props.tools[toolName];
+    const tool = Object.hasOwn(this.#props.tools, toolName)
+      ? this.#props.tools[toolName]
+      : undefined;
     if (!tool) throw new Error(`Unknown tool: ${toolName}`);
     return outputText(await tool({ ...input, id: this.#driverId }));
   }
 
   async #stop(saveCache: boolean): Promise<string> {
     await this.#close();
-    return outputText(
-      await this.#props.stop({ id: this.#driverId, save_cache: saveCache }),
-    );
+    try {
+      return outputText(
+        await this.#props.stop({ id: this.#driverId, save_cache: saveCache }),
+      );
+    } catch (error) {
+      // NOTE: A failed cache save must not orphan the browser.
+      if (saveCache)
+        await this.#props
+          .stop({ id: this.#driverId, save_cache: false })
+          .catch((retryError) =>
+            logger.error("Failed to stop without cache: {error}", {
+              error: retryError,
+            }),
+          );
+      throw error;
+    }
   }
 
   async #close() {

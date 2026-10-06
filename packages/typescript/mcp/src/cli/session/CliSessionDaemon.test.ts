@@ -432,6 +432,45 @@ describe("CliSessionDaemon", () => {
     expect(onExit).toHaveBeenCalledTimes(1);
   });
 
+  it("retries a failed cache-saving stop without the cache", async () => {
+    const { stop } = setup.cur;
+    stop.mockRejectedValueOnce(new Error("cache save failed"));
+    const { socketPath } = await startDaemon();
+
+    expect(
+      await request(socketPath, {
+        id: 1,
+        method: "stop",
+        params: { saveCache: true },
+      }),
+    ).toEqual({ id: 1, error: "cache save failed" });
+
+    expect(stop).toHaveBeenCalledTimes(2);
+    expect(stop).toHaveBeenNthCalledWith(1, { id: "drv-1", save_cache: true });
+    expect(stop).toHaveBeenNthCalledWith(2, { id: "drv-1", save_cache: false });
+  });
+
+  // NOTE: Vitest workers can't change the umask, so this relies on the
+  // ambient one (typically 022, which would yield 0755 without the chmod).
+  it.skipIf(process.platform === "win32")(
+    "restricts the socket to its owner",
+    async () => {
+      const { socketPath } = await startDaemon();
+      expect((fsSync.statSync(socketPath).mode & 0o777).toString(8)).toBe(
+        "600",
+      );
+    },
+  );
+
+  it("rejects inherited object keys as tools", async () => {
+    const { socketPath } = await startDaemon();
+
+    expect(await request(socketPath, run(1, "constructor", {}))).toEqual({
+      id: 1,
+      error: "Unknown tool: constructor",
+    });
+  });
+
   it("survives server errors after listening", async () => {
     let server: net.Server | undefined;
     const listen = net.Server.prototype.listen;
