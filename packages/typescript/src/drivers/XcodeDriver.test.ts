@@ -84,6 +84,11 @@ describe(XcodeDriver, () => {
     ["Enter", "\n"],
     ["Tab", "\t"],
     ["Escape", "\u001b"],
+    ["Space", " "],
+    ["ArrowUp", "\uf700"],
+    ["ArrowDown", "\uf701"],
+    ["ArrowLeft", "\uf702"],
+    ["ArrowRight", "\uf703"],
   ] as const)("synthesizes %s", async (key, character) => {
     await driver.pressKey(key);
     expect(capture).toHaveBeenCalledWith(

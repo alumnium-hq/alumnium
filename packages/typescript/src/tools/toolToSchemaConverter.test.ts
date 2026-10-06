@@ -44,7 +44,17 @@ describe(convertToolsToSchemas, () => {
           properties: {
             key: {
               type: "string",
-              enum: ["Backspace", "Enter", "Escape", "Tab"],
+              enum: [
+                "Backspace",
+                "Enter",
+                "Escape",
+                "Space",
+                "Tab",
+                "ArrowDown",
+                "ArrowUp",
+                "ArrowLeft",
+                "ArrowRight",
+              ],
               description: "Key to press.",
             },
           },

@@ -79,8 +79,18 @@ class AppiumDriver(BaseDriver):
             keys.append(Keys.ENTER)
         elif key == Key.ESCAPE:
             keys.append(Keys.ESCAPE)
+        elif key == Key.SPACE:
+            keys.append(Keys.SPACE)
         elif key == Key.TAB:
             keys.append(Keys.TAB)
+        elif key == Key.ARROW_DOWN:
+            keys.append(Keys.ARROW_DOWN)
+        elif key == Key.ARROW_UP:
+            keys.append(Keys.ARROW_UP)
+        elif key == Key.ARROW_LEFT:
+            keys.append(Keys.ARROW_LEFT)
+        elif key == Key.ARROW_RIGHT:
+            keys.append(Keys.ARROW_RIGHT)
 
         ActionChains(self.driver).send_keys(*keys).perform()
 

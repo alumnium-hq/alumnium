@@ -80,6 +80,12 @@ export class XcodeDriver extends BaseDriver {
       Enter: "\n",
       Tab: "\t",
       Escape: "\u001b",
+      Space: " ",
+      // XCUIKeyboardKey arrow values (NS*ArrowFunctionKey).
+      ArrowUp: "\uf700",
+      ArrowDown: "\uf701",
+      ArrowLeft: "\uf702",
+      ArrowRight: "\uf703",
     };
     await this.#perform(`sender keyboard kbd ${this.#encodeText(keys[key])}`);
   }

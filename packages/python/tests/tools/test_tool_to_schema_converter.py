@@ -42,7 +42,12 @@ def test_convert_tool_with_enum():
                             "Backspace",
                             "Enter",
                             "Escape",
+                            "Space",
                             "Tab",
+                            "ArrowDown",
+                            "ArrowUp",
+                            "ArrowLeft",
+                            "ArrowRight",
                         ],
                         "description": "Key to press.",
                     }
