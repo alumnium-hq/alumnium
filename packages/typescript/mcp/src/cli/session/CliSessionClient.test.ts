@@ -248,6 +248,7 @@ describe("CliSessionClient", () => {
       await registry.writeEntry(entry(registry, "busy"));
       const socketPath = registry.socketPath("busy");
       await fs.writeFile(socketPath, "");
+      pushTeardown(() => fs.rm(socketPath, { force: true }));
       vi.spyOn(net, "createConnection").mockImplementation(() => {
         const socket = Object.assign(new EventEmitter(), {
           destroy: vi.fn(),
