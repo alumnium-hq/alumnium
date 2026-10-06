@@ -72,7 +72,11 @@ export class CliSessionRegistry extends FileStore {
 
   async writeEntry(entry: CliSessionRegistry.Entry): Promise<void> {
     validateName(entry.name);
-    await this.writeJson(`${entry.name}.json`, entry);
+    // NOTE: Atomic, so `listEntries` never sees (and deletes) a partial file.
+    const file = `${entry.name}.json`;
+    const temp = `${file}.${process.pid}.tmp`;
+    await this.writeJson(temp, entry);
+    await this.rename(temp, file);
   }
 
   async removeEntry(name: string): Promise<void> {
@@ -130,7 +134,8 @@ export class CliSessionRegistry extends FileStore {
 }
 
 function validateName(name: string) {
-  CliSessionRegistry.SessionName.parse(name);
+  if (!CliSessionRegistry.SessionName.safeParse(name).success)
+    throw new Error(`Invalid session name: ${name}`);
 }
 
 function parseJson(text: string): unknown {

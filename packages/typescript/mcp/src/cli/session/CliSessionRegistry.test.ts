@@ -123,6 +123,28 @@ describe("CliSessionRegistry", () => {
     await expect(fs.stat(socketPath)).rejects.toThrow();
   });
 
+  it("leaves no temp files after writing and ignores them when listing", async () => {
+    const { registry } = setup.cur;
+    await registry.writeEntry(entry("a"));
+    await fs.writeFile(registry.resolve("a.json.1.tmp"), "{");
+
+    expect((await registry.listEntries()).map(({ name }) => name)).toEqual([
+      "a",
+    ]);
+
+    expect((await fs.readdir(registry.dir)).toSorted()).toEqual([
+      "a.json",
+      "a.json.1.tmp",
+    ]);
+  });
+
+  it("throws a readable error for invalid session names", () => {
+    const { registry } = setup.cur;
+    expect(() => registry.socketPath("../x")).toThrow(
+      "Invalid session name: ../x",
+    );
+  });
+
   it("rejects invalid session names", async () => {
     const { registry } = setup.cur;
     for (const name of ["", "../x", "a/b", "x".repeat(25)]) {

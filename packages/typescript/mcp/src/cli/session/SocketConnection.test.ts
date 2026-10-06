@@ -179,6 +179,22 @@ describe("SocketConnection", () => {
     );
   });
 
+  it("reads a long line in many chunks in linear time", async () => {
+    const { client, remote } = await connectPair();
+    const messages = collect(new SocketConnection(client, Infinity));
+    const text = "x".repeat(24 * 1024 * 1024);
+    const line = Buffer.from(`${JSON.stringify({ text })}\n`);
+
+    const startedAt = Date.now();
+    remote.write(line);
+
+    await vi.waitFor(() => expect(messages).toHaveLength(1), {
+      timeout: 15_000,
+    });
+    // NOTE: Quadratic reads take ~7 s here, linear ones well under a second.
+    expect(Date.now() - startedAt).toBeLessThan(3_000);
+  }, 20_000);
+
   it("delivers a message within the line limit", async () => {
     const { client, remote } = await connectPair();
     const messages = collect(new SocketConnection(client, 1024));

@@ -16,6 +16,22 @@ import { CliSessionDaemon } from "./CliSessionDaemon.ts";
 import { CliSessionRegistry } from "./CliSessionRegistry.ts";
 
 const spawnMock = vi.hoisted(() => vi.fn());
+const connectionArgs = vi.hoisted(() => [] as unknown[][]);
+
+vi.mock("./SocketConnection.ts", async (importOriginal) => {
+  const original =
+    await importOriginal<typeof import("./SocketConnection.ts")>();
+  return {
+    SocketConnection: class extends original.SocketConnection {
+      constructor(
+        ...args: ConstructorParameters<typeof original.SocketConnection>
+      ) {
+        super(...args);
+        connectionArgs.push(args);
+      }
+    },
+  };
+});
 
 vi.mock("node:child_process", () => ({ spawn: spawnMock }));
 
@@ -57,6 +73,20 @@ describe("CliSessionClient", () => {
     const text = await client.run("default", "echo", { goal: "x" });
 
     expect(JSON.parse(text)).toEqual({ goal: "x", id: "drv-default" });
+  });
+
+  it("reads replies without a line limit", async () => {
+    const { client } = setup.cur;
+    await startDaemon();
+    connectionArgs.length = 0;
+
+    await client.run("default", "echo", {});
+
+    // NOTE: The daemon's connections keep the default limit, the client's
+    // is Infinity, so big replies aren't cut off.
+    expect(
+      connectionArgs.filter(([, limit]) => limit === Infinity),
+    ).toHaveLength(1);
   });
 
   it("returns large outputs in full", async () => {

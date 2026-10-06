@@ -1,4 +1,6 @@
 import type net from "node:net";
+// NOTE: Bounds what the daemon reads (requests), the client reads replies
+// without a limit.
 const MAX_LINE_LENGTH = 64 * 1024 * 1024;
 
 /**
@@ -10,7 +12,10 @@ export class SocketConnection {
   onerror?: (kind: "malformed" | "handler", error: unknown) => void;
 
   #socket: net.Socket;
-  #buffer = "";
+  // NOTE: Chunks of the unterminated line, joined only when it completes, so
+  // reading one huge line stays linear.
+  #pending: string[] = [];
+  #pendingLength = 0;
   #maxLineLength: number;
   #closed = false;
 
@@ -39,12 +44,12 @@ export class SocketConnection {
 
   #onData(chunk: string) {
     if (this.#closed) return;
-    const start = this.#buffer.length;
-    this.#buffer += chunk;
-    let end = this.#buffer.indexOf("\n", start);
+    let start = 0;
+    let end = chunk.indexOf("\n");
     while (end !== -1) {
-      const line = this.#buffer.slice(0, end);
-      this.#buffer = this.#buffer.slice(end + 1);
+      const line = [...this.#pending, chunk.slice(start, end)].join("");
+      this.#clearPending();
+      start = end + 1;
       if (line) {
         let message: unknown;
         try {
@@ -62,20 +67,24 @@ export class SocketConnection {
           return;
         }
         // NOTE: A handler may have closed the connection, drop the rest.
-        if (this.#closed) {
-          this.#buffer = "";
-          return;
-        }
+        if (this.#closed) return;
       }
-      end = this.#buffer.indexOf("\n");
+      end = chunk.indexOf("\n", start);
     }
-    if (this.#buffer.length > this.#maxLineLength) {
-      this.#abort();
-    }
+    const rest = chunk.slice(start);
+    if (!rest) return;
+    this.#pending.push(rest);
+    this.#pendingLength += rest.length;
+    if (this.#pendingLength > this.#maxLineLength) this.#abort();
+  }
+
+  #clearPending() {
+    this.#pending = [];
+    this.#pendingLength = 0;
   }
 
   #abort() {
-    this.#buffer = "";
+    this.#clearPending();
     this.close();
   }
 }
