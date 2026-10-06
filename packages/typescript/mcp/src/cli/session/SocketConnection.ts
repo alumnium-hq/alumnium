@@ -1,9 +1,5 @@
 import type net from "node:net";
-import { Logger } from "../../telemetry/Logger.ts";
-
-const logger = Logger.get(import.meta.url);
-
-export const MAX_LINE_LENGTH = 64 * 1024 * 1024;
+const MAX_LINE_LENGTH = 64 * 1024 * 1024;
 
 /**
  * Newline-delimited JSON messages over a socket.
@@ -11,6 +7,7 @@ export const MAX_LINE_LENGTH = 64 * 1024 * 1024;
 export class SocketConnection {
   onmessage?: (message: unknown) => void;
   onclose?: () => void;
+  onerror?: (kind: "malformed" | "handler", error: unknown) => void;
 
   #socket: net.Socket;
   #buffer = "";
@@ -53,18 +50,14 @@ export class SocketConnection {
         try {
           message = JSON.parse(line);
         } catch (error) {
-          logger.debug("Malformed message, closing connection: {error}", {
-            error,
-          });
+          this.onerror?.("malformed", error);
           this.#abort();
           return;
         }
         try {
           this.onmessage?.(message);
         } catch (error) {
-          logger.error("Message handler failed, closing connection: {error}", {
-            error,
-          });
+          this.onerror?.("handler", error);
           this.#abort();
           return;
         }

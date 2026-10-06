@@ -7,7 +7,7 @@ import type { McpTool } from "../../mcp/tools/McpTool.ts";
 import { CliProtocol } from "./CliProtocol.ts";
 import { cliCommandLine } from "./CliSessionClient.ts";
 import type { CliSessionRegistry } from "./CliSessionRegistry.ts";
-import { MAX_LINE_LENGTH, SocketConnection } from "./SocketConnection.ts";
+import { SocketConnection } from "./SocketConnection.ts";
 
 const { logger, tracer } = Telemetry.get(import.meta.url);
 
@@ -141,11 +141,19 @@ export class CliSessionDaemon {
   }
 
   #onConnection(socket: net.Socket) {
-    const connection = new SocketConnection(socket, MAX_LINE_LENGTH);
+    const connection = new SocketConnection(socket);
     connection.onmessage = (message) =>
       void this.#onMessage(connection, message).catch((error) =>
         logger.error("Failed to handle request: {error}", { error }),
       );
+    connection.onerror = (kind, error) =>
+      kind === "malformed"
+        ? logger.debug("Malformed message, closing connection: {error}", {
+            error,
+          })
+        : logger.error("Message handler failed, closing connection: {error}", {
+            error,
+          });
   }
 
   async #onMessage(connection: SocketConnection, message: unknown) {
