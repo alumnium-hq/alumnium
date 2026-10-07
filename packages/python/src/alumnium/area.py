@@ -20,7 +20,7 @@ class Area:
         description: str,
         driver: BaseDriver,
         accessibility_tree: BaseAccessibilityTree,
-        tools: dict[str, BaseTool],
+        tools: dict[str, type[BaseTool]],
         client: HttpClient,
     ):
         self.id = id

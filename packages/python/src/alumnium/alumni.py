@@ -35,6 +35,7 @@ class Alumni:
         planner: bool | None = None,
         change_analysis: bool | None = None,
         exclude_attributes: set[str] | None = None,
+        disabled_tools: list[str] | None = None,
     ):
         planner = planner if planner is not None else PLANNER
         self.change_analysis = change_analysis if change_analysis is not None else CHANGE_ANALYSIS
@@ -54,9 +55,11 @@ class Alumni:
         else:
             raise NotImplementedError(f"Driver {driver} not implemented")
 
-        self.tools = {}
-        for tool in self.driver.supported_tools | set(extra_tools or []):
-            self.tools[tool.__name__] = tool
+        tools = self.driver.supported_tools | set(extra_tools or [])
+        disabled_tool_names = set(disabled_tools or [])
+        self.tools: dict[str, type[BaseTool]] = {
+            tool.__name__: tool for tool in tools if tool.__name__ not in disabled_tool_names
+        }
 
         server_url = url or getenv("ALUMNIUM_SERVER_URL")
         if server_url:

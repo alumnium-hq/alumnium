@@ -57,6 +57,7 @@ export namespace Alumni {
     model?: Model | undefined;
     llm?: LanguageModel | undefined;
     extraTools?: ToolClass[];
+    disabledTools?: string[] | undefined;
     planner?: boolean | undefined;
     changeAnalysis?: boolean | undefined;
     excludeAttributes?: string[] | undefined;
@@ -80,6 +81,7 @@ export namespace Alumni {
 export class Alumni {
   public driver: BaseDriver;
   client: Client;
+  readonly disabledTools: ReadonlySet<string>;
 
   private tools: Record<string, ToolClass> = {};
   public cache: Cache;
@@ -118,11 +120,10 @@ export class Alumni {
       options.navigationPolicy ?? {},
     );
 
-    for (const tool of new Set([
-      ...this.driver.supportedTools,
-      ...(options.extraTools || []),
-    ])) {
-      this.tools[tool.name] = tool;
+    const tools = this.driver.supportedTools.union(new Set(options.extraTools));
+    this.disabledTools = new Set(options.disabledTools);
+    for (const tool of tools) {
+      if (!this.disabledTools.has(tool.name)) this.tools[tool.name] = tool;
     }
 
     const planner = options.planner ?? Env.ALUMNIUM_PLANNER;
