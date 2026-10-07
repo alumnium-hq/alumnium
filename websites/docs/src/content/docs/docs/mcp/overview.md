@@ -1,7 +1,3 @@
----
-title: Overview
-description: Learn how to use Alumnium's MCP server to enable general-purpose AI agents to automate web and mobile applications.
----
 
 Alumnium's [Model Context Protocol][1] server enables general-purpose AI agents like Claude Code to leverage Alumnium's web and mobile automation capabilities through the standardized Model Context Protocol. This integration allows AI assistants to control browsers and mobile applications directly.
 
@@ -128,9 +124,9 @@ claude mcp add --transport http alumnium http://localhost:8014/mcp
 
 Both modes use `start` to initialize a browser or mobile driver session and return its session `id`. Pass capabilities as an inline JSON string or a path to a JSON file. Supports all drivers:
 
-- Chrome: Playwright, Selenium
-- iOS: Appium, Maestro, Xcode
-- Android: Appium, Maestro
+- Chrome: Selenium, Playwright, CloakBrowser.
+- iOS: Appium, Maestro, Xcode.
+- Android: Appium, Maestro.
 
 #### `platformName`
 

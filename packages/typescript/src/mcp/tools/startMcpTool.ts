@@ -323,7 +323,8 @@ export const startMcpTool = McpTool.define("start", {
           "mcp.driver.start",
           {
             "mcp.driver.id": id,
-            "driver.kind": "playwright",
+            "driver.kind":
+              Env.ALUMNIUM_DRIVER === "selenium" ? "selenium" : "playwright",
             "driver.platform": platform,
           },
           () =>
@@ -423,15 +424,20 @@ export const startMcpTool = McpTool.define("start", {
     McpState.registerDriver(id, al, driver, artifactsStore);
 
     const model = await al.model();
+    let driverName = al.driver.constructor.name
+      .replace(/Driver$/, "")
+      .toLowerCase();
+
+    if (platform == "chromium" && Env.ALUMNIUM_DRIVER === "cloakbrowser") {
+      driverName += " (cloakbrowser)";
+    }
 
     return [
       {
         type: "text",
         text: JSON.stringify({
           id: id,
-          driver: al.driver.constructor.name
-            .replace(/Driver$/, "")
-            .toLowerCase(),
+          driver: driverName,
           model: `${model.provider}/${model.name}`,
           platform_name: platformName,
         }),

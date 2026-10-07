@@ -152,6 +152,8 @@ export function createChromeDriver(
   logger.info(`Creating Chrome driver using ${driverKind}`);
   if (driverKind === "playwright") {
     return createPlaywrightDriver(capabilities, artifactsStore, driverOptions);
+  } else if (driverKind === "cloakbrowser") {
+    return createCloakBrowserDriver(driverOptions);
   } else {
     return createSeleniumDriver(capabilities, serverUrl, driverOptions);
   }
@@ -405,6 +407,27 @@ export async function createSeleniumDriver(
 
   logger.debug("Selenium driver created successfully");
   return driver;
+}
+
+/**
+ * Create a stealth Cloak Browser driver.
+ */
+async function createCloakBrowserDriver(
+  options: Pick<McpDriver.DriverOptions, "headless" | "proxy"> = {},
+): Promise<Page> {
+  const { launchContext } = await import("cloakbrowser");
+  const proxy = options.proxy ?? proxyFromEnv();
+  const context = await launchContext({
+    headless: options.headless ?? false,
+    ...(proxy ? { proxy } : {}),
+  });
+
+  await context.tracing.start({
+    screenshots: true,
+    snapshots: true,
+    sources: false,
+  });
+  return await context.newPage();
 }
 
 /**

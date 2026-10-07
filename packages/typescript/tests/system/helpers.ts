@@ -281,6 +281,7 @@ function createHelpers(
         case "selenium":
           return (element as WebElement).sendKeys(text);
 
+        case "cloakbrowser":
         case "playwright":
           return (element as Locator).fill(text);
 
@@ -304,6 +305,7 @@ function createHelpers(
         case "selenium":
           return (element as WebElement).click();
 
+        case "cloakbrowser":
         case "playwright":
           return (element as Locator).click();
 
