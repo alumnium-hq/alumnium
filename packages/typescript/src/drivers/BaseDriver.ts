@@ -2,7 +2,6 @@ import type { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTr
 import { AppId } from "../AppId.ts";
 import { Env } from "../Env.ts";
 import { NavigationPolicy } from "../NavigationPolicy.ts";
-import { Logger } from "../telemetry/Logger.ts";
 import type { ToolClass } from "../tools/BaseTool.ts";
 import { TreeDevDrill } from "../tree/dev/TreeDevDrill.ts";
 import { TreeDevDrillStore } from "../tree/dev/TreeDevDrillStore.ts";

@@ -31,9 +31,7 @@ import type { ChromiumWebDriver } from "selenium-webdriver/chromium.js";
 import { AppId } from "../AppId.ts";
 import { Env } from "../Env.ts";
 import { Telemetry } from "../telemetry/Telemetry.ts";
-import type { Tracer } from "../telemetry/Tracer.ts";
 import { TreeDevDrillError } from "../tree/dev/TreeDevDrillError.ts";
-import type { Driver } from "./Driver.ts";
 import {
   WAITER_SNAPSHOT_SCRIPT,
   type WaiterSnapshot,
@@ -258,7 +256,12 @@ export class SeleniumDriver extends BaseDriver {
         Backspace: SeleniumKey.BACK_SPACE,
         Enter: SeleniumKey.ENTER,
         Escape: SeleniumKey.ESCAPE,
+        Space: SeleniumKey.SPACE,
         Tab: SeleniumKey.TAB,
+        ArrowDown: SeleniumKey.ARROW_DOWN,
+        ArrowUp: SeleniumKey.ARROW_UP,
+        ArrowLeft: SeleniumKey.ARROW_LEFT,
+        ArrowRight: SeleniumKey.ARROW_RIGHT,
       };
 
       const actions = this.driver.actions({ async: true });

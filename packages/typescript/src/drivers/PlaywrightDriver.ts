@@ -372,7 +372,12 @@ export class PlaywrightDriver extends BaseDriver {
       Backspace: "Backspace",
       Enter: "Enter",
       Escape: "Escape",
+      Space: "Space",
       Tab: "Tab",
+      ArrowDown: "ArrowDown",
+      ArrowUp: "ArrowUp",
+      ArrowLeft: "ArrowLeft",
+      ArrowRight: "ArrowRight",
     };
 
     await this.autoswitchToNewTabAction(() =>

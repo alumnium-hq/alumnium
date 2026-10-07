@@ -98,7 +98,12 @@ export class AppiumDriver extends BaseDriver {
       Backspace: SeleniumKey.BACK_SPACE,
       Enter: SeleniumKey.ENTER,
       Escape: SeleniumKey.ESCAPE,
+      Space: SeleniumKey.SPACE,
       Tab: SeleniumKey.TAB,
+      ArrowDown: SeleniumKey.ARROW_DOWN,
+      ArrowUp: SeleniumKey.ARROW_UP,
+      ArrowLeft: SeleniumKey.ARROW_LEFT,
+      ArrowRight: SeleniumKey.ARROW_RIGHT,
     };
 
     // Simulate ActionChains behavior

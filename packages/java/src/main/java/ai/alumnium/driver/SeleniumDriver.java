@@ -187,7 +187,12 @@ public final class SeleniumDriver extends BaseDriver {
                 case BACKSPACE -> org.openqa.selenium.Keys.BACK_SPACE;
                 case ENTER -> org.openqa.selenium.Keys.ENTER;
                 case ESCAPE -> org.openqa.selenium.Keys.ESCAPE;
+                case SPACE -> org.openqa.selenium.Keys.SPACE;
                 case TAB -> org.openqa.selenium.Keys.TAB;
+                case ARROW_DOWN -> org.openqa.selenium.Keys.ARROW_DOWN;
+                case ARROW_UP -> org.openqa.selenium.Keys.ARROW_UP;
+                case ARROW_LEFT -> org.openqa.selenium.Keys.ARROW_LEFT;
+                case ARROW_RIGHT -> org.openqa.selenium.Keys.ARROW_RIGHT;
               };
           new Actions(driver).sendKeys(keyStroke).perform();
         });

@@ -8,7 +8,12 @@ public enum Key {
   BACKSPACE("Backspace"),
   ENTER("Enter"),
   ESCAPE("Escape"),
-  TAB("Tab");
+  SPACE("Space"),
+  TAB("Tab"),
+  ARROW_DOWN("ArrowDown"),
+  ARROW_UP("ArrowUp"),
+  ARROW_LEFT("ArrowLeft"),
+  ARROW_RIGHT("ArrowRight");
 
   private final String value;
 
