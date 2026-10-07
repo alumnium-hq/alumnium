@@ -41,7 +41,7 @@ export abstract class Driver {
     return parsedChromium.success ? parsedChromium.data : val;
   }, this.PlatformStrict);
 
-  static chromiumKinds = ["selenium", "playwright"] as const;
+  static chromiumKinds = ["selenium", "playwright", "cloakbrowser"] as const;
 
   static ChromiumKind = z.enum(this.chromiumKinds);
 

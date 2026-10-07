@@ -19,6 +19,7 @@ export interface SessionRequest {
     | "appium"
     | "maestro"
     | "xcode"
+    | "cloakbrowser"
     | undefined;
   provider: string | undefined;
   name?: string | undefined;

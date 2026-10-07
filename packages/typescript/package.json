@@ -78,6 +78,7 @@
     "alwaysly": "^0.4.0",
     "cac": "^7.0.0",
     "case-anything": "^3.1.2",
+    "cloakbrowser": "0.5.12",
     "diff": "^8.0.3",
     "domelementtype": "^3.0.0",
     "domhandler": "^6.0.0",

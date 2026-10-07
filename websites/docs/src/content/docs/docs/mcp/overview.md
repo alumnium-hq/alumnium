@@ -128,9 +128,9 @@ claude mcp add --transport http alumnium http://localhost:8014/mcp
 
 Both modes use `start` to initialize a browser or mobile driver session and return its session `id`. Pass capabilities as an inline JSON string or a path to a JSON file. Supports all drivers:
 
-- Chrome: Playwright, Selenium
-- iOS: Appium, Maestro, Xcode
-- Android: Appium, Maestro
+- Chrome: Selenium, Playwright, CloakBrowser.
+- iOS: Appium, Maestro, Xcode.
+- Android: Appium, Maestro.
 
 #### `platformName`
 

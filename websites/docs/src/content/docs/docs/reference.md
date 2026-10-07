@@ -5,9 +5,11 @@ description: Alumnium reference and notes
 
 ## Browser Support
 
-Alumnium works by building an accessibility tree of the webpage. Unfortunately, there is no standard API in browsers to provide this tree. Due to this limitation, the current version of Alumnium only works in Chromium-based browsers such as Google Chrome, Microsoft Edge, Opera, and others.
+Alumnium works by building an accessibility tree of the webpage. Unfortunately, there is no standard API in browsers to provide this tree. Due to this limitation, the current version of Alumnium only works in Chromium-based browsers such as Google Chrome, Microsoft Edge, Opera, and others. Browser support is implemented via:
 
-Playwright driver supports both _headful_ and _headless_ modes, while Selenium driver only supports the _headful_ mode.
+- Selenium
+- Playwright
+- CloakBrowser (only in MCP server)
 
 ## Mobile Support
 
