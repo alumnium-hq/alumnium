@@ -345,13 +345,51 @@ The following extra tools are currently supported:
 | Tool                      | Description                                                             |
 | ------------------------- | ----------------------------------------------------------------------- |
 | `DragSliderTool`          | Set a slider element to a desired numeric value                         |
-| `ExecuteJavaScriptTool`   | Execute custom JavaScript code in the browser context                   |
+| `ExecuteJavascriptTool`   | Execute custom JavaScript code in the browser context                   |
 | `NavigateBackTool`        | Navigate back to the previous page/screen using the browser/app history |
 | `NavigateToUrlTool`       | Navigate directly to a specified URL                                    |
 | `PrintToPdfTool`          | Print the current page to a PDF file                                    |
 | `ScrollTool`              | Scroll to a specific element                                            |
 | `SwitchToNextTabTool`     | Switch to the next browser tab or window                                |
 | `SwitchToPreviousTabTool` | Switch to the previous browser tab or window                            |
+
+## Disabled Tools
+
+Disable tools for an individual Alumni session by passing their case-sensitive class names. This applies to both driver defaults and extra tools; a disabled tool stays unavailable even if it is also passed as an extra tool. Calls requesting a disabled tool, including stale cached actions, fail before invoking the driver.
+
+<LanguageContent lang="java">
+
+```java
+import ai.alumnium.Alumni;
+import java.util.Set;
+
+Alumni al = new Alumni(
+  driver,
+  new Alumni.Options().withDisabledTools(Set.of("ExecuteJavascriptTool"))
+);
+```
+
+</LanguageContent>
+
+<LanguageContent lang="python">
+
+```python
+from alumnium import Alumni
+
+al = Alumni(driver, disabled_tools=["ExecuteJavascriptTool"])
+```
+
+</LanguageContent>
+
+<LanguageContent lang="typescript">
+
+```typescript
+import { Alumni } from "alumnium";
+
+const al = new Alumni(driver, { disabledTools: ["ExecuteJavascriptTool"] });
+```
+
+</LanguageContent>
 
 ## Tab Handling
 

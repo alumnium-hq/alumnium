@@ -94,7 +94,8 @@ export const startMcpTool = McpTool.define("start", {
             - "baseUrl" (string) — URL to navigate to automatically after driver start, e.g. "https://example.com";
             - "changeAnalysis" (boolean, default true) — enable UI changes analysis agent;
             - "cookies" (array) — cookies to set, supported for Selenium and Playwright, e.g. [{"name": "session", "value": "abc123", "domain": ".example.com"}];
-            - "device" (string or object) — the device to run on, e.g. "iPhone 16" (Playwright built-in preset name or a custom object with viewport/userAgent/deviceScaleFactor/isMobile/hasTouch, iOS real device unique device identifier, Android/iOS simulator name, etc.).
+            - "device" (string or object) — the device to run on, e.g. "iPhone 16" (Playwright built-in preset name or a custom object with viewport/userAgent/deviceScaleFactor/isMobile/hasTouch, iOS real device unique device identifier, Android/iOS simulator name, etc.);
+            - "disabledTools" (string[]) — tool class names to disable for this session, e.g. ["ExecuteJavascriptTool"];
             - "excludeAttributes" (string[]) — accessibility attributes to exclude from the tree, e.g., ["src"];
             - "executablePath" (string) — path to a custom Chrome executable;
             - "fullPageScreenshot" (boolean, default false) — capture full-page screenshots.
@@ -171,6 +172,11 @@ export const startMcpTool = McpTool.define("start", {
         | undefined) || {};
     delete capabilities["alumnium:options"];
 
+    const disabledTools = Array.isArray(alumniumOptions["disabledTools"])
+      ? alumniumOptions["disabledTools"].filter(
+          (value): value is string => typeof value === "string",
+        )
+      : undefined;
     const baseUrl =
       typeof alumniumOptions["baseUrl"] === "string"
         ? alumniumOptions["baseUrl"]
@@ -295,6 +301,7 @@ export const startMcpTool = McpTool.define("start", {
       "changeAnalysis",
       "cookies",
       "device",
+      "disabledTools",
       "excludeAttributes",
       "executablePath",
       "headers",
@@ -390,6 +397,7 @@ export const startMcpTool = McpTool.define("start", {
               SwitchToPreviousTabTool,
             ],
       planner,
+      disabledTools,
       changeAnalysis,
       excludeAttributes,
       navigationPolicy,

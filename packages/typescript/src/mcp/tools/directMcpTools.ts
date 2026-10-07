@@ -77,6 +77,11 @@ export const directMcpTools = ACTOR_TOOLS.map((Tool) => {
       const { id: sessionId, ...inputArgs } = inputSchema.parse(input);
       const id = z.string().parse(sessionId);
       const state = McpState.getDriverState(id);
+
+      if (state.al.disabledTools.has(Tool.name)) {
+        throw new Error(`Tool ${Tool.name} is disabled for this session`);
+      }
+
       const args = Object.fromEntries(
         Object.entries(inputArgs).map(([param, value]) => [
           parameters[param]!,

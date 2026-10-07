@@ -68,6 +68,7 @@ public final class Alumni implements AutoCloseable {
         builtTools.put(tool.getSimpleName(), tool);
       }
     }
+    opts.disabledTools().forEach(builtTools::remove);
     this.tools = Collections.unmodifiableMap(builtTools);
 
     String serverUrl = opts.url() != null ? opts.url() : Config.SERVER_URL;
@@ -359,40 +360,63 @@ public final class Alumni implements AutoCloseable {
       List<Class<? extends BaseTool>> extraTools,
       Boolean planner,
       Boolean changeAnalysis,
-      Set<String> excludeAttributes) {
+      Set<String> excludeAttributes,
+      Set<String> disabledTools) {
     public Options() {
-      this(null, null, List.of(), null, null, null);
+      this(null, null, List.of(), null, null, null, Set.of());
+    }
+
+    public Options(
+        String url,
+        Model model,
+        List<Class<? extends BaseTool>> extraTools,
+        Boolean planner,
+        Boolean changeAnalysis,
+        Set<String> excludeAttributes) {
+      this(url, model, extraTools, planner, changeAnalysis, excludeAttributes, Set.of());
     }
 
     public Options {
       extraTools = extraTools == null ? List.of() : List.copyOf(extraTools);
+      disabledTools = disabledTools == null ? Set.of() : Set.copyOf(disabledTools);
       if (excludeAttributes != null) {
         excludeAttributes = Collections.unmodifiableSet(new LinkedHashSet<>(excludeAttributes));
       }
     }
 
     public Options withUrl(String url) {
-      return new Options(url, model, extraTools, planner, changeAnalysis, excludeAttributes);
+      return new Options(
+          url, model, extraTools, planner, changeAnalysis, excludeAttributes, disabledTools);
     }
 
     public Options withModel(Model model) {
-      return new Options(url, model, extraTools, planner, changeAnalysis, excludeAttributes);
+      return new Options(
+          url, model, extraTools, planner, changeAnalysis, excludeAttributes, disabledTools);
     }
 
     public Options withExtraTools(List<Class<? extends BaseTool>> extraTools) {
-      return new Options(url, model, extraTools, planner, changeAnalysis, excludeAttributes);
+      return new Options(
+          url, model, extraTools, planner, changeAnalysis, excludeAttributes, disabledTools);
     }
 
     public Options withPlanner(Boolean planner) {
-      return new Options(url, model, extraTools, planner, changeAnalysis, excludeAttributes);
+      return new Options(
+          url, model, extraTools, planner, changeAnalysis, excludeAttributes, disabledTools);
     }
 
     public Options withChangeAnalysis(Boolean changeAnalysis) {
-      return new Options(url, model, extraTools, planner, changeAnalysis, excludeAttributes);
+      return new Options(
+          url, model, extraTools, planner, changeAnalysis, excludeAttributes, disabledTools);
     }
 
     public Options withExcludeAttributes(Set<String> excludeAttributes) {
-      return new Options(url, model, extraTools, planner, changeAnalysis, excludeAttributes);
+      return new Options(
+          url, model, extraTools, planner, changeAnalysis, excludeAttributes, disabledTools);
+    }
+
+    public Options withDisabledTools(Set<String> disabledTools) {
+      return new Options(
+          url, model, extraTools, planner, changeAnalysis, excludeAttributes, disabledTools);
     }
   }
 

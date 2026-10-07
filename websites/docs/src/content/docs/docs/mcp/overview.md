@@ -154,6 +154,7 @@ Pass `alumnium:options` in capabilities to configure Alumnium and driver behavio
         "domain": ".example.com"
       }
     ],
+    "disabledTools": ["ExecuteJavascriptTool"],
     "excludeAttributes": ["url"],
     "executablePath": "/Applications/Arc.app/Contents/MacOS/Arc",
     "headers": {
@@ -195,6 +196,7 @@ Mobile sessions describe the app and device the same way, and Alumnium translate
 | `cookies`                 | Pre-defined cookies to set before the session starts. Selenium and Playwright only.                                                                                                                                                                                                                                                                             |
 | `delay`                   | Seconds to wait after each interaction. Mobile only. Default is `0`.                                                                                                                                                                                                                                                                                            |
 | `device`                  | The device to run on. For browsers, a Playwright device preset such as `"Pixel 7"` or a device descriptor object with `viewport`, `userAgent`, `deviceScaleFactor`, `isMobile`, and `hasTouch` (Playwright only). For iOS and Android, a simulator/emulator UDID or serial, or a device name such as `"iPhone 16"`; defaults to the first connected device.     |
+| `disabledTools`           | Array of tool class names to disable for this session, e.g. `["ExecuteJavascriptTool"]`. |
 | `excludeAttributes`       | Array of accessibility tree attributes to exclude. Reduces tree size on large pages.                                                                                                                                                                                                                                                                            |
 | `executablePath`          | Path to a custom Chrome/Chromium executable (e.g. Arc, Brave). Selenium and Playwright only.                                                                                                                                                                                                                                                                    |
 | `fullPageScreenshot`      | Capture full-page screenshots instead of viewport-only. Default is `false`.                                                                                                                                                                                                                                                                                     |
@@ -225,6 +227,8 @@ For iOS and Android sessions, pass `appium:settings` in capabilities to configur
 ```
 
 Pass the returned `id` to subsequent tools. Use separate sessions to target Chrome, iOS, or Android, and call `stop` when finished. The `planner` and `changeAnalysis` options apply to agentic mode.
+
+For verification runs that must use browser interactions instead of JavaScript, set `"disabledTools": ["ExecuteJavascriptTool"]`. The setting applies only to that session. Disabled tools cannot be executed, including through cached actions; an action that still requests a disabled tool fails. Direct MCP tools remain listed because other sessions may enable them, but calls are rejected for sessions that disable them.
 
 ### `stop`
 
