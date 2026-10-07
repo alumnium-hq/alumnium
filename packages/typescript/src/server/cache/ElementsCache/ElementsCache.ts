@@ -94,9 +94,12 @@ export class ElementsCache extends ServerCache {
     return tracer.span("cache.lookup", this.#spanAttrs(), async (span) => {
       const agentMeta = request.meta;
 
-      if (agentMeta.kind !== "actor" && agentMeta.kind !== "planner") {
+      if (
+        (agentMeta.kind !== "actor" && agentMeta.kind !== "planner") ||
+        this.#hasScreenshot(request)
+      ) {
         logger.debug(
-          `Agent kind "${agentMeta.kind}" is not eligible for elements caching`,
+          `Request for agent "${agentMeta.kind}" is not eligible for elements caching`,
         );
         span.event("cache.lookup.miss", {
           ...this.#spanAttrs(),
@@ -235,9 +238,12 @@ export class ElementsCache extends ServerCache {
       try {
         const agentMeta = request.meta;
 
-        if (agentMeta.kind !== "actor" && agentMeta.kind !== "planner") {
+        if (
+          (agentMeta.kind !== "actor" && agentMeta.kind !== "planner") ||
+          this.#hasScreenshot(request)
+        ) {
           logger.debug(
-            `Agent kind "${agentMeta.kind}" is not eligible for elements caching`,
+            `Request for agent "${agentMeta.kind}" is not eligible for elements caching`,
           );
           span.event("cache.update.skip", {
             ...this.#spanAttrs(),
@@ -374,6 +380,16 @@ export class ElementsCache extends ServerCache {
 
   #spanAttrs() {
     return spanAttrs.call(this);
+  }
+
+  #hasScreenshot(request: ServerCache.CacheRequest): boolean {
+    return request.params.prompt.some(
+      (message) =>
+        message.role === "user" &&
+        message.content.some(
+          (part) => part.type === "file" && part.mediaType.startsWith("image/"),
+        ),
+    );
   }
 }
 

@@ -88,7 +88,7 @@ export class NativeClient extends Client {
   async planActions(
     props: Client.PlanActionsProps,
   ): Promise<Client.PlanActionsResult> {
-    const { goal, accessibilityTree, app } = props;
+    const { goal, accessibilityTree, app, screenshot } = props;
     this.session.updateContext({ app });
 
     if (!this.session.planner) {
@@ -99,6 +99,7 @@ export class NativeClient extends Client {
     const [explanation, steps] = await this.session.plannerAgent.invoke(
       goal,
       tree.toXml(this.session.excludeAttributes),
+      screenshot,
     );
     return { explanation, steps };
   }
@@ -121,7 +122,7 @@ export class NativeClient extends Client {
   async executeAction(
     props: Client.ExecuteActionProps,
   ): Promise<Client.ExecuteActionResult> {
-    const { goal, step, accessibilityTree, app } = props;
+    const { goal, step, accessibilityTree, app, screenshot } = props;
     this.session.updateContext({ app });
 
     const tree = this.session.parseTree(accessibilityTree);
@@ -129,6 +130,7 @@ export class NativeClient extends Client {
       goal,
       step,
       tree.toXml(this.session.excludeAttributes),
+      screenshot,
     );
     return {
       explanation,

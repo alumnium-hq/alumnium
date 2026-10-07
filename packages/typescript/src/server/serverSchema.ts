@@ -85,6 +85,7 @@ export const SessionParams = z.object({
 export const CreatePlanBody = CacheableRequestBody.extend({
   goal: z.string(),
   accessibility_tree: z.string(),
+  screenshot: z.string().nullable().optional(),
   url: z.string().optional(),
   title: z.string().optional(),
 });
@@ -102,6 +103,7 @@ export const PlanStepActionsBody = CacheableRequestBody.extend({
   goal: z.string(),
   step: z.string(),
   accessibility_tree: z.string(),
+  screenshot: z.string().nullable().optional(),
 });
 
 export const PlanStepActionsResponse = z.object({

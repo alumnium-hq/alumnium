@@ -16,5 +16,5 @@ def test_drag_and_drop(al, navigate):
 
     navigate("the-internet/drag-and-drop.html")
     assert al.get("titles of squares ordered from left to right", vision=True) == ["A", "B"]
-    al.do("move square A to square B")
+    al.do("move square A to square B", vision=True)
     assert al.get("titles of squares ordered from left to right", vision=True) == ["B", "A"]

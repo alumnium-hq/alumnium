@@ -81,6 +81,19 @@ describe(ElementsCache, () => {
       expect(await cache.lookup(request)).toEqual(result);
     });
 
+    it("does not reuse text-only actions for a screenshot with identical element attributes", async () => {
+      const { cache } = await setup();
+      const original = actorRequest('<button id="1" name="Previous" />');
+      const visual = withScreenshot(original);
+
+      await cache.update(original, actorResult(1));
+      expect(await cache.lookup(original)).not.toBeNull();
+      expect(await cache.lookup(visual)).toBeNull();
+      await cache.save();
+      expect(await cache.lookup(original)).not.toBeNull();
+      expect(await cache.lookup(visual)).toBeNull();
+    });
+
     it("resolves null for actor response if app does not match", async () => {
       const { cache, context } = await setup();
       const request = actorRequest('<button id="1" name="Login" />');
@@ -195,6 +208,18 @@ describe(ElementsCache, () => {
   });
 
   describe("update", () => {
+    it("does not store image-dependent actions as element-only matches", async () => {
+      const { cache, cacheDir } = await setup();
+      const original = actorRequest('<button id="1" name="Previous" />');
+      const visual = withScreenshot(original);
+
+      await cache.update(visual, actorResult(1));
+      expect(await cache.lookup(original)).toBeNull();
+      await cache.save();
+      expect(await cacheDir.flatTree()).toEqual([]);
+      expect(await cache.lookup(original)).toBeNull();
+    });
+
     it("uses updated app context for path names", async () => {
       const { cache, cacheDir, context } = await setup();
       const app = "staging.airbnb.com" as AppId;
@@ -419,6 +444,30 @@ function actorResult(id: number | string, text?: string) {
     ...(text === undefined ? {} : { text }),
     toolCalls: [AiSdkFactory.toolCall({ args: { id } })],
   });
+}
+
+function withScreenshot(
+  request: ServerCache.CacheRequest,
+): ServerCache.CacheRequest {
+  return {
+    ...request,
+    params: {
+      ...request.params,
+      prompt: [
+        {
+          role: "user",
+          content: [
+            { type: "text", text: "Choose the single arrow." },
+            {
+              type: "file",
+              mediaType: "image/png",
+              data: { type: "data", data: new Uint8Array([1, 2, 3]) },
+            },
+          ],
+        },
+      ],
+    },
+  };
 }
 
 function toolCallInputs(result: LanguageModelV4GenerateResult) {

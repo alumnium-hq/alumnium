@@ -83,12 +83,13 @@ class Alumni:
         self.driver.quit()
 
     @retry(tries=RETRIES, delay=DELAY, logger=logger)  # pyright: ignore[reportArgumentType]
-    def do(self, goal: str) -> DoResult:
+    def do(self, goal: str, vision: bool = False) -> DoResult:
         """
         Executes a series of steps to achieve the given goal.
 
         Args:
             goal: The goal to be achieved.
+            vision: Include current screenshots when planning and choosing actions. Defaults to False.
 
         Returns:
             DoResult containing the explanation and executed steps with their actions.
@@ -98,7 +99,12 @@ class Alumni:
         initial_accessibility_tree = self.driver.accessibility_tree
         before_tree = initial_accessibility_tree.to_str() if self.change_analysis else None
         before_url = self.driver.url if self.change_analysis else None
-        explanation, steps = self.client.plan_actions(goal, initial_accessibility_tree.to_str(), app=app)
+        explanation, steps = self.client.plan_actions(
+            goal,
+            initial_accessibility_tree.to_str(),
+            app=app,
+            screenshot=self.driver.screenshot if vision else None,
+        )
 
         executed_steps = []
         for idx, step in enumerate(steps):
@@ -106,7 +112,13 @@ class Alumni:
             if idx > 0:
                 self.driver.reset_accessibility_tree()
             accessibility_tree = self.driver.accessibility_tree
-            actor_explanation, actions = self.client.execute_action(goal, step, accessibility_tree.to_str(), app=app)
+            actor_explanation, actions = self.client.execute_action(
+                goal,
+                step,
+                accessibility_tree.to_str(),
+                app=app,
+                screenshot=self.driver.screenshot if vision else None,
+            )
 
             # When planner is off, explanation is just the goal — replace with actor's reasoning.
             if explanation == goal:
@@ -160,7 +172,7 @@ class Alumni:
             screenshot=self.driver.screenshot if vision else None,
             app=self.driver.app,
         )
-        assert value, explanation
+        assert value is True, explanation
         return explanation
 
     @retry(tries=RETRIES, delay=DELAY, logger=logger)  # pyright: ignore[reportArgumentType]

@@ -38,8 +38,14 @@ export class Area {
     this.client = client;
   }
 
-  @span("alumni.do", spanAttrs)
-  async do(goal: string): Promise<DoResult> {
+  @span("alumni.do", (_, options) => ({
+    "alumni.flavor": "area",
+    "alumni.method.args.vision": !!options?.vision,
+  }))
+  async do(
+    goal: string,
+    options: Alumni.VisionOptions = {},
+  ): Promise<DoResult> {
     return retry(
       { doRetry: (error) => !(error instanceof NavigationBlockedError) },
       async () => {
@@ -50,17 +56,24 @@ export class Area {
           goal,
           accessibilityTree: this.accessibilityTree.toStr(),
           app,
+          screenshot: options.vision
+            ? await this.driver.screenshot()
+            : undefined,
         });
 
         let finalExplanation = explanation;
         const executedSteps: DoStep[] = [];
         for (const step of steps) {
+          const screenshot = options.vision
+            ? await this.driver.screenshot()
+            : undefined;
           const { explanation: actorExplanation, actions } =
             await this.client.executeAction({
               goal,
               step,
               accessibilityTree: this.accessibilityTree.toStr(),
               app,
+              screenshot,
             });
 
           // When planner is off, explanation is just the goal — replace with actor's reasoning.

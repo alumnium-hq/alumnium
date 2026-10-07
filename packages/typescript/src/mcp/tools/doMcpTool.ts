@@ -62,6 +62,7 @@ export const doMcpTool = McpTool.define("do", {
   description:
     "Execute a goal using natural language (e.g., 'click login button', 'fill out the form'). Alumnium will plan and execute the necessary steps. " +
     `Supported actions: ${getDoToolActions()}. ` +
+    "Set vision=true to use a screenshot alongside the accessibility tree when controls are distinguishable by appearance. " +
     "IMPORTANT: Each call operates on the CURRENT PAGE state only. For multi-page workflows, issue separate calls (e.g., first 'navigate to URL', then 'search for X' as a separate call after page loads). " +
     "Note that you don't need to scroll the page to interact with elements, Alumnium can locate and work with elements outside the viewport.",
 
@@ -73,6 +74,11 @@ export const doMcpTool = McpTool.define("do", {
       .describe(
         "Natural language description of what to do on the current page. Do NOT combine actions that span multiple pages in a single goal.",
       ),
+
+    vision: z
+      .boolean()
+      .default(false)
+      .describe("Use a screenshot to distinguish controls by their appearance"),
 
     step: z
       .number()
@@ -94,10 +100,10 @@ export const doMcpTool = McpTool.define("do", {
   }),
 
   async execute(input, { logger }) {
-    const { id, goal } = input;
+    const { id, goal, vision } = input;
 
     const al = McpState.getDriverAlumni(id);
-    const { steps, explanation, changes } = await al.do(goal);
+    const { steps, explanation, changes } = await al.do(goal, { vision });
 
     logger.debug(`Completed with ${steps.length} steps`);
     await McpArtifactsStore.saveScreenshot({ id, description: goal });

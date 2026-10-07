@@ -98,6 +98,31 @@ describe(createCacheMiddleware, () => {
     expect(cache.requests[0]?.key).not.toBe(cache.requests[1]?.key);
   });
 
+  it("keys visual requests by image contents, preserving exact-image cache matches", async () => {
+    const cache = new MockCache(null);
+    for (const byte of [1, 2, 1]) {
+      await runMiddleware(
+        cache,
+        paramsWithMeta({}, undefined, undefined, [
+          {
+            role: "user",
+            content: [
+              { type: "text", text: "Choose the single arrow." },
+              {
+                type: "file",
+                mediaType: "image/png",
+                data: { type: "data", data: new Uint8Array([byte]) },
+              },
+            ],
+          },
+        ]),
+      );
+    }
+
+    expect(cache.requests[0]?.key).not.toBe(cache.requests[1]?.key);
+    expect(cache.requests[0]?.key).toBe(cache.requests[2]?.key);
+  });
+
   it("uses different keys for different metadata", async () => {
     const cache = new MockCache(null);
     await runMiddleware(cache, paramsWithMeta());

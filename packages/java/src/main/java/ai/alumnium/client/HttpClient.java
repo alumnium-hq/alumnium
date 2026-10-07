@@ -132,11 +132,20 @@ public final class HttpClient implements AutoCloseable {
   }
 
   public PlanResult planActions(String goal, String accessibilityTree, String app) {
+    return planActions(goal, accessibilityTree, app, null);
+  }
+
+  public PlanResult planActions(
+      String goal, String accessibilityTree, String app, String screenshot) {
+    Map<String, Object> body = new LinkedHashMap<>();
+    body.put("goal", goal);
+    body.put("accessibility_tree", accessibilityTree);
+    body.put("app", app);
+    if (screenshot != null) {
+      body.put("screenshot", screenshot);
+    }
     JsonNode data =
-        postJson(
-            "/v1/sessions/" + requireSession() + "/plans",
-            Map.of("goal", goal, "accessibility_tree", accessibilityTree, "app", app),
-            Duration.ofSeconds(120));
+        postJson("/v1/sessions/" + requireSession() + "/plans", body, Duration.ofSeconds(120));
     return new PlanResult(data.path("explanation").asText(""), toStringList(data.path("steps")));
   }
 
@@ -148,11 +157,21 @@ public final class HttpClient implements AutoCloseable {
 
   public ActionResult executeAction(
       String goal, String step, String accessibilityTree, String app) {
+    return executeAction(goal, step, accessibilityTree, app, null);
+  }
+
+  public ActionResult executeAction(
+      String goal, String step, String accessibilityTree, String app, String screenshot) {
+    Map<String, Object> body = new LinkedHashMap<>();
+    body.put("goal", goal);
+    body.put("step", step);
+    body.put("accessibility_tree", accessibilityTree);
+    body.put("app", app);
+    if (screenshot != null) {
+      body.put("screenshot", screenshot);
+    }
     JsonNode data =
-        postJson(
-            "/v1/sessions/" + requireSession() + "/steps",
-            Map.of("goal", goal, "step", step, "accessibility_tree", accessibilityTree, "app", app),
-            Duration.ofSeconds(120));
+        postJson("/v1/sessions/" + requireSession() + "/steps", body, Duration.ofSeconds(120));
     return new ActionResult(
         data.path("explanation").asText(""),
         MAPPER.convertValue(data.path("actions"), new TypeReference<List<DoStep>>() {}));
