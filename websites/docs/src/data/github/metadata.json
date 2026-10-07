@@ -1,10 +1,10 @@
 {
-  "stars": 1013,
+  "stars": 1015,
   "contributors": [
     {
       "username": "p0deje",
       "avatarUrl": "https://avatars.githubusercontent.com/u/665846?v=4",
-      "contributions": 836
+      "contributions": 853
     },
     {
       "username": "kossnocorp",
@@ -29,17 +29,17 @@
     {
       "username": "reachsridhard",
       "avatarUrl": "https://avatars.githubusercontent.com/u/274074773?v=4",
-      "contributions": 10
+      "contributions": 11
+    },
+    {
+      "username": "rookieInTraining",
+      "avatarUrl": "https://avatars.githubusercontent.com/u/820535?v=4",
+      "contributions": 5
     },
     {
       "username": "ursmurli",
       "avatarUrl": "https://avatars.githubusercontent.com/u/723306?v=4",
       "contributions": 5
-    },
-    {
-      "username": "rookieInTraining",
-      "avatarUrl": "https://avatars.githubusercontent.com/u/820535?v=4",
-      "contributions": 4
     },
     {
       "username": "endlessloop2",
@@ -97,6 +97,11 @@
       "contributions": 2
     },
     {
+      "username": "billzzheng",
+      "avatarUrl": "https://avatars.githubusercontent.com/u/47043849?v=4",
+      "contributions": 1
+    },
+    {
       "username": "WilliamK112",
       "avatarUrl": "https://avatars.githubusercontent.com/u/164879897?v=4",
       "contributions": 1
@@ -139,8 +144,268 @@
   ],
   "releases": [
     {
-      "version": "0.22.0",
+      "version": "0.23.1",
       "latest": true,
+      "artifacts": [
+        {
+          "name": "alumnium-0.23.1-darwin-arm64",
+          "size": 104841698
+        },
+        {
+          "name": "alumnium-0.23.1-darwin-x64",
+          "size": 110248016
+        },
+        {
+          "name": "alumnium-0.23.1-linux-arm64",
+          "size": 134719632
+        },
+        {
+          "name": "alumnium-0.23.1-linux-x64",
+          "size": 135669888
+        },
+        {
+          "name": "alumnium-0.23.1-py3-none-any.whl",
+          "size": 56530
+        },
+        {
+          "name": "alumnium-0.23.1-sources.jar",
+          "size": 59653
+        },
+        {
+          "name": "alumnium-0.23.1-windows-arm64.exe",
+          "size": 135664640
+        },
+        {
+          "name": "alumnium-0.23.1-windows-x64.exe",
+          "size": 139560960
+        },
+        {
+          "name": "alumnium-0.23.1.jar",
+          "size": 152719
+        },
+        {
+          "name": "alumnium-0.23.1.tar.gz",
+          "size": 36817
+        },
+        {
+          "name": "alumnium-0.23.1.tgz",
+          "size": 586041
+        },
+        {
+          "name": "alumnium-cli-darwin-arm64-0.23.1.jar",
+          "size": 37057639
+        },
+        {
+          "name": "alumnium-cli-darwin-arm64-0.23.1.tgz",
+          "size": 36816063
+        },
+        {
+          "name": "alumnium-cli-darwin-x64-0.23.1.jar",
+          "size": 39304300
+        },
+        {
+          "name": "alumnium-cli-darwin-x64-0.23.1.tgz",
+          "size": 39048464
+        },
+        {
+          "name": "alumnium-cli-linux-arm64-0.23.1.jar",
+          "size": 48499967
+        },
+        {
+          "name": "alumnium-cli-linux-arm64-0.23.1.tgz",
+          "size": 48141485
+        },
+        {
+          "name": "alumnium-cli-linux-x64-0.23.1.jar",
+          "size": 48767959
+        },
+        {
+          "name": "alumnium-cli-linux-x64-0.23.1.tgz",
+          "size": 48449616
+        },
+        {
+          "name": "alumnium-cli-windows-arm64-0.23.1.jar",
+          "size": 49450162
+        },
+        {
+          "name": "alumnium-cli-windows-arm64-0.23.1.tgz",
+          "size": 49122500
+        },
+        {
+          "name": "alumnium-cli-windows-x64-0.23.1.jar",
+          "size": 51157704
+        },
+        {
+          "name": "alumnium-cli-windows-x64-0.23.1.tgz",
+          "size": 50821266
+        },
+        {
+          "name": "alumnium_cli-0.23.1-py3-none-macosx_10_9_x86_64.whl",
+          "size": 39304142
+        },
+        {
+          "name": "alumnium_cli-0.23.1-py3-none-macosx_11_0_arm64.whl",
+          "size": 37057471
+        },
+        {
+          "name": "alumnium_cli-0.23.1-py3-none-manylinux_2_28_aarch64.whl",
+          "size": 48499809
+        },
+        {
+          "name": "alumnium_cli-0.23.1-py3-none-manylinux_2_28_x86_64.whl",
+          "size": 48767807
+        },
+        {
+          "name": "alumnium_cli-0.23.1-py3-none-win_amd64.whl",
+          "size": 51157537
+        },
+        {
+          "name": "alumnium_cli-0.23.1-py3-none-win_arm64.whl",
+          "size": 49449987
+        },
+        {
+          "name": "alumnium_cli-0.23.1.tar.gz",
+          "size": 2708
+        },
+        {
+          "name": "attestation.json",
+          "size": 16260
+        }
+      ]
+    },
+    {
+      "version": "0.23.0",
+      "latest": false,
+      "artifacts": [
+        {
+          "name": "alumnium-0.23.0-darwin-arm64",
+          "size": 104449186
+        },
+        {
+          "name": "alumnium-0.23.0-darwin-x64",
+          "size": 109347328
+        },
+        {
+          "name": "alumnium-0.23.0-linux-arm64",
+          "size": 142412096
+        },
+        {
+          "name": "alumnium-0.23.0-linux-x64",
+          "size": 142911808
+        },
+        {
+          "name": "alumnium-0.23.0-py3-none-any.whl",
+          "size": 56523
+        },
+        {
+          "name": "alumnium-0.23.0-sources.jar",
+          "size": 59653
+        },
+        {
+          "name": "alumnium-0.23.0-windows-arm64.exe",
+          "size": 155575296
+        },
+        {
+          "name": "alumnium-0.23.0-windows-x64.exe",
+          "size": 158741504
+        },
+        {
+          "name": "alumnium-0.23.0.jar",
+          "size": 152719
+        },
+        {
+          "name": "alumnium-0.23.0.tar.gz",
+          "size": 36802
+        },
+        {
+          "name": "alumnium-0.23.0.tgz",
+          "size": 585095
+        },
+        {
+          "name": "alumnium-cli-darwin-arm64-0.23.0.jar",
+          "size": 36207089
+        },
+        {
+          "name": "alumnium-cli-darwin-arm64-0.23.0.tgz",
+          "size": 35975534
+        },
+        {
+          "name": "alumnium-cli-darwin-x64-0.23.0.jar",
+          "size": 38333970
+        },
+        {
+          "name": "alumnium-cli-darwin-x64-0.23.0.tgz",
+          "size": 38078841
+        },
+        {
+          "name": "alumnium-cli-linux-arm64-0.23.0.jar",
+          "size": 51578982
+        },
+        {
+          "name": "alumnium-cli-linux-arm64-0.23.0.tgz",
+          "size": 51222302
+        },
+        {
+          "name": "alumnium-cli-linux-x64-0.23.0.jar",
+          "size": 51921499
+        },
+        {
+          "name": "alumnium-cli-linux-x64-0.23.0.tgz",
+          "size": 51594231
+        },
+        {
+          "name": "alumnium-cli-windows-arm64-0.23.0.jar",
+          "size": 52938843
+        },
+        {
+          "name": "alumnium-cli-windows-arm64-0.23.0.tgz",
+          "size": 52619120
+        },
+        {
+          "name": "alumnium-cli-windows-x64-0.23.0.jar",
+          "size": 54870064
+        },
+        {
+          "name": "alumnium-cli-windows-x64-0.23.0.tgz",
+          "size": 54539094
+        },
+        {
+          "name": "alumnium_cli-0.23.0-py3-none-macosx_10_9_x86_64.whl",
+          "size": 38333812
+        },
+        {
+          "name": "alumnium_cli-0.23.0-py3-none-macosx_11_0_arm64.whl",
+          "size": 36206919
+        },
+        {
+          "name": "alumnium_cli-0.23.0-py3-none-manylinux_2_28_aarch64.whl",
+          "size": 51578824
+        },
+        {
+          "name": "alumnium_cli-0.23.0-py3-none-manylinux_2_28_x86_64.whl",
+          "size": 51921347
+        },
+        {
+          "name": "alumnium_cli-0.23.0-py3-none-win_amd64.whl",
+          "size": 54869896
+        },
+        {
+          "name": "alumnium_cli-0.23.0-py3-none-win_arm64.whl",
+          "size": 52938671
+        },
+        {
+          "name": "alumnium_cli-0.23.0.tar.gz",
+          "size": 2707
+        },
+        {
+          "name": "attestation.json",
+          "size": 16295
+        }
+      ]
+    },
+    {
+      "version": "0.22.0",
+      "latest": false,
       "artifacts": [
         {
           "name": "alumnium-0.22.0-darwin-arm64",
@@ -735,50 +1000,6 @@
         {
           "name": "alumnium-0.9.0.tar.gz.publish.attestation",
           "size": 9001
-        }
-      ]
-    },
-    {
-      "version": "0.8.0",
-      "latest": false,
-      "artifacts": [
-        {
-          "name": "alumnium-0.8.0-py3-none-any.whl",
-          "size": 24608
-        },
-        {
-          "name": "alumnium-0.8.0-py3-none-any.whl.publish.attestation",
-          "size": 9205
-        },
-        {
-          "name": "alumnium-0.8.0.tar.gz",
-          "size": 16634
-        },
-        {
-          "name": "alumnium-0.8.0.tar.gz.publish.attestation",
-          "size": 9095
-        }
-      ]
-    },
-    {
-      "version": "0.7.2",
-      "latest": false,
-      "artifacts": [
-        {
-          "name": "alumnium-0.7.2-py3-none-any.whl",
-          "size": 24542
-        },
-        {
-          "name": "alumnium-0.7.2-py3-none-any.whl.publish.attestation",
-          "size": 9084
-        },
-        {
-          "name": "alumnium-0.7.2.tar.gz",
-          "size": 16540
-        },
-        {
-          "name": "alumnium-0.7.2.tar.gz.publish.attestation",
-          "size": 9025
         }
       ]
     }
