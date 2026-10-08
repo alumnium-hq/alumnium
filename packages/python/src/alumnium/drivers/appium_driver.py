@@ -5,7 +5,7 @@ from typing import Literal
 from appium.webdriver import Remote
 from appium.webdriver.common.appiumby import AppiumBy as By
 from appium.webdriver.webelement import WebElement
-from selenium.common.exceptions import UnknownMethodException
+from selenium.common.exceptions import NoSuchElementException, UnknownMethodException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 
@@ -191,8 +191,18 @@ class AppiumDriver(BaseDriver):
             props_str = " AND ".join(props)
             predicate += f" AND {props_str}"
 
-        logger.debug(f"Finding element by predicate: {predicate}")
-        return self.driver.find_element(By.IOS_PREDICATE, predicate)  # type: ignore[reportReturnType]
+        index = element.index or 0
+        logger.debug(f"Finding element by predicate: {predicate} (index {index})")
+        if not index:
+            return self.driver.find_element(By.IOS_PREDICATE, predicate)  # type: ignore[reportReturnType]
+
+        # Multiple elements match the predicate, pick the one from the tree
+        elements = self.driver.find_elements(By.IOS_PREDICATE, predicate)
+        if index >= len(elements):
+            raise NoSuchElementException(
+                f"No element found by predicate: {predicate} at index {index}, found {len(elements)} elements"
+            )
+        return elements[index]  # type: ignore[reportReturnType]
 
     # Use XPath for UIAutomator2
     def _find_element_android(self, element):

@@ -16,9 +16,24 @@ public final class XCUITestAccessibilityTree extends BaseAccessibilityTree {
   private final String xmlString;
   private int nextRawId = 0;
   private String raw;
+  private final XCUITestAccessibilityTree fullTree;
 
   public XCUITestAccessibilityTree(String xmlString) {
+    this(xmlString, null);
+  }
+
+  /**
+   * @param xmlString XCUITest page source
+   * @param fullTree full tree this one was scoped from. When present, the XML already carries
+   *     {@code raw_id} attributes and lookups are delegated to the full tree so that element
+   *     indexes are relative to the whole app.
+   */
+  private XCUITestAccessibilityTree(String xmlString, XCUITestAccessibilityTree fullTree) {
     this.xmlString = xmlString == null ? "" : xmlString;
+    this.fullTree = fullTree;
+    if (fullTree != null) {
+      this.raw = this.xmlString;
+    }
   }
 
   @Override
@@ -44,6 +59,9 @@ public final class XCUITestAccessibilityTree extends BaseAccessibilityTree {
 
   @Override
   public AccessibilityElement elementById(int rawId) {
+    if (fullTree != null) {
+      return fullTree.elementById(rawId);
+    }
     String xml = toStr();
     Document doc = parse(xml);
     Element match =
@@ -56,7 +74,32 @@ public final class XCUITestAccessibilityTree extends BaseAccessibilityTree {
         .type(match.getTagName())
         .name(nullIfEmpty(match.getAttribute("name")))
         .value(nullIfEmpty(match.getAttribute("value")))
-        .label(nullIfEmpty(match.getAttribute("label")));
+        .label(nullIfEmpty(match.getAttribute("label")))
+        .index(predicateIndex(doc, match));
+  }
+
+  /**
+   * Position of the element among all elements matching the same iOS predicate (type plus non-empty
+   * name, value and label) in document order.
+   */
+  private static int predicateIndex(Document doc, Element element) {
+    String[] attrs = {"name", "value", "label"};
+    NodeList candidates = doc.getElementsByTagName(element.getTagName());
+    int index = 0;
+    for (int i = 0; i < candidates.getLength(); i++) {
+      Element candidate = (Element) candidates.item(i);
+      if (candidate == element) break;
+      boolean matches = true;
+      for (String attr : attrs) {
+        String value = element.getAttribute(attr);
+        if (!value.isEmpty() && !value.equals(candidate.getAttribute(attr))) {
+          matches = false;
+          break;
+        }
+      }
+      if (matches) index++;
+    }
+    return index;
   }
 
   @Override
@@ -66,7 +109,8 @@ public final class XCUITestAccessibilityTree extends BaseAccessibilityTree {
     Element match =
         ChromiumAccessibilityTree.findByRawId(doc.getDocumentElement(), Integer.toString(rawId));
     if (match == null) return this;
-    return new XCUITestAccessibilityTree(ChromiumAccessibilityTree.serialize(match));
+    return new XCUITestAccessibilityTree(
+        ChromiumAccessibilityTree.serialize(match), fullTree != null ? fullTree : this);
   }
 
   private static Document parse(String xml) {

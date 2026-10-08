@@ -10,6 +10,7 @@ class AccessibilityElement:
     label: str | None = None
     type: str | None = None
     value: str | None = None
+    index: int | None = None
     androidresourceid: str | None = None
     androidclass: str | None = None
     androidtext: str | None = None

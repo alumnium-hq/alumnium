@@ -8,14 +8,28 @@ import { BaseAccessibilityTree } from "./BaseAccessibilityTree.ts";
 export class XCUITestAccessibilityTree extends BaseAccessibilityTree<string> {
   #xmlString: string;
   #nextRawId: number = 0;
+  #fullTree: XCUITestAccessibilityTree | null;
 
   protected override get kind(): string {
     return "xcuitest";
   }
 
-  constructor(xmlString: string) {
+  /**
+   * @param xmlString XCUITest page source
+   * @param fullTree Full tree this one was scoped from. When present, the XML
+   *   already carries raw_id attributes and lookups are delegated to the full
+   *   tree so that element indexes are relative to the whole app.
+   */
+  constructor(
+    xmlString: string,
+    fullTree: XCUITestAccessibilityTree | null = null,
+  ) {
     super(xmlString);
     this.#xmlString = xmlString;
+    this.#fullTree = fullTree;
+    if (fullTree) {
+      this.xml = xmlString;
+    }
   }
 
   /** Parse XML and add raw_id attributes to all elements. */
@@ -54,6 +68,10 @@ export class XCUITestAccessibilityTree extends BaseAccessibilityTree<string> {
    * @returns AccessibilityElement with type, name, value, label attributes
    */
   elementById(rawId: number): AccessibilityElement {
+    if (this.#fullTree) {
+      return this.#fullTree.elementById(rawId);
+    }
+
     // Get raw XML with raw_id attributes
     const rawXml = this.toStr();
     const root = this.#parseRoot(rawXml);
@@ -88,7 +106,41 @@ export class XCUITestAccessibilityTree extends BaseAccessibilityTree<string> {
       name: element.attribs["name"],
       value: element.attribs["value"],
       label: element.attribs["label"],
+      index: this.#predicateIndex(root, element),
     };
+  }
+
+  /**
+   * Position of the element among all elements matching the same iOS
+   * predicate (type plus non-empty name, value and label) in document order.
+   */
+  #predicateIndex(root: Element, element: Element): number {
+    const attrs = ["name", "value", "label"];
+    let index = 0;
+    const visit = (candidate: Element): boolean => {
+      if (candidate === element) {
+        return true;
+      }
+      if (
+        candidate.tagName === element.tagName &&
+        attrs.every(
+          (attr) =>
+            !element.attribs[attr] ||
+            candidate.attribs[attr] === element.attribs[attr],
+        )
+      ) {
+        index += 1;
+      }
+      for (const child of candidate.children) {
+        const childEl = Xml.nodeAsTag(child);
+        if (childEl && visit(childEl)) {
+          return true;
+        }
+      }
+      return false;
+    };
+    visit(root);
+    return index;
   }
 
   /** Scope the tree to a smaller subtree identified by raw_id. */
@@ -126,7 +178,7 @@ export class XCUITestAccessibilityTree extends BaseAccessibilityTree<string> {
     // Convert the scoped element back to XML string
     const scopedXml = XmlRenderer.render([targetElem]);
 
-    return new XCUITestAccessibilityTree(scopedXml);
+    return new XCUITestAccessibilityTree(scopedXml, this.#fullTree ?? this);
   }
 
   #parseRoot(xml: string): Element {

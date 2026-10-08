@@ -12,8 +12,10 @@ import ai.alumnium.tool.PressKeyTool;
 import ai.alumnium.tool.TypeTool;
 import io.appium.java_client.AppiumBy;
 import io.appium.java_client.remote.SupportsContextSwitching;
+import java.util.List;
 import java.util.Set;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebElement;
@@ -225,7 +227,24 @@ public final class AppiumDriver extends BaseDriver {
     appendPredicate(predicate, "value", element.value());
     appendPredicate(predicate, "label", element.label());
     String expr = predicate.toString();
-    return driver.findElement(AppiumBy.iOSNsPredicateString(expr));
+    int index = element.index() == null ? 0 : element.index();
+    if (index == 0) {
+      return driver.findElement(AppiumBy.iOSNsPredicateString(expr));
+    }
+
+    // Multiple elements match the predicate, pick the one from the tree
+    List<WebElement> elements = driver.findElements(AppiumBy.iOSNsPredicateString(expr));
+    if (index >= elements.size()) {
+      throw new NoSuchElementException(
+          "No element found by predicate: "
+              + expr
+              + " at index "
+              + index
+              + ", found "
+              + elements.size()
+              + " elements");
+    }
+    return elements.get(index);
   }
 
   private void appendPredicate(StringBuilder out, String key, String value) {

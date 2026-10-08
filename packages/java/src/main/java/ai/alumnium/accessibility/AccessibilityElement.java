@@ -17,6 +17,7 @@ public final class AccessibilityElement {
   private String label;
   private String type;
   private String value;
+  private Integer index;
   private String androidResourceId;
   private String androidClass;
   private String androidText;
@@ -78,6 +79,15 @@ public final class AccessibilityElement {
 
   public AccessibilityElement value(String v) {
     this.value = v;
+    return this;
+  }
+
+  public Integer index() {
+    return index;
+  }
+
+  public AccessibilityElement index(Integer v) {
+    this.index = v;
     return this;
   }
 
