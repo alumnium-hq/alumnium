@@ -106,19 +106,7 @@ export class XcodeSession {
       throw new Error(
         "An app is required to reset or launch with arguments or environment variables",
       );
-    await this.#client.connect(
-      new StdioClientTransport({
-        command: "xcrun",
-        args: ["mcpbridge"],
-        env: Object.fromEntries(
-          // oxlint-disable-next-line node/no-process-env
-          Object.entries(process.env).filter(
-            (entry): entry is [string, string] => entry[1] !== undefined,
-          ),
-        ),
-        stderr: "pipe",
-      }),
-    );
+    await this.#connect();
     const sessionIdentifier = `Alumnium ${randomUUID()}`;
     let workspaceIdentifier: string | undefined;
     let activeScheme: string | null | undefined;
@@ -168,6 +156,49 @@ export class XcodeSession {
     if (appReset) await this.#resetApp(result.deviceUUID);
     if (!workspace || appReset) await this.#launchApp(result.deviceUUID);
     await this.capture(undefined, this.#appId || undefined);
+  }
+
+  async #connect(): Promise<void> {
+    try {
+      await this.#client.connect(
+        new StdioClientTransport({
+          command: "xcrun",
+          args: ["mcpbridge"],
+          env: Object.fromEntries(
+            // oxlint-disable-next-line node/no-process-env
+            Object.entries(process.env).filter(
+              (entry): entry is [string, string] => entry[1] !== undefined,
+            ),
+          ),
+          stderr: "pipe",
+        }),
+      );
+    } catch (error) {
+      // The bridge reports why it cannot start (e.g. Xcode MCP access is disabled)
+      // outside of JSON-RPC, so the client only sees "Connection closed".
+      throw (await this.#bridgeFailure(error)) ?? error;
+    }
+  }
+
+  async #bridgeFailure(cause: unknown): Promise<Error | undefined> {
+    try {
+      await exec("xcrun", ["mcpbridge"], { timeout: 10_000 });
+    } catch (error) {
+      const output = (error instanceof Error ? error.message : "")
+        .replace(/^.*? exited with status \S+:\s*/s, "")
+        .trim();
+      let message = output;
+      try {
+        const parsed = z
+          .object({ error: z.object({ message: z.string() }) })
+          .parse(JSON.parse(output));
+        message = parsed.error.message;
+      } catch {
+        // Not a JSON-RPC error, use the raw output.
+      }
+      if (message)
+        return new Error(`Xcode mcpbridge failed: ${message}`, { cause });
+    }
   }
 
   async #resolveWorkspaceApp(

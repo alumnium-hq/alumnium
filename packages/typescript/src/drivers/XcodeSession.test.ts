@@ -590,6 +590,26 @@ describe(XcodeSession, () => {
     expect(mocks.close).toHaveBeenCalledOnce();
   });
 
+  it("surfaces why mcpbridge failed to start", async () => {
+    mocks.connect.mockRejectedValueOnce(new Error("Connection closed"));
+    mocks.exec.mockRejectedValueOnce(
+      new Error(
+        'xcrun exited with status 1: {"error":{"code":-32603,"message":"Xcode MCP access is disabled"},"id":null}',
+      ),
+    );
+    await expect(XcodeSession.start({ appId: "com.todo" })).rejects.toThrow(
+      "Xcode mcpbridge failed: Xcode MCP access is disabled",
+    );
+    expect(mocks.close).toHaveBeenCalledOnce();
+  });
+
+  it("keeps the connection error when mcpbridge starts fine", async () => {
+    mocks.connect.mockRejectedValueOnce(new Error("Connection closed"));
+    await expect(XcodeSession.start({ appId: "com.todo" })).rejects.toThrow(
+      "Connection closed",
+    );
+  });
+
   it("rejects physical devices and cleans up the session", async () => {
     mocks.callTool.mockResolvedValueOnce(
       result({
