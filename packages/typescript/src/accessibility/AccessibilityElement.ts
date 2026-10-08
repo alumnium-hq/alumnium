@@ -5,6 +5,7 @@ export interface AccessibilityElement {
   label?: string | undefined;
   type?: string | undefined;
   value?: string | undefined;
+  index?: number | undefined;
   androidResourceId?: string | undefined;
   androidClass?: string | undefined;
   androidText?: string | undefined;

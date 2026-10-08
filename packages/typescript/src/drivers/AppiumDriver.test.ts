@@ -6,6 +6,67 @@ import { AppiumDriver } from "./AppiumDriver.ts";
 import { TestTreeFactory } from "./__factories__/TestTreeFactory.ts";
 
 describe("AppiumDriver", () => {
+  describe("findElement", () => {
+    const element = { type: "XCUIElementTypeButton", name: "Action" };
+    const locator =
+      '-ios predicate string:type == "XCUIElementTypeButton" AND name == "Action"';
+
+    function createDriver(elements: WebdriverIO.Element[]) {
+      const webdriver = {
+        capabilities: { platformName: "iOS" },
+        $: vi.fn(() => ({ getElement: async () => elements[0] })),
+        $$: vi.fn(() => ({ getElements: async () => elements })),
+      };
+      const driver = new AppiumDriver(webdriver as unknown as Browser);
+      return { webdriver, driver };
+    }
+
+    function nativeElement(elementId: string): WebdriverIO.Element {
+      return { elementId } as WebdriverIO.Element;
+    }
+
+    it("finds a single element when index is 0", async () => {
+      const first = nativeElement("first");
+      const { webdriver, driver } = createDriver([first]);
+      driver.setAccessibilityTree(
+        TestTreeFactory.tree({ ...element, index: 0 }),
+      );
+
+      await expect(driver.findElement(1)).resolves.toBe(first);
+      expect(webdriver.$).toHaveBeenCalledWith(locator);
+      expect(webdriver.$$).not.toHaveBeenCalled();
+    });
+
+    it("picks the element at index among predicate matches", async () => {
+      const second = nativeElement("second");
+      const { webdriver, driver } = createDriver([
+        nativeElement("first"),
+        second,
+      ]);
+      driver.setAccessibilityTree(
+        TestTreeFactory.tree({ ...element, index: 1 }),
+      );
+
+      await expect(driver.findElement(1)).resolves.toBe(second);
+      expect(webdriver.$$).toHaveBeenCalledWith(locator);
+      expect(webdriver.$).not.toHaveBeenCalled();
+    });
+
+    it("fails when index is out of predicate matches", async () => {
+      const { driver } = createDriver([
+        nativeElement("first"),
+        nativeElement("second"),
+      ]);
+      driver.setAccessibilityTree(
+        TestTreeFactory.tree({ ...element, index: 2 }),
+      );
+
+      await expect(driver.findElement(1)).rejects.toThrow(
+        `No element found by locator: ${locator} at index 2, found 2 elements`,
+      );
+    });
+  });
+
   describe("drill probe", () => {
     it.each([
       [

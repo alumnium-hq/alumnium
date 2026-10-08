@@ -199,8 +199,21 @@ export class AppiumDriver extends BaseDriver {
     const tree = await this.getAccessibilityTree();
     const element = tree.elementById(id);
     const locator = this.#elementLocator(element);
-    logger.debug(`Finding element by locator: ${locator}`);
-    return this.driver.$(locator).getElement();
+    const index = element.index ?? 0;
+    logger.debug(`Finding element by locator: ${locator} (index ${index})`);
+    if (!index) {
+      return this.driver.$(locator).getElement();
+    }
+
+    // Multiple elements match the locator, pick the one from the tree
+    const elements = await this.driver.$$(locator).getElements();
+    const match = elements[index];
+    if (!match) {
+      throw new Error(
+        `No element found by locator: ${locator} at index ${index}, found ${elements.length} elements`,
+      );
+    }
+    return match;
   }
 
   @span("driver.execute_script", BaseDriver.spanAttrs)
@@ -343,8 +356,14 @@ export class AppiumDriver extends BaseDriver {
 
     const locator = this.#elementLocator(element);
     try {
-      const exists = await this.driver.$(locator).isExisting();
-      if (!exists) throw new Error(`No element found by locator: ${locator}`);
+      const index = element.index ?? 0;
+      const exists = index
+        ? (await this.driver.$$(locator).getElements()).length > index
+        : await this.driver.$(locator).isExisting();
+      if (!exists)
+        throw new Error(
+          `No element found by locator: ${locator} at index ${index}`,
+        );
       return locator;
     } catch (error) {
       throw new TreeDevDrillError("probe", error, locator);
