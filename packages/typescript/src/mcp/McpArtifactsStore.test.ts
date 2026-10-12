@@ -43,6 +43,14 @@ describe("McpArtifactsStore", () => {
           .spyOn(Env, "ALUMNIUM_MCP_ARTIFACTS_DIR", "get")
           .mockReturnValue(mockDir.path),
       );
+      // NOTE: Pinned rather than left to the default, so that a shell that
+      // exports ALUMNIUM_MCP_TAKE_SCREENSHOTS=false doesn't turn the tests below
+      // into ones that assert nothing.
+      pushMock(
+        vi
+          .spyOn(Env, "ALUMNIUM_MCP_TAKE_SCREENSHOTS", "get")
+          .mockReturnValue(true),
+      );
       const id = "test-driver";
       const artifactsStore = new McpArtifactsStore(id);
       const pixelB64 =
@@ -63,6 +71,22 @@ describe("McpArtifactsStore", () => {
           "Test screenshot! With special chars & long description that should be truncated",
       };
       return { mockDir, id, mockScreenshot, pixelB64, screenshotProps };
+    });
+
+    function disableScreenshots() {
+      pushMock(
+        vi
+          .spyOn(Env, "ALUMNIUM_MCP_TAKE_SCREENSHOTS", "get")
+          .mockReturnValue(false),
+      );
+    }
+
+    it("resolves null if screenshots are disabled", async () => {
+      const { screenshotProps, mockScreenshot } = setup.cur;
+      disableScreenshots();
+      const result = await McpArtifactsStore.saveScreenshot(screenshotProps);
+      expect(result).toBe(null);
+      expect(mockScreenshot).not.toBeCalled();
     });
 
     it("resolves path with step number and sanitized description prefix", async () => {
