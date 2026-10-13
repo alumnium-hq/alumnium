@@ -163,6 +163,10 @@ export const Env = {
     );
   },
 
+  get ALUMNIUM_XCODE_AUTO_APPROVE() {
+    return envVar("ALUMNIUM_XCODE_AUTO_APPROVE", z.stringbool().default(false));
+  },
+
   get ANDROID_HOME() {
     return envVar("ANDROID_HOME", z.string().optional());
   },

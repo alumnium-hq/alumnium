@@ -183,6 +183,10 @@ Set to `false` to start Playwright in headed mode. Only used in the [MCP server]
 
 Sets the `browserVersion` capability for Selenium, e.g. `stable`. Selenium Manager then downloads a matching Chrome for Testing build instead of using the locally installed Chrome. Only used in the [MCP server][3].
 
+### `ALUMNIUM_XCODE_AUTO_APPROVE`
+
+Set to `true` to automatically approve Xcode's permission requests (agent and project folder access) for Alumnium when starting an Xcode session. Runs `sudo xcrun mcp-server approve --for-24-hours`, so it requires passwordless `sudo`. Only used in the [MCP server][3]. Default is `false`.
+
 ### `ANTHROPIC_API_KEY`
 
 API key used when `ALUMNIUM_MODEL` is set to `anthropic`.

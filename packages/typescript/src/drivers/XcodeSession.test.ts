@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { Env } from "../Env.ts";
 import { XcodeSession } from "./XcodeSession.ts";
 
 const mocks = vi.hoisted(() => ({
@@ -55,6 +56,12 @@ vi.mock("./SimulatorWindow.ts", () => ({
     close = mocks.closeSimulator;
   },
 }));
+
+const attempt = (name: string, endpoints: string[]) => ({
+  id: `attempt-${name}`,
+  agent: { name },
+  endpoints,
+});
 
 describe(XcodeSession, () => {
   beforeEach(() => {
@@ -154,6 +161,54 @@ describe(XcodeSession, () => {
       arguments: { interactionSessionKey: "session-key" },
     });
     expect(mocks.close).toHaveBeenCalledOnce();
+  });
+
+  it("approves only alumnium access attempt endpoints when auto approve is enabled", async () => {
+    vi.useFakeTimers();
+    vi.stubEnv("ALUMNIUM_XCODE_AUTO_APPROVE", "true");
+    Env.reset();
+    try {
+      const baseExec = mocks.exec.getMockImplementation()!;
+      mocks.exec.mockImplementation(async (command, args, options) => {
+        if (args[1] === "status")
+          return {
+            stdout: JSON.stringify({
+              permission: {
+                projectAccessAttempts: [
+                  attempt("alumnium", ["agent", "folder"]),
+                  attempt("other-agent", ["other"]),
+                ],
+              },
+            }),
+            stderr: "",
+          };
+        return baseExec(command, args, options);
+      });
+      mocks.connect.mockImplementation(async () => {
+        await vi.advanceTimersByTimeAsync(XcodeSession.APPROVE_INTERVAL_MS);
+        await vi.waitFor(() => expect(mocks.exec).toHaveBeenCalledTimes(2));
+      });
+
+      const session = await XcodeSession.start({ appId: "com.todo" });
+      expect(mocks.exec).toHaveBeenCalledWith("sudo", [
+        "xcrun",
+        "mcp-server",
+        "approve",
+        "agent",
+        "folder",
+        "--for-24-hours",
+      ]);
+
+      // Polling stops once the requests are approved.
+      mocks.exec.mockClear();
+      await vi.advanceTimersByTimeAsync(XcodeSession.APPROVE_INTERVAL_MS * 3);
+      expect(mocks.exec).not.toHaveBeenCalled();
+      await session.close();
+    } finally {
+      vi.useRealTimers();
+      vi.unstubAllEnvs();
+      Env.reset();
+    }
   });
 
   it("installs a local app and launches on the resolved device with literal args and environment", async () => {
