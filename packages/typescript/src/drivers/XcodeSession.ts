@@ -6,8 +6,11 @@ import os from "node:os";
 import path from "node:path";
 import { z } from "zod";
 import { XcodeAccessibilityTree } from "../accessibility/XcodeAccessibilityTree.ts";
+import { Env } from "../Env.ts";
 import { ALUMNIUM_VERSION } from "../package.ts";
+import { Logger } from "../telemetry/Logger.ts";
 import { exec } from "../utils/process.ts";
+import { sleep } from "../utils/timers.ts";
 import { SimulatorWindow } from "./SimulatorWindow.ts";
 
 export namespace XcodeSession {
@@ -54,14 +57,30 @@ const Session = z.object({
   deviceIsSimulator: z.boolean(),
 });
 
+const PermissionStatus = z.object({
+  permission: z.object({
+    projectAccessAttempts: z
+      .array(
+        z.object({
+          agent: z.object({ name: z.string() }),
+          endpoints: z.array(z.string()),
+        }),
+      )
+      .default([]),
+  }),
+});
+
 const Capture = z.object({
   hierarchyPath: z.string().optional(),
   screenshotPath: z.string(),
 });
 
+const logger = Logger.get(import.meta.url);
+
 /** A simulator interaction session served by Apple's `xcrun mcpbridge`. */
 export class XcodeSession {
   static readonly TOOL_TIMEOUT_MS = 5 * 60_000;
+  static readonly APPROVE_INTERVAL_MS = 1_000;
 
   readonly #client = new Client({
     name: "alumnium",
@@ -71,6 +90,7 @@ export class XcodeSession {
   #key: string | undefined;
   #appId: string;
   readonly #simulatorWindow = new SimulatorWindow();
+  #approving = false;
 
   constructor(props: XcodeSession.Props) {
     this.#props = props;
@@ -106,6 +126,7 @@ export class XcodeSession {
       throw new Error(
         "An app is required to reset or launch with arguments or environment variables",
       );
+    this.#startAutoApprove();
     await this.#connect();
     const sessionIdentifier = `Alumnium ${randomUUID()}`;
     let workspaceIdentifier: string | undefined;
@@ -156,6 +177,54 @@ export class XcodeSession {
     if (appReset) await this.#resetApp(result.deviceUUID);
     if (!workspace || appReset) await this.#launchApp(result.deviceUUID);
     await this.capture(undefined, this.#appId || undefined);
+  }
+
+  #startAutoApprove() {
+    if (!Env.ALUMNIUM_XCODE_AUTO_APPROVE || this.#approving) return;
+
+    this.#approving = true;
+    this.#autoApprove();
+  }
+
+  async #autoApprove(): Promise<void> {
+    let lastError: string | undefined;
+    while (this.#approving) {
+      try {
+        if (await this.#approvePending()) break;
+      } catch (error) {
+        // Retry on the next iteration, the status may be unavailable while Xcode starts.
+        const message = error instanceof Error ? error.message : String(error);
+        if (message !== lastError)
+          logger.warn(`Xcode auto approve failed: ${message}`);
+        lastError = message;
+      }
+      await sleep(XcodeSession.APPROVE_INTERVAL_MS);
+    }
+    this.#approving = false;
+  }
+
+  async #approvePending(): Promise<boolean> {
+    const { stdout } = await exec("xcrun", [
+      "mcp-server",
+      "status",
+      "--format",
+      "json",
+    ]);
+    const { permission } = PermissionStatus.parse(JSON.parse(stdout));
+    const ids = permission.projectAccessAttempts
+      .filter(({ agent }) => agent.name === "alumnium")
+      .flatMap(({ endpoints }) => endpoints);
+    if (!ids.length) return false;
+
+    logger.info(`Approving Xcode access requests: ${ids.join(", ")}`);
+    await exec("sudo", [
+      "xcrun",
+      "mcp-server",
+      "approve",
+      ...ids,
+      "--for-24-hours",
+    ]);
+    return true;
   }
 
   async #connect(): Promise<void> {
@@ -378,6 +447,7 @@ export class XcodeSession {
   }
 
   async close(): Promise<void> {
+    this.#approving = false;
     try {
       if (this.#key) {
         const key = this.#key;
