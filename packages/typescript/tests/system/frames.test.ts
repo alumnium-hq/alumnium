@@ -25,6 +25,16 @@ describe("Frames", () => {
     expect(texts).toEqual(["LEFT", "MIDDLE", "RIGHT", "BOTTOM"]);
   });
 
+  it("iframe sharing the page URL", async ({ expect, setup }) => {
+    const { al, $ } = await setup();
+    const assert = expect.assert;
+
+    await $.navigate("same_url_iframe.html");
+
+    await al.do("click Increment button");
+    await al.check("count is 1", { assert });
+  });
+
   it("cross origin iframe", async ({ expect, setup, skip }) => {
     const { al, $, driverId } = await setup();
     const assert = expect.assert;
