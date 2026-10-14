@@ -251,6 +251,7 @@ export abstract class BaseServerAccessibilityTree {
   >();
 
   #textPromotedTags = new WeakSet<Xml.Tag>();
+  #inlinedTexts = new WeakSet<Xml.Node>();
 
   #unaddressableTags = new WeakSet<Xml.Tag>();
 
@@ -281,8 +282,10 @@ export abstract class BaseServerAccessibilityTree {
     if (this.inlineTextRoles.has(role) && xmlParent) {
       if (name.trim()) {
         const text = Xml.text(name);
-        if (!excludeAttrs.has("id") && node.addressable)
+        if (!excludeAttrs.has("id") && node.addressable) {
           this.#sourceIdsByRenderedNode.set(text, node.id);
+          this.#inlinedTexts.add(text);
+        }
         xmlParent.children.push(text);
       }
       return null;
@@ -429,8 +432,14 @@ export abstract class BaseServerAccessibilityTree {
   }
 
   #transferSourceId(xmlTag: Xml.Tag, child: Xml.Node): void {
-    if (xmlTag.attribs.id && !this.#sourceIdsByRenderedNode.has(child))
-      this.#sourceIdsByRenderedNode.set(child, xmlTag.attribs.id);
+    if (!xmlTag.attribs.id) return;
+    if (
+      this.#sourceIdsByRenderedNode.has(child) &&
+      !this.#inlinedTexts.has(child)
+    )
+      return;
+    this.#sourceIdsByRenderedNode.set(child, xmlTag.attribs.id);
+    this.#inlinedTexts.delete(child);
   }
 
   #postTransform(xmlTag: Xml.Tag): void {

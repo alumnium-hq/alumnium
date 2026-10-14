@@ -146,10 +146,10 @@
       <paragraph id=421>
         Everything needed to
         <div id=423>
-          <div id=425>build</div>
-          <div id=429>secure,</div>
-          <div id=433>performant</div>
-          <div id=437>applications</div>
+          <div id=424>build</div>
+          <div id=428>secure,</div>
+          <div id=432>performant</div>
+          <div id=436>applications</div>
         </div>
       </paragraph>
     </div>
@@ -241,10 +241,10 @@
       <heading id=807 level=2>
         Pay only
         <div id=809>
-          <div id=811>when</div>
-          <div id=815>your</div>
-          <div id=819>code</div>
-          <div id=823>runs</div>
+          <div id=810>when</div>
+          <div id=814>your</div>
+          <div id=818>code</div>
+          <div id=822>runs</div>
         </div>
       </heading>
       <paragraph id=827>(Not to keep servers warm.)</paragraph>
@@ -410,22 +410,22 @@
                 <div id=1096>
                   review-agent
                   <div id=1101>
-                    <div id=1103>scanning PRs</div>
-                    <div id=1107>179.6k tokens</div>
+                    <div id=1102>scanning PRs</div>
+                    <div id=1106>179.6k tokens</div>
                   </div>
                 </div>
                 <div id=1109>
                   test-agent
                   <div id=1114>
-                    <div id=1116>running checks</div>
-                    <div id=1120>8k tokens</div>
+                    <div id=1115>running checks</div>
+                    <div id=1119>8k tokens</div>
                   </div>
                 </div>
                 <div id=1122>
                   docs-agent
                   <div id=1127>
-                    <div id=1129>fixed documentation</div>
-                    <div id=1133>56 tokens</div>
+                    <div id=1128>fixed documentation</div>
+                    <div id=1132>56 tokens</div>
                   </div>
                 </div>
               </div>
