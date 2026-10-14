@@ -380,10 +380,7 @@ class PlaywrightDriver(BaseDriver):
     def _build_playwright_frame_map(self, frame_tree: dict) -> dict[str, Frame]:
         frame_map: dict[str, Frame] = {}
 
-        for frame in self.page.frames:
-            cdp_frame_id = self._find_cdp_frame_id_by_url(frame_tree, frame.url)
-            if cdp_frame_id:
-                frame_map[cdp_frame_id] = frame
+        self._map_frame_tree(frame_tree["frameTree"], self.page.main_frame, frame_map)
 
         # OOPIFs are absent from Page.getFrameTree — open a per-frame CDP session
         # and compare root frame ids.
@@ -500,19 +497,25 @@ class PlaywrightDriver(BaseDriver):
             frame_ids.extend(self._get_all_frame_ids(child))
         return frame_ids
 
-    def _find_cdp_frame_id_by_url(self, cdp_frame_tree: dict, target_url: str) -> str | None:
-        def search_frame(frame_info: dict) -> str | None:
-            frame = frame_info["frame"]
-            if frame["url"] == target_url:
-                return frame["id"]
+    def _map_frame_tree(self, frame_info: dict, playwright_frame: Frame, frame_map: dict[str, Frame]) -> None:
+        # Pair CDP and Playwright frames by tree position rather than by URL alone:
+        # iframes written with document.write (e.g. ad slots) inherit their parent's
+        # URL, and must never be mapped onto the main frame or a sibling.
+        frame_map[frame_info["frame"]["id"]] = playwright_frame
+        unmatched = list(frame_info.get("childFrames", []))
+        pending = list(playwright_frame.child_frames)
 
-            for child in frame_info.get("childFrames", []):
-                result = search_frame(child)
-                if result:
-                    return result
-            return None
+        def take(matches) -> None:
+            for frame in list(pending):
+                child = next((child for child in unmatched if matches(child, frame)), None)
+                if child is None:
+                    continue
+                unmatched.remove(child)
+                pending.remove(frame)
+                self._map_frame_tree(child, frame, frame_map)
 
-        return search_frame(cdp_frame_tree["frameTree"])
+        take(lambda child, frame: child["frame"]["url"] == frame.url and child["frame"].get("name", "") == frame.name)
+        take(lambda child, frame: child["frame"]["url"] == frame.url)
 
     def switch_to_next_tab(self):
         try:

@@ -185,7 +185,11 @@ describe("PlaywrightDriver", () => {
   });
 
   it("serializes AX nodes without fetching DOM metadata", async () => {
-    const frame = { url: () => "https://example.com" };
+    const frame = {
+      url: () => "https://example.com",
+      name: () => "",
+      childFrames: () => [],
+    };
     const send = vi.fn(async (command: string) => {
       if (command === "Page.getFrameTree") {
         return {
@@ -244,6 +248,51 @@ describe("PlaywrightDriver", () => {
       "DOM.getFlattenedDocument",
       expect.anything(),
     );
+  });
+
+  it("keeps the main frame mapped when a child iframe shares its URL", async () => {
+    const url = "https://example.com/page";
+    const ad = { url: () => url, name: () => "ad_slot", childFrames: () => [] };
+    const widget = {
+      url: () => "https://widget.example.com",
+      name: () => "",
+      childFrames: () => [],
+    };
+    const main = {
+      url: () => url,
+      name: () => "",
+      childFrames: () => [widget, ad],
+    };
+    const session = {
+      send: vi.fn(async () => ({})),
+      on: vi.fn(),
+      detach: vi.fn(),
+    };
+    const page = {
+      on: vi.fn(),
+      context: () => ({
+        addInitScript: vi.fn(),
+        newCDPSession: vi.fn(async () => session),
+        on: vi.fn(),
+      }),
+      mainFrame: () => main,
+      frames: () => [main, widget, ad],
+    };
+    const driver = new FetchTestPlaywrightDriver(page as unknown as Page);
+
+    const map = await driver.frameMap({
+      frameTree: {
+        frame: { id: "main", url },
+        childFrames: [
+          { frame: { id: "ad", url, name: "ad_slot" } },
+          { frame: { id: "widget", url: "https://widget.example.com" } },
+        ],
+      },
+    });
+
+    expect(map.get("main")).toBe(main);
+    expect(map.get("ad")).toBe(ad);
+    expect(map.get("widget")).toBe(widget);
   });
 
   describe("drill probe", () => {
@@ -409,6 +458,10 @@ describe("PlaywrightDriver", () => {
 class FetchTestPlaywrightDriver extends PlaywrightDriver {
   fetchTree(): Promise<BaseAccessibilityTree> {
     return this.fetchAccessibilityTree();
+  }
+
+  frameMap(frameTree: object): Promise<Map<string, unknown>> {
+    return (this as any).buildPlaywrightFrameMap(frameTree);
   }
 }
 

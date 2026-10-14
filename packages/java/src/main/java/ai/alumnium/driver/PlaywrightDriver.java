@@ -639,10 +639,7 @@ public final class PlaywrightDriver extends BaseDriver {
     @SuppressWarnings("unchecked")
     Map<String, Object> frameTree = (Map<String, Object>) frameTreeResp.get("frameTree");
     Map<String, Frame> map = new HashMap<>();
-    for (Frame f : page.frames()) {
-      String cdpFrameId = findCdpFrameIdByUrl(frameTree, f.url());
-      if (cdpFrameId != null) map.put(cdpFrameId, f);
-    }
+    mapFrameTree(frameTree, page.mainFrame(), map);
 
     oopifFrames.clear();
     for (Frame pwFrame : page.frames()) {
@@ -721,21 +718,42 @@ public final class PlaywrightDriver extends BaseDriver {
     }
   }
 
-  private static String findCdpFrameIdByUrl(Map<String, Object> frameInfo, String targetUrl) {
+  // Pair CDP and Playwright frames by tree position rather than by URL alone:
+  // iframes written with document.write (e.g. ad slots) inherit their parent's
+  // URL, and must never be mapped onto the main frame or a sibling.
+  static void mapFrameTree(Map<String, Object> frameInfo, Frame pwFrame, Map<String, Frame> map) {
     @SuppressWarnings("unchecked")
     Map<String, Object> frame = (Map<String, Object>) frameInfo.get("frame");
-    if (frame != null && targetUrl != null && targetUrl.equals(frame.get("url"))) {
-      return String.valueOf(frame.get("id"));
-    }
+    map.put(String.valueOf(frame.get("id")), pwFrame);
+
     @SuppressWarnings("unchecked")
     List<Map<String, Object>> children = (List<Map<String, Object>>) frameInfo.get("childFrames");
-    if (children != null) {
-      for (Map<String, Object> child : children) {
-        String r = findCdpFrameIdByUrl(child, targetUrl);
-        if (r != null) return r;
+    List<Map<String, Object>> unmatched =
+        children == null ? new ArrayList<>() : new ArrayList<>(children);
+    List<Frame> pending = new ArrayList<>(pwFrame.childFrames());
+    takeFrames(unmatched, pending, map, true);
+    takeFrames(unmatched, pending, map, false);
+  }
+
+  private static void takeFrames(
+      List<Map<String, Object>> unmatched,
+      List<Frame> pending,
+      Map<String, Frame> map,
+      boolean byName) {
+    for (Frame pwChild : new ArrayList<>(pending)) {
+      for (Map<String, Object> child : unmatched) {
+        @SuppressWarnings("unchecked")
+        Map<String, Object> frame = (Map<String, Object>) child.get("frame");
+        boolean sameUrl = String.valueOf(frame.get("url")).equals(pwChild.url());
+        Object name = frame.get("name");
+        boolean sameName = (name == null ? "" : String.valueOf(name)).equals(pwChild.name());
+        if (!sameUrl || (byName && !sameName)) continue;
+        unmatched.remove(child);
+        pending.remove(pwChild);
+        mapFrameTree(child, pwChild, map);
+        break;
       }
     }
-    return null;
   }
 
   private static String stripTrailingZeros(double value) {
