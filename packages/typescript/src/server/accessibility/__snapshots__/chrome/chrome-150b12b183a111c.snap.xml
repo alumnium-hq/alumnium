@@ -37,7 +37,7 @@
           <link id=82 focusable url="https://code.claude.com/docs/en/desktop-linux">Download for Linux</link>
           <link id=84 focusable url="https://code.claude.com/docs/en/overview">
             <div id=85>Read documentation</div>
-            <div id=89>(opens in new tab)</div>
+            <div id=88>(opens in new tab)</div>
           </link>
         </div>
         <paragraph id=90>Available for macOS, Linux, and Windows.</paragraph>
@@ -47,50 +47,50 @@
         <list id=95>
           <listitem id=96 level=1>
             <link id=97 focusable url="https://code.claude.com/docs/en/quickstart#step-1-install-claude-code">
-              <div id=100>Terminal</div>
-              <div id=102>(opens in new tab)</div>
+              <div id=99>Terminal</div>
+              <div id=101>(opens in new tab)</div>
             </link>
           </listitem>
           <listitem id=103 level=1>
             <link id=104 focusable url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d/code">
-              <div id=107>Web</div>
-              <div id=109>(opens in new tab)</div>
+              <div id=106>Web</div>
+              <div id=108>(opens in new tab)</div>
             </link>
           </listitem>
           <listitem id=110 level=1>
             <link id=111 focusable url="https://apps.apple.com/us/app/claude-by-anthropic/id6473753684">
-              <div id=114>iOS</div>
-              <div id=116>(opens in new tab)</div>
+              <div id=113>iOS</div>
+              <div id=115>(opens in new tab)</div>
             </link>
           </listitem>
           <listitem id=117 level=1>
             <link id=118 focusable url="https://play.google.com/store/apps/details?id=com.anthropic.claude">
-              <div id=121>Android</div>
-              <div id=123>(opens in new tab)</div>
+              <div id=120>Android</div>
+              <div id=122>(opens in new tab)</div>
             </link>
           </listitem>
           <listitem id=124 level=1>
             <link id=125 focusable url="https://code.claude.com/docs/en/github-actions">
-              <div id=128>GitHub</div>
-              <div id=130>(opens in new tab)</div>
+              <div id=127>GitHub</div>
+              <div id=129>(opens in new tab)</div>
             </link>
           </listitem>
           <listitem id=131 level=1>
             <link id=132 focusable url="https://marketplace.visualstudio.com/items?itemName=anthropic.claude-code">
-              <div id=135>VS Code</div>
-              <div id=137>(opens in new tab)</div>
+              <div id=134>VS Code</div>
+              <div id=136>(opens in new tab)</div>
             </link>
           </listitem>
           <listitem id=138 level=1>
             <link id=139 focusable url="https://plugins.jetbrains.com/plugin/27310-claude-code-beta-">
-              <div id=142>JetBrains</div>
-              <div id=144>(opens in new tab)</div>
+              <div id=141>JetBrains</div>
+              <div id=143>(opens in new tab)</div>
             </link>
           </listitem>
           <listitem id=145 level=1>
             <link id=146 focusable url="https://slack.com/oauth/v2/authorize?client_id=1601185624273.8899143856786&amp;scope=app_mentions:read,assistant:write,channels:history,channels:read,chat:write,files:read,files:write,groups:history,groups:read,im:history,im:read,im:write,mpim:history,reactions:write,users:read,users:read.email,commands,search:read.public&amp;user_scope=bookmarks:read,channels:history,channels:read,chat:write,emoji:read,files:read,groups:history,groups:read,groups:write,im:history,im:read,im:write,links:read,mpim:history,mpim:read,mpim:write,mpim:write.topic,pins:read,reactions:read,reactions:write,remote_files:read,team:read,users:read,users:read.email,search:read.public,search:read.private,search:read.im,search:read.mpim,search:read.files,search:read.users,canvases:read,canvases:write">
-              <div id=149>Slack</div>
-              <div id=151>(opens in new tab)</div>
+              <div id=148>Slack</div>
+              <div id=150>(opens in new tab)</div>
             </link>
           </listitem>
         </list>
@@ -156,9 +156,9 @@
       <div id=260>
         <div id=262>
           <div id=263>
-            <div id=265>acme-dashboard</div>
-            <div id=267>/</div>
-            <div id=269>Add a dark mode toggle to settings</div>
+            <div id=264>acme-dashboard</div>
+            <div id=266>/</div>
+            <div id=268>Add a dark mode toggle to settings</div>
           </div>
           <div id=271>
             <div id=273>Add a dark mode toggle to the settings page. Should remember the choice and follow the system default until they pick one.</div>
@@ -211,8 +211,8 @@
                     </code>
                   </div>
                   <div id=339>
-                    <div id=341>11</div>
-                    <div id=343>+</div>
+                    <div id=340>11</div>
+                    <div id=342>+</div>
                     <code id=344>
                       <div id=346>const</div>
                       <div id=348>prefersDark</div>
@@ -244,8 +244,8 @@
                     </code>
                   </div>
                   <div id=381>
-                    <div id=383>13</div>
-                    <div id=385>+</div>
+                    <div id=382>13</div>
+                    <div id=384>+</div>
                     <code id=386>
                       <div id=388>const</div>
                       <div id=390>[</div>
@@ -272,8 +272,8 @@
                     <code id=420 />
                   </div>
                   <div id=422>
-                    <div id=424>15</div>
-                    <div id=426>+</div>
+                    <div id=423>15</div>
+                    <div id=425>+</div>
                     <code id=427>
                       <div id=429>useEffect</div>
                       <div id=430>(()</div>
@@ -282,8 +282,8 @@
                     </code>
                   </div>
                   <div id=435>
-                    <div id=437>16</div>
-                    <div id=439>+</div>
+                    <div id=436>16</div>
+                    <div id=438>+</div>
                     <code id=440>
                       <div id=442>localStorage</div>
                       <div id=443>.</div>
@@ -296,8 +296,8 @@
                     </code>
                   </div>
                   <div id=451>
-                    <div id=453>17</div>
-                    <div id=455>+</div>
+                    <div id=452>17</div>
+                    <div id=454>+</div>
                     <code id=456>
                       <div id=458>},</div>
                       <div id=460>[</div>
@@ -384,9 +384,9 @@
                 <div id=552>#</div>
                 <div id=553>112</div>
               </div>
-              <div id=555>acme-dashboard</div>
-              <div id=557>claude/settings-dark-mode-Xk4fq</div>
-              <div id=560>CI</div>
+              <div id=554>acme-dashboard</div>
+              <div id=556>claude/settings-dark-mode-Xk4fq</div>
+              <div id=558>CI</div>
             </div>
           </div>
         </div>
@@ -495,7 +495,7 @@
             </div>
             <link id=692 focusable url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d/login?plan=pro">
               <div id=693>Try Claude</div>
-              <div id=695>(opens in new tab)</div>
+              <div id=694>(opens in new tab)</div>
             </link>
           </div>
         </div>
@@ -511,7 +511,7 @@
             </div>
             <link id=708 focusable url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d/login?plan=max">
               <div id=709>Try Claude</div>
-              <div id=711>(opens in new tab)</div>
+              <div id=710>(opens in new tab)</div>
             </link>
           </div>
         </div>
@@ -527,7 +527,7 @@
             </div>
             <link id=724 focusable url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d/login?plan=max">
               <div id=725>Try Claude</div>
-              <div id=727>(opens in new tab)</div>
+              <div id=726>(opens in new tab)</div>
             </link>
           </div>
         </div>
@@ -551,7 +551,7 @@
             </heading>
             <div id=749>
               <div id=751>Blog</div>
-              <div id=753>May 28, 2026</div>
+              <div id=752>May 28, 2026</div>
             </div>
           </link>
           <link id=755 focusable url="https://claude.com/blog/agent-view-in-claude-code">
@@ -561,7 +561,7 @@
             </heading>
             <div id=760>
               <div id=762>Blog</div>
-              <div id=764>May 11, 2026</div>
+              <div id=763>May 11, 2026</div>
             </div>
           </link>
           <link id=766 focusable url="https://claude.com/blog/introducing-routines-in-claude-code">
@@ -571,7 +571,7 @@
             </heading>
             <div id=771>
               <div id=773>Blog</div>
-              <div id=775>Apr 14, 2026</div>
+              <div id=774>Apr 14, 2026</div>
             </div>
           </link>
           <link id=777 focusable url="https://claude.com/blog/dispatch-and-computer-use">
@@ -581,13 +581,13 @@
             </heading>
             <div id=782>
               <div id=784>Blog</div>
-              <div id=786>Mar 23, 2026</div>
+              <div id=785>Mar 23, 2026</div>
             </div>
           </link>
         </div>
         <link id=788 focusable url="https://code.claude.com/docs/en/changelog">
           <div id=789>View changelog</div>
-          <div id=793>(opens in new tab)</div>
+          <div id=792>(opens in new tab)</div>
         </link>
       </div>
     </div>
@@ -726,11 +726,11 @@
             <group id=900>
               <link id=901 focusable url="https://marketplace.visualstudio.com/items?itemName=anthropic.claude-code">
                 <div id=902>VS Code</div>
-                <div id=904>(opens in new tab)</div>
+                <div id=903>(opens in new tab)</div>
               </link>
               <link id=905 focusable url="https://plugins.jetbrains.com/plugin/27310-claude-code-beta-">
                 <div id=906>JetBrains</div>
-                <div id=908>(opens in new tab)</div>
+                <div id=907>(opens in new tab)</div>
               </link>
             </group>
           </div>
@@ -743,7 +743,7 @@
             <group id=918>
               <link id=919 focusable url="https://claude.ai/redirect/claudedotcom.v1.claude_com.v1.25a2b0a7-9414-4240-93ff-3eee71a7236d/code">
                 <div id=920>Open in browser</div>
-                <div id=922>(opens in new tab)</div>
+                <div id=921>(opens in new tab)</div>
               </link>
               <link id=923 focusable url="https://claude.com/download">Download app</link>
             </group>
@@ -756,7 +756,7 @@
       <group id=932>
         <link id=933 focusable url="https://slack.com/oauth/v2/authorize?client_id=1601185624273.8899143856786&amp;scope=app_mentions:read,assistant:write,channels:history,channels:read,chat:write,files:read,files:write,groups:history,groups:read,im:history,im:read,im:write,mpim:history,reactions:write,users:read,users:read.email,commands,search:read.public&amp;user_scope=bookmarks:read,channels:history,channels:read,chat:write,emoji:read,files:read,groups:history,groups:read,groups:write,im:history,im:read,im:write,links:read,mpim:history,mpim:read,mpim:write,mpim:write.topic,pins:read,reactions:read,reactions:write,remote_files:read,team:read,users:read,users:read.email,search:read.public,search:read.private,search:read.im,search:read.mpim,search:read.files,search:read.users,canvases:read,canvases:write">
           <div id=934>Add to Slack</div>
-          <div id=936>(opens in new tab)</div>
+          <div id=935>(opens in new tab)</div>
         </link>
         <link id=937 focusable url="https://claude.com/claude-for-slack">Learn more</link>
       </group>

@@ -1,0 +1,640 @@
+<RootWebArea name="Ovulation Calculator &amp; Calendar - Determine Your Most Fertile Days" id=1 focusable focused url="https://www.webmd.com/baby/healthtool-ovulation-calculator">
+  <banner id=9 focusable>
+    <div id=10 focusable />
+    <div id=11 focusable>
+      <link id=13 focusable url="https://www.webmd.com/baby/healthtool-ovulation-calculator#main-container">Skip to main content</link>
+      <navigation name="Primary Site Menu" id=15>
+        <link name="WebMD Home" id=18 focusable url="https://www.webmd.com/">
+          <image name="Logo for WebMD" id=19 url="https://img.wbmdstatic.com/vim/live/webmd/consumer_assets/site_images/logos/webmd/web/webmd_logo_white.svg" />
+        </link>
+        <div id=20>
+          <list id=21>
+            <listitem name="Expand  Menu" id=22 level=1>
+              <button id=23 focusable>
+                <div id=24>Conditions</div>
+                <div id=27></div>
+              </button>
+            </listitem>
+            <listitem name="Expand  Menu" id=29 level=1>
+              <button id=30 focusable>
+                <div id=31>Drugs &amp; Supplements</div>
+                <div id=34></div>
+              </button>
+            </listitem>
+            <listitem name="Expand  Menu" id=36 level=1>
+              <button id=37 focusable>
+                <div id=38>Well-Being</div>
+                <div id=41></div>
+              </button>
+            </listitem>
+            <listitem name="Expand  Menu" id=43 level=1>
+              <link id=44 focusable url="https://symptoms.webmd.com/default.htm">Symptom Checker</link>
+            </listitem>
+            <listitem name="Expand  Menu" id=46 level=1>
+              <link id=47 focusable url="https://doctor.webmd.com/">Find a Doctor</link>
+            </listitem>
+            <listitem name="Expand  Menu" id=49 level=1>
+              <button id=50 focusable>
+                <div id=51>More</div>
+                <div id=54></div>
+              </button>
+            </listitem>
+          </list>
+          <div id=56>
+            <button id=58 focusable>Subscribe</button>
+            <link id=61 focusable url="https://member.webmd.com/signin?appid=1&amp;returl=https://www.webmd.com/baby/healthtool-ovulation-calculator">Log In</link>
+            <button name="Search" id=63 focusable>
+              <image id=64 />
+            </button>
+          </div>
+        </div>
+      </navigation>
+    </div>
+  </banner>
+  <div id=70 focusable>
+    <div id=71 focusable>
+      <Iframe name="Advertisement" id=75>
+        <RootWebArea id=76 focusable url="https://www.webmd.com/baby/healthtool-ovulation-calculator">
+          <link id=80 focusable url="https://adclick.g.doubleclick.net/pcs/click?xai=AKAOjsu0tl3MECR4rPK65qybGTU-J1kDkqcpQP_-2VpSRBNDS5zhhN67Ory8DHE9QRETYS8npxqwzjPfZdLDS8iLkQa1k1dcpG_USbg92VTEpZyzmziXiFIgEy0pnEQ9w--Q2a24C3iGyiDr3dDwjic7rbDJzCwaOxMVoKKDwhBKOeog5L41RoXYIB2EJaFgaqIq7_lsCYFKk0N86IhoX8Tyrc7qheWYVtJnyPswMy8QmhZZUWxDmen3Zdp72D4J8LSrS49u_KREh35Ou7e5ljnX4i1S6TJDJQS44lbjQG7fQpNiCaGWzJHsUuq4XjaP6UbTK9SSV613Etg-K2IYvjdYgTTYs0F9CpG_r9IJeXefBYQrm6QE9jcgnLAmYJWQXnq7d-woAznXpVD10CtODeUJ_Fv9XGk6o4FpGF_K-xSwI528xpDBdzjqMWE&amp;sai=AMfl-YTn-KXey_MiCsJh2SafFnVTvD4qdHnHl_NYR3BxFlzMbuS7e_GiTkk4g-8F6MT_-qCbIXTmRRcasJo9NaFBspJaULRusQFd0gT3jWZkJbyzYNeECOK-G3bcBcp6o6JVvC93uEAHki7dbpUAptcZI1-5V5v5COWpF0s9X_I6p3_c3pezsJlXI-Te0Ur0xUjqD6ky645uBeZpVlqFJAf1jLxO9_UyZDjQK-HDu3h5avW4Qi4L4YJUhcnq8oBgMVvHlO8OTNtTZ0txQ3sETdZdgRYh-PL2MQ7BWvmajzPjYBqVhYfU-nXtxRNzIR5vMsb6DLil3V6nqpSwJn182Ft1laQgoYHAeSmsfAcAklBWY7aYKFlKMy1tltnyyK_CyakJ2g-_vF2tmcIHyRRcOTuX2XwolOjLsMhoc-AwGhLvfg&amp;sig=Cg0ArKJSzH3P3WCd6ynJEAE&amp;fbs_aeid=%5Bgw_fbsaeid%5D&amp;urlfix=1&amp;adurl=https://www.webmd.com/subscribe%3Fpg%3D1228%26icd%3Dwnl_rhu_web_cons_728x90_ws">
+            <image name="advertisement" id=81 url="https://tpc.googlesyndication.com/simgad/4833071858715290197?" />
+          </link>
+        </RootWebArea>
+      </Iframe>
+      <div id=84>ADVERTISEMENT</div>
+    </div>
+  </div>
+  <main id=86 focusable>
+    <div id=88 focusable>
+      <div id=89 focusable>
+        <list name="Breadcrumb" id=91>
+          <listitem id=92 level=1>
+            <link id=93 focusable url="https://www.webmd.com/baby/default.htm">Pregnancy</link>
+          </listitem>
+        </list>
+        <div id=96>
+          <link name="Click to visit Health &amp; Baby landing page" id=97 focusable url="https://www.webmd.com/baby/default.htm">
+            <image name="Logo for Health &amp; Baby" id=98 url="https://img.lb.wbmdstatic.com/vim/live/webmd/consumer_assets/site_images/sitefronts/branding/grow/grow_logo.svg" />
+          </link>
+          <button id=99 focusable>
+            Healthy Pregnancy Guide
+            <div id=104></div>
+          </button>
+          <list id=108>
+            <listitem id=109 level=1>
+              <link id=110 focusable url="https://www.webmd.com/baby/getting-started-on-getting-pregnant">Getting Pregnant</link>
+            </listitem>
+            <listitem id=112 level=1>
+              <link id=113 focusable url="https://www.webmd.com/baby/your-pregnancy-week-by-week-weeks-1-4">First Trimester</link>
+            </listitem>
+            <listitem id=115 level=1>
+              <link id=116 focusable url="https://www.webmd.com/baby/second-trimester-of-pregnancy">Second Trimester</link>
+            </listitem>
+            <listitem id=118 level=1>
+              <link id=119 focusable url="https://www.webmd.com/baby/third-trimester-of-pregnancy">Third Trimester</link>
+            </listitem>
+            <listitem id=121 level=1>
+              <link id=122 focusable url="https://www.webmd.com/baby/cm/normal-labor-and-delivery-process">Labor and Delivery</link>
+            </listitem>
+            <listitem id=124 level=1>
+              <link id=125 focusable url="https://www.webmd.com/baby/anemia-in-pregnancy">Pregnancy Complications</link>
+            </listitem>
+          </list>
+        </div>
+      </div>
+      <div id=127 focusable />
+      <div id=128 focusable>
+        <div id=130>HEALTH &amp; PREGNANCY</div>
+        <heading id=132 level=1>Ovulation Calculator</heading>
+        <div id=134>Your menstrual cycle can vary from month to month, and not everyone's is the same length. Use this calculator to see when you may be ovulating to find your most fertile days. Typically, you can get pregnant during about 6 days each month. That's called your fertility window.</div>
+      </div>
+      <div id=136 focusable>
+        <div id=140>
+          <div id=141>Select the first day of your last period</div>
+          <div id=148>
+            <sectionheader id=149>
+              <div id=150>&lt;</div>
+              <div id=152>October 2026</div>
+              <div id=154>&gt;</div>
+            </sectionheader>
+            <div id=156>
+              <div id=157>SUN</div>
+              <div id=159>MON</div>
+              <div id=161>TUE</div>
+              <div id=163>WED</div>
+              <div id=165>THU</div>
+              <div id=167>FRI</div>
+              <div id=169>SAT</div>
+              <div id=175>1</div>
+              <div id=177>2</div>
+              <div id=179>3</div>
+              <div id=181>4</div>
+              <div id=183>5</div>
+              <div id=185>6</div>
+              <div id=187>7</div>
+              <div id=189>8</div>
+              <div id=191>9</div>
+              <div id=193>10</div>
+              <div id=195>11</div>
+              <div id=197>12</div>
+              <div id=199>13</div>
+              <div id=201>14</div>
+              <div id=203>15</div>
+              <div id=205>16</div>
+              <div id=207>17</div>
+              <div id=209>18</div>
+              <div id=211>19</div>
+              <div id=213>20</div>
+              <div id=215>21</div>
+              <div id=217>22</div>
+              <div id=219>23</div>
+              <div id=221>24</div>
+              <div id=223>25</div>
+              <div id=225>26</div>
+              <div id=227>27</div>
+              <div id=229>28</div>
+              <div id=231>29</div>
+              <div id=233>30</div>
+              <div id=235>31</div>
+            </div>
+          </div>
+          <div id=237>
+            <strong id=238>Note:</strong>
+            This tool should not be used alone to prevent pregnancy. Results are estimates as ovulation cycles can vary.
+          </div>
+        </div>
+        <div id=242>
+          <div id=243>
+            <div id=244>How Long Is Your Average Cycle?</div>
+            <div id=248>
+              <combobox name="— Days" id=249 value="28 days" focusable editable="plaintext">28 days</combobox>
+              <div id=254></div>
+            </div>
+            <div id=258>
+              Don’t know?
+              <button id=260 focusable>Calculate your Cycle Length</button>
+            </div>
+          </div>
+          <div id=262>
+            <div id=263>Types of Content I’m Interested in:</div>
+            <div id=265>optional</div>
+            <group name="checkbox-group" id=268>
+              <checkbox id=269 checked="false">
+                <checkbox name="Planning a Pregnancy" id=273 focusable checked="false" />
+                Planning a Pregnancy
+              </checkbox>
+              <checkbox id=276 checked="false">
+                <checkbox name="Tracking My Cycle" id=280 focusable checked="false" />
+                Tracking My Cycle
+              </checkbox>
+              <checkbox id=283 checked="false">
+                <checkbox name="Birth Control" id=287 focusable checked="false" />
+                Birth Control
+              </checkbox>
+            </group>
+          </div>
+          <button id=290 disabled>
+            <div id=291>
+              Calculate
+              <div id=293></div>
+            </div>
+          </button>
+        </div>
+      </div>
+      <div id=297 focusable>
+        <div id=298>
+          <div id=299>
+            <heading id=300 level=2>
+              <div id=301>Signs of Ovulation</div>
+              <div id=302></div>
+            </heading>
+            <list id=305>
+              <listitem id=306 level=1>
+                <div id=307>•</div>
+                <div id=309>Rise in basal body temperature, typically 1/2 to 1 degree, measured by a thermometer</div>
+              </listitem>
+              <listitem id=310 level=1>
+                <div id=311>•</div>
+                <div id=313>Higher levels of luteinizing hormone (LH), measured on a home ovulation kit</div>
+              </listitem>
+              <listitem id=314 level=1>
+                <div id=315>•</div>
+                <div id=317>Cervical mucus, or vaginal discharge, may appear clearer, thinner, and stretchy, like raw egg whites</div>
+              </listitem>
+              <listitem id=318 level=1>
+                <div id=319>•</div>
+                <div id=321>Breast tenderness</div>
+              </listitem>
+              <listitem id=322 level=1>
+                <div id=323>•</div>
+                <div id=325>Bloating</div>
+              </listitem>
+              <listitem id=326 level=1>
+                <div id=327>•</div>
+                <div id=329>Spotting</div>
+              </listitem>
+              <listitem id=330 level=1>
+                <div id=331>•</div>
+                <div id=333>Slight pain or cramping in your side</div>
+              </listitem>
+            </list>
+          </div>
+          <heading id=335 level=2>
+            <div id=336>Pregnancy Tips: How to Increase Your Chances</div>
+            <div id=337></div>
+          </heading>
+        </div>
+        <div id=339>
+          <heading id=340 level=1>LEARN MORE</heading>
+          <list id=342>
+            <listitem id=343 level=1>
+              <link id=344 focusable url="https://www.webmd.com/baby/getting-started-on-getting-pregnant">
+                <div id=345>Getting Started On Getting Pregnant</div>
+                <div id=347>Ready to start trying to conceive? Get answers to your questions about how long it could take, how often to have sex, and more.</div>
+              </link>
+            </listitem>
+            <listitem id=349 level=1>
+              <link id=350 focusable url="https://www.webmd.com/baby/fertility-no-nos">
+                <div id=351>What Not To Do If You Want To Get Pregnant</div>
+                <div id=353>Don't wait until you miss your period to start getting healthy. Here are 11 things NOT to do if you want to get pregnant.</div>
+              </link>
+            </listitem>
+            <listitem id=355 level=1>
+              <link id=356 focusable url="https://www.webmd.com/baby/fertility-sexual-positions">
+                <div id=357>The Truth About Sex Positions And Getting Pregnant</div>
+                <div id=359>No one sex position has been proven to improve your odds of conception. But some may be better than others.</div>
+              </link>
+            </listitem>
+            <listitem id=361 level=1>
+              <link id=362 focusable url="https://www.webmd.com/baby/ss/slideshow-prepregnancy-checklist">
+                <div id=363>Your Pre-Pregnancy Checklist</div>
+                <div id=365>How can you set the stage for a healthy pregnancy? Here’s a to-do list to help you get your body ready for a baby.</div>
+              </link>
+            </listitem>
+          </list>
+        </div>
+      </div>
+      <div id=367 focusable>
+        <sectionfooter id=368>
+          <div id=369>
+            <div id=370>
+              <div id=371>
+                <button id=372 focusable>Sources</button>
+                <button id=374 focusable>Update History</button>
+              </div>
+              <div id=376>
+                <button id=379 focusable>
+                  Share
+                  <image id=383 />
+                </button>
+                <div id=389 focusable describedby="webmd-tooltip-667">
+                  Save
+                  <image id=393 />
+                </div>
+              </div>
+            </div>
+            <link id=398 focusable url="https://www.webmd.com/about-webmd-policies/about-privacy-policy">View privacy policy, copyright and trust info</link>
+          </div>
+          <div id=402>
+            Medically Reviewed By
+            <link id=404 focusable url="https://www.webmd.com/bio/brunilda-nazario">Brunilda Nazario, MD</link>
+            on May 22, 2024
+          </div>
+          <paragraph id=408>
+            This tool does not provide medical advice.
+            <link id=410>
+              <div id=411>See additional information.</div>
+              <div id=413></div>
+            </link>
+          </paragraph>
+        </sectionfooter>
+      </div>
+    </div>
+  </main>
+  <div id=415 focusable>
+    <div id=416 focusable>
+      <div id=417>
+        <div id=418>RECOMMENDED</div>
+        <image name="photo of happy woman looking at pregnancy test" id=422 url="https://img.lb.wbmdstatic.com/vim/live/webmd/consumer_assets/site_images/article_thumbnails/site_front_toc_redesign/pregnancy_site_front_toc_redesign/1500x1500_pregnancy_site_front_toc_redesign_chapter_1_alt.jpg?resize=500px:*&amp;output-quality=75" />
+      </div>
+      <complementary id=424>
+        <sectionheader id=425>
+          <heading id=426 level=3>FEATURED</heading>
+        </sectionheader>
+      </complementary>
+      <div id=430>
+        <div id=432>
+          <heading id=433 level=3>Top doctors in San Jose, CA</heading>
+          Sponsored Results
+        </div>
+        <div id=438>
+          <div id=440>
+            <div id=442>
+              <div id=444>DR</div>
+              <div id=447>
+                <heading id=448 level=5>
+                  <link id=449 focusable url="https://doctor.webmd.com/doctor/selma-rashid-02bebc29-bca9-4677-a853-d7fcb33e634a-overview">Dr. Selma Arif Rashid</link>
+                </heading>
+                <paragraph id=451>
+                  <link id=452 focusable url="https://doctor.webmd.com/doctor/selma-rashid-02bebc29-bca9-4677-a853-d7fcb33e634a-overview">Internal Medicine</link>
+                </paragraph>
+                <div id=454>
+                  <link id=455 focusable url="https://doctor.webmd.com/doctor/selma-rashid-02bebc29-bca9-4677-a853-d7fcb33e634a-overview#ratings">
+                    <div id=456>
+                      3.0
+                      <slider name=3 id=459 value=3 focusable settable orientation="horizontal" valuemin=0 valuemax=5 />
+                    </div>
+                    8 Ratings
+                  </link>
+                  <div id=472>
+                    <image id=473 />
+                    25 Years Exp
+                  </div>
+                </div>
+              </div>
+              <div id=477>
+                <link id=478 focusable url="tel:(408) 214-4310">
+                  <image id=479 />
+                  (408) 214-4310
+                </link>
+                <link id=482 focusable url="https://doctor.webmd.com/doctor/selma-rashid-02bebc29-bca9-4677-a853-d7fcb33e634a-overview">View Full Profile</link>
+              </div>
+            </div>
+            <div id=486>
+              <div id=488>DD</div>
+              <div id=491>
+                <heading id=492 level=5>
+                  <link id=493 focusable url="https://doctor.webmd.com/doctor/rubeena-dhami-ee72610c-5fd2-4ca9-a339-da09e035f1cb-overview">Dr. Rubeena Dhami</link>
+                </heading>
+                <paragraph id=495>
+                  <link id=496 focusable url="https://doctor.webmd.com/doctor/rubeena-dhami-ee72610c-5fd2-4ca9-a339-da09e035f1cb-overview">Family Medicine</link>
+                </paragraph>
+                <div id=498>
+                  <link id=499 focusable url="https://doctor.webmd.com/doctor/rubeena-dhami-ee72610c-5fd2-4ca9-a339-da09e035f1cb-overview#ratings">
+                    <div id=500>
+                      0.0
+                      <slider name=0 id=503 value=0 focusable settable orientation="horizontal" valuemin=0 valuemax=5 />
+                    </div>
+                  </link>
+                  <div id=514>
+                    <image id=515 />
+                    8 Years Exp
+                  </div>
+                </div>
+              </div>
+              <div id=519>
+                <link id=520 focusable url="tel:(650) 262-1276">
+                  <image id=521 />
+                  (650) 262-1276
+                </link>
+                <link id=524 focusable url="https://doctor.webmd.com/doctor/rubeena-dhami-ee72610c-5fd2-4ca9-a339-da09e035f1cb-overview">View Full Profile</link>
+              </div>
+            </div>
+            <div id=528>
+              <div id=530>DA</div>
+              <div id=533>
+                <heading id=534 level=5>
+                  <link id=535 focusable url="https://doctor.webmd.com/doctor/elise-atkins-cc5c40b2-8d93-483e-94f1-636eb2b52c24-overview">Dr. Elise Atkins</link>
+                </heading>
+                <paragraph id=537>
+                  <link id=538 focusable url="https://doctor.webmd.com/doctor/elise-atkins-cc5c40b2-8d93-483e-94f1-636eb2b52c24-overview">Preventive Medicine</link>
+                </paragraph>
+                <div id=540>
+                  <link id=541 focusable url="https://doctor.webmd.com/doctor/elise-atkins-cc5c40b2-8d93-483e-94f1-636eb2b52c24-overview#ratings">
+                    <div id=542>
+                      5.0
+                      <slider name=5 id=545 value=5 focusable settable orientation="horizontal" valuemin=0 valuemax=5 />
+                    </div>
+                    24 Ratings
+                  </link>
+                  <div id=558>
+                    <image id=559 />
+                    26 Years Exp
+                  </div>
+                </div>
+              </div>
+              <div id=563>
+                <link id=564 focusable url="tel:(831) 667-5827">
+                  <image id=565 />
+                  (831) 667-5827
+                </link>
+                <link id=568 focusable url="https://doctor.webmd.com/doctor/elise-atkins-cc5c40b2-8d93-483e-94f1-636eb2b52c24-overview">View Full Profile</link>
+              </div>
+            </div>
+          </div>
+          <div id=571>
+            <heading id=572 level=3>
+              Find more top doctors on
+              <link id=574 focusable url="https://doctor.webmd.com/">
+                <image id=575 />
+              </link>
+            </heading>
+            <form id=576>
+              <combobox id=577 value="San Jose, CA 95121" focusable>
+                <textbox name="Zip Code or City, State" id=579 value="San Jose, CA 95121" focusable editable="plaintext" settable autocomplete="list" controls="webmd-typeahead">
+                  <div id=581 editable="plaintext">San Jose, CA 95121</div>
+                </textbox>
+              </combobox>
+              <button id=583 focusable>
+                <div id=585></div>
+                <div id=587>Search</div>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id=588 focusable />
+    <div id=590 focusable>
+      <heading id=594 level=3>RELATED LINKS</heading>
+      <list id=596>
+        <listitem id=597 level=1>
+          <link id=598 focusable url="https://www.webmd.com/baby/default.htm">Pregnancy Home</link>
+        </listitem>
+        <listitem id=600 level=1>
+          <link id=601 focusable url="https://www.webmd.com/baby/news-features">Pregnancy News</link>
+        </listitem>
+        <listitem id=603 level=1>
+          <link id=604 focusable url="https://www.webmd.com/baby/medical-reference-index">Pregnancy Medical Reference</link>
+        </listitem>
+        <listitem id=606 level=1>
+          <link id=607 focusable url="https://www.webmd.com/baby/guide-chapter-pregnancy-getting-pregnant">Getting Pregnant</link>
+        </listitem>
+        <listitem id=609 level=1>
+          <link id=610 focusable url="https://www.webmd.com/baby/guide-chapter-pregnancy-first-trimester">First Trimester</link>
+        </listitem>
+        <listitem id=612 level=1>
+          <link id=613 focusable url="https://www.webmd.com/baby/guide-chapter-pregnancy-second-trimester">Second Trimester</link>
+        </listitem>
+        <listitem id=615 level=1>
+          <link id=616 focusable url="https://www.webmd.com/baby/guide-chapter-pregnancy-third-trimester">Third Trimester</link>
+        </listitem>
+        <listitem id=618 level=1>
+          <link id=619 focusable url="https://www.webmd.com/baby/guide-chapter-pregnancy-labor-delivery">Labor &amp; Delivery</link>
+        </listitem>
+        <listitem id=621 level=1>
+          <link id=622 focusable url="https://www.webmd.com/baby/guide-chapter-pregnancy-complications">Pregnancy Complications</link>
+        </listitem>
+        <listitem id=624 level=1>
+          <link id=625 focusable url="https://www.webmd.com/baby/healthtool-ovulation-calculator">Ovulation Calculator</link>
+        </listitem>
+        <listitem id=627 level=1>
+          <link id=628 focusable url="https://www.webmd.com/baby/interactive-pregnancy-tool-fetal-development">Pregnancy Timeline</link>
+        </listitem>
+        <listitem id=630 level=1>
+          <link id=631 focusable url="https://www.webmd.com/baby/directory-index">Pregnancy Related Topics</link>
+        </listitem>
+        <listitem id=633 level=1>
+          <link id=634 focusable url="https://www.webmd.com/parenting/baby/default.htm">Baby Home</link>
+        </listitem>
+        <listitem id=636 level=1>
+          <link id=637 focusable url="https://www.webmd.com/parenting/baby/news-features">Baby News</link>
+        </listitem>
+        <listitem id=639 level=1>
+          <link id=640 focusable url="https://www.webmd.com/parenting/baby/medical-reference-index">Baby Medical Reference</link>
+        </listitem>
+        <listitem id=642 level=1>
+          <link id=643 focusable url="https://www.webmd.com/parenting/guide-chapter-parenting-toddler-milestones">Toddler Milestones</link>
+        </listitem>
+        <listitem id=645 level=1>
+          <link id=646 focusable url="https://www.webmd.com/parenting/guide-chapter-parenting-child-development">Child Development</link>
+        </listitem>
+        <listitem id=648 level=1>
+          <link id=649 focusable url="https://www.webmd.com/parenting/guide-chapter-parenting-child-safety">Child Safety</link>
+        </listitem>
+        <listitem id=651 level=1>
+          <link id=652 focusable url="https://www.webmd.com/children/default.htm">Children's Health</link>
+        </listitem>
+        <listitem id=654 level=1>
+          <link id=655 focusable url="https://www.webmd.com/children/vaccines/default.htm">Children's Vaccines</link>
+        </listitem>
+        <listitem id=657 level=1>
+          <link id=658 focusable url="https://www.webmd.com/parenting/default.htm">Parenting Home</link>
+        </listitem>
+        <listitem id=660 level=1>
+          <link id=661 focusable url="https://www.webmd.com/parenting/news-features">Parenting News</link>
+        </listitem>
+        <listitem id=663 level=1>
+          <link id=664 focusable url="https://doctor.webmd.com/find-a-doctor/specialty/pediatrics">Find a Pediatrician</link>
+        </listitem>
+        <listitem id=666 level=1>
+          <link id=667 focusable url="https://www.webmd.com/parenting/directory-index">More Parenting Topics</link>
+        </listitem>
+      </list>
+    </div>
+  </div>
+  <contentinfo id=669 focusable>
+    <div id=670 focusable>
+      <contentinfo id=671 focusable>
+        <div id=673>
+          <div id=674>
+            <div id=678>
+              <div id=680>
+                <heading id=681 level=3>Sign up for our free Pregnancy and Baby Newsletter</heading>
+                <heading id=684 level=4>Get news and information about pregnancy and infant health</heading>
+              </div>
+              <div id=688>
+                <textbox name="Enter your email address" id=690 focusable editable="plaintext" settable />
+                <button id=693 disabled>Subscribe</button>
+              </div>
+            </div>
+            <div id=696>
+              <div id=697>
+                <heading id=698 level=3>Follow WebMD on Social Media</heading>
+                <div id=700>
+                  <link name="facebook" id=701 focusable url="https://www.facebook.com/WebMD/">
+                    <image id=702 />
+                  </link>
+                  <link name="X" id=703 focusable url="https://x.com/webmd">
+                    <image id=704 />
+                  </link>
+                  <link name="instagram" id=705 focusable url="https://www.instagram.com/WebMD/">
+                    <image id=706 />
+                  </link>
+                  <link name="tiktok" id=707 focusable url="https://www.tiktok.com/@webmd/">
+                    <image id=708 />
+                  </link>
+                  <link name="pinterest" id=709 focusable url="https://www.pinterest.com/webmd/">
+                    <image id=710 />
+                  </link>
+                  <link name="whatsapp" id=711 focusable url="https://www.whatsapp.com/channel/0029VareKvA0wajrKr01nA1n">
+                    <image id=712 />
+                  </link>
+                </div>
+              </div>
+              <div id=714>
+                <heading id=715 level=3>Download WebMD App</heading>
+                <div id=717>
+                  <link name="App Store" id=718 focusable url="https://taps.io/Bzg3Q">
+                    <image name="App Store Image" id=719 url="https://img.webmd.com/vim/live/webmd/consumer_assets/site_images/tocs/community/thumbnails/ios-dwnld.png?resize=90:32" />
+                  </link>
+                  <link name="Android Store" id=720 focusable url="https://taps.io/Bzg2w">
+                    <image name="Andriod Store Image" id=721 url="https://img.webmd.com/vim/live/webmd/consumer_assets/site_images/tocs/community/thumbnails/android-dwnld.png?resize=90:32" />
+                  </link>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id=722>
+            <link id=724 focusable url="javascript:void(0)">Policies</link>
+            <link id=727 focusable url="javascript:void(0)">About</link>
+            <link id=730 focusable url="javascript:void(0)">For Advertisers</link>
+          </div>
+          <div id=732>
+            <list id=733>
+              <listitem id=734 level=1>
+                <link id=735 focusable url="https://www.webmd.com/about-webmd-policies/about-privacy-policy">Privacy Policy</link>
+              </listitem>
+              <listitem id=737 level=1>
+                <link id=738 focusable url="https://www.webmd.com/about-webmd-policies/cookie-policy">Cookie Policy</link>
+              </listitem>
+              <listitem id=740 level=1>
+                <link id=741 focusable url="https://www.webmd.com/about-webmd-policies/about-editorial-policy">Editorial Policy</link>
+              </listitem>
+              <listitem id=743 level=1>
+                <link id=744 focusable url="https://www.webmd.com/about-webmd-policies/about-advertising-policy">Advertising Policy</link>
+              </listitem>
+              <listitem id=746 level=1>
+                <link id=747 focusable url="https://www.webmd.com/about-webmd-policies/webmd-corrections-policies">Correction Policy</link>
+              </listitem>
+              <listitem id=749 level=1>
+                Your Privacy Choices
+                <image name="Toggle image for privacy choices" id=752 url="https://icons.internetbrands.com/ccpa/privacyoptions29x14.png" />
+              </listitem>
+              <listitem id=753 level=1>
+                <link id=754 focusable url="https://www.webmd.com/about-webmd-policies/about-terms-and-conditions-of-use">Terms of Use</link>
+              </listitem>
+              <listitem id=756 level=1>
+                <link id=757 focusable url="https://www.webmd.com/about-webmd-policies/accessibility-statement">Accessibility Statement</link>
+              </listitem>
+            </list>
+            <list id=760>
+              <listitem id=761 level=1>
+                <link id=762 focusable url="https://privacy.truste.com/privacy-seal/validation?rid=07326333-3522-463d-81bf-f00fd7171fff">
+                  <image name="TRUSTe" id=763 url="https://privacy-policy.truste.com/privacy-seal/seal?rid=07326333-3522-463d-81bf-f00fd7171fff" />
+                </link>
+              </listitem>
+              <listitem id=764 level=1>
+                <image name="TAG Registered Seal" id=765 url="https://img.webmd.com/dtmcms/live/webmd/consumer_assets/site_images/layout/shared/tag-registered.png?resize=*:60px" />
+              </listitem>
+              <listitem id=766 level=1>
+                <image name="Adchoices" id=768 url="https://img.webmd.com/dtmcms/live/webmd/consumer_assets/site_images/oncology/1/footer-images/ad-choice.png" />
+              </listitem>
+            </list>
+          </div>
+        </div>
+        <div id=769>
+          <paragraph id=771>
+            © 2005 - 2026 WebMD LLC, an
+            <link id=773 focusable url="https://www.internetbrands.com/">Internet Brands</link>
+            company. All rights reserved. WebMD does not provide medical advice, diagnosis or treatment.
+            <link id=776 focusable url="https://www.webmd.com/about-webmd-policies/additional-info">See additional information.</link>
+          </paragraph>
+          <link id=779 focusable url="https://www.webmd.com/">
+            <image name="Logo for WebMD" id=780 url="https://img.wbmdstatic.com/vim/live/webmd/consumer_assets/site_images/oncology/1/images/webmd-logo-white.svg" />
+          </link>
+        </div>
+      </contentinfo>
+    </div>
+  </contentinfo>
+  <div id=781 focusable />
+</RootWebArea>
