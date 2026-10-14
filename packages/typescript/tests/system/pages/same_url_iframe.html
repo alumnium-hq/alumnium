@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Same URL Iframe</title>
+  </head>
+  <body>
+    <h1>Main Page</h1>
+    <p>This page embeds an iframe that shares its URL, like some ad slots.</p>
+    <button id="increment" onclick="increment()">Increment</button>
+    <p id="count">Count: 0</p>
+    <script>
+      function increment() {
+        const count = document.getElementById("count");
+        count.textContent = `Count: ${Number(count.textContent.split(": ")[1]) + 1}`;
+      }
+
+      if (window === window.top) {
+        const frame = document.createElement("iframe");
+        frame.name = "ad_slot";
+        frame.src = location.href;
+        document.body.appendChild(frame);
+      } else {
+        document.body.innerHTML = "<p>Ad slot</p>";
+      }
+    </script>
+  </body>
+</html>

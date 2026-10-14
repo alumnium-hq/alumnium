@@ -19,6 +19,14 @@ public class FramesTest extends BaseTest {
         List.of("LEFT", "MIDDLE", "RIGHT", "BOTTOM"), al.get("text from all frames"));
   }
 
+  @Test
+  void testIframeSharingPageUrl() {
+    navigate("same_url_iframe.html");
+
+    al.act("click Increment button");
+    al.check("count is 1");
+  }
+
   @DisabledIfEnvironmentVariable(named = "ALUMNIUM_DRIVER", matches = "selenium")
   @Test
   void testCrossOriginIframe() {

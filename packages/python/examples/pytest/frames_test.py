@@ -27,3 +27,14 @@ def test_cross_origin_iframe(al, navigate):
     al.check("Text input contains 'testuser'")
     al.do("click Submit button")
     al.check("'Form submitted' message is present")
+
+
+@mark.xfail(
+    "appium" in getenv("ALUMNIUM_DRIVER", "selenium"),
+    reason="Frames support is only implemented for Playwright and Selenium currently",
+)
+def test_iframe_sharing_page_url(al, navigate):
+    navigate("same_url_iframe.html")
+
+    al.do("click Increment button")
+    al.check("count is 1")

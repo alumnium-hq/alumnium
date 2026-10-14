@@ -48,6 +48,7 @@ interface CDPFrameInfo {
   frame: {
     id: string;
     url: string;
+    name?: string;
   };
   childFrames?: CDPFrameInfo[];
 }
@@ -574,11 +575,7 @@ export class PlaywrightDriver extends BaseDriver {
     frameTree: CDPFrameTree,
   ): Promise<Map<string, Frame>> {
     const map: Map<string, Frame> = new Map();
-
-    for (const frame of this.page.frames()) {
-      const cdpFrameId = this.findCdpFrameIdByUrl(frameTree, frame.url());
-      if (cdpFrameId) map.set(cdpFrameId, frame);
-    }
+    this.mapFrameTree(frameTree.frameTree, this.page.mainFrame(), map);
 
     // OOPIFs are absent from Page.getFrameTree, so URL matching won't work.
     // Open a per-frame CDP session and compare root frame ids.
@@ -617,6 +614,35 @@ export class PlaywrightDriver extends BaseDriver {
     }
 
     return map;
+  }
+
+  // Pair CDP and Playwright frames by tree position rather than by URL alone:
+  // iframes written with document.write (e.g. ad slots) inherit their parent's
+  // URL, and must never be mapped onto the main frame or a sibling.
+  private mapFrameTree(
+    frameInfo: CDPFrameInfo,
+    playwrightFrame: Frame,
+    map: Map<string, Frame>,
+  ): void {
+    map.set(frameInfo.frame.id, playwrightFrame);
+
+    const unmatched = [...(frameInfo.childFrames || [])];
+    const pending = playwrightFrame.childFrames();
+    const take = (matches: (child: CDPFrameInfo, frame: Frame) => boolean) => {
+      for (const frame of [...pending]) {
+        const index = unmatched.findIndex((child) => matches(child, frame));
+        if (index === -1) continue;
+        const [child] = unmatched.splice(index, 1);
+        pending.splice(pending.indexOf(frame), 1);
+        this.mapFrameTree(child!, frame, map);
+      }
+    };
+    take(
+      (child, frame) =>
+        child.frame.url === frame.url() &&
+        (child.frame.name || "") === frame.name(),
+    );
+    take((child, frame) => child.frame.url === frame.url());
   }
 
   // Namespace and append a frame's nodes into allNodes to prevent id collisions.
@@ -814,25 +840,6 @@ export class PlaywrightDriver extends BaseDriver {
       frameIds.push(...this.getAllFrameIds(child));
     }
     return frameIds;
-  }
-
-  private findCdpFrameIdByUrl(
-    cdpFrameTree: CDPFrameTree,
-    targetUrl: string,
-  ): string | null {
-    const searchFrame = (frameInfo: CDPFrameInfo): string | null => {
-      if (frameInfo.frame.url === targetUrl) {
-        return frameInfo.frame.id;
-      }
-
-      for (const child of frameInfo.childFrames || []) {
-        const result = searchFrame(child);
-        if (result) return result;
-      }
-      return null;
-    };
-
-    return searchFrame(cdpFrameTree.frameTree);
   }
 
   private async getFrameNodes(
