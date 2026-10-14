@@ -49,8 +49,12 @@ describe("Env", () => {
     ["0", false],
   ])("parses boolean settings %s as %s", (input, expected) => {
     vi.stubEnv("ALUMNIUM_MCP_RECORD_VIDEOS", input);
+    vi.stubEnv("ALUMNIUM_MCP_TRACE_SCREENSHOTS", input);
+    vi.stubEnv("ALUMNIUM_MCP_TRACE_SNAPSHOTS", input);
     vi.stubEnv("ALUMNIUM_PLANNER", input);
     expect(Env.ALUMNIUM_MCP_RECORD_VIDEOS).toBe(expected);
+    expect(Env.ALUMNIUM_MCP_TRACE_SCREENSHOTS).toBe(expected);
+    expect(Env.ALUMNIUM_MCP_TRACE_SNAPSHOTS).toBe(expected);
     expect(Env.ALUMNIUM_PLANNER).toBe(expected);
   });
 

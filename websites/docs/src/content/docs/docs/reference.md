@@ -151,6 +151,14 @@ Sets the directory where the MCP server stores artifacts such as screenshots. De
 
 Sets the directory where the MCP server stores persistent browser profiles. Default is `~/.alumnium/profiles`. See the [`profile` option](/docs/guides/mcp#alumniumoptions) for details.
 
+### `ALUMNIUM_MCP_TRACE_SCREENSHOTS`
+
+Capture screenshots in Playwright traces recorded by the MCP server. Default is `true`. Set to `false` to reduce trace size.
+
+### `ALUMNIUM_MCP_TRACE_SNAPSHOTS`
+
+Capture DOM snapshots in Playwright traces recorded by the MCP server. Default is `true`. Set to `false` to reduce trace size.
+
 ### `ALUMNIUM_MODEL_RETRIES`
 
 Number of retries for failed AI model requests (e.g., rate limiting). Default is `8`.
