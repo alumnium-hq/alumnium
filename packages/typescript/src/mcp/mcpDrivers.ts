@@ -243,8 +243,8 @@ export async function createPlaywrightDriver(
   }
 
   await context.tracing.start({
-    screenshots: true,
-    snapshots: true,
+    screenshots: Env.ALUMNIUM_MCP_TRACE_SCREENSHOTS,
+    snapshots: Env.ALUMNIUM_MCP_TRACE_SNAPSHOTS,
     // Capturing call-site sources fails in the Bun single-file executable
     // because the recorded paths (e.g. /$bunfs/root/...) do not exist on disk.
     sources: false,
@@ -423,8 +423,8 @@ async function createCloakBrowserDriver(
   });
 
   await context.tracing.start({
-    screenshots: true,
-    snapshots: true,
+    screenshots: Env.ALUMNIUM_MCP_TRACE_SCREENSHOTS,
+    snapshots: Env.ALUMNIUM_MCP_TRACE_SNAPSHOTS,
     sources: false,
   });
   return await context.newPage();
