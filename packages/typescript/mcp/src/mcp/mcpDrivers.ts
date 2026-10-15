@@ -12,7 +12,6 @@ import {
   remote as remoteWebdriverio,
   type Browser as WebdriverIoBrowser,
 } from "webdriverio";
-
 import {
   type Driver,
   Env,

@@ -1,5 +1,5 @@
-import { createOllama } from "ollama-ai-provider-v2";
 import type { LanguageModelV4 } from "@ai-sdk/provider";
+import { createOllama } from "ollama-ai-provider-v2";
 import { LlmFactory, Env, Logger, type Model } from "@alumnium/core/internal";
 
 const logger = Logger.get(import.meta.url);

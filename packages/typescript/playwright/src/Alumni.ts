@@ -1,5 +1,5 @@
-import { Alumni as BaseAlumni } from "@alumnium/core";
 import type { Page } from "playwright-core";
+import { Alumni as BaseAlumni } from "@alumnium/core";
 import { PlaywrightDriver } from "./drivers/PlaywrightDriver.ts";
 
 /** Alumni driving a Playwright `Page`. */

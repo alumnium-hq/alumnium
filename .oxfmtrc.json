@@ -7,5 +7,26 @@
     "websites/homepage/**/*",
     "**/__fixtures__/**/*"
   ],
-  "printWidth": 80
+  "printWidth": 80,
+  "sortImports": {
+    // Third-party packages go first, then `alumnium` and the other workspace
+    // packages.
+    "customGroups": [
+      {
+        "groupName": "alumnium",
+        "elementNamePattern": ["alumnium", "alumnium/**"]
+      }
+    ],
+    "groups": [
+      "builtin",
+      "external",
+      "alumnium",
+      ["internal", "subpath"],
+      ["parent", "sibling", "index"],
+      "style",
+      "unknown"
+    ],
+    "internalPattern": ["@alumnium/"],
+    "newlinesBetween": false
+  }
 }

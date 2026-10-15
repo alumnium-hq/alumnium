@@ -1,12 +1,12 @@
 import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.ts";
-import { type BaseDriver } from "../drivers/BaseDriver.ts";
-import { BaseTool, type ToolClass } from "../tools/BaseTool.ts";
-import { NavigationBlockedError } from "../NavigationPolicy.ts";
-import { retry } from "../utils/retry.ts";
-import { Telemetry } from "../telemetry/Telemetry.ts";
-import { type Tracer } from "../telemetry/Tracer.ts";
 import { Client } from "../clients/Client.ts";
 import type { Data } from "../clients/typecasting.ts";
+import { type BaseDriver } from "../drivers/BaseDriver.ts";
+import { NavigationBlockedError } from "../NavigationPolicy.ts";
+import { Telemetry } from "../telemetry/Telemetry.ts";
+import { type Tracer } from "../telemetry/Tracer.ts";
+import { BaseTool, type ToolClass } from "../tools/BaseTool.ts";
+import { retry } from "../utils/retry.ts";
 import { type Alumni } from "./Alumni.ts";
 import { AssertionError } from "./errors/AssertionError.ts";
 import type { DoResult, DoStep } from "./result.ts";

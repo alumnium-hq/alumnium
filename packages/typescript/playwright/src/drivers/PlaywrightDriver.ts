@@ -27,6 +27,7 @@ import {
   waiterScriptSource,
   waitForPageStability,
 } from "@alumnium/core/internal";
+
 // NOTE: While macros work well in Bun, it fails when using Alumnium client from
 // Node.js. A solution could be "node:sea" module, but current Bun version
 // doesn't support it. For now, we bundle assets with scripts/generate.ts.

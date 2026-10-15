@@ -1,9 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
-
 import { never } from "alwaysly";
 import z from "zod";
-
 import { Alumni } from "alumnium";
 import {
   DragSliderTool,
@@ -20,13 +18,13 @@ import {
   Telemetry,
 } from "@alumnium/core/internal";
 import { McpArtifactsStore } from "../McpArtifactsStore.ts";
-import { McpProfilesStore } from "../McpProfilesStore.ts";
-import { McpState } from "../McpState.ts";
 import {
   createChromeDriver,
   createMobileDriver,
   type McpDriver,
 } from "../mcpDrivers.ts";
+import { McpProfilesStore } from "../McpProfilesStore.ts";
+import { McpState } from "../McpState.ts";
 import { McpTool } from "./McpTool.ts";
 
 const { tracer } = Telemetry.get(import.meta.url);

@@ -1,5 +1,5 @@
-import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import type { LanguageModelV4 } from "@ai-sdk/provider";
+import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import {
   apiKeyField,
   LlmFactory,

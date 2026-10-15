@@ -1,6 +1,5 @@
 import type { WebDriver } from "selenium-webdriver";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-
 import { Driver, Env, FileStore } from "@alumnium/core/internal";
 import {
   createMobileDriver,

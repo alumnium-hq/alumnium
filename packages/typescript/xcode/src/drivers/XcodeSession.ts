@@ -1,11 +1,10 @@
-import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { randomUUID } from "node:crypto";
 import { cp, mkdtemp, readFile, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
+import { Client } from "@modelcontextprotocol/sdk/client/index.js";
+import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { z } from "zod";
-import { XcodeAccessibilityTree } from "../accessibility/XcodeAccessibilityTree.ts";
 import {
   ALUMNIUM_VERSION,
   Env,
@@ -14,6 +13,7 @@ import {
   SimulatorWindow,
   sleep,
 } from "@alumnium/core/internal";
+import { XcodeAccessibilityTree } from "../accessibility/XcodeAccessibilityTree.ts";
 
 export namespace XcodeSession {
   export interface Props {

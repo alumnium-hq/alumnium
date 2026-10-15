@@ -1,14 +1,14 @@
 import type { ModelMessage } from "ai";
 import z from "zod";
 import { type LanguageModel } from "../../llm/LanguageModel.ts";
+import { loadAi } from "../../llm/loadAi.ts";
 import { type Model } from "../../Model.ts";
-import { NavigateToUrlTool } from "../../tools/NavigateToUrlTool.ts";
 import { pythonicFormat } from "../../pythonic/pythonicFormat.ts";
+import { Telemetry } from "../../telemetry/Telemetry.ts";
+import { NavigateToUrlTool } from "../../tools/NavigateToUrlTool.ts";
 import { SwitchToNextTabTool } from "../../tools/SwitchToNextTabTool.ts";
 import { SwitchToPreviousTabTool } from "../../tools/SwitchToPreviousTabTool.ts";
-import { Telemetry } from "../../telemetry/Telemetry.ts";
 import { UploadTool } from "../../tools/UploadTool.ts";
-import { loadAi } from "../../llm/loadAi.ts";
 import { BaseAgent } from "./BaseAgent.ts";
 
 const { tracer, logger } = Telemetry.get(import.meta.url);

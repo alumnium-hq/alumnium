@@ -1,10 +1,10 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.ts";
 import type { AccessibilityElement } from "../accessibility/AccessibilityElement.ts";
+import { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTree.ts";
 import { AppId } from "../AppId.ts";
 import { Env } from "../Env.ts";
-import { TreeDevDrillStore } from "../tree/dev/TreeDevDrillStore.ts";
 import type { ToolClass } from "../tools/BaseTool.ts";
+import { TreeDevDrillStore } from "../tree/dev/TreeDevDrillStore.ts";
 import { BaseDriver } from "./BaseDriver.ts";
 import type { Keys } from "./keys.ts";
 

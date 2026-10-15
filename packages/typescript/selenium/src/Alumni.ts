@@ -1,5 +1,5 @@
-import { Alumni as BaseAlumni } from "@alumnium/core";
 import { WebDriver } from "selenium-webdriver";
+import { Alumni as BaseAlumni } from "@alumnium/core";
 import { SeleniumDriver } from "./drivers/SeleniumDriver.ts";
 
 /** Alumni driving a Selenium `WebDriver`. */

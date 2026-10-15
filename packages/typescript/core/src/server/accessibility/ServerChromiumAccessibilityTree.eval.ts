@@ -1,11 +1,11 @@
+import * as fs from "node:fs/promises";
 import { evalite } from "evalite";
 import { reportTrace } from "evalite/traces";
 import { Env } from "../../Env.ts";
 import { Logger } from "../../telemetry/Logger.ts";
-import { ServerChromiumAccessibilityTree } from "./ServerChromiumAccessibilityTree.ts";
-import { LlmFactory } from "../LlmFactory.ts";
 import { RetrieverAgent } from "../agents/RetrieverAgent.ts";
-import * as fs from "node:fs/promises";
+import { LlmFactory } from "../LlmFactory.ts";
+import { ServerChromiumAccessibilityTree } from "./ServerChromiumAccessibilityTree.ts";
 
 Logger.level = "warning";
 

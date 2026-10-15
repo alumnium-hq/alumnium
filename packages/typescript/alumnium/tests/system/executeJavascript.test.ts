@@ -1,5 +1,5 @@
-import { ExecuteJavascriptTool } from "alumnium";
 import { describe } from "vitest";
+import { ExecuteJavascriptTool } from "alumnium";
 import { baseIt } from "./helpers.ts";
 
 describe("Execute JavaScript", () => {

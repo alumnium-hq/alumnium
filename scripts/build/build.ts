@@ -2,12 +2,12 @@
 
 // This script builds the Alumnium for multiple target platforms using Bun.
 
-import { always } from "alwaysly";
-import { $, type BunPlugin } from "bun";
-import { snakeCase } from "case-anything";
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
+import { always } from "alwaysly";
+import { $, type BunPlugin } from "bun";
+import { snakeCase } from "case-anything";
 import { stringify as tomlStringify } from "smol-toml";
 import { z } from "zod";
 import { ALUMNIUM_VERSION } from "../../packages/typescript/core/src/package.ts";

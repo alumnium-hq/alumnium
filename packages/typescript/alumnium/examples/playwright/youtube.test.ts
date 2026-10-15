@@ -1,5 +1,5 @@
-import { Alumni } from "alumnium";
 import { test } from "@playwright/test";
+import { Alumni } from "alumnium";
 
 test.setTimeout(120_000);
 

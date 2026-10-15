@@ -1,6 +1,6 @@
 import { Alumni as BaseAlumni } from "@alumnium/core";
-import { MaestroSession } from "./drivers/MaestroSession.ts";
 import { MaestroDriver } from "./drivers/MaestroDriver.ts";
+import { MaestroSession } from "./drivers/MaestroSession.ts";
 
 /** Alumni driving a `MaestroSession`. */
 export class Alumni extends BaseAlumni<MaestroDriver> {

@@ -1,5 +1,5 @@
-import fs from "node:fs/promises";
 import { readdirSync } from "node:fs";
+import fs from "node:fs/promises";
 import { describe, expect, it } from "vitest";
 import { ServerXCUITestAccessibilityTree } from "./ServerXCUITestAccessibilityTree.ts";
 
