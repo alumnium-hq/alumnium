@@ -1,7 +1,8 @@
-import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import os from "node:os";
 import path from "node:path";
+import { Client } from "@modelcontextprotocol/sdk/client/index.js";
+import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
+import { lit } from "smollit";
 import z from "zod";
 import {
   ALUMNIUM_VERSION,
@@ -10,7 +11,6 @@ import {
   sleep,
   spawn,
 } from "@alumnium/core/internal";
-import { lit } from "smollit";
 
 const logger = Logger.get(import.meta.url);
 

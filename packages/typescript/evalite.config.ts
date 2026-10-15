@@ -1,11 +1,11 @@
 import path from "node:path";
-import type { Evalite } from "evalite/types";
 import { defineConfig } from "evalite/config";
 import { createInMemoryStorage } from "evalite/in-memory-storage";
+import type { Evalite } from "evalite/types";
+import { Env } from "./core/src/Env.ts";
 // NOTE: Config loaders externalize workspace packages and Node can't load
 // their TypeScript sources, so import the modules by path.
 import { FileStore } from "./core/src/FileStore/FileStore.ts";
-import { Env } from "./core/src/Env.ts";
 import { Logger } from "./core/src/telemetry/Logger.ts";
 
 const storage = createJsonStorage();

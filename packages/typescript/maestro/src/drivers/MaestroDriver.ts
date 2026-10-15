@@ -1,4 +1,4 @@
-import { MaestroAccessibilityTree } from "../accessibility/MaestroAccessibilityTree.ts";
+import { lit } from "smollit";
 import {
   type AccessibilityElement,
   AppId,
@@ -14,8 +14,8 @@ import {
   TreeDevDrillError,
   TypeTool,
 } from "@alumnium/core/internal";
+import { MaestroAccessibilityTree } from "../accessibility/MaestroAccessibilityTree.ts";
 import { MaestroSession } from "./MaestroSession.ts";
-import { lit } from "smollit";
 
 const { tracer, logger } = Telemetry.get(import.meta.url);
 const { span } = tracer.dec();

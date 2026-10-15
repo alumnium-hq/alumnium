@@ -1,10 +1,10 @@
+import { describe } from "vitest";
 import {
   type PlaywrightDriver,
   type SeleniumDriver,
   SwitchToNextTabTool,
   SwitchToPreviousTabTool,
 } from "alumnium";
-import { describe } from "vitest";
 import { baseIt } from "./helpers.ts";
 
 describe("Tabs", () => {

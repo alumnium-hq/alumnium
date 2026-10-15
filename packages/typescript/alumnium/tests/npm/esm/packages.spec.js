@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { Alumni } from "alumnium";
 import * as appium from "@alumnium/appium";
 import * as core from "@alumnium/core";
 import * as coreInternal from "@alumnium/core/internal";
@@ -6,7 +7,6 @@ import * as maestro from "@alumnium/maestro";
 import * as playwright from "@alumnium/playwright";
 import * as selenium from "@alumnium/selenium";
 import * as xcode from "@alumnium/xcode";
-import { Alumni } from "alumnium";
 
 const providers = Object.fromEntries(
   await Promise.all(

@@ -1,12 +1,12 @@
 import type { ModelMessage } from "ai";
+import { txt } from "smollit";
 import z from "zod";
 import { type LanguageModel } from "../../llm/LanguageModel.ts";
+import { loadAi } from "../../llm/loadAi.ts";
 import { type Model } from "../../Model.ts";
 import { pythonicFormat } from "../../pythonic/pythonicFormat.ts";
 import { Telemetry } from "../../telemetry/Telemetry.ts";
-import { loadAi } from "../../llm/loadAi.ts";
 import { BaseAgent } from "./BaseAgent.ts";
-import { txt } from "smollit";
 
 const { tracer, logger } = Telemetry.get(import.meta.url);
 const { span } = tracer.dec();

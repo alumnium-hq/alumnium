@@ -2,13 +2,13 @@ import type { BaseAccessibilityTree } from "../accessibility/BaseAccessibilityTr
 import { AppId } from "../AppId.ts";
 import { Env } from "../Env.ts";
 import { NavigationPolicy } from "../NavigationPolicy.ts";
+import { Telemetry } from "../telemetry/Telemetry.ts";
 import type { ToolClass } from "../tools/BaseTool.ts";
 import { TreeDevDrill } from "../tree/dev/TreeDevDrill.ts";
-import { TreeDevDrillStore } from "../tree/dev/TreeDevDrillStore.ts";
 import { TreeDevDrillError } from "../tree/dev/TreeDevDrillError.ts";
+import { TreeDevDrillStore } from "../tree/dev/TreeDevDrillStore.ts";
 import type { Driver } from "./Driver.ts";
 import type { Keys } from "./keys.ts";
-import { Telemetry } from "../telemetry/Telemetry.ts";
 
 const { tracer, logger } = Telemetry.get(import.meta.url);
 

@@ -1,11 +1,11 @@
+import { always } from "alwaysly";
 import { describe, expect, it, vi } from "vitest";
-import { BaseAccessibilityTree } from "../../accessibility/BaseAccessibilityTree.ts";
 import type { AccessibilityElement } from "../../accessibility/AccessibilityElement.ts";
+import { BaseAccessibilityTree } from "../../accessibility/BaseAccessibilityTree.ts";
 import type { BaseServerAccessibilityTree } from "../../server/accessibility/BaseServerAccessibilityTree.ts";
 import { TreeFactory } from "../TreeFactory.ts";
 import { TreeDevDrill } from "./TreeDevDrill.ts";
 import { TreeDevDrillError } from "./TreeDevDrillError.ts";
-import { always } from "alwaysly";
 
 describe(TreeDevDrill, () => {
   it("walks multiple roots and nested tags in output order", async () => {

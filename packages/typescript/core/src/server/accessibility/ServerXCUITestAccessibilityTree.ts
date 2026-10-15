@@ -1,7 +1,7 @@
+import { always } from "alwaysly";
+import type { Tree } from "../../tree/Tree.ts";
 import { Xml } from "../../xml/Xml.ts";
 import { BaseServerAccessibilityTree } from "./BaseServerAccessibilityTree.ts";
-import type { Tree } from "../../tree/Tree.ts";
-import { always } from "alwaysly";
 
 export class ServerXCUITestAccessibilityTree extends BaseServerAccessibilityTree {
   #tree: Tree.Node[] = [];

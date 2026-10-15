@@ -1,7 +1,7 @@
+import { textContent } from "domutils";
+import type { Tree } from "../../tree/Tree.ts";
 import { Xml } from "../../xml/Xml.ts";
 import { BaseServerAccessibilityTree } from "./BaseServerAccessibilityTree.ts";
-import type { Tree } from "../../tree/Tree.ts";
-import { textContent } from "domutils";
 
 export class ServerChromiumAccessibilityTree extends BaseServerAccessibilityTree {
   #tree: Tree.Node[] = [];

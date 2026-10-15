@@ -1,6 +1,6 @@
 import { Alumni as BaseAlumni } from "@alumnium/core";
-import { XcodeSession } from "./drivers/XcodeSession.ts";
 import { XcodeDriver } from "./drivers/XcodeDriver.ts";
+import { XcodeSession } from "./drivers/XcodeSession.ts";
 
 /** Alumni driving an `XcodeSession`. */
 export class Alumni extends BaseAlumni<XcodeDriver> {

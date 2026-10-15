@@ -1,7 +1,8 @@
 import { execSync } from "node:child_process";
-import ansi from "picocolors";
+import os from "node:os";
 import { canonize } from "@js-fns/canon";
 import { xxh32Str } from "@js-fns/xxhash/str";
+import ansi from "picocolors";
 import z from "zod";
 import { Driver } from "./drivers/Driver.ts";
 import { McpMode } from "./mcp/McpMode.ts";
@@ -14,7 +15,6 @@ import {
   pathString,
 } from "./utils/schema.ts";
 import { maskString } from "./utils/string.ts";
-import os from "node:os";
 
 let logEnabled = true;
 

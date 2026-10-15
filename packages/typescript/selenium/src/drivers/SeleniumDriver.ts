@@ -1,17 +1,17 @@
 import * as fs from "fs/promises";
-
+import { always } from "alwaysly";
 import {
   By,
   Key as SeleniumKey,
   WebDriver,
   WebElement,
 } from "selenium-webdriver";
+import type { ChromiumWebDriver } from "selenium-webdriver/chromium.js";
 import {
   ElementNotInteractableError,
   NoSuchSessionError,
 } from "selenium-webdriver/lib/error.js";
-
-import { always } from "alwaysly";
+import type { ShadowRoot } from "selenium-webdriver/lib/webdriver.js";
 import {
   AppId,
   BaseAccessibilityTree,
@@ -33,13 +33,12 @@ import {
   type WaiterSnapshot,
   waitForPageStability,
 } from "@alumnium/core/internal";
+import { SeleniumCdpConnection } from "./SeleniumCdpConnection.ts";
+
 // NOTE: While macros work well in Bun, it fails when using Alumnium client from
 // Node.js. A solution could be "node:sea" module, but current Bun version
 // doesn't support it. For now, we bundle assets with scripts/generate.ts.
 // import { readScript } from "@alumnium/core" with { type: "macro" };
-import type { ChromiumWebDriver } from "selenium-webdriver/chromium.js";
-import { SeleniumCdpConnection } from "./SeleniumCdpConnection.ts";
-import type { ShadowRoot } from "selenium-webdriver/lib/webdriver.js";
 
 const { tracer, logger } = Telemetry.get(import.meta.url);
 const { span } = tracer.dec();

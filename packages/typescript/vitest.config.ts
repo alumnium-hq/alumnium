@@ -1,12 +1,12 @@
 import babel from "@rolldown/plugin-babel";
 import { defineConfig } from "vitest/config";
+import type { InlineConfig } from "vitest/node";
+import PassThresholdReporter from "./alumnium/tests/utils/PassThresholdReporter.ts";
 // NOTE: Config loaders externalize workspace packages and Node can't load
 // their TypeScript sources, so import the modules by path.
 import { Driver } from "./core/src/drivers/Driver.ts";
 import { Env } from "./core/src/Env.ts";
 import { Logger } from "./core/src/telemetry/Logger.ts";
-import PassThresholdReporter from "./alumnium/tests/utils/PassThresholdReporter.ts";
-import type { InlineConfig } from "vitest/node";
 
 const driverKind = Env.ALUMNIUM_DRIVER;
 const isAppium = Driver.isAppium(driverKind);

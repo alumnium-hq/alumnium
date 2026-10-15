@@ -3,9 +3,9 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
+import { ServerMaestroAccessibilityTree } from "@alumnium/core/internal";
 import { MaestroAccessibilityTree } from "../../accessibility/MaestroAccessibilityTree.ts";
 import type { MaestroSession } from "../../drivers/MaestroSession.ts";
-import { ServerMaestroAccessibilityTree } from "@alumnium/core/internal";
 
 const FIXTURE_PATH = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),

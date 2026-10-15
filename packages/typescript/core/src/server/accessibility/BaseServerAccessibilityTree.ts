@@ -1,12 +1,12 @@
 import { always } from "alwaysly";
+import { textContent } from "domutils";
+import { BaseAccessibilityTree } from "../../accessibility/BaseAccessibilityTree.ts";
 import { Env } from "../../Env.ts";
+import { Logger } from "../../telemetry/Logger.ts";
 import type { ToolCall } from "../../tools/BaseTool.ts";
 import type { Tree } from "../../tree/Tree.ts";
 import { Xml } from "../../xml/Xml.ts";
 import { XmlRenderer } from "../../xml/XmlRenderer.ts";
-import { textContent } from "domutils";
-import { Logger } from "../../telemetry/Logger.ts";
-import { BaseAccessibilityTree } from "../../accessibility/BaseAccessibilityTree.ts";
 
 const logger = Logger.get(import.meta.url);
 

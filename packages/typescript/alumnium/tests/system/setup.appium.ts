@@ -1,6 +1,6 @@
-import { Model } from "alumnium";
 import type { TestProject } from "vitest/node";
 import { remote } from "webdriverio";
+import { Model } from "alumnium";
 import { Env } from "@alumnium/core/internal";
 
 interface WdioRemoteOptions {

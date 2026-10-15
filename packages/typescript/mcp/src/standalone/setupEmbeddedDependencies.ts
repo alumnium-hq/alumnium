@@ -1,8 +1,8 @@
-import { embeddedFiles } from "bun";
 import fs from "node:fs/promises";
 import Module from "node:module";
 import os from "node:os";
 import path from "node:path";
+import { embeddedFiles } from "bun";
 import { ensureDir, isSingleFileExecutable } from "@alumnium/core/internal";
 import {
   PLAYWRIGHT_CORE_BROWSERS_JSON_ASSET_NAME,

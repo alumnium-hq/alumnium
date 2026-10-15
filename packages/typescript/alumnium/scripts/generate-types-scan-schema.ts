@@ -1,8 +1,8 @@
 #!/usr/bin/env bun
 
-import { pascalCase } from "case-anything";
 import fs from "node:fs/promises";
 import path from "node:path";
+import { pascalCase } from "case-anything";
 import { format } from "oxfmt";
 import {
   hashValue,

@@ -1,11 +1,11 @@
 import { always } from "alwaysly";
 import { Element } from "domhandler";
-import type { MaestroSession } from "../drivers/MaestroSession.ts";
 import {
   type AccessibilityElement,
   BaseAccessibilityTree,
   XmlRenderer,
 } from "@alumnium/core/internal";
+import type { MaestroSession } from "../drivers/MaestroSession.ts";
 
 /** Fallback legend, used when Maestro omits `ui_schema.abbreviations`. */
 const DEFAULT_ABBREVIATIONS: Record<string, string> = {

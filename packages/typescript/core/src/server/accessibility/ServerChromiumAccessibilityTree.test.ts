@@ -1,12 +1,12 @@
-import fs from "node:fs/promises";
 import { readdirSync } from "node:fs";
+import fs from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { lit } from "smollit";
 import { describe, expect, it } from "vitest";
 import { ChromiumAccessibilityTree as ClientChromiumAccessibilityTree } from "../../accessibility/ChromiumAccessibilityTree.ts";
-import { ServerChromiumAccessibilityTree } from "./ServerChromiumAccessibilityTree.ts";
-import { fileURLToPath } from "node:url";
-import path from "node:path";
-import { lit } from "smollit";
 import { Xml } from "../../xml/Xml.ts";
+import { ServerChromiumAccessibilityTree } from "./ServerChromiumAccessibilityTree.ts";
 
 describe(ServerChromiumAccessibilityTree, () => {
   describe("toXml", () => {

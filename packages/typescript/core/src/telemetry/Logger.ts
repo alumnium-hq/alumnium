@@ -1,3 +1,6 @@
+import * as fs from "node:fs/promises";
+import path from "node:path";
+import { inspect } from "node:util";
 import { getFileSink, type FileSinkOptions } from "@logtape/file";
 import {
   configure,
@@ -11,9 +14,6 @@ import {
   type Sink,
 } from "@logtape/logtape";
 import { getOpenTelemetrySink } from "@logtape/otel";
-import * as fs from "node:fs/promises";
-import path from "node:path";
-import { inspect } from "node:util";
 import { Env } from "../Env.ts";
 import { GlobalFileStorePaths } from "../FileStore/GlobalFileStorePaths.ts";
 import { ensureDir } from "../utils/fs.ts";

@@ -1,7 +1,7 @@
 import type { LanguageModelV4GenerateResult } from "@ai-sdk/provider";
 import { describe, expect, it } from "vitest";
-import { AiSdk } from "../../../llm/AiSdk.ts";
 import { AiSdkFactory } from "../../../llm/__factories__/AiSdkFactory.ts";
+import { AiSdk } from "../../../llm/AiSdk.ts";
 import { ElementsCacheMask } from "./ElementsCacheMask.ts";
 
 describe("ElementsCacheMask", () => {
