@@ -6,8 +6,8 @@ import {
 import { MockLanguageModelV4 } from "ai/test";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { Env } from "../../Env.ts";
-import { Model } from "../../Model.ts";
 import { AiSdkFactory } from "../../llm/__factories__/AiSdkFactory.ts";
+import { Model } from "../../Model.ts";
 import { BaseAgent } from "./BaseAgent.ts";
 
 afterEach(() => {

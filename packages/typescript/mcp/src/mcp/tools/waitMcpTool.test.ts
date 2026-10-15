@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
-import { pushMock } from "../../../../alumnium/tests/unit/mocks.ts";
 import { AssertionError, sleep } from "@alumnium/core/internal";
+import { pushMock } from "../../../../alumnium/tests/unit/mocks.ts";
 import { McpState } from "../McpState.ts";
 import { waitMcpTool } from "./waitMcpTool.ts";
 

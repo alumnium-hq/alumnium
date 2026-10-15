@@ -1,10 +1,4 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { pushMock } from "../../../alumnium/tests/unit/mocks.ts";
-import {
-  CreateSessionResponse,
-  type Http,
-  LlmFactory,
-} from "@alumnium/core/internal";
 import {
   ActorAgent,
   AreaAgent,
@@ -14,6 +8,12 @@ import {
   RetrieverAgent,
   SessionManager,
 } from "@alumnium/core/agents";
+import {
+  CreateSessionResponse,
+  type Http,
+  LlmFactory,
+} from "@alumnium/core/internal";
+import { pushMock } from "../../../alumnium/tests/unit/mocks.ts";
 import { serverApp } from "./serverApp.ts";
 
 describe("serverApp", () => {

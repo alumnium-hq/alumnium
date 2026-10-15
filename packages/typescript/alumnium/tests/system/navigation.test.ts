@@ -1,5 +1,5 @@
-import { NavigateBackTool } from "alumnium";
 import { describe } from "vitest";
+import { NavigateBackTool } from "alumnium";
 import { baseIt } from "./helpers.ts";
 
 describe("Navigation", () => {

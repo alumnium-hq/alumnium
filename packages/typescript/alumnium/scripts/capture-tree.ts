@@ -2,11 +2,11 @@
 
 // This script prints a tree from a given web page URL.
 
-import { chromium, devices } from "playwright";
-import { Alumni } from "alumnium";
 import { writeFile } from "node:fs/promises";
 import { emitKeypressEvents } from "node:readline";
 import { parseArgs } from "node:util";
+import { chromium, devices } from "playwright";
+import { Alumni } from "alumnium";
 import {
   Logger,
   ServerChromiumAccessibilityTree,

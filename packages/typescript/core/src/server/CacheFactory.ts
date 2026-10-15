@@ -1,6 +1,6 @@
 import { Env } from "../Env.ts";
-import { Logger } from "../telemetry/Logger.ts";
 import { Model } from "../Model.ts";
+import { Logger } from "../telemetry/Logger.ts";
 import { CacheStore } from "./cache/CacheStore.ts";
 import { ChainedCache } from "./cache/ChainedCache.ts";
 import { ElementsCache } from "./cache/ElementsCache/ElementsCache.ts";

@@ -2,8 +2,8 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { ServerXCUITestAccessibilityTree } from "@alumnium/core/internal";
 import { ElementsCacheTree } from "@alumnium/core/agents";
+import { ServerXCUITestAccessibilityTree } from "@alumnium/core/internal";
 import { XCUITestAccessibilityTree } from "./XCUITestAccessibilityTree.ts";
 
 const SIMPLE_FIXTURE_PATH = path.resolve(

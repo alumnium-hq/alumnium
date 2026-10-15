@@ -1,7 +1,7 @@
-import type { Alumni } from "alumnium";
 import { describe, inject } from "vitest";
-import { baseIt } from "./helpers.ts";
+import type { Alumni } from "alumnium";
 import { Env } from "@alumnium/core/internal";
+import { baseIt } from "./helpers.ts";
 
 describe("Native To Do application", () => {
   const it = baseIt.override("setup", async ({ setup, skip }) => {

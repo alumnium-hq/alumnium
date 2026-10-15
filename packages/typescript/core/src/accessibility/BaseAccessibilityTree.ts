@@ -1,9 +1,9 @@
 import { xxh64Any } from "@js-fns/xxhash/any";
-import type { AccessibilityElement } from "./AccessibilityElement.ts";
+import { always } from "alwaysly";
 import { Env } from "../Env.ts";
 import { FileStore } from "../FileStore/FileStore.ts";
 import { Logger } from "../telemetry/Logger.ts";
-import { always } from "alwaysly";
+import type { AccessibilityElement } from "./AccessibilityElement.ts";
 
 const logger = Logger.get(import.meta.url);
 

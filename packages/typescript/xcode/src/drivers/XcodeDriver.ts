@@ -1,4 +1,3 @@
-import { XcodeAccessibilityTree } from "../accessibility/XcodeAccessibilityTree.ts";
 import {
   AppId,
   BaseDriver,
@@ -14,6 +13,7 @@ import {
   type ToolClass,
   TypeTool,
 } from "@alumnium/core/internal";
+import { XcodeAccessibilityTree } from "../accessibility/XcodeAccessibilityTree.ts";
 import type { XcodeSession } from "./XcodeSession.ts";
 
 const { tracer } = Telemetry.get(import.meta.url);

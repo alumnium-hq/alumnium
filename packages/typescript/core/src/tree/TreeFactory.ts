@@ -3,8 +3,8 @@ import type { BaseServerAccessibilityTree } from "../server/accessibility/BaseSe
 import { ServerChromiumAccessibilityTree } from "../server/accessibility/ServerChromiumAccessibilityTree.ts";
 import { ServerMaestroAccessibilityTree } from "../server/accessibility/ServerMaestroAccessibilityTree.ts";
 import { ServerUIAutomator2AccessibilityTree } from "../server/accessibility/ServerUIAutomator2AccessibilityTree.ts";
-import { ServerXCUITestAccessibilityTree } from "../server/accessibility/ServerXCUITestAccessibilityTree.ts";
 import { ServerXcodeAccessibilityTree } from "../server/accessibility/ServerXcodeAccessibilityTree.ts";
+import { ServerXCUITestAccessibilityTree } from "../server/accessibility/ServerXCUITestAccessibilityTree.ts";
 
 export namespace TreeFactory {
   export type Kind = (typeof TreeFactory.kinds)[number];

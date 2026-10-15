@@ -1,5 +1,5 @@
-import { createXai } from "@ai-sdk/xai";
 import type { LanguageModelV4 } from "@ai-sdk/provider";
+import { createXai } from "@ai-sdk/xai";
 import {
   apiKeyField,
   LlmFactory,

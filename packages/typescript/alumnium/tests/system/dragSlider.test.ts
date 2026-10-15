@@ -1,5 +1,5 @@
-import { DragSliderTool } from "alumnium";
 import { describe } from "vitest";
+import { DragSliderTool } from "alumnium";
 import { baseIt } from "./helpers.ts";
 
 describe("Drag Slider", () => {

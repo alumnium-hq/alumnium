@@ -1,3 +1,6 @@
+import fs from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
 import {
   APICallError,
   UnsupportedFunctionalityError,
@@ -14,9 +17,6 @@ import type {
   SDKUserMessage,
   TokenUsage,
 } from "@cursor/sdk";
-import fs from "node:fs/promises";
-import os from "node:os";
-import path from "node:path";
 import { z } from "zod";
 import { Logger } from "@alumnium/core/internal";
 

@@ -1,7 +1,7 @@
 import type { LanguageModelV4 } from "@ai-sdk/provider";
 import { Env } from "../Env.ts";
-import { Logger } from "../telemetry/Logger.ts";
 import { type Model } from "../Model.ts";
+import { Logger } from "../telemetry/Logger.ts";
 
 const logger = Logger.get(import.meta.url);
 

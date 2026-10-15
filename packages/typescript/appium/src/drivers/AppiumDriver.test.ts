@@ -1,11 +1,11 @@
-import type { Browser } from "webdriverio";
 import { describe, expect, it, vi } from "vitest";
+import type { Browser } from "webdriverio";
 import {
   type BaseAccessibilityTree,
   TreeDevDrillError,
 } from "@alumnium/core/internal";
-import { AppiumDriver } from "./AppiumDriver.ts";
 import { TestTreeFactory } from "../../../core/src/drivers/__factories__/TestTreeFactory.ts";
+import { AppiumDriver } from "./AppiumDriver.ts";
 
 describe("AppiumDriver", () => {
   describe("findElement", () => {

@@ -7,7 +7,6 @@ import {
   vi,
   type MockInstance,
 } from "vitest";
-import { XcodeAccessibilityTree } from "../accessibility/XcodeAccessibilityTree.ts";
 import {
   ClickTool,
   DragAndDropTool,
@@ -17,6 +16,7 @@ import {
   ScrollTool,
   TypeTool,
 } from "@alumnium/core";
+import { XcodeAccessibilityTree } from "../accessibility/XcodeAccessibilityTree.ts";
 import { XcodeDriver } from "./XcodeDriver.ts";
 import { XcodeSession } from "./XcodeSession.ts";
 

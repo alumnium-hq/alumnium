@@ -1,5 +1,5 @@
-import { Alumni as BaseAlumni } from "@alumnium/core";
 import type { Browser } from "webdriverio";
+import { Alumni as BaseAlumni } from "@alumnium/core";
 import { AppiumDriver } from "./drivers/AppiumDriver.ts";
 
 /** Alumni driving a WebdriverIO (Appium) `Browser`. */

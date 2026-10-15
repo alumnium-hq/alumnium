@@ -1,7 +1,7 @@
 import { always } from "alwaysly";
 import { Element, isTag, isText, Text } from "domhandler";
-import { Parser } from "htmlparser2";
 import * as DomHandler from "domhandler";
+import { Parser } from "htmlparser2";
 
 export namespace Xml {
   export type Node = DomHandler.Node;

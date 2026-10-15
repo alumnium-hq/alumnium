@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import { fileURLToPath } from "node:url";
-import { get_encoding } from "tiktoken";
 import { $ } from "bun";
+import { get_encoding } from "tiktoken";
 
 const SNAPSHOTS_PATH = new URL(
   "../../core/src/server/accessibility/__snapshots__/",

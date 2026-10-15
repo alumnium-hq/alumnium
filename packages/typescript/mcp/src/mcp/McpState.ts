@@ -3,13 +3,12 @@
  * State management for MCP server driver instances.
  */
 
+import { Alumni } from "alumnium";
 import {
   type BaseServerAccessibilityTree,
   LlmUsageStats,
   Telemetry,
 } from "@alumnium/core/internal";
-
-import { Alumni } from "alumnium";
 import { PlaywrightDriver } from "@alumnium/playwright";
 import type { McpArtifactsStore } from "./McpArtifactsStore.ts";
 import type { McpDriver } from "./mcpDrivers.ts";
