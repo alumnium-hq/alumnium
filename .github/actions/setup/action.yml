@@ -58,7 +58,10 @@ runs:
     - name: Cache Dist
       uses: actions/cache@v5
       with:
-        path: packages/typescript/dist
+        path: |
+          packages/typescript/dist
+          packages/python/dist
+          packages/java/dist
         key: dist-${{ inputs.sha || github.sha }}
         restore-keys: dist-
 

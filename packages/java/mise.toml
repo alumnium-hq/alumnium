@@ -6,6 +6,9 @@ run = "./gradlew installPlaywright"
 # NOTE: On Debian-compatible Linux, it prompts for sudo to install OS dependencies.
 raw = true
 
+[tasks.clean]
+run = "rm -rf dist build"
+
 [tasks.build]
 run = "./gradlew build -x test"
 description = "Build main Java artifact"
@@ -74,3 +77,10 @@ run = [{ task = "test/system", args = ["appium-android", "{{usage.test}}"] }]
 [tasks."test/package"]
 run = "./scripts/test-package.sh"
 description = "Test Maven package installation and CLI binary auto-start"
+
+[tasks."version/set"]
+description = "Sets the version of the Java package."
+usage = '''
+arg "<version>" help="Version to set, e.g. 0.24.0"
+'''
+run = "../../scripts/build/setVersion.ts java {{usage.version}}"

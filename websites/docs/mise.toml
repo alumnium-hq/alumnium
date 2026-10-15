@@ -50,3 +50,10 @@ run = "bun scripts/fetchAsciinemaMetadata.ts"
 
 [tasks."gen/types"]
 run = "bun wrangler types"
+
+[tasks."version/set"]
+description = "Sets the Alumnium version in the docs install snippets."
+usage = '''
+arg "<version>" help="Version to set, e.g. 0.24.0"
+'''
+run = "../../scripts/build/setVersion.ts docs {{usage.version}}"

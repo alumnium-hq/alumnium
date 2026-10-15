@@ -192,7 +192,7 @@ def _create_al(driver, extra_tools=None):
 
 @fixture(scope="session")
 def pages_dir():
-    return Path(__file__).resolve().parents[3] / "typescript/tests/system/pages"
+    return Path(__file__).resolve().parents[3] / "typescript/alumnium/tests/system/pages"
 
 
 @fixture

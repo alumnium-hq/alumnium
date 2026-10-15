@@ -30,7 +30,7 @@ runs:
       with:
         name: test-typescript-${{ inputs.name }}
         path: |
-          packages/typescript/tests/artifacts/
+          packages/typescript/alumnium/tests/artifacts/
         if-no-files-found: ignore
 
     - name: Upload Python Test Artifacts

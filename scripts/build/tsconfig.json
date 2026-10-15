@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "../../packages/typescript/tsconfig.json",
+  "include": ["./*.ts"],
+  "references": [{ "path": "../../packages/typescript/" }],
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "./.ts",
+    "tsBuildInfoFile": "./.ts/tsconfig.tsbuildinfo",
+    "types": ["bun"]
+  }
+}

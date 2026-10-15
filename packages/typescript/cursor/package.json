@@ -1,0 +1,17 @@
+{
+  "name": "@alumnium/cursor",
+  "version": "0.23.1",
+  "description": "Alumnium Cursor LLM provider",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@ai-sdk/provider": "^4.0.7",
+    "@alumnium/core": "workspace:*",
+    "@cursor/sdk": "1.0.30",
+    "ai": "^7.0.78",
+    "zod": "^4.4.1"
+  }
+}

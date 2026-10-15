@@ -1,0 +1,16 @@
+{
+  "name": "@alumnium/openai",
+  "version": "0.23.1",
+  "description": "Alumnium OpenAI LLM provider",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@ai-sdk/openai": "^4.0.46",
+    "@ai-sdk/provider": "^4.0.7",
+    "@alumnium/core": "workspace:*",
+    "ai": "^7.0.78"
+  }
+}
