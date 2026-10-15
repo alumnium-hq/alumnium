@@ -43,7 +43,7 @@ export const McpCommand = CliCommand.define({
       name: "mode",
       syntax: "--mode <mode>",
       description:
-        "Execution mode: agentic or direct (defaults to ALUMNIUM_MCP_MODE or agentic)",
+        "Execution mode: agentic or direct (defaults to ALUMNIUM_MCP_MODE or agentic). HTTP clients can override it per request with ?mode=agentic|direct",
     }),
   }),
 
