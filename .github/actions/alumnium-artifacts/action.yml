@@ -19,3 +19,4 @@ runs:
         name: alumnium-${{ inputs.name }}
         path: packages/${{ inputs.package }}/.alumnium
         include-hidden-files: true
+        if-no-files-found: ignore
