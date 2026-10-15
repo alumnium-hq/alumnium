@@ -33,30 +33,30 @@ dependencies = [
 ]
 
 [[tool.uv.sources.alumnium]]
-path = "../../dist/alumnium-$VERSION-py3-none-any.whl"
+path = "../../dist/pip/alumnium-$VERSION-py3-none-any.whl"
 
 [[tool.uv.sources.alumnium-cli]]
-path = "../../../typescript/dist/pip/alumnium_cli-$VERSION-py3-none-manylinux_2_28_x86_64.whl"
+path = "../../dist/pip/alumnium_cli-$VERSION-py3-none-manylinux_2_28_x86_64.whl"
 marker = "sys_platform == 'linux' and (platform_machine == 'x86_64' or platform_machine == 'amd64' or platform_machine == 'AMD64')"
 
 [[tool.uv.sources.alumnium-cli]]
-path = "../../../typescript/dist/pip/alumnium_cli-$VERSION-py3-none-manylinux_2_28_aarch64.whl"
+path = "../../dist/pip/alumnium_cli-$VERSION-py3-none-manylinux_2_28_aarch64.whl"
 marker = "sys_platform == 'linux' and (platform_machine == 'aarch64' or platform_machine == 'arm64' or platform_machine == 'ARM64')"
 
 [[tool.uv.sources.alumnium-cli]]
-path = "../../../typescript/dist/pip/alumnium_cli-$VERSION-py3-none-macosx_10_9_x86_64.whl"
+path = "../../dist/pip/alumnium_cli-$VERSION-py3-none-macosx_10_9_x86_64.whl"
 marker = "sys_platform == 'darwin' and (platform_machine == 'x86_64' or platform_machine == 'amd64' or platform_machine == 'AMD64')"
 
 [[tool.uv.sources.alumnium-cli]]
-path = "../../../typescript/dist/pip/alumnium_cli-$VERSION-py3-none-macosx_11_0_arm64.whl"
+path = "../../dist/pip/alumnium_cli-$VERSION-py3-none-macosx_11_0_arm64.whl"
 marker = "sys_platform == 'darwin' and (platform_machine == 'aarch64' or platform_machine == 'arm64' or platform_machine == 'ARM64')"
 
 [[tool.uv.sources.alumnium-cli]]
-path = "../../../typescript/dist/pip/alumnium_cli-$VERSION-py3-none-win_amd64.whl"
+path = "../../dist/pip/alumnium_cli-$VERSION-py3-none-win_amd64.whl"
 marker = "sys_platform == 'win32' and (platform_machine == 'x86_64' or platform_machine == 'amd64' or platform_machine == 'AMD64')"
 
 [[tool.uv.sources.alumnium-cli]]
-path = "../../../typescript/dist/pip/alumnium_cli-$VERSION-py3-none-win_arm64.whl"
+path = "../../dist/pip/alumnium_cli-$VERSION-py3-none-win_arm64.whl"
 marker = "sys_platform == 'win32' and (platform_machine == 'aarch64' or platform_machine == 'arm64' or platform_machine == 'ARM64')"
 EOF
 }

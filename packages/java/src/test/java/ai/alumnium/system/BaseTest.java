@@ -174,7 +174,7 @@ public class BaseTest {
 
   protected static void navigate(String url) {
     if (!URI.create(url).isAbsolute()) {
-      url = Path.of("../typescript/tests/system/pages", url).toUri().toString();
+      url = Path.of("../typescript/alumnium/tests/system/pages", url).toUri().toString();
     }
     al.driver().visit(url);
   }

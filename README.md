@@ -143,7 +143,7 @@ Alumnium is a member of the [TestMu AI][5] Open Source Program, which supports t
 [3]: https://alumnium.ai/docs/getting-started/configuration/
 [4]: ./CONTRIBUTING.md
 [5]: https://www.testmuai.com/
-[6]: packages/typescript/examples/
+[6]: packages/typescript/alumnium/examples/
 [7]: https://alumnium.ai/blog/webvoyager-benchmark/
 [8]: https://alumnium.ai/docs/guides/mcp/
 [9]: packages/java/src/test/java/ai/alumnium/system

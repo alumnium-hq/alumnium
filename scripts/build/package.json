@@ -1,0 +1,16 @@
+{
+  "name": "@alumnium/build-scripts",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Scripts building, checking and publishing Alumnium packages",
+  "license": "MIT",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "^1.4.2",
+    "@types/node": "24",
+    "alwaysly": "^0.4.0",
+    "case-anything": "^3.1.2",
+    "smol-toml": "^1.6.1",
+    "zod": "^4.4.1"
+  }
+}

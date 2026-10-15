@@ -1,0 +1,50 @@
+{
+  "name": "@alumnium/core",
+  "version": "0.23.1",
+  "description": "Alumnium core: Alumni, agents, environment, telemetry, storage, accessibility trees, tools and driver contracts",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./internal": "./src/internal.ts",
+    "./agents": "./src/agents.ts"
+  },
+  "dependencies": {
+    "@ai-sdk/provider": "^4.0.7",
+    "@js-fns/canon": "^0.2.0",
+    "@js-fns/xxhash": "^0.1.0",
+    "@logtape/file": "^2.0.2",
+    "@logtape/logtape": "^2.0.2",
+    "@logtape/otel": "^2.0.5",
+    "@opentelemetry/api": "^1.9.1",
+    "@opentelemetry/exporter-trace-otlp-http": "^0.215.0",
+    "@opentelemetry/resources": "^2.7.0",
+    "@opentelemetry/sdk-trace-base": "^2.7.0",
+    "@opentelemetry/sdk-trace-node": "^2.7.0",
+    "alwaysly": "^0.4.0",
+    "cac": "^7.0.0",
+    "case-anything": "^3.1.2",
+    "diff": "^8.0.3",
+    "domelementtype": "^3.0.0",
+    "domhandler": "^6.0.0",
+    "domutils": "^3.2.2",
+    "filenamify": "^7.0.1",
+    "htmlparser2": "^11.0.0",
+    "nanoid": "^5.1.9",
+    "picocolors": "^1.1.1",
+    "smollit": "^0.2.0",
+    "zod": "^4.4.1"
+  },
+  "devDependencies": {
+    "ai": "^7.0.78",
+    "oxfmt": "^0.65.0"
+  },
+  "peerDependencies": {
+    "ai": "^7.0.78"
+  },
+  "peerDependenciesMeta": {
+    "ai": {
+      "optional": true
+    }
+  }
+}

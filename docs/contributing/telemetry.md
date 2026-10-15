@@ -33,7 +33,7 @@ Use these env vars to configure a custom OpenTelemetry backend.
 
 Similar to `Logger.get`, you use the `Tracer.get` (or `Telemetry.get` that provides both `logger` and `tracer` instances) to get the `tracer` instance for the current module. Then use one of the `tracer` methods to create spans and events.
 
-The span and event names and their attributes are strictly typed to avoid inconsistencies and typos. To add a new span, a span attribute/event, or a global event, update [`packages/typescript/src/telemetry/Tracer.ts`](../../packages/typescript/src/telemetry/Tracer.ts).
+The span and event names and their attributes are strictly typed to avoid inconsistencies and typos. To add a new span, a span attribute/event, or a global event, update [`packages/typescript/core/src/telemetry/Tracer.ts`](../../packages/typescript/core/src/telemetry/Tracer.ts).
 
 #### Instrumenting With Spans
 

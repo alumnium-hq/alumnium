@@ -50,7 +50,7 @@ Check out [documentation][1] and more [examples][2]!
 See the [contributing guidelines][4] for information on how to get involved in the project and develop locally.
 
 [1]: https://alumnium.ai/docs/
-[2]: https://github.com/alumnium-hq/alumnium/tree/main/packages/typescript/tests/system
+[2]: https://github.com/alumnium-hq/alumnium/tree/main/packages/typescript/alumnium/tests/system
 [3]: https://alumnium.ai/docs/getting-started/configuration/
 [4]: https://github.com/alumnium-hq/alumnium/tree/main/CONTRIBUTING.md
 [5]: https://www.lambdatest.com/

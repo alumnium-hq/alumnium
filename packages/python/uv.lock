@@ -23,12 +23,12 @@ name = "alumnium"
 version = "0.23.1"
 source = { editable = "." }
 dependencies = [
-    { name = "alumnium-cli", version = "0.23.1", source = { directory = "../typescript/dist/pip-alumnium-cli-darwin-arm64" }, marker = "(platform_machine == 'ARM64' and sys_platform == 'darwin') or (platform_machine == 'aarch64' and sys_platform == 'darwin') or (platform_machine == 'arm64' and sys_platform == 'darwin')" },
-    { name = "alumnium-cli", version = "0.23.1", source = { directory = "../typescript/dist/pip-alumnium-cli-darwin-x64" }, marker = "(platform_machine == 'AMD64' and sys_platform == 'darwin') or (platform_machine == 'amd64' and sys_platform == 'darwin') or (platform_machine == 'x86_64' and sys_platform == 'darwin')" },
-    { name = "alumnium-cli", version = "0.23.1", source = { directory = "../typescript/dist/pip-alumnium-cli-linux-arm64" }, marker = "(platform_machine == 'ARM64' and sys_platform == 'linux') or (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'arm64' and sys_platform == 'linux')" },
-    { name = "alumnium-cli", version = "0.23.1", source = { directory = "../typescript/dist/pip-alumnium-cli-linux-x64" }, marker = "(platform_machine == 'AMD64' and sys_platform == 'linux') or (platform_machine == 'amd64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
-    { name = "alumnium-cli", version = "0.23.1", source = { directory = "../typescript/dist/pip-alumnium-cli-windows-arm64" }, marker = "(platform_machine == 'ARM64' and sys_platform == 'win32') or (platform_machine == 'aarch64' and sys_platform == 'win32') or (platform_machine == 'arm64' and sys_platform == 'win32')" },
-    { name = "alumnium-cli", version = "0.23.1", source = { directory = "../typescript/dist/pip-alumnium-cli-windows-x64" }, marker = "(platform_machine == 'AMD64' and sys_platform == 'win32') or (platform_machine == 'amd64' and sys_platform == 'win32') or (platform_machine == 'x86_64' and sys_platform == 'win32')" },
+    { name = "alumnium-cli", version = "0.23.1", source = { directory = "dist/pip-alumnium-cli-darwin-arm64" }, marker = "(platform_machine == 'ARM64' and sys_platform == 'darwin') or (platform_machine == 'aarch64' and sys_platform == 'darwin') or (platform_machine == 'arm64' and sys_platform == 'darwin')" },
+    { name = "alumnium-cli", version = "0.23.1", source = { directory = "dist/pip-alumnium-cli-darwin-x64" }, marker = "(platform_machine == 'AMD64' and sys_platform == 'darwin') or (platform_machine == 'amd64' and sys_platform == 'darwin') or (platform_machine == 'x86_64' and sys_platform == 'darwin')" },
+    { name = "alumnium-cli", version = "0.23.1", source = { directory = "dist/pip-alumnium-cli-linux-arm64" }, marker = "(platform_machine == 'ARM64' and sys_platform == 'linux') or (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'arm64' and sys_platform == 'linux')" },
+    { name = "alumnium-cli", version = "0.23.1", source = { directory = "dist/pip-alumnium-cli-linux-x64" }, marker = "(platform_machine == 'AMD64' and sys_platform == 'linux') or (platform_machine == 'amd64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
+    { name = "alumnium-cli", version = "0.23.1", source = { directory = "dist/pip-alumnium-cli-windows-arm64" }, marker = "(platform_machine == 'ARM64' and sys_platform == 'win32') or (platform_machine == 'aarch64' and sys_platform == 'win32') or (platform_machine == 'arm64' and sys_platform == 'win32')" },
+    { name = "alumnium-cli", version = "0.23.1", source = { directory = "dist/pip-alumnium-cli-windows-x64" }, marker = "(platform_machine == 'AMD64' and sys_platform == 'win32') or (platform_machine == 'amd64' and sys_platform == 'win32') or (platform_machine == 'x86_64' and sys_platform == 'win32')" },
     { name = "appium-python-client" },
     { name = "playwright" },
     { name = "portpicker" },
@@ -60,12 +60,12 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "alumnium-cli", marker = "(platform_machine == 'AMD64' and sys_platform == 'darwin') or (platform_machine == 'amd64' and sys_platform == 'darwin') or (platform_machine == 'x86_64' and sys_platform == 'darwin')", directory = "../typescript/dist/pip-alumnium-cli-darwin-x64" },
-    { name = "alumnium-cli", marker = "(platform_machine == 'ARM64' and sys_platform == 'darwin') or (platform_machine == 'aarch64' and sys_platform == 'darwin') or (platform_machine == 'arm64' and sys_platform == 'darwin')", directory = "../typescript/dist/pip-alumnium-cli-darwin-arm64" },
-    { name = "alumnium-cli", marker = "(platform_machine == 'AMD64' and sys_platform == 'linux') or (platform_machine == 'amd64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')", directory = "../typescript/dist/pip-alumnium-cli-linux-x64" },
-    { name = "alumnium-cli", marker = "(platform_machine == 'ARM64' and sys_platform == 'linux') or (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'arm64' and sys_platform == 'linux')", directory = "../typescript/dist/pip-alumnium-cli-linux-arm64" },
-    { name = "alumnium-cli", marker = "(platform_machine == 'AMD64' and sys_platform == 'win32') or (platform_machine == 'amd64' and sys_platform == 'win32') or (platform_machine == 'x86_64' and sys_platform == 'win32')", directory = "../typescript/dist/pip-alumnium-cli-windows-x64" },
-    { name = "alumnium-cli", marker = "(platform_machine == 'ARM64' and sys_platform == 'win32') or (platform_machine == 'aarch64' and sys_platform == 'win32') or (platform_machine == 'arm64' and sys_platform == 'win32')", directory = "../typescript/dist/pip-alumnium-cli-windows-arm64" },
+    { name = "alumnium-cli", marker = "(platform_machine == 'AMD64' and sys_platform == 'darwin') or (platform_machine == 'amd64' and sys_platform == 'darwin') or (platform_machine == 'x86_64' and sys_platform == 'darwin')", directory = "dist/pip-alumnium-cli-darwin-x64" },
+    { name = "alumnium-cli", marker = "(platform_machine == 'ARM64' and sys_platform == 'darwin') or (platform_machine == 'aarch64' and sys_platform == 'darwin') or (platform_machine == 'arm64' and sys_platform == 'darwin')", directory = "dist/pip-alumnium-cli-darwin-arm64" },
+    { name = "alumnium-cli", marker = "(platform_machine == 'AMD64' and sys_platform == 'linux') or (platform_machine == 'amd64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')", directory = "dist/pip-alumnium-cli-linux-x64" },
+    { name = "alumnium-cli", marker = "(platform_machine == 'ARM64' and sys_platform == 'linux') or (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'arm64' and sys_platform == 'linux')", directory = "dist/pip-alumnium-cli-linux-arm64" },
+    { name = "alumnium-cli", marker = "(platform_machine == 'AMD64' and sys_platform == 'win32') or (platform_machine == 'amd64' and sys_platform == 'win32') or (platform_machine == 'x86_64' and sys_platform == 'win32')", directory = "dist/pip-alumnium-cli-windows-x64" },
+    { name = "alumnium-cli", marker = "(platform_machine == 'ARM64' and sys_platform == 'win32') or (platform_machine == 'aarch64' and sys_platform == 'win32') or (platform_machine == 'arm64' and sys_platform == 'win32')", directory = "dist/pip-alumnium-cli-windows-arm64" },
     { name = "appium-python-client", specifier = ">=5.1.1,<6.0.0" },
     { name = "playwright", specifier = ">=1.49,<2.0" },
     { name = "portpicker", specifier = ">=1.6.0" },
@@ -98,7 +98,7 @@ dev = [
 [[package]]
 name = "alumnium-cli"
 version = "0.23.1"
-source = { directory = "../typescript/dist/pip-alumnium-cli-darwin-arm64" }
+source = { directory = "dist/pip-alumnium-cli-darwin-arm64" }
 resolution-markers = [
     "(python_full_version >= '3.11' and platform_machine == 'ARM64' and sys_platform == 'darwin') or (python_full_version >= '3.11' and platform_machine == 'aarch64' and sys_platform == 'darwin') or (python_full_version >= '3.11' and platform_machine == 'arm64' and sys_platform == 'darwin')",
     "(python_full_version < '3.11' and platform_machine == 'ARM64' and sys_platform == 'darwin') or (python_full_version < '3.11' and platform_machine == 'aarch64' and sys_platform == 'darwin') or (python_full_version < '3.11' and platform_machine == 'arm64' and sys_platform == 'darwin')",
@@ -107,7 +107,7 @@ resolution-markers = [
 [[package]]
 name = "alumnium-cli"
 version = "0.23.1"
-source = { directory = "../typescript/dist/pip-alumnium-cli-darwin-x64" }
+source = { directory = "dist/pip-alumnium-cli-darwin-x64" }
 resolution-markers = [
     "(python_full_version >= '3.11' and platform_machine == 'AMD64' and sys_platform == 'darwin') or (python_full_version >= '3.11' and platform_machine == 'amd64' and sys_platform == 'darwin') or (python_full_version >= '3.11' and platform_machine == 'x86_64' and sys_platform == 'darwin')",
     "(python_full_version < '3.11' and platform_machine == 'AMD64' and sys_platform == 'darwin') or (python_full_version < '3.11' and platform_machine == 'amd64' and sys_platform == 'darwin') or (python_full_version < '3.11' and platform_machine == 'x86_64' and sys_platform == 'darwin')",
@@ -116,7 +116,7 @@ resolution-markers = [
 [[package]]
 name = "alumnium-cli"
 version = "0.23.1"
-source = { directory = "../typescript/dist/pip-alumnium-cli-linux-arm64" }
+source = { directory = "dist/pip-alumnium-cli-linux-arm64" }
 resolution-markers = [
     "(python_full_version >= '3.11' and platform_machine == 'ARM64' and sys_platform == 'linux') or (python_full_version >= '3.11' and platform_machine == 'aarch64' and sys_platform == 'linux') or (python_full_version >= '3.11' and platform_machine == 'arm64' and sys_platform == 'linux')",
     "(python_full_version < '3.11' and platform_machine == 'ARM64' and sys_platform == 'linux') or (python_full_version < '3.11' and platform_machine == 'aarch64' and sys_platform == 'linux') or (python_full_version < '3.11' and platform_machine == 'arm64' and sys_platform == 'linux')",
@@ -125,7 +125,7 @@ resolution-markers = [
 [[package]]
 name = "alumnium-cli"
 version = "0.23.1"
-source = { directory = "../typescript/dist/pip-alumnium-cli-linux-x64" }
+source = { directory = "dist/pip-alumnium-cli-linux-x64" }
 resolution-markers = [
     "(python_full_version >= '3.11' and platform_machine == 'AMD64' and sys_platform == 'linux') or (python_full_version >= '3.11' and platform_machine == 'amd64' and sys_platform == 'linux') or (python_full_version >= '3.11' and platform_machine == 'x86_64' and sys_platform == 'linux')",
     "(python_full_version < '3.11' and platform_machine == 'AMD64' and sys_platform == 'linux') or (python_full_version < '3.11' and platform_machine == 'amd64' and sys_platform == 'linux') or (python_full_version < '3.11' and platform_machine == 'x86_64' and sys_platform == 'linux')",
@@ -134,7 +134,7 @@ resolution-markers = [
 [[package]]
 name = "alumnium-cli"
 version = "0.23.1"
-source = { directory = "../typescript/dist/pip-alumnium-cli-windows-arm64" }
+source = { directory = "dist/pip-alumnium-cli-windows-arm64" }
 resolution-markers = [
     "(python_full_version >= '3.11' and platform_machine == 'ARM64' and sys_platform == 'win32') or (python_full_version >= '3.11' and platform_machine == 'aarch64' and sys_platform == 'win32') or (python_full_version >= '3.11' and platform_machine == 'arm64' and sys_platform == 'win32')",
     "(python_full_version < '3.11' and platform_machine == 'ARM64' and sys_platform == 'win32') or (python_full_version < '3.11' and platform_machine == 'aarch64' and sys_platform == 'win32') or (python_full_version < '3.11' and platform_machine == 'arm64' and sys_platform == 'win32')",
@@ -143,7 +143,7 @@ resolution-markers = [
 [[package]]
 name = "alumnium-cli"
 version = "0.23.1"
-source = { directory = "../typescript/dist/pip-alumnium-cli-windows-x64" }
+source = { directory = "dist/pip-alumnium-cli-windows-x64" }
 resolution-markers = [
     "(python_full_version >= '3.11' and platform_machine == 'AMD64' and sys_platform == 'win32') or (python_full_version >= '3.11' and platform_machine == 'amd64' and sys_platform == 'win32') or (python_full_version >= '3.11' and platform_machine == 'x86_64' and sys_platform == 'win32')",
     "(python_full_version < '3.11' and platform_machine == 'AMD64' and sys_platform == 'win32') or (python_full_version < '3.11' and platform_machine == 'amd64' and sys_platform == 'win32') or (python_full_version < '3.11' and platform_machine == 'x86_64' and sys_platform == 'win32')",

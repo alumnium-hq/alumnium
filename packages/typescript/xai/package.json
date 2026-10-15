@@ -1,0 +1,16 @@
+{
+  "name": "@alumnium/xai",
+  "version": "0.23.1",
+  "description": "Alumnium xAI LLM provider",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@ai-sdk/provider": "^4.0.7",
+    "@ai-sdk/xai": "^4.0.43",
+    "@alumnium/core": "workspace:*",
+    "ai": "^7.0.78"
+  }
+}

@@ -18,7 +18,7 @@ Before contributing, please review:
 
 Alumnium is organized as a monorepo with two main packages:
 
-- **`packages/typescript/`** - Core TypeScript implementation, MCP, and AI servers
+- **`packages/typescript/`** - TypeScript workspace split into npm packages (`core`, drivers, one package per LLM provider, `test`, `alumnium`) plus the MCP and HTTP servers shipped in the CLI binary
 - **`packages/python/`** - Python client implementation
 
 Both packages share the same API and can be developed independently or together.
@@ -195,7 +195,7 @@ gh workflow run ci.yml -f pr=123
 gh workflow run ci.yml -f google=true -f anthropic=true -f typescript=false -f java=false -f selenium=false -f eval=false
 ```
 
-Only `azure_openai` is checked by default. Every provider from `packages/typescript/src/Model.ts` is
+Only `azure_openai` is checked by default. Every provider from `packages/typescript/core/src/Model.ts` is
 available, but only some have credentials configured in CI (azure_openai, anthropic, aws_anthropic,
 aws_meta, deepseek, google, mistralai, openai); the others will fail until secrets are added.
 
