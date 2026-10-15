@@ -1,0 +1,30 @@
+allowBuilds:
+  edgedriver: false
+  geckodriver: false
+  protobufjs: false
+
+overrides:
+  "@alumnium/anthropic": "file:../../../dist/npm-anthropic"
+  "@alumnium/appium": "file:../../../dist/npm-appium"
+  "@alumnium/aws": "file:../../../dist/npm-aws"
+  "@alumnium/azure": "file:../../../dist/npm-azure"
+  "@alumnium/codex": "file:../../../dist/npm-codex"
+  "@alumnium/core": "file:../../../dist/npm-core"
+  "@alumnium/cursor": "file:../../../dist/npm-cursor"
+  "@alumnium/deepseek": "file:../../../dist/npm-deepseek"
+  "@alumnium/google": "file:../../../dist/npm-google"
+  "@alumnium/maestro": "file:../../../dist/npm-maestro"
+  "@alumnium/mistral": "file:../../../dist/npm-mistral"
+  "@alumnium/ollama": "file:../../../dist/npm-ollama"
+  "@alumnium/openai": "file:../../../dist/npm-openai"
+  "@alumnium/openrouter": "file:../../../dist/npm-openrouter"
+  "@alumnium/playwright": "file:../../../dist/npm-playwright"
+  "@alumnium/selenium": "file:../../../dist/npm-selenium"
+  "@alumnium/xai": "file:../../../dist/npm-xai"
+  "@alumnium/xcode": "file:../../../dist/npm-xcode"
+  "@alumnium/cli-darwin-arm64": "file:../../../dist/npm-alumnium-cli-darwin-arm64"
+  "@alumnium/cli-darwin-x64": "file:../../../dist/npm-alumnium-cli-darwin-x64"
+  "@alumnium/cli-linux-arm64": "file:../../../dist/npm-alumnium-cli-linux-arm64"
+  "@alumnium/cli-linux-x64": "file:../../../dist/npm-alumnium-cli-linux-x64"
+  "@alumnium/cli-windows-arm64": "file:../../../dist/npm-alumnium-cli-windows-arm64"
+  "@alumnium/cli-windows-x64": "file:../../../dist/npm-alumnium-cli-windows-x64"

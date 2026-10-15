@@ -11,3 +11,10 @@ if [ "$actual" != "$expected" ]; then
 fi
 ''',
 ]
+
+[tasks."version/set"]
+description = "Sets the Helm chart appVersion."
+usage = '''
+arg "<version>" help="Version to set, e.g. 0.24.0"
+'''
+run = "../../scripts/build/setVersion.ts chart {{usage.version}}"

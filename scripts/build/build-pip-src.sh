@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+BUILD_SUBSCRIPT="${BUILD_SUBSCRIPT:-false}"
+
+if [ "$BUILD_SUBSCRIPT" != "true" ]; then
+	echo -e "🚧 Generating source tarball for pip package...\n"
+fi
+
+DIST_DIR="$(dirname "${BASH_SOURCE[0]}")/../../packages/python/dist"
+SRC_TAR_GZ_NAME="alumnium_cli-$VERSION.tar.gz"
+SRC_TAR_GZ_PATH="$DIST_DIR/pip/$SRC_TAR_GZ_NAME"
+
+tmp_dir="$(mktemp -d)"
+trap 'rm -rf "$tmp_dir"' EXIT
+
+# PyPI sdist requires a single top-level directory named {package}-{version}
+top_dir="$tmp_dir/alumnium_cli-$VERSION"
+mkdir -p "$top_dir"
+
+# PyPI requires PKG-INFO in the sdist root
+printf '%s' "$PKG_INFO" > "$top_dir/PKG-INFO"
+
+# Copy pip directories to temp, zeroing out binaries
+while IFS= read -r -d '' dir; do
+	cp -r "$dir" "$top_dir/"
+	find "$top_dir/$(basename "$dir")" -path '*/src/alumnium_cli/alumnium-*' \
+		-exec sh -c ': > "$1"' _ {} \;
+done < <(find "$DIST_DIR" -maxdepth 1 -type d -name 'pip-alumnium-cli*' -print0)
+
+# Archive from temp directory, excluding ruff cache
+tar -czf "$SRC_TAR_GZ_PATH" \
+	--exclude='*.ruff_cache*' \
+	-C "$tmp_dir" \
+	"alumnium_cli-$VERSION"
+
+if [ "$BUILD_SUBSCRIPT" = "true" ]; then
+	echo "🟢 Pip source tarball: $SRC_TAR_GZ_PATH"
+else
+	echo "🎉 Generated source tarball: $SRC_TAR_GZ_PATH"
+fi
+
+if [ -n "${BUILD_DEBUG:-}" ]; then
+	tmp_debug_dir="$(mktemp -d)"
+	tar -xf "$SRC_TAR_GZ_PATH" -C "$tmp_debug_dir"
+	echo -e "\n📦 Contents of the generated tarball:\n"
+	tree "$tmp_debug_dir"
+fi

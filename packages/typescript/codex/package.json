@@ -1,0 +1,20 @@
+{
+  "name": "@alumnium/codex",
+  "version": "0.23.1",
+  "description": "Alumnium Codex LLM provider",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@ai-sdk/openai": "^4.0.46",
+    "@ai-sdk/provider": "^4.0.7",
+    "@alumnium/core": "workspace:*",
+    "ai": "^7.0.78",
+    "openai-oauth": "1.0.2"
+  },
+  "devDependencies": {
+    "zod": "^4.4.1"
+  }
+}

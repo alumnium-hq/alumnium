@@ -8,7 +8,12 @@ AI-powered test automation framework using natural language commands. Wraps Appi
 
 - `packages/java/` - Java client implementation
 - `packages/python/` - Python client implementation
-- `packages/typescript/` - TypeScript core implementation (agents, server, MCP) and client
+- `packages/typescript/` - TypeScript workspace: shared scripts, tests and tooling, plus npm packages in subdirectories:
+  - `core/` (`@alumnium/core`) - `Alumni`, `Area`, clients, AI agents, prompts, caches, the `LlmFactory` provider registry, Env, telemetry, storage, accessibility trees, tools and the `BaseDriver` contract. No drivers or LLM provider SDKs; `ai` is an optional peer loaded lazily via `llm/loadAi.ts` when agents run. The main entry (`src/index.ts`) exports only the public API (`Alumni`, `Area`, `Cache`, `Model`, tools, etc.); everything other packages need (`Env`, `Logger`, `BaseDriver`, `LlmFactory`, utils) comes from `@alumnium/core/internal`, which the main entry re-exports from. Agent internals are exposed to private packages via `@alumnium/core/agents`, which isn't published
+  - `playwright/`, `selenium/`, `appium/`, `maestro/`, `xcode/` (`@alumnium/<driver>`) - Drivers, each exporting an `Alumni` bound to its native driver
+  - `openai/`, `anthropic/`, `google/`, `azure/`, `aws/`, `deepseek/`, `mistral/`, `xai/`, `openrouter/`, `ollama/`, `codex/`, `cursor/` (`@alumnium/<provider>`) - One package per LLM provider, registered with `LlmFactory` on import and depending on `ai`; shared helpers live in `core/src/llm/providerUtils.ts`
+  - `server/`, `mcp/`, `cli/` - HTTP server, MCP server and CLI, only shipped inside the compiled `alumnium` binary (private)
+  - `alumnium/` (`alumnium`) - Batteries-included package: all drivers and providers, `Alumni` accepting any native driver, and the `alumnium` bin
 
 ## Key Architecture
 
@@ -23,7 +28,7 @@ AI-powered test automation framework using natural language commands. Wraps Appi
 5. **Drivers** abstract platform differences (Selenium/Playwright/Appium)
 6. **Accessibility Trees** provide platform-agnostic UI representation
 
-**Key directories**:
+**Key directories** (inside `packages/typescript/<package>/src/` for TypeScript):
 
 - `accessibility/` - Platform-specific tree implementations (Chromium, XCUITest, UIAutomator2)
 - `drivers/` - Driver wrappers (`SeleniumDriver`, `PlaywrightDriver`, `AppiumDriver`)
@@ -66,3 +71,4 @@ mise //packages/typescript:dev/server  # Start Alumnium server
 1. **Read files before editing**: Understand current implementation
 2. **Match existing patterns**: Keep architecture consistent
 3. **Update both languages**: Maintain API parity between Python/TypeScript
+4. **Respect TypeScript package boundaries**: Import other packages by name through their entries (`@alumnium/core` for public API, `@alumnium/core/internal` for everything else), never by relative path. Add new core modules to `core/src/internal.ts`, and to `core/src/index.ts` only if users need them. `scripts/build/npmPackages.ts` enforces forbidden imports and declared dependencies per package

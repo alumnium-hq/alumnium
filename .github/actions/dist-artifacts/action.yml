@@ -34,7 +34,7 @@ runs:
       with:
         name: dist-npm-${{ inputs.name }}
         path: |
-          packages/typescript/dist/npm/*
+          packages/typescript/dist/npm/*.tgz
 
     - name: Upload Pip Dist Artifacts
       if: inputs.pip == 'true'
@@ -42,8 +42,7 @@ runs:
       with:
         name: dist-pip-${{ inputs.name }}
         path: |
-          packages/python/dist/*
-          packages/typescript/dist/pip/*
+          packages/python/dist/pip/*
 
     - name: Upload Bin Dist Artifacts
       if: inputs.bin == 'true'

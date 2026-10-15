@@ -19,6 +19,47 @@ Alumnium supports:
 - [Maestro](https://maestro.dev) driver for iOS and Android in the MCP server
 - [Xcode 27+](https://developer.apple.com/xcode/) driver for iOS in the MCP server
 
+## npm Packages
+
+The TypeScript implementation is published as several npm packages, released together under the same version:
+
+| Package                                                          | Description                                                                                                                                                                                                                                                |
+| ---------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `alumnium`                                                       | Batteries-included package: `Alumni` accepting any supported driver, all drivers and LLM providers, and the `alumnium` CLI.                                                                                                                                |
+| `@alumnium/playwright`, `@alumnium/selenium`, `@alumnium/appium` | Web and mobile drivers. Each exports an `Alumni` bound to its native driver (Playwright `Page`, Selenium `WebDriver`, WebdriverIO `Browser`).                                                                                                              |
+| `@alumnium/maestro`, `@alumnium/xcode`                           | Maestro and Xcode drivers with their sessions.                                                                                                                                                                                                             |
+| `@alumnium/<provider>`                                           | LLM providers, one package per provider (see below). Importing a package registers its providers.                                                                                                                                                          |
+| `@alumnium/core`                                                 | `Alumni` and the AI agents, shared by all packages. Does not depend on browser drivers or LLM provider SDKs, and runs on Node.js without Bun. The agents run on the `ai` package, installed with any LLM provider package and loaded only when agents run. |
+| `@alumnium/cli-<os>-<arch>`                                      | Prebuilt CLI binaries, installed automatically as optional dependencies of `alumnium`.                                                                                                                                                                     |
+
+LLM provider packages, by `ALUMNIUM_MODEL` provider:
+
+| Provider                        | Package                |
+| ------------------------------- | ---------------------- |
+| `anthropic`                     | `@alumnium/anthropic`  |
+| `aws_anthropic`, `aws_meta`     | `@alumnium/aws`    |
+| `azure_openai`, `azure_foundry` | `@alumnium/azure`      |
+| `codex`                         | `@alumnium/codex`      |
+| `cursor`                        | `@alumnium/cursor`     |
+| `deepseek`                      | `@alumnium/deepseek`   |
+| `google`                        | `@alumnium/google`     |
+| `mistralai`                     | `@alumnium/mistral`    |
+| `ollama`                        | `@alumnium/ollama`     |
+| `openai`                        | `@alumnium/openai`     |
+| `openrouter`                    | `@alumnium/openrouter` |
+| `xai`                           | `@alumnium/xai`        |
+
+Use `alumnium` to write tests. To install only what you use, pick a driver package and the LLM provider package matching `ALUMNIUM_MODEL` instead:
+
+```typescript
+import "@alumnium/openai"; // Registers the `openai` provider.
+import { Alumni } from "@alumnium/playwright";
+
+const al = new Alumni(page);
+```
+
+`@alumnium/core` is meant for tools that integrate Alumnium (e.g. test runners and agent harnesses) and talk to the Alumnium MCP server or CLI, so they don't need to install browser drivers and LLM providers.
+
 ## Environment Variables
 
 The following environment variables can be used to control the behavior of Alumnium.
@@ -113,22 +154,22 @@ export OTEL_EXPORTER_OTLP_PROTOCOL="http/protobuf"
 
 Select AI provider and model to use.
 
-| Value         | LLM                                         | Notes                                                                    |
-| ------------- | ------------------------------------------- | ------------------------------------------------------------------------ |
-| anthropic     | claude-haiku-4-5-20251001                   | Anthropic API.                                                           |
-| azure_foundry | gpt-5.6-luna                                | Azure AI Foundry API.                                                    |
-| azure_openai  | gpt-5.6-luna                                | Self-hosted Azure OpenAI API.                                            |
-| aws_anthropic | us.anthropic.claude-haiku-4-5-20251001-v1:0 | Serverless Amazon Bedrock API.                                           |
-| aws_meta      | us.meta.llama4-maverick-17b-instruct-v1:0   | Serverless Amazon Bedrock API.                                           |
-| codex         | gpt-5.6-luna                                | OpenAI models via ChatGPT Plus/Pro OAuth.                                |
-| cursor        | composer-2.5                                | Cursor models via Cursor Agents SDK (local runtime).                     |
-| deepseek      | deepseek-flash                              | DeepSeek Platform.                                                       |
-| google        | gemini-3.5-flash-lite                       | Google AI Studio API.                                                    |
-| mistralai     | mistral-medium-3-5                          | Mistral AI Studio API.                                                   |
-| ollama        | qwen3.6:35b                                 | Local model inference with Ollama.                                       |
-| openai        | gpt-5.6-luna                                | OpenAI API.                                                              |
-| openrouter    | openai/gpt-5.6-luna                         | Models routed through OpenRouter.                                        |
-| xai           | grok-4.3                                    | xAI API.                                                                 |
+| Value         | LLM                                         | Notes                                                |
+| ------------- | ------------------------------------------- | ---------------------------------------------------- |
+| anthropic     | claude-haiku-4-5-20251001                   | Anthropic API.                                       |
+| azure_foundry | gpt-5.6-luna                                | Azure AI Foundry API.                                |
+| azure_openai  | gpt-5.6-luna                                | Self-hosted Azure OpenAI API.                        |
+| aws_anthropic | us.anthropic.claude-haiku-4-5-20251001-v1:0 | Serverless Amazon Bedrock API.                       |
+| aws_meta      | us.meta.llama4-maverick-17b-instruct-v1:0   | Serverless Amazon Bedrock API.                       |
+| codex         | gpt-5.6-luna                                | OpenAI models via ChatGPT Plus/Pro OAuth.            |
+| cursor        | composer-2.5                                | Cursor models via Cursor Agents SDK (local runtime). |
+| deepseek      | deepseek-flash                              | DeepSeek Platform.                                   |
+| google        | gemini-3.5-flash-lite                       | Google AI Studio API.                                |
+| mistralai     | mistral-medium-3-5                          | Mistral AI Studio API.                               |
+| ollama        | qwen3.6:35b                                 | Local model inference with Ollama.                   |
+| openai        | gpt-5.6-luna                                | OpenAI API.                                          |
+| openrouter    | openai/gpt-5.6-luna                         | Models routed through OpenRouter.                    |
+| xai           | grok-4.3                                    | xAI API.                                             |
 
 You can also override the LLM for each provider by passing it after `/`.
 

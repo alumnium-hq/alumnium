@@ -1,6 +1,6 @@
 # Types Scan
 
-This document describes the `scanTypes` defined in [`packages/typescript/src/utils/typesScan.ts`](../../packages/typescript/src/utils/typesScan.ts), and its counterpart script [`packages/typescript/scripts/generate-types-scan-schema.ts`](../../packages/typescript/scripts/generate-types-scan-schema.ts).
+This document describes the `scanTypes` defined in [`packages/typescript/core/src/utils/typesScan.ts`](../../packages/typescript/core/src/utils/typesScan.ts), and its counterpart script [`packages/typescript/alumnium/scripts/generate-types-scan-schema.ts`](../../packages/typescript/alumnium/scripts/generate-types-scan-schema.ts).
 
 ## Quick Start
 

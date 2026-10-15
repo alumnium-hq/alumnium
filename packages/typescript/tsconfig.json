@@ -2,10 +2,10 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "include": [
     "./*.ts",
-    "./src/**/*.ts",
-    "./scripts/**/*.ts",
-    "./tests/**/*.ts",
-    "./package.json"
+    "./*/src/**/*.ts",
+    "./alumnium/scripts/**/*.ts",
+    "./alumnium/tests/**/*.ts",
+    "./core/package.json"
   ],
   "compilerOptions": {
     // Resolve

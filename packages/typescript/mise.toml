@@ -14,65 +14,66 @@ description = "Clears TypeScript package Alumnium LLM cache."
 run = "rm -rf ./.alumnium/cache"
 
 [tasks.build]
-run = "./scripts/build.ts"
-description = "Build CLI bins, core npm and CLI pip packages"
+run = "../../scripts/build/build.ts"
+description = "Build CLI bins, npm packages and CLI pip/Maven packages"
 depends = ["build/generate"]
 sources = [
-  "src/**/*",
-  "scripts/build.ts",
+  "*/src/**/*",
+  "*/package.json",
+  "../../scripts/build/*",
   "package.json",
   "tsconfig.json",
   "tsconfig.build.json",
   "*.md",
 ]
-outputs = ["dist/**/*"]
+outputs = ["dist/**/*", "../python/dist/**/*", "../java/dist/**/*"]
 tools = { java = "21" }
 
 [tasks."build/generate"]
 run = { task = "build/generate:bundles" }
 
 [tasks."build/generate:bundles"]
-run = "./scripts/generate-bundles.ts | xargs oxfmt"
+run = "../../scripts/build/generate-bundles.ts | xargs oxfmt"
 description = "Generates code bundles to enable building single-file executable"
 sources = [
-  "scripts/generate-bundles.ts",
+  "../../scripts/build/generate-bundles.ts",
   # TODO: Move prompts generation into the script
-  "src/server/agents/prompts/prompts.ts",
-  "src/drivers/scripts/*.js",
-  "src/server/agents/prompts/**/*.md",
-  "src/standalone/cursorSdkManifest.ts",
+  "core/src/server/agents/prompts/prompts.ts",
+  "core/src/drivers/scripts/*.js",
+  "core/src/server/agents/prompts/**/*.md",
+  "cursor/src/standalone/cursorSdkManifest.ts",
   "../../bun.lock",
 ]
 outputs = [
-  "src/server/agents/prompts/bundledPrompts.ts",
-  "src/drivers/scripts/bundledScripts.ts",
-  "src/standalone/cursorSdkVendorManifest.ts",
+  "core/src/server/agents/prompts/bundledPrompts.ts",
+  "core/src/drivers/scripts/bundledScripts.ts",
+  "cursor/src/standalone/cursorSdkVendorManifest.ts",
 ]
 
 [tasks.publish]
-run = "./scripts/publish.sh"
+run = "../../scripts/build/publish.sh"
 depends = "build"
 
 [tasks."dev/cli"]
 usage = '''
 arg "[args]" var=#true
 '''
-run = "fnox exec  -- bun ./src/cli/bin.ts {{usage.args | join(sep=' ')}}"
+run = "fnox exec  -- bun ./cli/src/cli/bin.ts {{usage.args | join(sep=' ')}}"
 quiet = true
 raw = true
 
 [tasks."dev/server"]
-run = "fnox exec  -- bun ./src/cli/bin.ts server"
+run = "fnox exec  -- bun ./cli/src/cli/bin.ts server"
 quiet = true
 raw = true
 
 [tasks."dev/mcp"]
-run = "fnox exec  -- bun ./src/cli/bin.ts mcp"
+run = "fnox exec  -- bun ./cli/src/cli/bin.ts mcp"
 quiet = true
 raw = true
 
 [tasks."dev/mcp:inspect"]
-run = "fnox exec  -- ALUMNIUM_LOG_FILENAME=mcp-inspect.log bunx @modelcontextprotocol/inspector bun ./src/cli/bin.ts mcp"
+run = "fnox exec  -- ALUMNIUM_LOG_FILENAME=mcp-inspect.log bunx @modelcontextprotocol/inspector bun ./cli/src/cli/bin.ts mcp"
 
 [tasks.test]
 run = [{ task = "test/unit" }, { task = "test/system:all" }]
@@ -84,7 +85,7 @@ run = "bun vitest --project unit run"
 run = "bun vitest --project unit"
 
 [tasks."test/unit:coverage"]
-run = "bun vitest --project unit --coverage --coverage.reportsDirectory tests/artifacts/coverage/ run"
+run = "bun vitest --project unit --coverage --coverage.reportsDirectory alumnium/tests/artifacts/coverage/ run"
 
 [tasks."test/system"]
 usage = '''
@@ -100,7 +101,7 @@ run = '''
 ALUMNIUM_DRIVER={{usage.driver}} \
   ALUMNIUM_MODEL={{usage.model}} \
   ALUMNIUM_TEST_ARG={{usage.test}} \
-  ./scripts/test-system.sh
+  ./alumnium/scripts/test-system.sh
 '''
 
 [tasks."test/system:all"]
@@ -231,8 +232,8 @@ arg "<driver>" help="Driver to use for waiter tests" {
 '''
 run = '''
 ALUMNIUM_DRIVER={{usage.driver}} \
-ALUMNIUM_TEST_VITEST_ARGS="tests/system/waiter.test.ts" \
-./scripts/test-system.sh
+ALUMNIUM_TEST_VITEST_ARGS="alumnium/tests/system/waiter.test.ts" \
+./alumnium/scripts/test-system.sh
 '''
 
 [tasks."test/waiter:selenium"]
@@ -251,9 +252,9 @@ arg "<model>" help="Model to use for cache tests" {
 run = '''
 ALUMNIUM_DRIVER="playwright" \
 ALUMNIUM_MODEL="{{usage.model}}" \
-ALUMNIUM_TEST_VITEST_ARGS="-t addition tests/system/calculator.test.ts" \
+ALUMNIUM_TEST_VITEST_ARGS="-t addition alumnium/tests/system/calculator.test.ts" \
 ALUMNIUM_TEST_CACHE="true" \
-./scripts/test-system.sh
+./alumnium/scripts/test-system.sh
 '''
 
 [tasks."test/cache:all"]
@@ -322,7 +323,7 @@ description = "Run cache tests for `xai` model. See `test/cache` task for detail
 run = { task = "test/cache", args = ["xai"] }
 
 [tasks."test/package"]
-run = "./scripts/test-package.sh"
+run = "./alumnium/scripts/test-package.sh"
 tools = { pnpm = "latest" }
 
 [tasks.eval]
@@ -350,13 +351,20 @@ depends = "//:types/ts"
 depends = "//:types/ts:watch"
 
 [tasks.version]
-run = "./scripts/version.ts"
+run = "./alumnium/scripts/version.ts"
 quiet = true
 raw = true
 
+[tasks."version/set"]
+description = "Sets the version of all TypeScript packages, which are released together."
+usage = '''
+arg "<version>" help="Version to set, e.g. 0.24.0"
+'''
+run = "./alumnium/scripts/version.ts set {{usage.version}}"
+
 [tasks."get-ollama-model"]
 description = "Gets the current Ollama model id."
-run = "./scripts/get-ollama-model.ts"
+run = "./alumnium/scripts/get-ollama-model.ts"
 quiet = true
 raw = true
 
@@ -365,7 +373,7 @@ description = "Generates Zod schema from .types-scan.json file produced by `scan
 usage = '''
 arg "<types_scan_path>" help="Path to .types-scan.json file"
 '''
-run = "./scripts/generate-types-scan-schema.ts {{usage.types_scan_path}}"
+run = "./alumnium/scripts/generate-types-scan-schema.ts {{usage.types_scan_path}}"
 
 
 [tasks."generate/types-scan-schema:class"]
@@ -374,8 +382,8 @@ usage = '''
 arg "<types_scan_path>" help="Path to .types-scan.json file"
 arg "<class_name>" help="Name of the class to enclose the generated schema in"
 '''
-run = "./scripts/generate-types-scan-schema.ts {{usage.types_scan_path}} --mode class --class-name {{usage.class_name}}"
+run = "./alumnium/scripts/generate-types-scan-schema.ts {{usage.types_scan_path}} --mode class --class-name {{usage.class_name}}"
 
 [tasks."bench/tree-tokens"]
 description = "Benchmarks tree tokens."
-run = "bun scripts/report-tree-tokens.ts"
+run = "bun alumnium/scripts/report-tree-tokens.ts"

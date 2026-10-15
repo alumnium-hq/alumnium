@@ -1,10 +1,14 @@
 {
   "extends": "./tsconfig",
-  "include": ["./src/**/*.ts", "./package.json"],
-  "exclude": ["./src/**/*.test.ts"],
+  "include": ["./*/src/**/*.ts", "./core/package.json"],
+  "exclude": [
+    "./*/src/**/*.test.ts",
+    "./*/src/**/*.eval.ts",
+    "./*/src/**/__factories__/**"
+  ],
   "compilerOptions": {
     // Output
-    "outDir": "./dist/npm-alumnium",
+    "outDir": "./tmp/npm-types",
     "emitDeclarationOnly": true,
     "declaration": true,
     // Build
