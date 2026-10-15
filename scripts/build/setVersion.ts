@@ -2,7 +2,9 @@
 
 // Sets the release version in a package's files: `setVersion.ts <target>
 // <version>`. Used by the `version/set` mise tasks; TypeScript packages use
-// packages/typescript/scripts/version.ts.
+// packages/typescript/alumnium/scripts/version.ts. Accepts SemVer
+// (`0.24.0-alpha.1`) or PEP 440 (`0.24.0a1`) versions; Python files get the
+// PEP 440 form and the rest SemVer.
 
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -12,6 +14,8 @@ interface Replacement {
   files: string[];
   /** Regexps whose first group precedes and second group follows the version. */
   patterns: RegExp[];
+  /** Converts the SemVer version to the files' format. */
+  format?: (version: string) => string;
 }
 
 const REPO_ROOT_DIR = path.resolve(import.meta.dirname, "../..");
@@ -31,6 +35,7 @@ const TARGETS: Record<string, Replacement[]> = {
         // The CLI is released with the same version.
         /(alumnium-cli==)[^;\s"]+()/g,
       ],
+      format: toPep440,
     },
     {
       // Updated in place as `uv lock` can't resolve the new version before the
@@ -40,6 +45,7 @@ const TARGETS: Record<string, Replacement[]> = {
         /(\nname = "alumnium(?:-cli)?"\nversion = ")[^"]+(")/g,
         /(\{ name = "alumnium-cli", version = ")[^"]+(")/g,
       ],
+      format: toPep440,
     },
   ],
   java: [
@@ -71,8 +77,35 @@ const TARGETS: Record<string, Replacement[]> = {
   ],
 };
 
-const [target, version] = process.argv.slice(2);
+// Pre-release labels in SemVer and their PEP 440 counterparts.
+const PRE_RELEASE_LABELS: Record<string, string> = {
+  alpha: "a",
+  beta: "b",
+  rc: "rc",
+};
+
+/** Converts a PEP 440 pre-release (`0.24.0a1`) to SemVer (`0.24.0-alpha.1`). */
+function toSemver(version: string): string {
+  const match = version.match(/^(\d+\.\d+\.\d+)(a|b|rc)(\d+)$/);
+  if (!match) return version;
+  const [, release, label, number] = match;
+  const semverLabel = Object.entries(PRE_RELEASE_LABELS).find(
+    ([, pep440Label]) => pep440Label === label,
+  )?.[0];
+  return `${release}-${semverLabel}.${number}`;
+}
+
+/** Converts a SemVer pre-release (`0.24.0-alpha.1`) to PEP 440 (`0.24.0a1`). */
+function toPep440(version: string): string {
+  const match = version.match(/^(\d+\.\d+\.\d+)-(alpha|beta|rc)\.(\d+)$/);
+  if (!match) return version;
+  const [, release, label, number] = match;
+  return `${release}${PRE_RELEASE_LABELS[label!]}${number}`;
+}
+
+const [target, versionArg] = process.argv.slice(2);
 const replacements = target && TARGETS[target];
+const version = versionArg && toSemver(versionArg);
 
 if (!replacements || !version || !/^\d+\.\d+\.\d+(-[\w.]+)?$/.test(version)) {
   console.error(
@@ -82,7 +115,10 @@ if (!replacements || !version || !/^\d+\.\d+\.\d+(-[\w.]+)?$/.test(version)) {
 }
 
 let changed = 0;
-for (const { files, patterns } of replacements) {
+const fileVersions = new Set<string>();
+for (const { files, patterns, format } of replacements) {
+  const fileVersion = format ? format(version) : version;
+  fileVersions.add(fileVersion);
   const paths = (
     await Promise.all(
       files.map((pattern) =>
@@ -99,7 +135,7 @@ for (const { files, patterns } of replacements) {
       (acc, pattern) =>
         acc.replace(
           pattern,
-          (_, before, after) => `${before}${version}${after}`,
+          (_, before, after) => `${before}${fileVersion}${after}`,
         ),
       text,
     );
@@ -109,4 +145,6 @@ for (const { files, patterns } of replacements) {
   }
 }
 
-console.log(`Set ${target} version ${version} in ${changed} files`);
+console.log(
+  `Set ${target} version ${[...fileVersions].join(", ")} in ${changed} files`,
+);
