@@ -105,7 +105,8 @@ fi
 
 echo -e "\n🌀 Running pytest Playwright smoke test\n"
 
-ALUMNIUM_LOG_LEVEL=warning fnox exec -- uv run pytest \
+ALUMNIUM_LOG_LEVEL=warning ALUMNIUM_STORE_DIR="$PKG_DIR/.alumnium"  \
+	fnox exec -- uv run pytest \
 	--retries "$ALUMNIUM_TEST_RETRY_COUNT" \
 	--retry-delay "$ALUMNIUM_TEST_RETRY_DELAY_SEC"
 

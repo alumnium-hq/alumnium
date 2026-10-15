@@ -155,7 +155,7 @@ EOF
 
 	echo -e "\n🌀 Running Playwright with $module module"
 
-	ALUMNIUM_LOG_LEVEL=warning fnox exec -c "$FNOX_CONFIG" -- pnpm exec playwright test --retries=3
+	ALUMNIUM_STORE_DIR="$PKG_DIR/.alumnium" ALUMNIUM_LOG_LEVEL=warning fnox exec -c "$FNOX_CONFIG" -- pnpm exec playwright test --retries=3
 
 	echo -e "\n🟢 Playwright OK: Tests executed successfully"
 	echo -e "\n🟢 $module module OK: All tests passed\n"
