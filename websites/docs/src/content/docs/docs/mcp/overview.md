@@ -114,7 +114,7 @@ Run the MCP server on your infrastructure with streamable HTTP transport:
 OPENAI_API_KEY=... alumnium mcp --transport http
 ```
 
-You can change host and port to bind using `--host` and `--port` respectively. By default, `127.0.0.1:8014` is used.
+You can change host and port to bind using `--host` and `--port` respectively. By default, `127.0.0.1:8014` is used. Clients can override the server mode per request with the `?mode=agentic` or `?mode=direct` query parameter.
 
 Once running, you can connect to the MCP user using `/mcp` endpoint, e.g. for Claude Code:
 

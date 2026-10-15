@@ -9,7 +9,7 @@ import { directMcpTools } from "./tools/directMcpTools.ts";
 import { McpServer as Server } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
-import type { McpMode } from "./McpMode.ts";
+import { McpMode } from "./McpMode.ts";
 import type { McpTransport } from "./McpTransport.ts";
 import { ALUMNIUM_VERSION } from "../package.ts";
 import { Logger } from "../telemetry/Logger.ts";
@@ -79,7 +79,7 @@ export class McpServer {
       logger.info(`Started MCP server at ${new URL("/mcp", server.url)}`);
     } else {
       logger.info("Starting MCP server with stdio transport");
-      await this.#createServer().connect(new StdioServerTransport());
+      await this.#createServer(this.#mode).connect(new StdioServerTransport());
     }
   }
 
@@ -94,9 +94,17 @@ export class McpServer {
     if (request.method !== "POST")
       return new Response(null, { status: 405, headers: { Allow: "POST" } });
 
+    let mode = this.#mode;
+    const modeParam = url.searchParams.get("mode");
+    if (modeParam !== null) {
+      const parsed = McpMode.safeParse(modeParam);
+      if (!parsed.success) return new Response(null, { status: 400 });
+      mode = parsed.data;
+    }
+
     // Stateless MCP transports must be created per request. Browser and mobile
     // sessions remain in McpState until stop is called or the process exits.
-    const server = this.#createServer();
+    const server = this.#createServer(mode);
     const transport = new WebStandardStreamableHTTPServerTransport({
       enableJsonResponse: true,
     });
@@ -108,18 +116,17 @@ export class McpServer {
     }
   }
 
-  #createServer(): Server {
+  #createServer(mode: McpMode): Server {
     const server = new Server({ name: "alumnium", version: ALUMNIUM_VERSION });
-    this.#registerTools(server);
+    this.#registerTools(server, mode);
     return server;
   }
 
   /**
    * Register all MCP tools.
    */
-  #registerTools(server: Server) {
-    const tools =
-      this.#mode === "direct" ? DIRECT_MCP_TOOLS : AGENTIC_MCP_TOOLS;
+  #registerTools(server: Server, mode: McpMode) {
+    const tools = mode === "direct" ? DIRECT_MCP_TOOLS : AGENTIC_MCP_TOOLS;
     tools.forEach((toolDef) => {
       const { name, description, inputSchema, execute } = toolDef;
       server.registerTool(
