@@ -182,6 +182,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           context: .
+          target: binary
           build-args: VERSION=${{ steps.version.outputs.version }}
           labels: ${{ steps.meta.outputs.labels }}
           platforms: linux/amd64,linux/arm64
@@ -195,6 +196,40 @@ jobs:
         with:
           subject-name: index.docker.io/alumnium/alumnium
           subject-digest: ${{ steps.push.outputs.digest }}
+          push-to-registry: true
+
+      - name: Docker Metadata (web)
+        id: meta-web
+        uses: docker/metadata-action@v6
+        with:
+          images: alumnium/alumnium
+          flavor: suffix=-web
+          tags: |
+            type=ref,event=tag
+            type=semver,pattern={{major}}.{{minor}},value=${{ steps.version.outputs.version }}
+            type=semver,pattern={{version}},value=${{ steps.version.outputs.version }}
+
+      - name: Build and Push (web)
+        id: push-web
+        uses: docker/build-push-action@v7
+        with:
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          context: .
+          target: web
+          build-args: VERSION=${{ steps.version.outputs.version }}
+          labels: ${{ steps.meta-web.outputs.labels }}
+          platforms: linux/amd64,linux/arm64
+          provenance: mode=max
+          push: true
+          sbom: true
+          tags: ${{ steps.meta-web.outputs.tags }}
+
+      - name: Attest Build Provenance (web)
+        uses: actions/attest-build-provenance@v3
+        with:
+          subject-name: index.docker.io/alumnium/alumnium
+          subject-digest: ${{ steps.push-web.outputs.digest }}
           push-to-registry: true
 
       - name: Debug Session
