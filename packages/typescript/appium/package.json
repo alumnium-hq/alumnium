@@ -1,6 +1,6 @@
 {
   "name": "@alumnium/appium",
-  "version": "0.23.1",
+  "version": "0.24.0-alpha.1",
   "description": "Alumnium Appium (WebdriverIO) driver",
   "license": "MIT",
   "type": "module",
