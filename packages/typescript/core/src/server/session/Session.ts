@@ -2,7 +2,7 @@ import type { LanguageModelV4 } from "@ai-sdk/provider";
 import z from "zod";
 import { AppId } from "../../AppId.ts";
 import { Driver } from "../../drivers/Driver.ts";
-import { type LanguageModel } from "../../llm/LanguageModel.ts";
+import type { LanguageModel } from "../../llm/LanguageModel.ts";
 import {
   createLlmUsage,
   LlmUsage,
@@ -11,7 +11,7 @@ import {
 import { loadAi } from "../../llm/loadAi.ts";
 import { Model } from "../../Model.ts";
 import { Logger } from "../../telemetry/Logger.ts";
-import { type ToolDefinition } from "../../tools/ToolDefinition.ts";
+import type { ToolDefinition } from "../../tools/ToolDefinition.ts";
 import { TreeFactory } from "../../tree/TreeFactory.ts";
 import { BaseServerAccessibilityTree } from "../accessibility/BaseServerAccessibilityTree.ts";
 import { ActorAgent } from "../agents/ActorAgent.ts";

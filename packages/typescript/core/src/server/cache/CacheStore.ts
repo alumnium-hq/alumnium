@@ -1,4 +1,4 @@
-import { type AppId } from "../../AppId.ts";
+import type { AppId } from "../../AppId.ts";
 import { Env } from "../../Env.ts";
 import { FileStore } from "../../FileStore/FileStore.ts";
 import { GlobalFileStorePaths } from "../../FileStore/GlobalFileStorePaths.ts";

@@ -1,6 +1,6 @@
 import z from "zod";
-import { type LanguageModel } from "../../llm/LanguageModel.ts";
-import { type Model } from "../../Model.ts";
+import type { LanguageModel } from "../../llm/LanguageModel.ts";
+import type { Model } from "../../Model.ts";
 import { pythonicFormat } from "../../pythonic/pythonicFormat.ts";
 import { Telemetry } from "../../telemetry/Telemetry.ts";
 import { BaseAgent } from "./BaseAgent.ts";

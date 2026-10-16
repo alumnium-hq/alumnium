@@ -1,9 +1,9 @@
 import type { ModelMessage } from "ai";
 import { txt } from "smollit";
 import z from "zod";
-import { type LanguageModel } from "../../llm/LanguageModel.ts";
+import type { LanguageModel } from "../../llm/LanguageModel.ts";
 import { loadAi } from "../../llm/loadAi.ts";
-import { type Model } from "../../Model.ts";
+import type { Model } from "../../Model.ts";
 import { pythonicFormat } from "../../pythonic/pythonicFormat.ts";
 import { Telemetry } from "../../telemetry/Telemetry.ts";
 import { BaseAgent } from "./BaseAgent.ts";

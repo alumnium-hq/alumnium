@@ -1,7 +1,7 @@
 import type { LanguageModelV4GenerateResult } from "@ai-sdk/provider";
 import { createLlmUsage, type LlmUsage } from "../../llm/llmSchema.ts";
 import { Telemetry } from "../../telemetry/Telemetry.ts";
-import { type Tracer } from "../../telemetry/Tracer.ts";
+import type { Tracer } from "../../telemetry/Tracer.ts";
 import { SessionContext } from "../session/SessionContext.ts";
 import { ServerCache } from "./ServerCache.ts";
 

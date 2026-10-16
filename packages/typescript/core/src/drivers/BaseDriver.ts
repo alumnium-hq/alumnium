@@ -12,6 +12,13 @@ import type { Keys } from "./keys.ts";
 
 const { tracer, logger } = Telemetry.get(import.meta.url);
 
+function spanAttrs(this: BaseDriver) {
+  return {
+    "driver.platform": this.platform,
+    "driver.kind": this.kind,
+  };
+}
+
 /**
  * @typeParam TElement - Native element handle returned by `findElement`.
  */
@@ -71,16 +78,12 @@ export abstract class BaseDriver<TElement = unknown> {
   abstract printToPdf(filepath: string): Promise<void>;
   abstract checkNavigationPolicy(url?: string): void | Promise<void>;
 
-  static spanAttrs(this: BaseDriver) {
-    return {
-      "driver.platform": this.platform,
-      "driver.kind": this.kind,
-    };
-  }
+  static readonly spanAttrs = spanAttrs;
 
   //#region Stateful
 
   static stateful<This extends BaseDriver, Args extends unknown[], Result>(
+    this: void,
     target: object,
     propertyKey: string | symbol,
     descriptor: TypedPropertyDescriptor<
@@ -88,9 +91,10 @@ export abstract class BaseDriver<TElement = unknown> {
     >,
   ): TypedPropertyDescriptor<(this: This, ...args: Args) => Promise<Result>>;
 
-  static stateful(action: string): BaseDriver.StatefulDecorator;
+  static stateful(this: void, action: string): BaseDriver.StatefulDecorator;
 
   static stateful(
+    this: void,
     targetOrAction: object | string,
     propertyKey?: string | symbol,
     descriptor?: TypedPropertyDescriptor<(...args: any[]) => Promise<any>>,

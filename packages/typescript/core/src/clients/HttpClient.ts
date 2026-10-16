@@ -1,11 +1,11 @@
-import { type Http } from "../Http.ts";
+import type { Http } from "../Http.ts";
 import { LlmUsageStats } from "../llm/llmSchema.ts";
 import { Model } from "../Model.ts";
 import { ErrorResponse, HealthCheckResponse } from "../server/serverSchema.ts";
-import { type SessionId } from "../server/session/SessionId.ts";
+import type { SessionId } from "../server/session/SessionId.ts";
 import { Logger } from "../telemetry/Logger.ts";
 import { Telemetry } from "../telemetry/Telemetry.ts";
-import { type Tracer } from "../telemetry/Tracer.ts";
+import type { Tracer } from "../telemetry/Tracer.ts";
 import { convertToolsToSchemas } from "../tools/index.ts";
 import type {
   AddExampleRequest,
