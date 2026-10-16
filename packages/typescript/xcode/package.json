@@ -1,6 +1,6 @@
 {
   "name": "@alumnium/xcode",
-  "version": "0.24.0-alpha.1",
+  "version": "0.24.0-alpha.2",
   "description": "Alumnium Xcode driver",
   "license": "MIT",
   "type": "module",
