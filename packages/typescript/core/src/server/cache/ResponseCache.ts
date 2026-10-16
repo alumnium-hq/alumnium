@@ -2,7 +2,7 @@ import type { LanguageModelV4GenerateResult } from "@ai-sdk/provider";
 import { AppId } from "../../AppId.ts";
 import { AiSdk } from "../../llm/AiSdk.ts";
 import { Telemetry } from "../../telemetry/Telemetry.ts";
-import { type Tracer } from "../../telemetry/Tracer.ts";
+import type { Tracer } from "../../telemetry/Tracer.ts";
 import { SessionContext } from "../session/SessionContext.ts";
 import { CacheStore } from "./CacheStore.ts";
 import { ServerCache } from "./ServerCache.ts";

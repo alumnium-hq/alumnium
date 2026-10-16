@@ -203,7 +203,9 @@
   }
 
   function trackXhr() {
+    // oxlint-disable-next-line typescript/unbound-method -- Called on each request with `.apply`
     const nativeOpen = XMLHttpRequest.prototype.open;
+    // oxlint-disable-next-line typescript/unbound-method -- See above
     const nativeSend = XMLHttpRequest.prototype.send;
     /** @type {WeakMap<XMLHttpRequest, string>} */
     const urls = new WeakMap();

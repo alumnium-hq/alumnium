@@ -1,12 +1,12 @@
 import type { LanguageModelV4CallOptions } from "@ai-sdk/provider";
 import { MockLanguageModelV4 } from "ai/test";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { type AppId } from "../AppId.ts";
+import type { AppId } from "../AppId.ts";
 import type { Alumni } from "../client/Alumni.ts";
 import { Env } from "../Env.ts";
 import { Model } from "../Model.ts";
 import { Session } from "../server/session/Session.ts";
-import { type SessionId } from "../server/session/SessionId.ts";
+import type { SessionId } from "../server/session/SessionId.ts";
 import { AiSdkFactory } from "./__factories__/AiSdkFactory.ts";
 
 afterEach(() => {

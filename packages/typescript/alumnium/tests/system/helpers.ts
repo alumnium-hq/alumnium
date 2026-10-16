@@ -200,7 +200,7 @@ async function stopTracing(
     "../artifacts/traces",
     `${file}-${name}-${status}-${retry}.zip`,
   );
-  page.context().tracing.stop({ path: tracePath });
+  await page.context().tracing.stop({ path: tracePath });
 }
 
 function createHelpers(

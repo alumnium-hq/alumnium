@@ -1,6 +1,6 @@
 import { always } from "alwaysly";
 import { AppId } from "../AppId.ts";
-import { type LanguageModel } from "../llm/LanguageModel.ts";
+import type { LanguageModel } from "../llm/LanguageModel.ts";
 import { LlmUsageStats } from "../llm/llmSchema.ts";
 import { Model } from "../Model.ts";
 import { AccessibilityTreeDiff } from "../server/accessibility/AccessibilityTreeDiff.ts";
@@ -10,7 +10,7 @@ import { Session } from "../server/session/Session.ts";
 import { SessionManager } from "../server/session/SessionManager.ts";
 import { Logger } from "../telemetry/Logger.ts";
 import { Telemetry } from "../telemetry/Telemetry.ts";
-import { type Tracer } from "../telemetry/Tracer.ts";
+import type { Tracer } from "../telemetry/Tracer.ts";
 import { convertToolsToSchemas } from "../tools/index.ts";
 import { Client } from "./Client.ts";
 import { type Data, looselyTypecast } from "./typecasting.ts";
