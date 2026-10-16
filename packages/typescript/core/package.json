@@ -1,6 +1,6 @@
 {
   "name": "@alumnium/core",
-  "version": "0.24.0-alpha.1",
+  "version": "0.24.0-alpha.2",
   "description": "Alumnium core: Alumni, agents, environment, telemetry, storage, accessibility trees, tools and driver contracts",
   "license": "MIT",
   "type": "module",

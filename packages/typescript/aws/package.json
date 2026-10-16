@@ -1,6 +1,6 @@
 {
   "name": "@alumnium/aws",
-  "version": "0.24.0-alpha.1",
+  "version": "0.24.0-alpha.2",
   "description": "Alumnium AWS (Bedrock) LLM provider",
   "license": "MIT",
   "type": "module",
