@@ -176,7 +176,7 @@ describe(ChainedCache, () => {
       expect(chained.usage).toEqual(usage());
     });
 
-    it("resolves usage from last cache hit", async () => {
+    it("includes usage accumulated by caches that missed", async () => {
       const { sessionContext, cache1, cache2, request } = setup();
       const response = createResult();
       cache1.assign(null, {
@@ -193,7 +193,36 @@ describe(ChainedCache, () => {
       const chained = new ChainedCache(sessionContext, [cache1, cache2]);
       await chained.lookup(request);
 
-      expect(chained.usage).toEqual(usage());
+      expect(chained.usage).toEqual({
+        input_tokens: 2,
+        output_tokens: 3,
+        total_tokens: 4,
+        cache_creation: 5,
+        cache_read: 6,
+        reasoning: 7,
+      });
+    });
+
+    it("accumulates usage across hits in different caches", async () => {
+      const { sessionContext, cache1, cache2, request } = setup();
+      const response = createResult();
+      cache1.assign(response, usage());
+
+      const chained = new ChainedCache(sessionContext, [cache1, cache2]);
+      await chained.lookup(request);
+
+      cache1.assign(null);
+      cache2.assign(response, usage());
+      await chained.lookup(request);
+
+      expect(chained.usage).toEqual({
+        input_tokens: 2,
+        output_tokens: 4,
+        total_tokens: 6,
+        cache_creation: 8,
+        cache_read: 10,
+        reasoning: 12,
+      });
     });
 
     it("resolves empty usage on miss", async () => {
