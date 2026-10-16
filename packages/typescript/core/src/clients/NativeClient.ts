@@ -1,6 +1,5 @@
 import { always } from "alwaysly";
 import { AppId } from "../AppId.ts";
-import type { LanguageModel } from "../llm/LanguageModel.ts";
 import { LlmUsageStats } from "../llm/llmSchema.ts";
 import { Model } from "../Model.ts";
 import { AccessibilityTreeDiff } from "../server/accessibility/AccessibilityTreeDiff.ts";
@@ -22,7 +21,6 @@ const { span } = tracer.dec();
 export namespace NativeClient {
   export interface Props extends Client.Props {
     model: Model;
-    llm?: LanguageModel | undefined;
   }
 
   export interface RetrieveProps {
@@ -40,7 +38,7 @@ export class NativeClient extends Client {
   session: Session;
 
   constructor(props: NativeClient.Props) {
-    const { llm, model, ...superProps } = props;
+    const { model, ...superProps } = props;
     super({ ...superProps });
 
     logger.debug("Initializing NativeClient with props: {props}", { props });
@@ -51,12 +49,10 @@ export class NativeClient extends Client {
     const toolSchemas = convertToolsToSchemas(this.tools);
 
     this.session = this.#sessionManager.createSession({
-      provider: model.provider,
-      name: model.name,
+      model,
       tools: toolSchemas,
       platform: this.platform,
       driver: this.driver,
-      llm,
       planner: this.planner,
       excludeAttributes: this.excludeAttributes,
     });

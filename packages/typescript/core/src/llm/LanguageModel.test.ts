@@ -15,20 +15,21 @@ afterEach(() => {
 });
 
 describe("custom language model", () => {
-  it("accepts a concrete AI SDK model in public options", () => {
+  it("accepts a concrete AI SDK model as the model in public options", () => {
     const llm = new MockLanguageModelV4();
-    const options = { llm } satisfies Alumni.Options;
+    const model = Model.builder("openai", () => llm)("test");
+    const options = { model } satisfies Alumni.Options;
 
-    expect(options.llm).toBe(llm);
+    expect(options.model.createLlm()).toBe(llm);
   });
 
   it("rejects model ID strings in public options", () => {
     const options: Alumni.Options = {
-      // @ts-expect-error -- Custom models must be concrete model objects.
-      llm: "openai/gpt-5",
+      // @ts-expect-error -- Models must be model objects.
+      model: "openai/gpt-5",
     };
 
-    expect(options.llm).toBe("openai/gpt-5");
+    expect(options.model).toBe("openai/gpt-5");
   });
 
   it("wraps and invokes a supplied concrete model", async () => {
@@ -41,10 +42,9 @@ describe("custom language model", () => {
     const session = new Session({
       app: "test-app" as AppId,
       sessionId: "test-session" as SessionId,
-      model: Model.parse("openai/test"),
+      model: Model.builder("openai", () => llm)("test"),
       platform: "chromium",
       tools: [],
-      llm,
     });
 
     await expect(session.changesAnalyzerAgent.invoke("diff")).resolves.toBe(

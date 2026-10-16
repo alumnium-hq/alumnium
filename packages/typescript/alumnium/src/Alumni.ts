@@ -1,5 +1,9 @@
 import { Alumni as AppiumAlumni, AppiumDriver } from "@alumnium/appium";
-import { Alumni as BaseAlumni, type BaseDriver } from "@alumnium/core/internal";
+import {
+  Alumni as BaseAlumni,
+  type BaseDriver,
+  Env,
+} from "@alumnium/core/internal";
 import { Alumni as MaestroAlumni, MaestroDriver } from "@alumnium/maestro";
 import {
   Alumni as PlaywrightAlumni,
@@ -8,6 +12,7 @@ import {
 import { Alumni as SeleniumAlumni, SeleniumDriver } from "@alumnium/selenium";
 import { Alumni as XcodeAlumni, XcodeDriver } from "@alumnium/xcode";
 import type { Element } from "./drivers/index.ts";
+import { resolveModel } from "./models.ts";
 
 /**
  * Alumni accepting any supported native driver: Selenium `WebDriver`,
@@ -16,7 +21,13 @@ import type { Element } from "./drivers/index.ts";
  */
 export class Alumni extends BaseAlumni<BaseDriver<Element>> {
   constructor(driver: Alumni.Driver, options: Alumni.Options = {}) {
-    super(wrapDriver(driver), options);
+    super(wrapDriver(driver), {
+      ...options,
+      //  With `url`, the server picks the model, not the client.
+      ...(!options.url && {
+        model: resolveModel(options.model ?? Env.ALUMNIUM_MODEL),
+      }),
+    });
   }
 }
 

@@ -2,11 +2,10 @@ import { createOpenAI } from "@ai-sdk/openai";
 import type { LanguageModelV4 } from "@ai-sdk/provider";
 import {
   apiKeyField,
-  LlmFactory,
   withCallDefaults,
   Env,
   Logger,
-  type Model,
+  Model,
 } from "@alumnium/core/internal";
 
 const logger = Logger.get(import.meta.url);
@@ -30,8 +29,4 @@ export function createOpenAiLlm(model: Model): LanguageModelV4 {
       });
 }
 
-export const openAiProviders: LlmFactory.Providers = {
-  openai: createOpenAiLlm,
-};
-
-LlmFactory.register(openAiProviders);
+export const openai = Model.builder("openai", createOpenAiLlm);

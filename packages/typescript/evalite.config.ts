@@ -17,7 +17,6 @@ export default defineConfig({
   maxConcurrency: Env.ALUMNIUM_EVAL_MAX_CONCURRENCY,
   scoreThreshold: Env.ALUMNIUM_EVAL_THRESHOLD_PCT,
   storage: () => storage,
-  setupFiles: ["./alumnium/tests/eval/setup.ts"],
 });
 
 function createJsonStorage(): Evalite.Storage & { save(): Promise<void> } {

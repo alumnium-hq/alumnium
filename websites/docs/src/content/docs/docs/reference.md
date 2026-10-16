@@ -28,35 +28,48 @@ The TypeScript implementation is published as several npm packages, released tog
 | `alumnium`                                                       | Batteries-included package: `Alumni` accepting any supported driver, all drivers and LLM providers, and the `alumnium` CLI.                                                                                                                                |
 | `@alumnium/playwright`, `@alumnium/selenium`, `@alumnium/appium` | Web and mobile drivers. Each exports an `Alumni` bound to its native driver (Playwright `Page`, Selenium `WebDriver`, WebdriverIO `Browser`).                                                                                                              |
 | `@alumnium/maestro`, `@alumnium/xcode`                           | Maestro and Xcode drivers with their sessions.                                                                                                                                                                                                             |
-| `@alumnium/<provider>`                                           | LLM providers, one package per provider (see below). Importing a package registers its providers.                                                                                                                                                          |
+| `@alumnium/<provider>`                                           | LLM providers, one package per provider (see below). Each exports builders of its models to pass to `Alumni`.                                                                                                                                              |
 | `@alumnium/core`                                                 | `Alumni` and the AI agents, shared by all packages. Does not depend on browser drivers or LLM provider SDKs, and runs on Node.js without Bun. The agents run on the `ai` package, installed with any LLM provider package and loaded only when agents run. |
 | `@alumnium/telemetry`                                            | OpenTelemetry trace and log exporters, loaded by `@alumnium/core` when `ALUMNIUM_TRACE` is enabled. Included in `alumnium`.                                                                                                                               |
 | `@alumnium/cli-<os>-<arch>`                                      | Prebuilt CLI binaries, installed automatically as optional dependencies of `alumnium`.                                                                                                                                                                     |
 
-LLM provider packages, by `ALUMNIUM_MODEL` provider:
+LLM provider packages and the model builders they export, by `ALUMNIUM_MODEL` provider:
 
-| Provider                        | Package                |
-| ------------------------------- | ---------------------- |
-| `anthropic`                     | `@alumnium/anthropic`  |
-| `aws_anthropic`, `aws_meta`     | `@alumnium/aws`    |
-| `azure_openai`, `azure_foundry` | `@alumnium/azure`      |
-| `codex`                         | `@alumnium/codex`      |
-| `cursor`                        | `@alumnium/cursor`     |
-| `deepseek`                      | `@alumnium/deepseek`   |
-| `google`                        | `@alumnium/google`     |
-| `mistralai`                     | `@alumnium/mistral`    |
-| `ollama`                        | `@alumnium/ollama`     |
-| `openai`                        | `@alumnium/openai`     |
-| `openrouter`                    | `@alumnium/openrouter` |
-| `xai`                           | `@alumnium/xai`        |
+| Provider                        | Package                | Builders                        |
+| ------------------------------- | ---------------------- | ------------------------------- |
+| `anthropic`                     | `@alumnium/anthropic`  | `anthropic()`                   |
+| `aws_anthropic`, `aws_meta`     | `@alumnium/aws`        | `awsAnthropic()`, `awsMeta()`   |
+| `azure_openai`, `azure_foundry` | `@alumnium/azure`      | `azureOpenai()`, `azureFoundry()` |
+| `codex`                         | `@alumnium/codex`      | `codex()`                       |
+| `cursor`                        | `@alumnium/cursor`     | `cursor()`                      |
+| `deepseek`                      | `@alumnium/deepseek`   | `deepseek()`                    |
+| `google`                        | `@alumnium/google`     | `google()`                      |
+| `mistralai`                     | `@alumnium/mistral`    | `mistral()`                     |
+| `ollama`                        | `@alumnium/ollama`     | `ollama()`                      |
+| `openai`                        | `@alumnium/openai`     | `openai()`                      |
+| `openrouter`                    | `@alumnium/openrouter` | `openrouter()`                  |
+| `xai`                           | `@alumnium/xai`        | `xai()`                         |
 
-Use `alumnium` to write tests. To install only what you use, pick a driver package and the LLM provider package matching `ALUMNIUM_MODEL` instead:
+Use `alumnium` to write tests: it includes all providers and uses `ALUMNIUM_MODEL`. To install only what you use, pick a driver package and an LLM provider package, and pass the model built by the provider package:
 
 ```typescript
-import "@alumnium/openai"; // Registers the `openai` provider.
 import { Alumni } from "@alumnium/playwright";
+import { openai } from "@alumnium/openai";
 
-const al = new Alumni(page);
+const al = new Alumni(page, { model: openai() }); // The default OpenAI model
+const al2 = new Alumni(page, { model: openai("gpt-5.6-mini") });
+```
+
+Builders default to the provider's default model. `alumnium` exports all builders too, e.g. `import { Alumni, anthropic } from "alumnium";`.
+
+To use your own [AI SDK](https://ai-sdk.dev) language model, e.g. unsupported yet by `alumnium`, build the model with `Model.builder`, naming the provider whose prompts suit it:
+
+```typescript
+import { zai } from "@ai-sdk/zai";
+import { Alumni, Model } from "alumnium";
+
+const glm = Model.builder("openai", ({ name }) => zai(name))("glm-5.3");
+const al = new Alumni(page, { model: glm });
 ```
 
 `@alumnium/core` is meant for tools that integrate Alumnium (e.g. test runners and agent harnesses) and talk to the Alumnium MCP server or CLI, so they don't need to install browser drivers and LLM providers.
