@@ -8,10 +8,6 @@ import {
   type SpanStatus as OtelSpanStatus,
   type Tracer as OtelTracer,
 } from "@opentelemetry/api";
-import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
-import { resourceFromAttributes } from "@opentelemetry/resources";
-import { BatchSpanProcessor } from "@opentelemetry/sdk-trace-base";
-import { NodeTracerProvider } from "@opentelemetry/sdk-trace-node";
 import { nanoid } from "nanoid";
 import type { AgentKind } from "../AgentKind.ts";
 import type { Driver } from "../drivers/Driver.ts";
@@ -20,6 +16,7 @@ import type { Model } from "../Model.ts";
 import type { SessionId } from "../server/session/SessionId.ts";
 import { TypeUtils } from "../typeUtils.ts";
 import { Instrumentation } from "./Instrumentation.ts";
+import { loadTelemetry } from "./loadTelemetry.ts";
 
 export namespace Tracer {
   //#region Defs
@@ -801,56 +798,49 @@ export abstract class Tracer {
         args as Tracer.SpanFnAllArgsAny,
       );
 
-      const provider = this.#configure();
+      const tracer = this.#configure();
 
       if (typeof bodyFnOrKey === "string" || !bodyFnOrKey) {
         const key = bodyFnOrKey || nanoid();
 
-        if (!provider) {
+        if (!tracer) {
           const span = this.#dummySpan;
           this.#spans.set(key, span);
           return span;
         }
 
-        const otelSpan = this.#tracer(provider).startSpan(
-          spanName,
-          traceAttrs(attrs),
-        );
+        const otelSpan = tracer.startSpan(spanName, traceAttrs(attrs));
 
         return this.#span(otelSpan, key);
       }
 
       const bodyFn = bodyFnOrKey;
-      if (!provider) return bodyFn(this.#dummySpan);
+      if (!tracer) return bodyFn(this.#dummySpan);
 
-      return this.#tracer(provider).startActiveSpan(
-        spanName,
-        traceAttrs(attrs),
-        (otelSpan) => {
-          const span = this.#span(otelSpan);
+      return tracer.startActiveSpan(spanName, traceAttrs(attrs), (otelSpan) => {
+        const span = this.#span(otelSpan);
 
-          try {
-            const result = bodyFn(span);
+        try {
+          const result = bodyFn(span);
 
-            if (result instanceof Promise)
-              return result
-                .then((res) => {
-                  span.succeed();
-                  return res;
-                })
-                .catch((error) => {
-                  span.fail(error);
-                  throw error;
-                });
+          if (result instanceof Promise)
+            return result
+              .then((res) => {
+                span.succeed();
+                return res;
+              })
+              .catch((error) => {
+                span.fail(error);
+                throw error;
+              });
 
-            span.succeed();
-            return result;
-          } catch (error) {
-            span.fail(error);
-            throw error;
-          }
-        },
-      );
+          span.succeed();
+          return result;
+        } catch (error) {
+          span.fail(error);
+          throw error;
+        }
+      });
     };
 
     return {
@@ -865,8 +855,8 @@ export abstract class Tracer {
       },
 
       event: (eventName, ...args) => {
-        const provider = this.#configure();
-        if (!provider) return;
+        const tracer = this.#configure();
+        if (!tracer) return;
 
         const attrs = args[0] || {};
         const fullEventName = `${moduleName}.${eventName}`;
@@ -878,7 +868,7 @@ export abstract class Tracer {
           return;
         }
 
-        const span = this.#tracer(provider).startSpan(fullEventName, {
+        const span = tracer.startSpan(fullEventName, {
           attributes: eventAttrs,
         });
         span.addEvent(fullEventName, eventAttrs);
@@ -943,10 +933,6 @@ export abstract class Tracer {
     };
   }
 
-  static #tracer(provider: NodeTracerProvider): OtelTracer {
-    return provider.getTracer(this.serviceName);
-  }
-
   static #compactAttrs(attrs: object): OtelAttributes {
     return Object.fromEntries(
       Object.entries(attrs).filter(([, value]) => value != null),
@@ -980,10 +966,19 @@ export abstract class Tracer {
     }
   }
 
+  /**
+   * Loads the exporters when tracing is enabled, so that spans started right
+   * after are recorded.
+   */
+  static async init() {
+    this.#configure();
+    await this.#tracing;
+  }
+
   static async flush() {
-    const provider = this.#configure();
-    if (!provider) return;
-    return this.#flush(provider);
+    this.#configure();
+    const tracing = await this.#tracing;
+    if (tracing) return this.#flush(tracing);
   }
 
   //#endregion
@@ -1090,13 +1085,13 @@ export abstract class Tracer {
     otelSpan.setStatus(otelStatus);
   }
 
-  static async #flush(provider: NodeTracerProvider) {
+  static async #flush(tracing: loadTelemetry.Tracing) {
     this.#spans.forEach((span) => {
       span.fail("Span not ended before flush");
     });
 
-    await provider
-      .forceFlush()
+    await tracing
+      .flush()
       // NOTE: Ignore errors so that the operation doesn't fail if the telemetry
       // server is unreachable, i.e., when running tests.
       .catch(() => {});
@@ -1106,28 +1101,26 @@ export abstract class Tracer {
 
   //#region Configuration
 
-  static #provider: NodeTracerProvider | undefined | null;
+  static #tracing:
+    | Promise<loadTelemetry.Tracing | undefined>
+    | null
+    | undefined;
 
-  static #configure(): NodeTracerProvider | null {
-    if (this.#provider !== undefined) return this.#provider;
-
-    if (this.enabled) {
-      const provider = new NodeTracerProvider({
-        resource: resourceFromAttributes({
-          "service.name": Tracer.serviceName,
-        }),
-        spanProcessors: [new BatchSpanProcessor(new OTLPTraceExporter())],
-      });
-
-      provider.register();
-      process.once("beforeExit", () => void this.#flush(provider));
-
-      this.#provider = provider;
-    } else {
-      this.#provider = null;
+  static #configure(): OtelTracer | null {
+    if (this.#tracing === undefined) {
+      this.#tracing = this.enabled
+        ? loadTelemetry().then((telemetry) => {
+            const tracing = telemetry?.startTracing(this.serviceName);
+            if (tracing)
+              process.once("beforeExit", () => void this.#flush(tracing));
+            return tracing;
+          })
+        : null;
     }
 
-    return this.#provider;
+    // NOTE: The global tracer delegates to the provider registered by
+    // `@alumnium/telemetry` once it's loaded (see `init`).
+    return this.#tracing ? trace.getTracer(this.serviceName) : null;
   }
 
   //#endregion

@@ -98,6 +98,17 @@ describe("workspace packages", () => {
     expect(inspection.lazyImports).toContain("ai");
     expect(getEntry("@alumnium/core").dependencies).not.toHaveProperty("ai");
   });
+
+  it("loads @alumnium/telemetry lazily in @alumnium/core", () => {
+    const { inspection, dependencies } = getEntry("@alumnium/core");
+    expect(inspection.lazyImports).toContain("@alumnium/telemetry");
+    expect(dependencies).not.toHaveProperty("@alumnium/telemetry");
+    expect(
+      inspection.imports.filter((dep) =>
+        /^@opentelemetry\/(sdk|exporter)|^@logtape\/otel$/.test(dep),
+      ),
+    ).toEqual([]);
+  });
 });
 
 describe("matchesAny", () => {
