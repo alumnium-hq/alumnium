@@ -1,6 +1,6 @@
 import type { LanguageModelV4 } from "@ai-sdk/provider";
 import { createOllama } from "ollama-ai-provider-v2";
-import { LlmFactory, Env, Logger, type Model } from "@alumnium/core/internal";
+import { Env, Logger, Model } from "@alumnium/core/internal";
 
 const logger = Logger.get(import.meta.url);
 
@@ -19,8 +19,4 @@ export function createOllamaLlm(model: Model): LanguageModelV4 {
   )(model.name);
 }
 
-export const ollamaProviders: LlmFactory.Providers = {
-  ollama: createOllamaLlm,
-};
-
-LlmFactory.register(ollamaProviders);
+export const ollama = Model.builder("ollama", createOllamaLlm);

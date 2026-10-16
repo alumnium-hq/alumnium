@@ -23,7 +23,6 @@ import { RetrieverAgent } from "../agents/RetrieverAgent.ts";
 import { createCacheMiddleware } from "../cache/CacheMiddleware.ts";
 import { ServerCache } from "../cache/ServerCache.ts";
 import { CacheFactory } from "../CacheFactory.ts";
-import { LlmFactory } from "../LlmFactory.ts";
 import { SessionContext } from "./SessionContext.ts";
 import { SessionId } from "./SessionId.ts";
 
@@ -38,7 +37,6 @@ export namespace Session {
     // Optional since Java/Python only support Appium.
     driver?: Driver.Kind | undefined;
     tools: ToolDefinition[];
-    llm?: LanguageModel | undefined;
     planner?: boolean | undefined;
     excludeAttributes?: Set<string> | undefined;
   }
@@ -85,12 +83,6 @@ export class Session {
     this.excludeAttributes = props.excludeAttributes ?? new Set();
     this.#context = new SessionContext({ app, sessionId });
     this.cache = CacheFactory.createCache(this.#context, model);
-    if (props.llm) {
-      this.#llm = wrapLanguageModelLazily({
-        model: props.llm,
-        middleware: createCacheMiddleware(this.cache),
-      });
-    }
 
     logger.info(
       `Created session ${sessionId} with model ${model.provider}/${model.name} and platform ${platform}`,
@@ -99,9 +91,15 @@ export class Session {
 
   get llm(): LanguageModel {
     return (this.#llm ??= wrapLanguageModelLazily({
-      model: LlmFactory.createLlm(this.model),
+      model: this.#createLlm(),
       middleware: createCacheMiddleware(this.cache),
     }));
+  }
+
+  #createLlm(): LanguageModel {
+    if (!Model.hasProvider(this.model))
+      throw Model.missingProviderError(this.model);
+    return this.model.createLlm();
   }
 
   get actorAgent(): ActorAgent {

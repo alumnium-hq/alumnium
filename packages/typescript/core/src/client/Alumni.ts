@@ -5,7 +5,6 @@ import { NativeClient } from "../clients/NativeClient.ts";
 import type { Data } from "../clients/typecasting.ts";
 import type { BaseDriver } from "../drivers/BaseDriver.ts";
 import { Env } from "../Env.ts";
-import type { LanguageModel } from "../llm/LanguageModel.ts";
 import { LlmUsageStats } from "../llm/llmSchema.ts";
 import { Model } from "../Model.ts";
 import { NavigationPolicy } from "../NavigationPolicy.ts";
@@ -24,8 +23,7 @@ const { span } = tracer.dec();
 export namespace Alumni {
   export interface Options {
     url?: string | undefined;
-    model?: Model | undefined;
-    llm?: LanguageModel | undefined;
+    model?: Model | Model.WithProvider | undefined;
     extraTools?: ToolClass[];
     disabledTools?: string[] | undefined;
     planner?: boolean | undefined;
@@ -61,7 +59,6 @@ export class Alumni<TDriver extends BaseDriver = BaseDriver> {
   private tools: Record<string, ToolClass> = {};
   public cache: Cache;
   private changeAnalysis: boolean;
-  private llm: LanguageModel | undefined;
 
   constructor(driver: TDriver, options: Alumni.Options = {}) {
     logger.debug("Initializing Alumni with options: {options}", { options });
@@ -70,7 +67,6 @@ export class Alumni<TDriver extends BaseDriver = BaseDriver> {
 
     this.changeAnalysis =
       options.changeAnalysis ?? Env.ALUMNIUM_CHANGE_ANALYSIS;
-    this.llm = options.llm;
 
     this.driver = driver;
 
@@ -105,7 +101,6 @@ export class Alumni<TDriver extends BaseDriver = BaseDriver> {
     } else {
       this.client = new NativeClient({
         model: model || Env.ALUMNIUM_MODEL,
-        llm: this.llm,
         ...clientProps,
       });
     }

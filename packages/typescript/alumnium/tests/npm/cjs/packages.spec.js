@@ -8,21 +8,24 @@ const selenium = require("@alumnium/selenium");
 const xcode = require("@alumnium/xcode");
 const { Alumni } = require("alumnium");
 
+// Model builders each LLM provider package exports.
+const BUILDERS = {
+  anthropic: ["anthropic"],
+  aws: ["awsAnthropic", "awsMeta"],
+  azure: ["azureFoundry", "azureOpenai"],
+  codex: ["codex"],
+  cursor: ["cursor"],
+  deepseek: ["deepseek"],
+  google: ["google"],
+  mistral: ["mistral"],
+  ollama: ["ollama"],
+  openai: ["openai"],
+  openrouter: ["openrouter"],
+  xai: ["xai"],
+};
+
 const providers = Object.fromEntries(
-  [
-    "anthropic",
-    "aws",
-    "azure",
-    "codex",
-    "cursor",
-    "deepseek",
-    "google",
-    "mistral",
-    "ollama",
-    "openai",
-    "openrouter",
-    "xai",
-  ].map((name) => [name, require(`@alumnium/${name}`)]),
+  Object.keys(BUILDERS).map((name) => [name, require(`@alumnium/${name}`)]),
 );
 
 test("all packages import", () => {
@@ -36,8 +39,11 @@ test("all packages import", () => {
   for (const driver of [playwright, selenium, appium, maestro, xcode]) {
     expect(driver.Alumni.prototype).toBeInstanceOf(core.Alumni);
   }
-  for (const [name, pkg] of Object.entries(providers)) {
-    const map = Object.entries(pkg).find(([key]) => key.endsWith("Providers"));
-    expect(map, `${name} providers map`).toBeDefined();
+  for (const [name, builders] of Object.entries(BUILDERS)) {
+    for (const builder of builders) {
+      const model = providers[name][builder]();
+      expect(model.provider, `${name}.${builder}()`).toBeTruthy();
+      expect(model.createLlm, `${name}.${builder}()`).toBeInstanceOf(Function);
+    }
   }
 });

@@ -2,11 +2,10 @@ import type { LanguageModelV4 } from "@ai-sdk/provider";
 import { createXai } from "@ai-sdk/xai";
 import {
   apiKeyField,
-  LlmFactory,
   withCallDefaults,
   Env,
   Logger,
-  type Model,
+  Model,
 } from "@alumnium/core/internal";
 
 const logger = Logger.get(import.meta.url);
@@ -20,8 +19,4 @@ export function createXAiLlm(model: Model): LanguageModelV4 {
   });
 }
 
-export const xAiProviders: LlmFactory.Providers = {
-  xai: createXAiLlm,
-};
-
-LlmFactory.register(xAiProviders);
+export const xai = Model.builder("xai", createXAiLlm);

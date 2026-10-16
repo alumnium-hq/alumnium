@@ -2,11 +2,10 @@ import { createGoogle } from "@ai-sdk/google";
 import type { LanguageModelV4 } from "@ai-sdk/provider";
 import {
   apiKeyField,
-  LlmFactory,
   withCallDefaults,
   Env,
   Logger,
-  type Model,
+  Model,
 } from "@alumnium/core/internal";
 
 const logger = Logger.get(import.meta.url);
@@ -21,8 +20,4 @@ export function createGoogleLlm(model: Model): LanguageModelV4 {
   );
 }
 
-export const googleProviders: LlmFactory.Providers = {
-  google: createGoogleLlm,
-};
-
-LlmFactory.register(googleProviders);
+export const google = Model.builder("google", createGoogleLlm);

@@ -1,6 +1,13 @@
 monorepo_root = true
 [monorepo]
-config_roots = [".", "packages/*", "charts/*", "websites/*", "telemetry", "assets"]
+config_roots = [
+  ".",
+  "packages/*",
+  "charts/*",
+  "websites/*",
+  "telemetry",
+  "assets",
+]
 
 [tools]
 # TypeScript
@@ -203,7 +210,9 @@ run = [
   "mise //websites/docs:version/set {{usage.version}}",
   "mise //charts/alumnium:version/set {{usage.version}}",
   "./scripts/build/setVersion.ts readme {{usage.version}}",
+  "mise //:install",
 ]
+
 [tasks."docker/build"]
 description = "Build Docker image"
 depends = ["//packages/typescript:build"]

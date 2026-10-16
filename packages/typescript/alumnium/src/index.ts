@@ -1,17 +1,15 @@
-// Register all LLM providers.
-import "@alumnium/anthropic";
-import "@alumnium/aws";
-import "@alumnium/azure";
-import "@alumnium/codex";
-import "@alumnium/cursor";
-import "@alumnium/deepseek";
-import "@alumnium/google";
-import "@alumnium/mistral";
-import "@alumnium/ollama";
-import "@alumnium/openai";
-import "@alumnium/openrouter";
-import "@alumnium/xai";
-
+export { anthropic } from "@alumnium/anthropic";
+export { awsAnthropic, awsMeta } from "@alumnium/aws";
+export { azureFoundry, azureOpenai } from "@alumnium/azure";
+export { codex } from "@alumnium/codex";
+export { cursor } from "@alumnium/cursor";
+export { deepseek } from "@alumnium/deepseek";
+export { google } from "@alumnium/google";
+export { mistral } from "@alumnium/mistral";
+export { ollama } from "@alumnium/ollama";
+export { openai } from "@alumnium/openai";
+export { openrouter } from "@alumnium/openrouter";
+export { xai } from "@alumnium/xai";
 export {
   Area,
   AssertionError,
@@ -48,5 +46,6 @@ export {
   WaitTool,
 } from "@alumnium/core";
 export { Alumni, wrapDriver } from "./Alumni.ts";
+export { resolveModel } from "./models.ts";
 export * from "./cli/cliClient.ts";
 export * from "./drivers/index.ts";

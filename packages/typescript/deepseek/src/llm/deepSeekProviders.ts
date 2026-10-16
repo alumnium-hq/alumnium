@@ -2,11 +2,10 @@ import { createDeepSeek } from "@ai-sdk/deepseek";
 import type { LanguageModelV4 } from "@ai-sdk/provider";
 import {
   apiKeyField,
-  LlmFactory,
   withCallDefaults,
   Env,
   Logger,
-  type Model,
+  Model,
 } from "@alumnium/core/internal";
 
 const logger = Logger.get(import.meta.url);
@@ -20,8 +19,4 @@ export function createDeepSeekLlm(model: Model): LanguageModelV4 {
   );
 }
 
-export const deepSeekProviders: LlmFactory.Providers = {
-  deepseek: createDeepSeekLlm,
-};
-
-LlmFactory.register(deepSeekProviders);
+export const deepseek = Model.builder("deepseek", createDeepSeekLlm);

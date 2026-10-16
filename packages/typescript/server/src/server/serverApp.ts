@@ -1,5 +1,9 @@
 import { cors } from "@elysiajs/cors";
 import { Elysia } from "elysia";
+import * as anthropic from "@alumnium/anthropic";
+import * as aws from "@alumnium/aws";
+import * as azure from "@alumnium/azure";
+import * as codex from "@alumnium/codex";
 import {
   ChangesAnalyzerAgent,
   RetrieverAgent,
@@ -7,12 +11,36 @@ import {
 } from "@alumnium/core/agents";
 import {
   AccessibilityTreeDiff,
+  Env,
   LlmUsageStats,
   Model,
   Telemetry,
 } from "@alumnium/core/internal";
 import * as s from "@alumnium/core/internal";
+import * as cursor from "@alumnium/cursor";
+import * as deepseek from "@alumnium/deepseek";
+import * as google from "@alumnium/google";
+import * as mistral from "@alumnium/mistral";
+import * as ollama from "@alumnium/ollama";
+import * as openai from "@alumnium/openai";
+import * as openrouter from "@alumnium/openrouter";
+import * as xai from "@alumnium/xai";
 import { ServerTelemetry } from "./ServerTelemetry.ts";
+
+const resolveModel = Model.resolver(
+  anthropic,
+  aws,
+  azure,
+  codex,
+  cursor,
+  deepseek,
+  google,
+  mistral,
+  ollama,
+  openai,
+  openrouter,
+  xai,
+);
 
 const telemetry = Telemetry.get(import.meta.url);
 const { logger } = telemetry;
@@ -59,7 +87,11 @@ export const serverApp = new Elysia({ prefix: "/v1" })
       .post(
         "/",
         (ctx) => {
-          const session = ctx.store.sessions.createSession(ctx.body);
+          const { provider, name, ...props } = ctx.body;
+          const model = resolveModel(
+            provider ? Model.new(provider, name) : Env.ALUMNIUM_MODEL,
+          );
+          const session = ctx.store.sessions.createSession({ ...props, model });
           return {
             session_id: session.sessionId,
             model: Model.toString(session.model),

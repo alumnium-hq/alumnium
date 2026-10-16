@@ -1,5 +1,6 @@
 import * as fs from "node:fs/promises";
 import { evalite } from "evalite";
+import { createEvalLlm } from "../../../../alumnium/tests/eval/llm.ts";
 import { Env } from "../../Env.ts";
 import { Logger } from "../../telemetry/Logger.ts";
 import type { ToolCall } from "../../tools/BaseTool.ts";
@@ -10,7 +11,6 @@ import { convertToolsToSchemas } from "../../tools/index.ts";
 import { PressKeyTool } from "../../tools/PressKeyTool.ts";
 import { TypeTool } from "../../tools/TypeTool.ts";
 import { UploadTool } from "../../tools/UploadTool.ts";
-import { LlmFactory } from "../LlmFactory.ts";
 import { ActorAgent } from "./ActorAgent.ts";
 
 Logger.level = "warning";
@@ -90,7 +90,7 @@ evalite<Input, ActorAgent.InvokeResult, ToolCall[]>("ActorAgent", {
 
   task: async ({ goal, step, treeXml }) => {
     const model = Env.ALUMNIUM_MODEL;
-    const llm = LlmFactory.createLlm(model);
+    const llm = createEvalLlm(model);
     const agent = new ActorAgent(model, llm, toolSchemas);
 
     return agent.invoke(goal, step, treeXml);

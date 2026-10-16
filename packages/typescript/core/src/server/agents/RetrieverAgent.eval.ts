@@ -1,8 +1,8 @@
 import { evalite } from "evalite";
 import { lit } from "smollit";
+import { createEvalLlm } from "../../../../alumnium/tests/eval/llm.ts";
 import { Env } from "../../Env.ts";
 import { Logger } from "../../telemetry/Logger.ts";
-import { LlmFactory } from "../LlmFactory.ts";
 import { RetrieverAgent } from "./RetrieverAgent.ts";
 
 Logger.level = "warning";
@@ -135,7 +135,7 @@ evalite("RetrieverAgent", {
 
   task: async (input) => {
     const model = Env.ALUMNIUM_MODEL;
-    const llm = LlmFactory.createLlm(model);
+    const llm = createEvalLlm(model);
     const agent = new RetrieverAgent(model, llm);
 
     return agent.invoke(input);

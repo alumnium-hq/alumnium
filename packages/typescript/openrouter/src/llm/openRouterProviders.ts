@@ -1,12 +1,6 @@
 import type { LanguageModelV4 } from "@ai-sdk/provider";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
-import {
-  apiKeyField,
-  LlmFactory,
-  Env,
-  Logger,
-  type Model,
-} from "@alumnium/core/internal";
+import { apiKeyField, Env, Logger, Model } from "@alumnium/core/internal";
 
 const logger = Logger.get(import.meta.url);
 
@@ -19,8 +13,4 @@ export function createOpenRouterLlm(model: Model): LanguageModelV4 {
   })(model.name);
 }
 
-export const openRouterProviders: LlmFactory.Providers = {
-  openrouter: createOpenRouterLlm,
-};
-
-LlmFactory.register(openRouterProviders);
+export const openrouter = Model.builder("openrouter", createOpenRouterLlm);

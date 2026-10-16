@@ -1,10 +1,10 @@
 import * as fs from "node:fs/promises";
 import { evalite } from "evalite";
 import { reportTrace } from "evalite/traces";
+import { createEvalLlm } from "../../../../alumnium/tests/eval/llm.ts";
 import { Env } from "../../Env.ts";
 import { Logger } from "../../telemetry/Logger.ts";
 import { RetrieverAgent } from "../agents/RetrieverAgent.ts";
-import { LlmFactory } from "../LlmFactory.ts";
 import { ServerChromiumAccessibilityTree } from "./ServerChromiumAccessibilityTree.ts";
 
 Logger.level = "warning";
@@ -105,7 +105,7 @@ evalite("ServerChromiumAccessibilityTree", {
 
 async function runRetriever(input: RetrieverAgent.Props) {
   const model = Env.ALUMNIUM_MODEL;
-  const llm = LlmFactory.createLlm(model);
+  const llm = createEvalLlm(model);
   const agent = new RetrieverAgent(model, llm);
 
   const start = performance.now();

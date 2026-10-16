@@ -9,21 +9,9 @@
   },
   "type": "module",
   "dependencies": {
-    "@alumnium/anthropic": "workspace:*",
-    "@alumnium/aws": "workspace:*",
-    "@alumnium/azure": "workspace:*",
-    "@alumnium/codex": "workspace:*",
     "@alumnium/core": "workspace:*",
-    "@alumnium/cursor": "workspace:*",
-    "@alumnium/deepseek": "workspace:*",
-    "@alumnium/google": "workspace:*",
     "@alumnium/mcp": "workspace:*",
-    "@alumnium/mistral": "workspace:*",
-    "@alumnium/ollama": "workspace:*",
-    "@alumnium/openai": "workspace:*",
-    "@alumnium/openrouter": "workspace:*",
     "@alumnium/server": "workspace:*",
-    "@alumnium/xai": "workspace:*",
     "cac": "^7.0.0",
     "picocolors": "^1.1.1"
   }
