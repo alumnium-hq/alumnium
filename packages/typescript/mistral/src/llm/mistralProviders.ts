@@ -2,11 +2,10 @@ import { createMistral } from "@ai-sdk/mistral";
 import type { LanguageModelV4 } from "@ai-sdk/provider";
 import {
   apiKeyField,
-  LlmFactory,
   withCallDefaults,
   Env,
   Logger,
-  type Model,
+  Model,
 } from "@alumnium/core/internal";
 
 const logger = Logger.get(import.meta.url);
@@ -19,8 +18,4 @@ export function createMistralLlm(model: Model): LanguageModelV4 {
   );
 }
 
-export const mistralProviders: LlmFactory.Providers = {
-  mistralai: createMistralLlm,
-};
-
-LlmFactory.register(mistralProviders);
+export const mistral = Model.builder("mistralai", createMistralLlm);

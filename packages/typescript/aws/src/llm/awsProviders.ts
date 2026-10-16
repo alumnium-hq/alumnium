@@ -1,12 +1,11 @@
 import { createAmazonBedrock } from "@ai-sdk/amazon-bedrock";
 import type { LanguageModelV4 } from "@ai-sdk/provider";
 import {
-  LlmFactory,
   usesAdaptiveThinking,
   withCallDefaults,
   Env,
   Logger,
-  type Model,
+  Model,
 } from "@alumnium/core/internal";
 
 const logger = Logger.get(import.meta.url);
@@ -30,9 +29,5 @@ export function createAwsLlm(model: Model): LanguageModelV4 {
   });
 }
 
-export const awsProviders: LlmFactory.Providers = {
-  aws_anthropic: createAwsLlm,
-  aws_meta: createAwsLlm,
-};
-
-LlmFactory.register(awsProviders);
+export const awsAnthropic = Model.builder("aws_anthropic", createAwsLlm);
+export const awsMeta = Model.builder("aws_meta", createAwsLlm);

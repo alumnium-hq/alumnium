@@ -8,9 +8,9 @@ import type { AgentOptions, RunResult, SDKUserMessage } from "@cursor/sdk";
 import { generateText, Output, streamText, tool } from "ai";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { z } from "zod";
-import { Env, Model, LlmFactory } from "@alumnium/core/internal";
-import "./cursorProviders.ts";
+import { Env } from "@alumnium/core/internal";
 import { CursorLanguageModel } from "./CursorLanguageModel.ts";
+import { cursor } from "./cursorProviders.ts";
 
 const mocks = vi.hoisted(() => ({
   create: vi.fn<(options: AgentOptions) => Promise<unknown>>(),
@@ -62,7 +62,7 @@ describe("CursorLanguageModel", () => {
     vi.stubEnv("CURSOR_API_KEY", "cursor-test-key");
     Env.reset();
     const result = await generateText({
-      model: LlmFactory.createLlm(Model.parse("cursor")),
+      model: cursor().createLlm(),
       prompt: "hello",
     });
     expect(result.text).toBe("hello");

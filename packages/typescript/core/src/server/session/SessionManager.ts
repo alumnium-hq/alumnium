@@ -1,13 +1,11 @@
 import { AppId } from "../../AppId.ts";
 import type { Driver } from "../../drivers/Driver.ts";
-import { Env } from "../../Env.ts";
-import type { LanguageModel } from "../../llm/LanguageModel.ts";
 import {
   createLlmUsageStats,
   LlmUsage,
   LlmUsageStats,
 } from "../../llm/llmSchema.ts";
-import { Model } from "../../Model.ts";
+import type { Model } from "../../Model.ts";
 import { Telemetry } from "../../telemetry/Telemetry.ts";
 import type { ToolDefinition } from "../../tools/ToolDefinition.ts";
 import type { TypeUtils } from "../../typeUtils.ts";
@@ -22,10 +20,8 @@ export namespace SessionManager {
     platform: Driver.Platform;
     // Optional since Java/Python only support Appium.
     driver?: Driver.Kind | undefined;
-    provider?: Model.Provider | undefined;
-    name?: string | undefined;
+    model: Model;
     tools: ToolDefinition[];
-    llm?: LanguageModel | undefined;
     planner?: boolean | undefined;
     excludeAttributes?: string[] | undefined;
     sessionId?: SessionId | undefined;
@@ -63,20 +59,11 @@ export class SessionManager {
 
     logger.debug(`Creating session with {props}`, { props });
 
-    const {
-      provider,
-      name: modelName,
-      excludeAttributes,
-      ...restProps
-    } = props;
+    const { excludeAttributes, ...restProps } = props;
 
-    const model = provider
-      ? Model.new(provider, modelName)
-      : Env.ALUMNIUM_MODEL;
     const session = new Session({
       ...restProps,
       sessionId,
-      model,
       excludeAttributes: new Set(excludeAttributes ?? []),
     });
 

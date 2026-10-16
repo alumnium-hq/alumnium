@@ -2,12 +2,11 @@ import { createAnthropic } from "@ai-sdk/anthropic";
 import type { LanguageModelV4 } from "@ai-sdk/provider";
 import {
   apiKeyField,
-  LlmFactory,
   usesAdaptiveThinking,
   withCallDefaults,
   Env,
   Logger,
-  type Model,
+  Model,
 } from "@alumnium/core/internal";
 
 const logger = Logger.get(import.meta.url);
@@ -30,8 +29,4 @@ export function createAnthropicLlm(model: Model): LanguageModelV4 {
   });
 }
 
-export const anthropicProviders: LlmFactory.Providers = {
-  anthropic: createAnthropicLlm,
-};
-
-LlmFactory.register(anthropicProviders);
+export const anthropic = Model.builder("anthropic", createAnthropicLlm);

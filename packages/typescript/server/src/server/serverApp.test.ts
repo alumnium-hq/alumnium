@@ -11,7 +11,7 @@ import {
 import {
   CreateSessionResponse,
   type Http,
-  LlmFactory,
+  Model,
 } from "@alumnium/core/internal";
 import { pushMock } from "../../../alumnium/tests/unit/mocks.ts";
 import { serverApp } from "./serverApp.ts";
@@ -21,12 +21,6 @@ describe("serverApp", () => {
     serverApp.store.sessions = new SessionManager();
 
     pushMock(
-      vi.spyOn(LlmFactory, "createLlm").mockReturnValue({
-        withStructuredOutput: () => ({ invoke: async () => ({}) }),
-        bindTools: () => ({ invoke: async () => ({}) }),
-        invoke: async () => ({ content: "" }),
-      } as any),
-
       vi
         .spyOn(PlannerAgent.prototype, "invoke")
         .mockResolvedValue([
@@ -79,6 +73,37 @@ describe("serverApp", () => {
   });
 
   describe("POST /sessions", () => {
+    async function postSession(model: { provider?: string; name?: string }) {
+      const response = await serverApp.handle(
+        createRequest("POST", "/sessions", {
+          ...model,
+          platform: "chromium",
+          tools: [],
+        }),
+      );
+      const body = CreateSessionResponse.parse(await response.json());
+      return {
+        model: body.model,
+        session: serverApp.store.sessions.getSession(body.session_id)!,
+      };
+    }
+
+    it("binds the requested model to its provider", async () => {
+      const { model, session } = await postSession({
+        provider: "anthropic",
+        name: "claude-haiku-4-5-20251001",
+      });
+      expect(model).toBe("anthropic/claude-haiku-4-5-20251001");
+      expect(Model.hasProvider(session.model)).toBe(true);
+    });
+
+    it("defaults to ALUMNIUM_MODEL", async () => {
+      vi.stubEnv("ALUMNIUM_MODEL", "google");
+      const { model, session } = await postSession({});
+      expect(model).toBe(`google/${Model.defaultProviderModel("google")}`);
+      expect(Model.hasProvider(session.model)).toBe(true);
+    });
+
     it("validates payload", async () => {
       const emptyBodyResponse = await serverApp.handle(
         createRequest("POST", "sessions", {}),

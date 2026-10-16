@@ -2,13 +2,12 @@ import { createAzure } from "@ai-sdk/azure";
 import type { LanguageModelV4 } from "@ai-sdk/provider";
 import {
   apiKeyField,
-  LlmFactory,
   requiredEnv,
   withCallDefaults,
   Env,
   Logger,
   maskString,
-  type Model,
+  Model,
 } from "@alumnium/core/internal";
 
 const logger = Logger.get(import.meta.url);
@@ -80,9 +79,5 @@ function createAzureOpenAiProvider(): ReturnType<typeof createAzure> {
   });
 }
 
-export const azureProviders: LlmFactory.Providers = {
-  azure_foundry: createAzureLlm,
-  azure_openai: createAzureLlm,
-};
-
-LlmFactory.register(azureProviders);
+export const azureFoundry = Model.builder("azure_foundry", createAzureLlm);
+export const azureOpenai = Model.builder("azure_openai", createAzureLlm);

@@ -38,7 +38,6 @@ export * from "./mcp/McpMode.ts";
 export * from "./package.ts";
 export * from "./pythonic/pythonicFormat.ts";
 export * from "./pythonic/pythonicSplitlines.ts";
-export * from "./server/LlmFactory.ts";
 export * from "./server/accessibility/AccessibilityTreeDiff.ts";
 export * from "./server/accessibility/BaseServerAccessibilityTree.ts";
 export * from "./server/accessibility/ServerChromiumAccessibilityTree.ts";

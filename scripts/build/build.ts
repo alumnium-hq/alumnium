@@ -275,7 +275,7 @@ const telemetryPathsRewritePlugin: BunPlugin = {
 
 // Keeps imports of the package's other published entries external (e.g. the
 // public `index.ts` re-exporting from `internal.ts`), so each module is
-// bundled once and the entries share state like the LlmFactory registry.
+// bundled once and the entries share state, e.g. the same `Alumni` class.
 // Bun keeps the source specifier of external imports, so the entry source is
 // rewritten to point at the sibling's output file.
 function siblingEntriesExternalPlugin(
