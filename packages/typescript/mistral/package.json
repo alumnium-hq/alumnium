@@ -1,0 +1,16 @@
+{
+  "name": "@alumnium/mistral",
+  "version": "0.24.0-alpha.2",
+  "description": "Alumnium Mistral AI LLM provider",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@ai-sdk/mistral": "^4.0.32",
+    "@ai-sdk/provider": "^4.0.7",
+    "@alumnium/core": "workspace:*",
+    "ai": "^7.0.78"
+  }
+}

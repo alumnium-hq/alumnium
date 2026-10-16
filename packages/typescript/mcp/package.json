@@ -1,0 +1,27 @@
+{
+  "name": "@alumnium/mcp",
+  "version": "0.24.0-alpha.2",
+  "private": true,
+  "description": "Alumnium MCP server",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./standalone": "./src/standalone/index.ts"
+  },
+  "dependencies": {
+    "@alumnium/core": "workspace:*",
+    "@alumnium/maestro": "workspace:*",
+    "@alumnium/playwright": "workspace:*",
+    "@alumnium/xcode": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "alumnium": "workspace:*",
+    "alwaysly": "^0.4.0",
+    "case-anything": "^3.1.2",
+    "cloakbrowser": "0.5.12",
+    "playwright-core": "^1.60.0",
+    "selenium-webdriver": "^4.41.0",
+    "webdriverio": "^9.30.1",
+    "zod": "^4.4.1"
+  }
+}

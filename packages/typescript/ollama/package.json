@@ -1,0 +1,16 @@
+{
+  "name": "@alumnium/ollama",
+  "version": "0.24.0-alpha.2",
+  "description": "Alumnium Ollama LLM provider",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@ai-sdk/provider": "^4.0.7",
+    "@alumnium/core": "workspace:*",
+    "ai": "^7.0.78",
+    "ollama-ai-provider-v2": "^4.0.1"
+  }
+}

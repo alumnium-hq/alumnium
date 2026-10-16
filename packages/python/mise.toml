@@ -22,10 +22,12 @@ description = "Clears Python package Alumnium LLM cache."
 run = "rm -rf ./.alumnium/cache"
 
 [tasks.build]
+# NOTE: dist/pip also holds the CLI pip packages built by scripts/build/build.ts
+# (published together), so only the main package files are cleaned up.
 run = '''
-rm -rf dist
-mkdir -p dist
-uv build --out-dir dist
+mkdir -p dist/pip
+rm -f dist/pip/alumnium-[0-9]*
+uv build --out-dir dist/pip
 '''
 description = "Build main pip package"
 
@@ -124,3 +126,10 @@ run = "uv run ty check --watch"
 run = "fnox exec -- uv run python -i demo.py"
 raw = true
 quiet = true
+
+[tasks."version/set"]
+description = "Sets the version of the Python package and its CLI dependency."
+usage = '''
+arg "<version>" help="Version to set, e.g. 0.24.0"
+'''
+run = "../../scripts/build/setVersion.ts python {{usage.version}}"

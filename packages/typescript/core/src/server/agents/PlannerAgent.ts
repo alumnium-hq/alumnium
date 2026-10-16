@@ -1,0 +1,209 @@
+import type { ModelMessage } from "ai";
+import z from "zod";
+import type { LanguageModel } from "../../llm/LanguageModel.ts";
+import { loadAi } from "../../llm/loadAi.ts";
+import type { Model } from "../../Model.ts";
+import { pythonicFormat } from "../../pythonic/pythonicFormat.ts";
+import { Telemetry } from "../../telemetry/Telemetry.ts";
+import { NavigateToUrlTool } from "../../tools/NavigateToUrlTool.ts";
+import { SwitchToNextTabTool } from "../../tools/SwitchToNextTabTool.ts";
+import { SwitchToPreviousTabTool } from "../../tools/SwitchToPreviousTabTool.ts";
+import { UploadTool } from "../../tools/UploadTool.ts";
+import { BaseAgent } from "./BaseAgent.ts";
+
+const { tracer, logger } = Telemetry.get(import.meta.url);
+const { span } = tracer.dec();
+
+export namespace PlannerAgent {
+  export type Meta = z.infer<typeof PlannerAgent.Meta>;
+
+  export type Plan = z.infer<typeof PlannerAgent.Plan>;
+}
+
+export class PlannerAgent extends BaseAgent {
+  static Plan = z.object({
+    explanation: z
+      .string()
+      .describe(
+        "Explanation how the actions were determined and why they are related to the goal. " +
+          "Always include the goal, actions to achieve it, and their order in the explanation.",
+      ),
+    actions: z
+      .array(z.string())
+      .describe("List of actions to achieve the goal."),
+  });
+
+  static Meta = z.object({
+    kind: z.literal("planner"),
+    goal: BaseAgent.Goal,
+    treeXml: z.string(),
+  });
+
+  static readonly #NAVIGATE_TO_URL_EXAMPLE = `
+Example:
+Input:
+Given the following XML accessibility tree:
+\`\`\`xml
+<link href="http://foo.bar/baz" />
+\`\`\`
+Outline the actions needed to achieve the following goal: open 'http://foo.bar/baz/123' URL
+Output:
+Explanation: In order to open URL, I am going to directly navigate to the requested URL.
+Actions: ['navigate to "http://foo.bar/baz/123" URL']
+`.trim();
+
+  static readonly #SWITCH_TAB_EXAMPLE = `
+Example:
+Input:
+Given the following XML accessibility tree:
+\`\`\`xml
+<RootWebArea id=1 focusable focused url="about:blank" />
+\`\`\`
+Outline the actions needed to achieve the following goal: switch to <previous|next> browser tab
+Output:
+Explanation: In order to switch to the <previous|next> browser tab, I am going to use the switch tab action.
+Actions: ['switch to the <previous|next> browser tab']
+`.trim();
+
+  static readonly #UPLOAD_EXAMPLE = `
+Example:
+Input:
+Given the following XML accessibility tree:
+\`\`\`xml
+<button name="Choose File" />
+\`\`\`
+Outline the actions needed to achieve the following goal: upload '/tmp/test.txt', '/tmp/image.png'
+Output:
+Explanation: In order to upload the file, I am going to use the upload action on the file input button.
+I don't need to click the button first, as the upload action will handle that.
+Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
+`.trim();
+
+  toolNames: string[];
+  // TODO: There's a bug in Bun that results in `#baseExamples` compiled to
+  // `__privateGet(this, _baseExamples)` which causes a runtime error.
+  // Figure out a solution to use private fields without breaking Bun
+  // compatibility.
+  private baseExamples = "";
+  private extraExamples = "";
+
+  constructor(model: Model, llm: LanguageModel, toolNames: string[]) {
+    super(model, llm);
+
+    // Convert tool class names to human-readable names
+    // E.g., "NavigateToUrlTool" -> "navigate to url"
+    this.toolNames = toolNames.map((tool) =>
+      tool
+        .replace(/(?<!^)(?=[A-Z])/g, " ")
+        .toLowerCase()
+        .replace(" tool", ""),
+    );
+
+    if (toolNames.includes(NavigateToUrlTool.name)) {
+      this.baseExamples += `\n\n${PlannerAgent.#NAVIGATE_TO_URL_EXAMPLE}`;
+    }
+
+    if (toolNames.includes(UploadTool.name)) {
+      this.baseExamples += `\n\n${PlannerAgent.#UPLOAD_EXAMPLE}`;
+    }
+
+    if (
+      toolNames.includes(SwitchToPreviousTabTool.name) ||
+      toolNames.includes(SwitchToNextTabTool.name)
+    ) {
+      this.baseExamples += `\n\n${PlannerAgent.#SWITCH_TAB_EXAMPLE}`;
+    }
+
+    this.extraExamples = this.baseExamples;
+  }
+
+  clearExamples(): void {
+    this.extraExamples = this.baseExamples;
+    logger.info("Examples cleared.");
+  }
+
+  addExample(goal: string, actions: string[]) {
+    logger.info("Adding example:");
+    logger.debug(`  -> Goal: ${goal}`);
+    logger.debug(`  -> Actions: ${actions.join(", ")}`);
+
+    this.extraExamples += `\n\n${PlannerAgent.#formatExample(goal, actions)}`;
+
+    logger.info("Example added.");
+  }
+
+  static #formatExample(goal: string, actions: string[]): string {
+    const actionsStr = actions.map((a) => `'${a}'`).join(", ");
+    return `Example:
+Input:
+Given the following XML accessibility tree:
+\`\`\`xml
+\`\`\`
+Outline the actions needed to achieve the following goal: ${goal}
+Output:
+Explanation: To achieve the goal, the following actions will be performed: ${actions.join(", ")}.
+Actions: [${actionsStr}]`.trim();
+  }
+
+  /**
+   * Plan actions to achieve a goal.
+   *
+   * @param goal The goal to achieve
+   * @param treeXml The accessibility tree XML
+   * @param screenshot An optional base64-encoded PNG of the current view
+   * @returns A tuple of (explanation, actions) where explanation describes
+   *   the reasoning and actions is the list of steps to achieve the goal.
+   */
+  @span("agent.invoke", { "agent.kind": "planner" })
+  async invoke(
+    goal: string,
+    treeXml: string,
+    screenshot?: string,
+  ): Promise<[string, string[]]> {
+    const { Output } = await loadAi();
+    logger.info("Starting planning:");
+    this.logData(logger, "in", {
+      Goal: goal,
+      "Accessibility tree": this.debugLogTreeDetail(treeXml),
+    });
+
+    const meta: PlannerAgent.Meta = {
+      kind: "planner",
+      goal: goal as BaseAgent.Goal,
+      treeXml,
+    };
+
+    const prompt = pythonicFormat(this.prompts.user, {
+      goal,
+      accessibility_tree: treeXml,
+    });
+    const content: Extract<ModelMessage, { role: "user" }>["content"] =
+      screenshot
+        ? [
+            { type: "text", text: prompt },
+            { type: "file", mediaType: "image/png", data: screenshot },
+          ]
+        : prompt;
+
+    const result = await this.invokeModel({
+      instructions: pythonicFormat(this.prompts.system, {
+        tools: this.toolNames.join(", "),
+        extra_examples: this.extraExamples,
+      }),
+      messages: [{ role: "user", content }],
+      output: Output.object({ schema: PlannerAgent.Plan }),
+      meta,
+    });
+
+    const structured = result.structured as PlannerAgent.Plan;
+    this.logData(logger, "out", {
+      Result: structured,
+      Usage: result.usage,
+    });
+
+    return [
+      structured.explanation,
+      structured.actions.filter((action) => action),
+    ];
+  }
+}

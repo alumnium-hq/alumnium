@@ -1,0 +1,16 @@
+{
+  "name": "@alumnium/azure",
+  "version": "0.24.0-alpha.2",
+  "description": "Alumnium Azure (OpenAI and Foundry) LLM provider",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@ai-sdk/azure": "^4.0.48",
+    "@ai-sdk/provider": "^4.0.7",
+    "@alumnium/core": "workspace:*",
+    "ai": "^7.0.78"
+  }
+}

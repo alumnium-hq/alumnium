@@ -1,0 +1,18 @@
+{
+  "name": "@alumnium/cli",
+  "version": "0.24.0-alpha.2",
+  "private": true,
+  "description": "Alumnium CLI",
+  "license": "MIT",
+  "bin": {
+    "alumnium": "./src/cli/bin.ts"
+  },
+  "type": "module",
+  "dependencies": {
+    "@alumnium/core": "workspace:*",
+    "@alumnium/mcp": "workspace:*",
+    "@alumnium/server": "workspace:*",
+    "cac": "^7.0.0",
+    "picocolors": "^1.1.1"
+  }
+}

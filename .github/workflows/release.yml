@@ -55,15 +55,10 @@ jobs:
       - name: Build Main Package
         run: mise //packages/python:build
 
-      - name: Publish CLI Pip Packages
+      - name: Publish pip Packages
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          packages-dir: packages/typescript/dist/pip/
-
-      - name: Publish Main Package
-        uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          packages-dir: packages/python/dist/
+          packages-dir: packages/python/dist/pip/
 
       - name: Debug Session
         if: failure() && runner.debug == '1'
@@ -242,11 +237,10 @@ jobs:
         with:
           subject-path: |
             packages/java/build/libs/*
-            packages/python/dist/*
+            packages/java/dist/maven/*
+            packages/python/dist/pip/*
             packages/typescript/dist/bin/*
-            packages/typescript/dist/maven/*
-            packages/typescript/dist/npm/*
-            packages/typescript/dist/pip/*
+            packages/typescript/dist/npm/*.tgz
 
       - name: Get Version
         id: version
@@ -256,11 +250,10 @@ jobs:
         run: >
           gh release create ${{ steps.version.outputs.version }}
           packages/java/build/libs/*
-          packages/python/dist/*
+          packages/java/dist/maven/*
+          packages/python/dist/pip/*
           packages/typescript/dist/bin/*
-          packages/typescript/dist/maven/*
-          packages/typescript/dist/pip/*
-          packages/typescript/dist/npm/*
+          packages/typescript/dist/npm/*.tgz
           "${{ steps.attest.outputs.bundle-path }}"
           --generate-notes
           ${{ contains(steps.version.outputs.version, 'alpha') && '--prerelease' || '' }}

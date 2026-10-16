@@ -1,0 +1,22 @@
+import { createDeepSeek } from "@ai-sdk/deepseek";
+import type { LanguageModelV4 } from "@ai-sdk/provider";
+import {
+  apiKeyField,
+  withCallDefaults,
+  Env,
+  Logger,
+  Model,
+} from "@alumnium/core/internal";
+
+const logger = Logger.get(import.meta.url);
+
+export function createDeepSeekLlm(model: Model): LanguageModelV4 {
+  logger.debug(`Creating DeepSeek LLM with model ${model.name}`);
+  return withCallDefaults(
+    createDeepSeek(apiKeyField(Env.DEEPSEEK_API_KEY))(model.name),
+    { temperature: 0, reasoning: "low" },
+    model.name === "deepseek-reasoner" ? ["toolChoice"] : undefined,
+  );
+}
+
+export const deepseek = Model.builder("deepseek", createDeepSeekLlm);

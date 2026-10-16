@@ -6,4 +6,4 @@ dist/
 .alumnium/
 
 # Test artifacts
-/tests/artifacts/
+/alumnium/tests/artifacts/

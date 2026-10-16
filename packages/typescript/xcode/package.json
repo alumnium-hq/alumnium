@@ -1,0 +1,16 @@
+{
+  "name": "@alumnium/xcode",
+  "version": "0.24.0-alpha.2",
+  "description": "Alumnium Xcode driver",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@alumnium/core": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "domhandler": "^6.0.0",
+    "zod": "^4.4.1"
+  }
+}

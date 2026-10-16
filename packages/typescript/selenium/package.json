@@ -1,0 +1,15 @@
+{
+  "name": "@alumnium/selenium",
+  "version": "0.24.0-alpha.2",
+  "description": "Alumnium Selenium driver",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@alumnium/core": "workspace:*",
+    "alwaysly": "^0.4.0",
+    "selenium-webdriver": "^4.41.0"
+  }
+}

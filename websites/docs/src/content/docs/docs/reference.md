@@ -19,6 +19,61 @@ Alumnium supports:
 - [Maestro](https://maestro.dev) driver for iOS and Android in the MCP server
 - [Xcode 27+](https://developer.apple.com/xcode/) driver for iOS in the MCP server
 
+## npm Packages
+
+The TypeScript implementation is published as several npm packages, released together under the same version:
+
+| Package                                                          | Description                                                                                                                                                                                                                                                |
+| ---------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `alumnium`                                                       | Batteries-included package: `Alumni` accepting any supported driver, all drivers and LLM providers, and the `alumnium` CLI.                                                                                                                                |
+| `@alumnium/playwright`, `@alumnium/selenium`, `@alumnium/appium` | Web and mobile drivers. Each exports an `Alumni` bound to its native driver (Playwright `Page`, Selenium `WebDriver`, WebdriverIO `Browser`).                                                                                                              |
+| `@alumnium/maestro`, `@alumnium/xcode`                           | Maestro and Xcode drivers with their sessions.                                                                                                                                                                                                             |
+| `@alumnium/<provider>`                                           | LLM providers, one package per provider (see below). Each exports builders of its models to pass to `Alumni`.                                                                                                                                              |
+| `@alumnium/core`                                                 | `Alumni` and the AI agents, shared by all packages. Does not depend on browser drivers or LLM provider SDKs, and runs on Node.js without Bun. The agents run on the `ai` package, installed with any LLM provider package and loaded only when agents run. |
+| `@alumnium/telemetry`                                            | OpenTelemetry trace and log exporters, loaded by `@alumnium/core` when `ALUMNIUM_TRACE` is enabled. Included in `alumnium`.                                                                                                                               |
+| `@alumnium/cli-<os>-<arch>`                                      | Prebuilt CLI binaries, installed automatically as optional dependencies of `alumnium`.                                                                                                                                                                     |
+
+LLM provider packages and the model builders they export, by `ALUMNIUM_MODEL` provider:
+
+| Provider                        | Package                | Builders                        |
+| ------------------------------- | ---------------------- | ------------------------------- |
+| `anthropic`                     | `@alumnium/anthropic`  | `anthropic()`                   |
+| `aws_anthropic`, `aws_meta`     | `@alumnium/aws`        | `awsAnthropic()`, `awsMeta()`   |
+| `azure_openai`, `azure_foundry` | `@alumnium/azure`      | `azureOpenai()`, `azureFoundry()` |
+| `codex`                         | `@alumnium/codex`      | `codex()`                       |
+| `cursor`                        | `@alumnium/cursor`     | `cursor()`                      |
+| `deepseek`                      | `@alumnium/deepseek`   | `deepseek()`                    |
+| `google`                        | `@alumnium/google`     | `google()`                      |
+| `mistralai`                     | `@alumnium/mistral`    | `mistral()`                     |
+| `ollama`                        | `@alumnium/ollama`     | `ollama()`                      |
+| `openai`                        | `@alumnium/openai`     | `openai()`                      |
+| `openrouter`                    | `@alumnium/openrouter` | `openrouter()`                  |
+| `xai`                           | `@alumnium/xai`        | `xai()`                         |
+
+Use `alumnium` to write tests: it includes all providers and uses `ALUMNIUM_MODEL`. To install only what you use, pick a driver package and an LLM provider package, and pass the model built by the provider package:
+
+```typescript
+import { Alumni } from "@alumnium/playwright";
+import { openai } from "@alumnium/openai";
+
+const al = new Alumni(page, { model: openai() }); // The default OpenAI model
+const al2 = new Alumni(page, { model: openai("gpt-5.6-mini") });
+```
+
+Builders default to the provider's default model. `alumnium` exports all builders too, e.g. `import { Alumni, anthropic } from "alumnium";`.
+
+To use your own [AI SDK](https://ai-sdk.dev) language model, e.g. unsupported yet by `alumnium`, build the model with `Model.builder`, naming the provider whose prompts suit it:
+
+```typescript
+import { zai } from "@ai-sdk/zai";
+import { Alumni, Model } from "alumnium";
+
+const glm = Model.builder("openai", ({ name }) => zai(name))("glm-5.3");
+const al = new Alumni(page, { model: glm });
+```
+
+`@alumnium/core` is meant for tools that integrate Alumnium (e.g. test runners and agent harnesses) and talk to the Alumnium MCP server or CLI, so they don't need to install browser drivers and LLM providers.
+
 ## Environment Variables
 
 The following environment variables can be used to control the behavior of Alumnium.
@@ -109,26 +164,28 @@ export OTEL_EXPORTER_OTLP_ENDPOINT="http://127.0.0.1:4318"
 export OTEL_EXPORTER_OTLP_PROTOCOL="http/protobuf"
 ```
 
+The Alumnium CLI and the `alumnium` npm package include the exporters. When using `@alumnium/core` or a driver package without `alumnium`, also install `@alumnium/telemetry`.
+
 ### `ALUMNIUM_MODEL`
 
 Select AI provider and model to use.
 
-| Value         | LLM                                         | Notes                                                                    |
-| ------------- | ------------------------------------------- | ------------------------------------------------------------------------ |
-| anthropic     | claude-haiku-4-5-20251001                   | Anthropic API.                                                           |
-| azure_foundry | gpt-5.6-luna                                | Azure AI Foundry API.                                                    |
-| azure_openai  | gpt-5.6-luna                                | Self-hosted Azure OpenAI API.                                            |
-| aws_anthropic | us.anthropic.claude-haiku-4-5-20251001-v1:0 | Serverless Amazon Bedrock API.                                           |
-| aws_meta      | us.meta.llama4-maverick-17b-instruct-v1:0   | Serverless Amazon Bedrock API.                                           |
-| codex         | gpt-5.6-luna                                | OpenAI models via ChatGPT Plus/Pro OAuth.                                |
-| cursor        | composer-2.5                                | Cursor models via Cursor Agents SDK (local runtime).                     |
-| deepseek      | deepseek-flash                              | DeepSeek Platform.                                                       |
-| google        | gemini-3.5-flash-lite                       | Google AI Studio API.                                                    |
-| mistralai     | mistral-medium-3-5                          | Mistral AI Studio API.                                                   |
-| ollama        | qwen3.6:35b                                 | Local model inference with Ollama.                                       |
-| openai        | gpt-5.6-luna                                | OpenAI API.                                                              |
-| openrouter    | openai/gpt-5.6-luna                         | Models routed through OpenRouter.                                        |
-| xai           | grok-4.3                                    | xAI API.                                                                 |
+| Value         | LLM                                         | Notes                                                |
+| ------------- | ------------------------------------------- | ---------------------------------------------------- |
+| anthropic     | claude-haiku-4-5-20251001                   | Anthropic API.                                       |
+| azure_foundry | gpt-5.6-luna                                | Azure AI Foundry API.                                |
+| azure_openai  | gpt-5.6-luna                                | Self-hosted Azure OpenAI API.                        |
+| aws_anthropic | us.anthropic.claude-haiku-4-5-20251001-v1:0 | Serverless Amazon Bedrock API.                       |
+| aws_meta      | us.meta.llama4-maverick-17b-instruct-v1:0   | Serverless Amazon Bedrock API.                       |
+| codex         | gpt-5.6-luna                                | OpenAI models via ChatGPT Plus/Pro OAuth.            |
+| cursor        | composer-2.5                                | Cursor models via Cursor Agents SDK (local runtime). |
+| deepseek      | deepseek-flash                              | DeepSeek Platform.                                   |
+| google        | gemini-3.5-flash-lite                       | Google AI Studio API.                                |
+| mistralai     | mistral-medium-3-5                          | Mistral AI Studio API.                               |
+| ollama        | qwen3.6:35b                                 | Local model inference with Ollama.                   |
+| openai        | gpt-5.6-luna                                | OpenAI API.                                          |
+| openrouter    | openai/gpt-5.6-luna                         | Models routed through OpenRouter.                    |
+| xai           | grok-4.3                                    | xAI API.                                             |
 
 You can also override the LLM for each provider by passing it after `/`.
 

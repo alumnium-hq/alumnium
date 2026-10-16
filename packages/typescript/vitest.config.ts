@@ -1,10 +1,12 @@
 import babel from "@rolldown/plugin-babel";
 import { defineConfig } from "vitest/config";
-import { Driver } from "./src/drivers/Driver.ts";
-import { Env } from "./src/Env.ts";
-import { Logger } from "./src/telemetry/Logger.ts";
-import PassThresholdReporter from "./tests/utils/PassThresholdReporter.ts";
 import type { InlineConfig } from "vitest/node";
+import PassThresholdReporter from "./alumnium/tests/utils/PassThresholdReporter.ts";
+// NOTE: Config loaders externalize workspace packages and Node can't load
+// their TypeScript sources, so import the modules by path.
+import { Driver } from "./core/src/drivers/Driver.ts";
+import { Env } from "./core/src/Env.ts";
+import { Logger } from "./core/src/telemetry/Logger.ts";
 
 const driverKind = Env.ALUMNIUM_DRIVER;
 const isAppium = Driver.isAppium(driverKind);
@@ -27,8 +29,8 @@ export default defineConfig({
       {
         test: {
           name: "unit",
-          include: ["src/**/*.test.ts"],
-          setupFiles: ["tests/unit/setup.ts"],
+          include: ["*/src/**/*.test.ts"],
+          setupFiles: ["alumnium/tests/unit/setup.ts"],
           pool: "threads",
           maxWorkers: Env.ALUMNIUM_TEST_MAX_CONCURRENCY,
         },
@@ -37,20 +39,20 @@ export default defineConfig({
       {
         test: {
           name: "system",
-          include: ["tests/system/**/*.test.ts"],
+          include: ["alumnium/tests/system/**/*.test.ts"],
           testTimeout: 5 * 60_000, // 5 minutes
           retry: {
             count: Env.ALUMNIUM_TEST_RETRY_COUNT,
             delay: Env.ALUMNIUM_TEST_RETRY_DELAY,
           },
           globalSetup: isAppium
-            ? ["tests/system/setup.appium.ts"]
+            ? ["alumnium/tests/system/setup.appium.ts"]
             : isMaestro
-              ? ["tests/system/setup.maestro.ts"]
+              ? ["alumnium/tests/system/setup.maestro.ts"]
               : driverKind === "xcode"
-                ? ["tests/system/setup.xcode.ts"]
+                ? ["alumnium/tests/system/setup.xcode.ts"]
                 : [],
-          setupFiles: ["tests/system/setup.ts"],
+          setupFiles: ["alumnium/tests/system/setup.ts"],
           pool: "threads",
           fileParallelism: !isMobile,
           maxWorkers: Env.ALUMNIUM_TEST_MAX_CONCURRENCY,

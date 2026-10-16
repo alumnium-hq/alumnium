@@ -1,0 +1,413 @@
+import fs from "node:fs/promises";
+import path from "node:path";
+import { describe, expect, it } from "vitest";
+import z from "zod";
+import {
+  createMockDir,
+  setupBeforeEach,
+} from "../../../alumnium/tests/unit/mocks.ts";
+import { FileStore } from "./FileStore.ts";
+
+describe("FileStore", () => {
+  describe("constructor", () => {
+    it("initializes with a directory", () => {
+      const dir = "test/store/dir";
+      const store = new FileStore(dir);
+      expect(store.dir).toBe("test/store/dir");
+    });
+
+    it("allows override dir in subclasses", () => {
+      const TestStore = class extends FileStore {
+        constructor(dir: string) {
+          super(dir);
+          this.defineDir(() => `overridden/${dir}`);
+        }
+      };
+      const store = new TestStore("test/store/dir");
+      expect(store.dir).toBe("overridden/test/store/dir");
+    });
+
+    it("allows to define dynamic dir in subclasses", () => {
+      const TestStore = class extends FileStore {
+        #counter = 0;
+        constructor() {
+          super(FileStore.DYNAMIC_DIR_SYMBOL);
+        }
+
+        override get dir() {
+          return `test/dir/${this.#counter}`;
+        }
+
+        increment() {
+          this.#counter++;
+        }
+      };
+
+      const store = new TestStore();
+      expect(store.dir).toBe("test/dir/0");
+      store.increment();
+      expect(store.dir).toBe("test/dir/1");
+    });
+  });
+
+  describe("resolve", () => {
+    it("resolves path against base dir", () => {
+      const store = new FileStore("test/dir");
+      expect(store.resolve("./sub/dir")).toBe("test/dir/sub/dir");
+    });
+  });
+
+  describe("FileStore.cwdRelStore", () => {
+    it("resolves a store relative to cwd", () => {
+      expect(FileStore.cwdRelStore("test/store").dir).toBe(
+        path.resolve("test/store"),
+      );
+    });
+
+    it("resolves cwd when the nested store is omitted", () => {
+      expect(FileStore.cwdRelStore().dir).toBe(process.cwd());
+    });
+
+    it("rejects an absolute path", () => {
+      expect(() => FileStore.cwdRelStore(path.resolve("test/store"))).toThrow(
+        "must be relative",
+      );
+    });
+  });
+
+  describe("ensureFilePath", () => {
+    const setup = setupBeforeEach(async () => {
+      const mockDir = await createMockDir();
+      const store = new FileStore(mockDir.path);
+      const relFilePath = "sub/dir/file.txt";
+      const result = await store.ensureFilePath(relFilePath);
+      return { mockDir, relFilePath, result };
+    });
+
+    it("resolves file path", async () => {
+      const { mockDir, relFilePath, result } = setup.cur;
+      expect(result).toBe(path.resolve(mockDir.path, relFilePath));
+    });
+
+    it("creates file dir", async () => {
+      const { result } = setup.cur;
+      await expect(fs.stat(path.dirname(result))).resolves.toMatchObject({
+        size: expect.any(Number),
+      });
+    });
+
+    it("does't create file", async () => {
+      const { result } = setup.cur;
+      await expect(fs.stat(result)).rejects.toThrow("ENOENT");
+    });
+  });
+
+  describe("ensureDir", () => {
+    const setup = setupBeforeEach(async () => {
+      const mockDir = await createMockDir();
+      const store = new FileStore(mockDir.path);
+      const relDirPath = "sub/dir";
+      const result = await store.ensureDir(relDirPath);
+      return { mockDir, relDirPath, result };
+    });
+
+    it("resolves dir path", async () => {
+      const { mockDir, relDirPath, result } = setup.cur;
+      expect(result).toBe(path.resolve(mockDir.path, relDirPath));
+    });
+
+    it("creates dir", async () => {
+      const { result } = setup.cur;
+      await expect(fs.stat(result)).resolves.toMatchObject({
+        isDirectory: expect.any(Function),
+      });
+    });
+  });
+
+  describe("writeJson", () => {
+    const setup = setupBeforeEach(async () => {
+      const mockDir = await createMockDir();
+      const store = new FileStore(mockDir.path);
+      const relFilePath = "sub/dir/file.json";
+      const data = { key: "value" };
+      const result = await store.writeJson(relFilePath, data);
+      return { mockDir, relFilePath, data, result };
+    });
+
+    it("resolves file path", async () => {
+      const { mockDir, relFilePath, result } = setup.cur;
+      expect(result).toBe(path.resolve(mockDir.path, relFilePath));
+    });
+
+    it("writes JSON data to file", async () => {
+      const { result, data } = setup.cur;
+      const fileContent = await fs.readFile(result, "utf-8");
+      expect(JSON.parse(fileContent)).toEqual(data);
+    });
+  });
+
+  describe("writeFile", () => {
+    const setup = setupBeforeEach(async () => {
+      const mockDir = await createMockDir();
+      const store = new FileStore(mockDir.path);
+      return { mockDir, store };
+    });
+
+    it("resolves file path", async () => {
+      const { mockDir, store } = setup.cur;
+      const relFilePath = "sub/dir/file.txt";
+      const result = await store.writeFile(relFilePath, "Hello, world!");
+      expect(result).toBe(path.resolve(mockDir.path, relFilePath));
+    });
+
+    it("writes string data to file", async () => {
+      const { store } = setup.cur;
+      const result = await store.writeFile("sub/dir/file.txt", "Hello, world!");
+      const content = await fs.readFile(result, "utf-8");
+      expect(content).toBe("Hello, world!");
+    });
+
+    it("writes buffer data to file", async () => {
+      const { store } = setup.cur;
+      const buf = Buffer.from("Hello, buffer!");
+      const result = await store.writeFile("sub/dir/file.bin", buf);
+      const content = await fs.readFile(result);
+      expect(content).toEqual(buf);
+    });
+  });
+
+  describe("readText", () => {
+    const setup = setupBeforeEach(async () => {
+      const mockDir = await createMockDir();
+      const store = new FileStore(mockDir.path);
+      return { mockDir, store };
+    });
+
+    it("reads text content from file", async () => {
+      const { mockDir, store } = setup.cur;
+      const filePath = path.resolve(mockDir.path, "file.txt");
+      await fs.writeFile(filePath, "Hello, world!");
+      const content = await store.readText("file.txt");
+      expect(content).toBe("Hello, world!");
+    });
+
+    it("returns null if file doesn't exist", async () => {
+      const { store } = setup.cur;
+      const content = await store.readText("nonexistent.txt");
+      expect(content).toBeNull();
+    });
+  });
+
+  describe("readJson", () => {
+    const setup = setupBeforeEach(async () => {
+      const mockDir = await createMockDir();
+      const store = new FileStore(mockDir.path);
+      return { mockDir, store };
+    });
+
+    it("reads JSON content from file", async () => {
+      const { mockDir, store } = setup.cur;
+      const filePath = path.resolve(mockDir.path, "file.json");
+      const data = { key: "value" };
+      await fs.writeFile(filePath, JSON.stringify(data));
+      const content = await store.readJson("file.json");
+      expect(content).toEqual(data);
+    });
+
+    it("returns null if file doesn't exist", async () => {
+      const { store } = setup.cur;
+      const content = await store.readJson("nope.json");
+      expect(content).toBeNull();
+    });
+
+    it("throws if file content is not valid JSON", async () => {
+      const { mockDir, store } = setup.cur;
+      const filePath = path.resolve(mockDir.path, "invalid.json");
+      await fs.writeFile(filePath, "Not a JSON string");
+      await expect(store.readJson("invalid.json")).rejects.toThrow();
+    });
+
+    it("allows to parse using zod schema", async () => {
+      const { mockDir, store } = setup.cur;
+      const Schema = z.object({ name: z.string() });
+      const filePath = path.resolve(mockDir.path, "data.json");
+      const data = { name: "Alice", age: 30 };
+      await fs.writeFile(filePath, JSON.stringify(data));
+      const content = await store.readJson("data.json", Schema);
+      expect(content).toEqual({ name: "Alice" });
+    });
+
+    it("throws if content doesn't match zod schema", async () => {
+      const { mockDir, store } = setup.cur;
+      const Schema = z.object({ name: z.string() });
+      const filePath = path.resolve(mockDir.path, "data.json");
+      const data = { age: 30 };
+      await fs.writeFile(filePath, JSON.stringify(data));
+      await expect(store.readJson("data.json", Schema)).rejects.toThrow();
+    });
+  });
+
+  describe("remove", () => {
+    const setup = setupBeforeEach(async () => {
+      const mockDir = await createMockDir();
+      const store = new FileStore(mockDir.path);
+      return { mockDir, store };
+    });
+
+    it("removes an existing file", async () => {
+      const { store } = setup.cur;
+      const filePath = await store.writeFile("sub/dir/file.txt", "Hello");
+      await store.remove("sub/dir/file.txt");
+      await expect(fs.stat(filePath)).rejects.toThrow("ENOENT");
+    });
+
+    it("doesn't throw if the file doesn't exist", async () => {
+      const { store } = setup.cur;
+      await expect(store.remove("nonexistent.txt")).resolves.toBeUndefined();
+    });
+  });
+
+  describe("mtime", () => {
+    const setup = setupBeforeEach(async () => {
+      const mockDir = await createMockDir();
+      const store = new FileStore(mockDir.path);
+      return { mockDir, store };
+    });
+
+    it("returns the last-modified time of an existing file", async () => {
+      const { store } = setup.cur;
+      const filePath = await store.writeFile("file.txt", "Hello");
+      const stat = await fs.stat(filePath);
+      const mtime = await store.mtime("file.txt");
+      expect(mtime).toBe(stat.mtimeMs);
+    });
+
+    it("returns null if the file doesn't exist", async () => {
+      const { store } = setup.cur;
+      const mtime = await store.mtime("nonexistent.txt");
+      expect(mtime).toBeNull();
+    });
+  });
+
+  describe("rename", () => {
+    const setup = setupBeforeEach(async () => {
+      const mockDir = await createMockDir();
+      const store = new FileStore(mockDir.path);
+      return { mockDir, store };
+    });
+
+    it("renames an existing file", async () => {
+      const { store } = setup.cur;
+      const fromPath = await store.writeFile("sub/dir/from.txt", "Hello");
+      await store.rename("sub/dir/from.txt", "sub/dir/to.txt");
+      await expect(fs.stat(fromPath)).rejects.toThrow("ENOENT");
+      const content = await store.readText("sub/dir/to.txt");
+      expect(content).toBe("Hello");
+    });
+
+    it("throws if the source file doesn't exist", async () => {
+      const { store } = setup.cur;
+      await expect(
+        store.rename("nonexistent.txt", "destination.txt"),
+      ).rejects.toThrow();
+    });
+  });
+
+  describe("clear", () => {
+    const setup = setupBeforeEach(async () => {
+      const mockDir = await createMockDir();
+      const store = new FileStore(mockDir.path);
+      return { mockDir, store };
+    });
+
+    it("removes the store directory with all contents", async () => {
+      const { mockDir, store } = setup.cur;
+      const filePath = await store.writeFile("sub/dir/file.txt", "Hello");
+      await expect(fs.stat(filePath)).resolves.toMatchObject({
+        size: expect.any(Number),
+      });
+      await store.clear();
+      await expect(fs.stat(mockDir.path)).rejects.toThrow("ENOENT");
+    });
+
+    it("doesn't throw if directory doesn't exist", async () => {
+      const { mockDir, store } = setup.cur;
+      await fs.rm(mockDir.path, { recursive: true });
+      await store.clear();
+      await expect(store.clear()).resolves.toBeUndefined();
+    });
+  });
+
+  describe("subStore", () => {
+    const setup = setupBeforeEach(async () => {
+      const mockDir = await createMockDir();
+      const store = new FileStore(mockDir.path);
+      return { mockDir, store };
+    });
+
+    it("creates sub-store with resolved directory", () => {
+      const { mockDir, store } = setup.cur;
+      const subStore = store.subStore("sub/dir");
+      expect(subStore.dir).toBe(path.resolve(mockDir.path, "sub/dir"));
+    });
+
+    it("throws if subdirectory path is absolute", () => {
+      const { store } = setup.cur;
+      expect(() => store.subStore("/absolute/path")).toThrow(
+        "Subdirectory path '/absolute/path' must be relative to the store directory",
+      );
+    });
+  });
+
+  describe("FileStore.subStore", () => {
+    it("creates nested sub-store with env var param", async () => {
+      const subStore = FileStore.subStore("sub/dir", "default/dir");
+      expect(subStore.dir).toBe("sub/dir");
+    });
+
+    it("falls back to the default dir within global dir if the env var is undefined", () => {
+      const subStore = FileStore.subStore(undefined, "default/dir");
+      expect(subStore.dir).toBe(".alumnium/default/dir");
+    });
+
+    it("resolves empty string to '.'", () => {
+      const subStore = FileStore.subStore("", "default/dir");
+      expect(subStore.dir).toBe(".");
+    });
+
+    it("allows to pass nested directory relative to base dir", () => {
+      expect(FileStore.subStore(".custom", "default", "nested/dir").dir).toBe(
+        ".custom/nested/dir",
+      );
+      expect(FileStore.subStore(undefined, "default", "nested/dir").dir).toBe(
+        ".alumnium/default/nested/dir",
+      );
+    });
+  });
+
+  describe("FileStore.subResolve", () => {
+    it("resolves nested sub-store path with env var param", () => {
+      const subDir = FileStore.subResolve("sub/dir", "default/dir");
+      expect(subDir).toBe("sub/dir");
+    });
+
+    it("falls back to the default dir within global dir if the env var is undefined", () => {
+      const subDir = FileStore.subResolve(undefined, "default/dir");
+      expect(subDir).toBe(".alumnium/default/dir");
+    });
+
+    it("resolves empty string to '.'", () => {
+      const subDir = FileStore.subResolve("", "default/dir");
+      expect(subDir).toBe(".");
+    });
+
+    it("allows to pass nested directory relative to base dir", () => {
+      expect(FileStore.subResolve(".custom", "default", "nested/dir")).toBe(
+        ".custom/nested/dir",
+      );
+      expect(FileStore.subResolve(undefined, "default", "nested/dir")).toBe(
+        ".alumnium/default/nested/dir",
+      );
+    });
+  });
+});

@@ -1,0 +1,18 @@
+{
+  "name": "@alumnium/maestro",
+  "version": "0.24.0-alpha.2",
+  "description": "Alumnium Maestro driver",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@alumnium/core": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "alwaysly": "^0.4.0",
+    "domhandler": "^6.0.0",
+    "smollit": "^0.2.0",
+    "zod": "^4.4.1"
+  }
+}

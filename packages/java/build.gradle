@@ -16,7 +16,7 @@ plugins {
 }
 
 group   = 'ai.alumnium'
-version = '0.23.1'
+version = '0.24.0-alpha.2'
 
 java {
     toolchain {
@@ -90,7 +90,7 @@ dependencies {
     testRuntimeOnly "org.junit.platform:junit-platform-launcher"
     testRuntimeOnly "org.slf4j:slf4j-simple:${slf4jVersion}"
     testRuntimeOnly files({
-        def mavenDir = file("${rootProject.projectDir}/../typescript/dist/maven")
+        def mavenDir = file("${rootProject.projectDir}/dist/maven")
         mavenDir.listFiles()?.findAll { it.name.endsWith('.jar') } ?: []
     })
 }
@@ -239,7 +239,7 @@ def cliPlatforms = [
     'windows-arm64',
     'windows-x64'
 ]
-def tsMavenDir = file("${rootProject.projectDir}/../typescript/dist/maven")
+def tsMavenDir = file("${rootProject.projectDir}/dist/maven")
 
 publishing {
     publications {

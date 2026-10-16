@@ -1,6 +1,13 @@
 monorepo_root = true
 [monorepo]
-config_roots = [".", "packages/*", "charts/*", "websites/*", "telemetry", "assets"]
+config_roots = [
+  ".",
+  "packages/*",
+  "charts/*",
+  "websites/*",
+  "telemetry",
+  "assets",
+]
 
 [tools]
 # TypeScript
@@ -109,7 +116,11 @@ run = [{ task = "//packages/typescript:dev/mcp:inspect" }]
 
 [tasks."clean"]
 run = "rm -rf ./.alumnium"
-depends_post = ["//packages/typescript:clean", "//packages/python:clean"]
+depends_post = [
+  "//packages/typescript:clean",
+  "//packages/python:clean",
+  "//packages/java:clean",
+]
 
 [tasks."clear/cache"]
 description = "Clears all Alumnium LLM cache."
@@ -120,6 +131,7 @@ depends_post = [
 ]
 
 [tasks.format]
+run = "bun oxfmt scripts/build"
 depends = [
   "//packages/java:format",
   "//packages/python:format",
@@ -127,6 +139,7 @@ depends = [
 ]
 
 [tasks."format/check"]
+run = "bun oxfmt scripts/build --check"
 depends = [
   "//packages/java:format/check",
   "//packages/python:format/check",
@@ -137,6 +150,7 @@ depends = [
 depends = ["types/ts", "//packages/java:types", "//packages/python:types"]
 
 [tasks.lint]
+run = "bun oxlint scripts/build"
 description = "Lint all packages"
 depends = [
   "//packages/java:lint",
@@ -156,6 +170,8 @@ run = "bun run tsc --build"
 run = "bun run tsc --build --watch"
 
 [tasks."test/unit"]
+run = "bun test"
+dir = "scripts/build"
 depends = [
   "//packages/java:test/unit",
   "//packages/python:test/unit",
@@ -181,6 +197,21 @@ depends = [
 run = { task = "//packages/typescript:version" }
 quiet = true
 raw = true
+
+[tasks."version/set"]
+description = "Sets the release version of all packages, the docs, the Helm chart and the README."
+usage = '''
+arg "<version>" help="Version to set, e.g. 0.24.0"
+'''
+run = [
+  "mise //packages/typescript:version/set {{usage.version}}",
+  "mise //packages/python:version/set {{usage.version}}",
+  "mise //packages/java:version/set {{usage.version}}",
+  "mise //websites/docs:version/set {{usage.version}}",
+  "mise //charts/alumnium:version/set {{usage.version}}",
+  "./scripts/build/setVersion.ts readme {{usage.version}}",
+  "mise //:install",
+]
 
 [tasks."docker/build"]
 description = "Build Docker image"

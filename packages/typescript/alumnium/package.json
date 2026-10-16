@@ -1,0 +1,75 @@
+{
+  "name": "alumnium",
+  "version": "0.24.0-alpha.2",
+  "description": "End-to-End Testing with AI for Agents and Engineers",
+  "keywords": [
+    "ai",
+    "alumnium",
+    "appium",
+    "automation",
+    "playwright",
+    "selenium",
+    "webdriverio"
+  ],
+  "license": "MIT",
+  "author": "Alex Rodionov <p0deje@gmail.com>",
+  "contributors": [
+    "Alex Rodionov <p0deje@gmail.com>",
+    "Sasha Koss <koss@nocorp.me>",
+    "Tatiana Shepeleva <tati.shep@gmail.com>"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alumnium-hq/alumnium.git"
+  },
+  "bin": {
+    "alumnium": "./src/cli/binWrapper.ts"
+  },
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE.md"
+  ],
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "publishConfig": {
+    "bin": {
+      "alumnium": "./src/cli/binWrapper.js"
+    },
+    "exports": {
+      ".": {
+        "import": {
+          "types": "./src/client/index.d.ts",
+          "default": "./src/client/index.js"
+        },
+        "require": {
+          "types": "./src/client/index.d.cts",
+          "default": "./src/client/index.cjs"
+        }
+      }
+    }
+  },
+  "dependencies": {
+    "@alumnium/anthropic": "workspace:*",
+    "@alumnium/appium": "workspace:*",
+    "@alumnium/aws": "workspace:*",
+    "@alumnium/azure": "workspace:*",
+    "@alumnium/codex": "workspace:*",
+    "@alumnium/core": "workspace:*",
+    "@alumnium/cursor": "workspace:*",
+    "@alumnium/deepseek": "workspace:*",
+    "@alumnium/google": "workspace:*",
+    "@alumnium/maestro": "workspace:*",
+    "@alumnium/mistral": "workspace:*",
+    "@alumnium/ollama": "workspace:*",
+    "@alumnium/openai": "workspace:*",
+    "@alumnium/openrouter": "workspace:*",
+    "@alumnium/playwright": "workspace:*",
+    "@alumnium/selenium": "workspace:*",
+    "@alumnium/telemetry": "workspace:*",
+    "@alumnium/xai": "workspace:*",
+    "@alumnium/xcode": "workspace:*"
+  }
+}
