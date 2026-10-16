@@ -30,6 +30,7 @@ The TypeScript implementation is published as several npm packages, released tog
 | `@alumnium/maestro`, `@alumnium/xcode`                           | Maestro and Xcode drivers with their sessions.                                                                                                                                                                                                             |
 | `@alumnium/<provider>`                                           | LLM providers, one package per provider (see below). Importing a package registers its providers.                                                                                                                                                          |
 | `@alumnium/core`                                                 | `Alumni` and the AI agents, shared by all packages. Does not depend on browser drivers or LLM provider SDKs, and runs on Node.js without Bun. The agents run on the `ai` package, installed with any LLM provider package and loaded only when agents run. |
+| `@alumnium/telemetry`                                            | OpenTelemetry trace and log exporters, loaded by `@alumnium/core` when `ALUMNIUM_TRACE` is enabled. Included in `alumnium`.                                                                                                                               |
 | `@alumnium/cli-<os>-<arch>`                                      | Prebuilt CLI binaries, installed automatically as optional dependencies of `alumnium`.                                                                                                                                                                     |
 
 LLM provider packages, by `ALUMNIUM_MODEL` provider:
@@ -149,6 +150,8 @@ export OTEL_SERVICE_NAME="alumnium"
 export OTEL_EXPORTER_OTLP_ENDPOINT="http://127.0.0.1:4318"
 export OTEL_EXPORTER_OTLP_PROTOCOL="http/protobuf"
 ```
+
+The Alumnium CLI and the `alumnium` npm package include the exporters. When using `@alumnium/core` or a driver package without `alumnium`, also install `@alumnium/telemetry`.
 
 ### `ALUMNIUM_MODEL`
 

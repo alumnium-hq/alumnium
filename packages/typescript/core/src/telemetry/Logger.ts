@@ -13,11 +13,11 @@ import {
   type Config as LogtapeConfig,
   type Sink,
 } from "@logtape/logtape";
-import { getOpenTelemetrySink } from "@logtape/otel";
 import { Env } from "../Env.ts";
 import { GlobalFileStorePaths } from "../FileStore/GlobalFileStorePaths.ts";
 import { ensureDir } from "../utils/fs.ts";
 import { Instrumentation } from "./Instrumentation.ts";
+import { loadTelemetry } from "./loadTelemetry.ts";
 import { LoggerSchema } from "./LoggerSchema.ts";
 import { Tracer } from "./Tracer.ts";
 
@@ -102,6 +102,8 @@ export abstract class Logger {
       await this.#flush();
       process.exit(1);
     }
+
+    await Tracer.init();
   }
 
   //#endregion
@@ -210,12 +212,10 @@ export abstract class Logger {
       });
     }
 
-    if (Tracer.enabled) {
+    const telemetry = Tracer.enabled ? await loadTelemetry() : undefined;
+    if (telemetry) {
       mainSinks.push("otel");
-
-      sinks.otel = getOpenTelemetrySink({
-        serviceName: Instrumentation.serviceName,
-      });
+      sinks.otel = telemetry.getLogSink(Instrumentation.serviceName);
     }
 
     return {

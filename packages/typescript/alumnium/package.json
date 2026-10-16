@@ -68,6 +68,7 @@
     "@alumnium/openrouter": "workspace:*",
     "@alumnium/playwright": "workspace:*",
     "@alumnium/selenium": "workspace:*",
+    "@alumnium/telemetry": "workspace:*",
     "@alumnium/xai": "workspace:*",
     "@alumnium/xcode": "workspace:*"
   }

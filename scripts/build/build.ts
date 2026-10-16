@@ -856,6 +856,17 @@ async function buildNpmTar(name: string, dir: string) {
 }
 
 // npm pack names scoped package tarballs `<scope>-<name>-<version>.tgz`.
+function pinWorkspaceVersions(
+  deps: Record<string, string>,
+): Record<string, string> {
+  return Object.fromEntries(
+    Object.entries(deps).map(([dep, version]) => [
+      dep,
+      version.startsWith("workspace:") ? ALUMNIUM_VERSION : version,
+    ]),
+  );
+}
+
 function npmTarBaseName(name: string) {
   return name.replace(/^@/, "").replace("/", "-");
 }
@@ -953,12 +964,10 @@ ${pkg.packageJson.description}. See [the main \`alumnium\` package page](https:/
       }),
     ),
     // Workspace packages are released together and pinned exactly.
-    dependencies: Object.fromEntries(
-      Object.entries(dependencies).map(([dep, version]) => [
-        dep,
-        version.startsWith("workspace:") ? ALUMNIUM_VERSION : version,
-      ]),
-    ),
+    dependencies: pinWorkspaceVersions(dependencies),
+    ...(packageJson.peerDependencies && {
+      peerDependencies: pinWorkspaceVersions(packageJson.peerDependencies),
+    }),
   };
 
   if (isMain) {
