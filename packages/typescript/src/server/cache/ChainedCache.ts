@@ -1,4 +1,5 @@
 import type { LanguageModelV4GenerateResult } from "@ai-sdk/provider";
+import { createLlmUsage, type LlmUsage } from "../../llm/llmSchema.ts";
 import { Telemetry } from "../../telemetry/Telemetry.ts";
 import type { Tracer } from "../../telemetry/Tracer.ts";
 import { SessionContext } from "../session/SessionContext.ts";
@@ -26,7 +27,13 @@ export class ChainedCache extends ServerCache {
           `Cache hit in ${cache.constructor.name} (position ${index})`,
         );
 
-        this.usage = { ...cache.usage };
+        const usage = createLlmUsage();
+        this.caches.forEach((layer) => {
+          (Object.keys(usage) as (keyof LlmUsage)[]).forEach((key) => {
+            usage[key] += layer.usage[key];
+          });
+        });
+        this.usage = usage;
         return result;
       }
     }
