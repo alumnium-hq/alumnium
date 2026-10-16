@@ -103,12 +103,26 @@ const OWN_DRIVER_IMPORTS: Record<string, string[]> = {
 
 const DRIVER_PKGS = Object.keys(OWN_DRIVER_IMPORTS);
 
+// OpenTelemetry SDK and exporters `@alumnium/telemetry` may import.
+const TELEMETRY_IMPORTS = [
+  "@logtape/otel",
+  "@opentelemetry/exporter-logs-otlp-grpc",
+  "@opentelemetry/exporter-logs-otlp-http",
+  "@opentelemetry/exporter-logs-otlp-proto",
+  "@opentelemetry/sdk-logs",
+  "@opentelemetry/exporter-trace-otlp-http",
+  "@opentelemetry/resources",
+  "@opentelemetry/sdk-trace-base",
+  "@opentelemetry/sdk-trace-node",
+];
+
 // Loaded on import of `@alumnium/core`. `ai` is allowed
 // only lazily, when agents run (see core/src/llm/loadAi.ts). The tiny
 // `@ai-sdk/provider` (LLM interfaces and errors) is allowed.
 const LIGHTWEIGHT_FORBIDDEN = [
   ...DRIVER_IMPORTS,
   ...PROVIDER_IMPORTS,
+  ...TELEMETRY_IMPORTS,
   "@ai-sdk/gateway",
   "@ai-sdk/provider-utils",
   "ai",
@@ -121,6 +135,12 @@ const LIGHTWEIGHT_FORBIDDEN = [
  */
 export const FORBIDDEN_IMPORTS: Record<string, string[]> = {
   "@alumnium/core": LIGHTWEIGHT_FORBIDDEN,
+  "@alumnium/telemetry": [
+    ...DRIVER_IMPORTS,
+    ...PROVIDER_IMPORTS,
+    "ai",
+    "@alumnium/*",
+  ],
   // Each provider package imports only its own LLM SDK.
   ...Object.fromEntries(
     PROVIDER_PKGS.map((name) => [

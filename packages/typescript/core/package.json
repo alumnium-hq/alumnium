@@ -15,12 +15,7 @@
     "@js-fns/xxhash": "^0.1.0",
     "@logtape/file": "^2.0.2",
     "@logtape/logtape": "^2.0.2",
-    "@logtape/otel": "^2.0.5",
     "@opentelemetry/api": "^1.9.1",
-    "@opentelemetry/exporter-trace-otlp-http": "^0.215.0",
-    "@opentelemetry/resources": "^2.7.0",
-    "@opentelemetry/sdk-trace-base": "^2.7.0",
-    "@opentelemetry/sdk-trace-node": "^2.7.0",
     "alwaysly": "^0.4.0",
     "cac": "^7.0.0",
     "case-anything": "^3.1.2",
@@ -36,13 +31,18 @@
     "zod": "^4.4.1"
   },
   "devDependencies": {
+    "@alumnium/telemetry": "workspace:*",
     "ai": "^7.0.78",
     "oxfmt": "^0.65.0"
   },
   "peerDependencies": {
+    "@alumnium/telemetry": "workspace:*",
     "ai": "^7.0.78"
   },
   "peerDependenciesMeta": {
+    "@alumnium/telemetry": {
+      "optional": true
+    },
     "ai": {
       "optional": true
     }

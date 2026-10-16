@@ -20,6 +20,7 @@ overrides:
   "@alumnium/openrouter": "file:../../../dist/npm-openrouter"
   "@alumnium/playwright": "file:../../../dist/npm-playwright"
   "@alumnium/selenium": "file:../../../dist/npm-selenium"
+  "@alumnium/telemetry": "file:../../../dist/npm-telemetry"
   "@alumnium/xai": "file:../../../dist/npm-xai"
   "@alumnium/xcode": "file:../../../dist/npm-xcode"
   "@alumnium/cli-darwin-arm64": "file:../../../dist/npm-alumnium-cli-darwin-arm64"
