@@ -67,10 +67,7 @@ export const Model = {
 
   Dev: ModelDev,
 
-  new(
-    providerStr: string | Model.Provider,
-    nameStr: string | undefined,
-  ): Model {
+  new(providerStr: string, nameStr: string | undefined): Model {
     const provider = Model.Provider.parse(providerStr, { reportInput: true });
     const name = nameStr || Model.defaultProviderModel(provider);
     return { provider, name };

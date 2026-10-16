@@ -88,8 +88,6 @@ function createJsonStorage(): Evalite.Storage & { save(): Promise<void> } {
   }
 
   return {
-    ...memory,
-
     runs: {
       ...memory.runs,
       create: persistAfter(memory.runs.create),

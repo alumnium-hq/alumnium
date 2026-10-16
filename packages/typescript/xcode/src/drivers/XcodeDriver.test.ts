@@ -166,7 +166,9 @@ describe(XcodeDriver, () => {
 });
 
 function encode(text: string): string {
-  return [...text]
-    .map((character) => `\\u{${character.codePointAt(0)!.toString(16)}}`)
-    .join("");
+  // Properly count UTF-16 characters.
+  return Array.from(
+    text,
+    (character) => `\\u{${character.codePointAt(0)!.toString(16)}}`,
+  ).join("");
 }

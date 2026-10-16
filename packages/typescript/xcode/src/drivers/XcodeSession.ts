@@ -185,7 +185,7 @@ export class XcodeSession {
     if (!Env.ALUMNIUM_XCODE_AUTO_APPROVE || this.#approving) return;
 
     this.#approving = true;
-    this.#autoApprove();
+    void this.#autoApprove();
   }
 
   async #autoApprove(): Promise<void> {

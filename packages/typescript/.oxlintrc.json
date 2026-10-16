@@ -1,7 +1,7 @@
 {
   "$schema": "./../../node_modules/oxlint/configuration_schema.json",
   "extends": ["./../../.oxlintrc.json"],
-  "plugins": ["node"],
+  "plugins": ["node", "typescript"],
   "rules": {
     "no-restricted-imports": [
       "error",
@@ -45,5 +45,14 @@
 
     // Disallow `using process.env` directly, use `Env.get` instead.
     "node/no-process-env": "error"
-  }
+  },
+  "overrides": [
+    {
+      // Assertions like `expect(mock.method)` reference methods unbound.
+      "files": ["**/*.test.ts", "**/*.spec.js"],
+      "rules": {
+        "typescript/unbound-method": "off"
+      }
+    }
+  ]
 }

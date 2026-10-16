@@ -2,7 +2,7 @@ import * as fs from "node:fs/promises";
 import { evalite } from "evalite";
 import { Env } from "../../Env.ts";
 import { Logger } from "../../telemetry/Logger.ts";
-import { type ToolCall } from "../../tools/BaseTool.ts";
+import type { ToolCall } from "../../tools/BaseTool.ts";
 import { ClickTool } from "../../tools/ClickTool.ts";
 import { DragAndDropTool } from "../../tools/DragAndDropTool.ts";
 import { HoverTool } from "../../tools/HoverTool.ts";

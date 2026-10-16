@@ -21,7 +21,7 @@ export abstract class Xml {
   static parseRootChildren(xml: string): Xml.Node[] {
     const handler = new DomHandler.DomHandler();
 
-    const originalOnopentag = handler.onopentag;
+    const originalOnopentag = handler.onopentag.bind(handler);
     let truishAttrs: Record<string, string> = {};
 
     // @ts-expect-error: DomHandler is poorly typed.
@@ -39,7 +39,7 @@ export abstract class Xml {
     handler.onopentag = (name, attribs) => {
       // NOTE: Weirdly this is the way to parse no-value attributes,
       // i.e., `checked`. See: https://github.com/fb55/htmlparser2/issues/974
-      originalOnopentag.call(handler, name, { ...attribs, ...truishAttrs });
+      originalOnopentag(name, { ...attribs, ...truishAttrs });
     };
 
     const parser = new Parser(handler, {
@@ -82,7 +82,7 @@ export abstract class Xml {
     return root;
   }
 
-  static isTag(node: Xml.Node): node is Xml.Tag {
+  static isTag(this: void, node: Xml.Node): node is Xml.Tag {
     return isTag(node);
   }
 

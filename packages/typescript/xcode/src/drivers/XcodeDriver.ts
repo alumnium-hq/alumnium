@@ -67,7 +67,7 @@ export class XcodeDriver extends BaseDriver<never> {
         ? ""
         : (focused.value ?? "");
 
-    const input = "\b".repeat([...value].length) + text;
+    const input = "\b".repeat(value.length) + text;
     if (input) {
       await this.#perform(`sender keyboard kbd ${this.#encodeText(input)}`);
     }
@@ -289,9 +289,10 @@ export class XcodeDriver extends BaseDriver<never> {
   }
 
   #encodeText(text: string): string {
-    // Encode every character, including literal backslashes, so user text cannot become commands.
-    return [...text]
-      .map((character) => `\\u{${character.codePointAt(0)!.toString(16)}}`)
-      .join("");
+    // Properly count UTF-16 characters.
+    return Array.from(
+      text,
+      (character) => `\\u{${character.codePointAt(0)!.toString(16)}}`,
+    ).join("");
   }
 }
