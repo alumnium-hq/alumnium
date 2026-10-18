@@ -1,3 +1,6 @@
 [submodule "benchmarks/webvoyager"]
 	path = benchmarks/webvoyager
 	url = git@github.com:alumnium-hq/WebVoyager.git
+[submodule "benchmarks/online-mind2web"]
+	path = benchmarks/online-mind2web
+	url = /Users/p0deje/.codex/worktrees/3b58/alumnium/benchmarks/online-mind2web/
