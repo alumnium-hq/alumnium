@@ -209,6 +209,27 @@ describe("serverApp", () => {
   });
 
   describe("POST /sessions/:session_id/plans", () => {
+    it("passes cache false to the planner", async () => {
+      const sessionId = await createSession();
+      const response = await serverApp.handle(
+        createRequest("POST", `/sessions/${sessionId}/plans`, {
+          app: "test",
+          goal: "open settings",
+          accessibility_tree: sampleAccessibilityTree,
+          cache: false,
+        }),
+      );
+
+      expect(response.status).toBe(200);
+      expect(PlannerAgent.prototype.invoke).toHaveBeenCalledWith(
+        "open settings",
+        expect.any(String),
+        undefined,
+        {},
+        false,
+      );
+    });
+
     it.each([undefined, null, "cGxhbi1pbWFnZQ=="])(
       "passes an optional screenshot to the planner (%s)",
       async (screenshot) => {
@@ -228,6 +249,7 @@ describe("serverApp", () => {
           expect.stringContaining("<RootWebArea"),
           screenshot ?? undefined,
           {},
+          true,
         );
       },
     );
@@ -284,6 +306,29 @@ describe("serverApp", () => {
   });
 
   describe("POST /sessions/:session_id/steps", () => {
+    it("passes cache false to the actor", async () => {
+      const sessionId = await createSession();
+      const response = await serverApp.handle(
+        createRequest("POST", `/sessions/${sessionId}/steps`, {
+          app: "test",
+          goal: "create 'Buy milk' todo item",
+          step: "click New Todo Input field",
+          accessibility_tree: sampleAccessibilityTree,
+          cache: false,
+        }),
+      );
+
+      expect(response.status).toBe(200);
+      expect(ActorAgent.prototype.invoke).toHaveBeenCalledWith(
+        "create 'Buy milk' todo item",
+        "click New Todo Input field",
+        expect.any(String),
+        undefined,
+        {},
+        false,
+      );
+    });
+
     it("executes step actions", async () => {
       const sessionId = await createSession();
       const response = await serverApp.handle(
@@ -324,6 +369,7 @@ describe("serverApp", () => {
         expect.not.stringContaining('url="'),
         screenshot,
         {},
+        true,
       );
       expect(await response.json()).toEqual({
         actions: [
@@ -353,6 +399,27 @@ describe("serverApp", () => {
           "Found the requested information in the accessibility tree",
         result: "true",
       });
+    });
+
+    it.each([
+      [undefined, true],
+      [true, true],
+      [false, false],
+    ])("passes cache %s to the retriever", async (cache, expected) => {
+      const sessionId = await createSession();
+      const response = await serverApp.handle(
+        createRequest("POST", `/sessions/${sessionId}/statements`, {
+          app: "test",
+          statement: "there is a submit button on the page",
+          accessibility_tree: sampleAccessibilityTree,
+          cache,
+        }),
+      );
+
+      expect(response.status).toBe(200);
+      expect(RetrieverAgent.prototype.invoke).toHaveBeenCalledWith(
+        expect.objectContaining({ cache: expected }),
+      );
     });
   });
 
@@ -393,6 +460,27 @@ describe("serverApp", () => {
   });
 
   describe("POST /sessions/:session_id/changes", () => {
+    it.each([
+      [undefined, true],
+      [false, false],
+    ])("passes cache %s to the changes analyzer", async (cache, expected) => {
+      const sessionId = await createSession();
+      const response = await serverApp.handle(
+        createRequest("POST", `/sessions/${sessionId}/changes`, {
+          app: "test",
+          before: { accessibility_tree: sampleAccessibilityTree, url: "" },
+          after: { accessibility_tree: sampleAccessibilityTree, url: "" },
+          cache,
+        }),
+      );
+
+      expect(response.status).toBe(200);
+      expect(ChangesAnalyzerAgent.prototype.invoke).toHaveBeenCalledWith(
+        expect.any(String),
+        expected,
+      );
+    });
+
     it("analyzes UI changes", async () => {
       const sessionId = await createSession();
       const response = await serverApp.handle(

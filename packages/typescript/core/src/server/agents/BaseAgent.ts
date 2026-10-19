@@ -68,6 +68,7 @@ export namespace BaseAgent {
     instructions: string;
     messages: ModelMessage[];
     meta: Agent.Meta;
+    cache?: boolean | undefined;
     tools?: ToolSet;
     output?: ReturnType<typeof Output.object>;
     abortSignal?: AbortSignal;
@@ -176,6 +177,7 @@ export class BaseAgent {
               providerOptions: {
                 alumnium: {
                   meta: options.meta,
+                  cache: options.cache ?? true,
                 },
               },
               ...(options.tools ? { tools: options.tools } : {}),

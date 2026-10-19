@@ -40,6 +40,7 @@ export namespace RetrieverAgent {
     title: string | undefined;
     url: string | undefined;
     screenshot: string | undefined | null;
+    cache?: boolean | undefined;
   }
 }
 
@@ -76,6 +77,7 @@ export class RetrieverAgent extends BaseAgent {
       title = "",
       url = "",
       screenshot = null,
+      cache,
     } = props;
 
     logger.info("Starting retrieval:");
@@ -125,6 +127,7 @@ export class RetrieverAgent extends BaseAgent {
       messages: [{ role: "user", content: humanContent }],
       output: Output.object({ schema: RetrievedInformation }),
       meta,
+      cache,
     });
 
     this.logData(logger, "out", {

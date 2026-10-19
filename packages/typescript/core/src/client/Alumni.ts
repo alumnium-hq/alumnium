@@ -45,9 +45,13 @@ export namespace Alumni {
     assert?: CheckAssert;
   }
 
-  export type CheckOptions = VisionOptions & ParamsOptions & AssertOptions;
-  export type DoOptions = VisionOptions & ParamsOptions;
-  export type GetOptions = VisionOptions & ParamsOptions;
+  interface CacheOptions {
+    cache?: boolean | undefined;
+  }
+
+  export type DoOptions = VisionOptions & ParamsOptions & CacheOptions;
+  export type GetOptions = VisionOptions & ParamsOptions & CacheOptions;
+  export type CheckOptions = GetOptions & AssertOptions;
 
   export type CheckAssert = (
     expression: any,
@@ -132,6 +136,7 @@ export class Alumni<TDriver extends BaseDriver = BaseDriver> {
     "alumni.flavor": "alumni",
     "alumni.method.args.params": options?.params,
     "alumni.method.args.vision": !!options?.vision,
+    "alumni.method.args.cache": options?.cache ?? true,
   }))
   async do(goal: string, options: Alumni.DoOptions = {}): Promise<DoResult> {
     return retry(async () => {
@@ -149,6 +154,7 @@ export class Alumni<TDriver extends BaseDriver = BaseDriver> {
         accessibilityTree: await initialAccessibilityTree.toStr(),
         app,
         screenshot: options.vision ? await this.driver.screenshot() : undefined,
+        cache: options.cache,
       });
 
       let finalExplanation = explanation;
@@ -171,6 +177,7 @@ export class Alumni<TDriver extends BaseDriver = BaseDriver> {
             app,
             screenshot,
             params: options.params,
+            cache: options.cache,
           });
 
         // When planner is off, explanation is just the goal — replace with actor's reasoning.
@@ -202,6 +209,7 @@ export class Alumni<TDriver extends BaseDriver = BaseDriver> {
           ).toStr(),
           afterUrl: await this.driver.url(),
           app,
+          cache: options.cache,
         });
       }
 
@@ -217,6 +225,7 @@ export class Alumni<TDriver extends BaseDriver = BaseDriver> {
     "alumni.flavor": "alumni",
     "alumni.method.args.params": options?.params,
     "alumni.method.args.vision": !!options?.vision,
+    "alumni.method.args.cache": options?.cache ?? true,
   }))
   async check(
     statement: string,
@@ -236,6 +245,7 @@ export class Alumni<TDriver extends BaseDriver = BaseDriver> {
         url: await this.driver.url(),
         app: await this.driver.app(),
         screenshot,
+        cache: options.cache,
       });
 
       if (!value || !explanation) {
@@ -255,6 +265,7 @@ export class Alumni<TDriver extends BaseDriver = BaseDriver> {
     "alumni.flavor": "alumni",
     "alumni.method.args.params": options?.params,
     "alumni.method.args.vision": !!options?.vision,
+    "alumni.method.args.cache": options?.cache ?? true,
   }))
   async get(data: string, options: Alumni.GetOptions = {}): Promise<Data> {
     return retry(async () => {
@@ -271,6 +282,7 @@ export class Alumni<TDriver extends BaseDriver = BaseDriver> {
         url: await this.driver.url(),
         app: await this.driver.app(),
         screenshot,
+        cache: options.cache,
       });
 
       return value === null ? explanation : value;

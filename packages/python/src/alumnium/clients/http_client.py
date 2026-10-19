@@ -92,6 +92,7 @@ class HttpClient:
         app: str = "unknown",
         screenshot: str | None = None,
         params: dict[str, str] | None = None,
+        cache: bool = True,
     ) -> tuple[str, list[str]]:
         """
         Plan actions to achieve a goal.
@@ -106,6 +107,7 @@ class HttpClient:
                 "app": app,
                 **({"screenshot": screenshot} if screenshot is not None else {}),
                 **({"params": params} if params else {}),
+                **({} if cache else {"cache": False}),
             },
             timeout=120,
         )
@@ -137,6 +139,7 @@ class HttpClient:
         app: str = "unknown",
         screenshot: str | None = None,
         params: dict[str, str] | None = None,
+        cache: bool = True,
     ) -> tuple[str, list[dict]]:
         response = post(
             f"{self.base_url}/v1/sessions/{self.session_id}/steps",
@@ -147,6 +150,7 @@ class HttpClient:
                 "app": app,
                 **({"screenshot": screenshot} if screenshot is not None else {}),
                 **({"params": params} if params else {}),
+                **({} if cache else {"cache": False}),
             },
             timeout=120,
         )
@@ -163,6 +167,7 @@ class HttpClient:
         screenshot: str | None,
         app: str = "unknown",
         params: dict[str, str] | None = None,
+        cache: bool = True,
     ) -> tuple[str, Data]:
         response = post(
             f"{self.base_url}/v1/sessions/{self.session_id}/statements",
@@ -174,6 +179,7 @@ class HttpClient:
                 "screenshot": screenshot if screenshot else None,
                 "app": app,
                 **({"params": params} if params else {}),
+                **({} if cache else {"cache": False}),
             },
             timeout=120,
         )
@@ -207,6 +213,7 @@ class HttpClient:
         after_accessibility_tree: str,
         after_url: str,
         app: str = "unknown",
+        cache: bool = True,
     ) -> str:
         response = post(
             f"{self.base_url}/v1/sessions/{self.session_id}/changes",
@@ -220,6 +227,7 @@ class HttpClient:
                     "url": after_url,
                 },
                 "app": app,
+                **({} if cache else {"cache": False}),
             },
             timeout=120,
         )

@@ -43,6 +43,7 @@ export interface PlanRequest {
   app: AppId;
   screenshot?: string | undefined;
   params?: Params.Values | undefined;
+  cache?: boolean | undefined;
 }
 
 export interface PlanResponse {
@@ -57,6 +58,7 @@ export interface StepRequest {
   app: AppId;
   screenshot?: string | undefined;
   params?: Params.Values | undefined;
+  cache?: boolean | undefined;
 }
 
 export interface StepResponse {
@@ -72,6 +74,7 @@ export interface StatementRequest {
   screenshot?: string | null;
   app: AppId;
   params?: Params.Values | undefined;
+  cache?: boolean | undefined;
 }
 
 export interface StatementResponse {
@@ -114,6 +117,7 @@ export interface ChangesRequest {
   before: ChangeState;
   after: ChangeState;
   app: AppId;
+  cache?: boolean | undefined;
 }
 
 export interface ChangesResponse {

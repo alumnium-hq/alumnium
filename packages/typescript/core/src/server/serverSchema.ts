@@ -89,6 +89,7 @@ export const CreatePlanBody = CacheableRequestBody.extend({
   url: z.string().optional(),
   title: z.string().optional(),
   params: z.record(z.string(), z.string()).default({}),
+  cache: z.boolean().default(true),
 });
 
 export const CreatePlanResponse = z.object({
@@ -106,6 +107,7 @@ export const PlanStepActionsBody = CacheableRequestBody.extend({
   accessibility_tree: z.string(),
   screenshot: z.string().nullable().optional(),
   params: z.record(z.string(), z.string()).default({}),
+  cache: z.boolean().default(true),
 });
 
 export const PlanStepActionsResponse = z.object({
@@ -134,6 +136,7 @@ export const ExecuteStatementBody = CacheableRequestBody.extend({
   title: z.string().optional(),
   screenshot: z.string().nullable().optional(),
   params: z.record(z.string(), z.string()).default({}),
+  cache: z.boolean().default(true),
 });
 
 export const ExecuteStatementResponse = z.object({
@@ -175,6 +178,7 @@ export const FindElementResponse = z.object({
 export const AnalyzeChangesBody = CacheableRequestBody.extend({
   before: Change,
   after: Change,
+  cache: z.boolean().default(true),
 });
 
 export const AnalyzeChangesResponse = z.object({

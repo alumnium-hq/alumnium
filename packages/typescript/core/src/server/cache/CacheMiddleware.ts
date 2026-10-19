@@ -12,12 +12,12 @@ const CACHE_VERSION = "ai-sdk-v1";
 export function createCacheMiddleware(
   cache: ServerCache,
 ): LanguageModelV4Middleware {
-  const metadata = new WeakMap<LanguageModelV4CallOptions, Agent.Meta>();
+  const metadata = new WeakMap<LanguageModelV4CallOptions, Metadata>();
 
   return {
     specificationVersion: "v4",
     async transformParams({ params }) {
-      const meta = readMeta(params);
+      const meta = readMetadata(params);
       const providerOptions = { ...params.providerOptions };
       delete providerOptions.alumnium;
       const transformed: LanguageModelV4CallOptions = {
@@ -30,7 +30,10 @@ export function createCacheMiddleware(
       return transformed;
     },
     async wrapGenerate({ doGenerate, params, model }) {
-      const meta = metadata.get(params) ?? readMeta(params);
+      const { meta, cache: useCache } =
+        metadata.get(params) ?? readMetadata(params);
+      if (!useCache) return doGenerate();
+
       const cacheableParams = { ...params };
       delete cacheableParams.abortSignal;
       const providerOptions = { ...cacheableParams.providerOptions };
@@ -61,8 +64,14 @@ export function createCacheMiddleware(
   };
 }
 
-function readMeta(params: LanguageModelV4CallOptions): Agent.Meta {
-  const meta = params.providerOptions?.alumnium?.meta;
+interface Metadata {
+  meta: Agent.Meta;
+  cache: boolean;
+}
+
+function readMetadata(params: LanguageModelV4CallOptions): Metadata {
+  const alumnium = params.providerOptions?.alumnium;
+  const meta = alumnium?.meta;
   if (
     !meta ||
     typeof meta !== "object" ||
@@ -72,7 +81,7 @@ function readMeta(params: LanguageModelV4CallOptions): Agent.Meta {
   ) {
     throw new Error("Missing Alumnium cache metadata");
   }
-  return meta as Agent.Meta;
+  return { meta: meta as Agent.Meta, cache: alumnium?.cache !== false };
 }
 
 const AGENT_KINDS = new Set([

@@ -90,7 +90,7 @@ export class NativeClient extends Client {
     props: Client.PlanActionsProps,
   ): Promise<Client.PlanActionsResult> {
     const session = await this.session;
-    const { goal, accessibilityTree, app, screenshot, params } = props;
+    const { goal, accessibilityTree, app, screenshot, params, cache } = props;
     session.updateContext({ app });
 
     if (!session.planner) {
@@ -103,6 +103,7 @@ export class NativeClient extends Client {
       tree.toXml(session.excludeAttributes),
       screenshot,
       params,
+      cache,
     );
     return { explanation, steps };
   }
@@ -128,7 +129,8 @@ export class NativeClient extends Client {
     props: Client.ExecuteActionProps,
   ): Promise<Client.ExecuteActionResult> {
     const session = await this.session;
-    const { goal, step, accessibilityTree, app, screenshot, params } = props;
+    const { goal, step, accessibilityTree, app, screenshot, params, cache } =
+      props;
     session.updateContext({ app });
 
     const tree = session.parseTree(accessibilityTree);
@@ -138,6 +140,7 @@ export class NativeClient extends Client {
       tree.toXml(session.excludeAttributes),
       screenshot,
       params,
+      cache,
     );
     return {
       explanation,
@@ -161,6 +164,7 @@ export class NativeClient extends Client {
       app,
       screenshot,
       params,
+      cache,
     } = props;
 
     session.updateContext({ app });
@@ -176,6 +180,7 @@ export class NativeClient extends Client {
       title,
       url,
       screenshot: screenshot || null,
+      cache,
     });
     return [explanation, looselyTypecast(result)] as [string, Data];
   }
@@ -223,6 +228,7 @@ export class NativeClient extends Client {
       afterAccessibilityTree,
       afterUrl,
       app,
+      cache,
     } = props;
     session.updateContext({ app });
 
@@ -246,7 +252,10 @@ export class NativeClient extends Client {
       }
     }
 
-    analysis += await session.changesAnalyzerAgent.invoke(diff.compute());
+    analysis += await session.changesAnalyzerAgent.invoke(
+      diff.compute(),
+      cache,
+    );
     return analysis;
   }
 

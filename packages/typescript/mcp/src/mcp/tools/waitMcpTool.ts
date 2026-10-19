@@ -31,7 +31,7 @@ export const waitMcpTool = McpTool.define("wait", {
       .describe("Max seconds to wait for condition (default: 10, string only)"),
   }),
 
-  async execute(input, { logger }) {
+  async execute(input, { logger, cache }) {
     const { for: waitFor, id, timeout: inputTimeout } = input;
 
     // If it's a number, wait that many seconds
@@ -69,7 +69,7 @@ export const waitMcpTool = McpTool.define("wait", {
     while ((Date.now() - startTime) / 1000 < timeout) {
       attempts += 1;
       try {
-        const explanation = await al.check(waitFor);
+        const explanation = await al.check(waitFor, { cache });
         logger.info(`Condition met after ${attempts} attempt(s)`);
         return [
           {

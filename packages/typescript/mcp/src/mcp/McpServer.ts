@@ -14,6 +14,7 @@ import { directMcpTools } from "./tools/directMcpTools.ts";
 import { doMcpTool } from "./tools/doMcpTool.ts";
 import { fetchAccessibilityTreeMcpTool } from "./tools/fetchAccessibilityTreeMcpTool.ts";
 import { getMcpTool } from "./tools/getMcpTool.ts";
+import type { McpTool } from "./tools/McpTool.ts";
 import { startMcpTool } from "./tools/startMcpTool.ts";
 import { stopMcpTool } from "./tools/stopMcpTool.ts";
 import { waitMcpTool } from "./tools/waitMcpTool.ts";
@@ -130,9 +131,9 @@ export class McpServer {
         toolDef.name,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         { description, inputSchema: inputSchema as any },
-        async (input: any) => {
+        async (input: any, { _meta }: { _meta?: McpTool.Meta }) => {
           try {
-            return { content: await execute(input) };
+            return { content: await execute(input, _meta) };
           } catch (error) {
             logger.error(`Error executing tool ${name}: {error}`, { error });
             return {

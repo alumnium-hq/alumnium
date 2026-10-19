@@ -137,7 +137,7 @@ public final class HttpClient implements AutoCloseable {
 
   public PlanResult planActions(
       String goal, String accessibilityTree, String app, String screenshot) {
-    return planActions(goal, accessibilityTree, app, screenshot, Map.of());
+    return planActions(goal, accessibilityTree, app, screenshot, Map.of(), true);
   }
 
   public PlanResult planActions(
@@ -145,7 +145,8 @@ public final class HttpClient implements AutoCloseable {
       String accessibilityTree,
       String app,
       String screenshot,
-      Map<String, String> params) {
+      Map<String, String> params,
+      boolean cache) {
     Map<String, Object> body = new LinkedHashMap<>();
     body.put("goal", goal);
     body.put("accessibility_tree", accessibilityTree);
@@ -155,6 +156,9 @@ public final class HttpClient implements AutoCloseable {
     }
     if (!params.isEmpty()) {
       body.put("params", params);
+    }
+    if (!cache) {
+      body.put("cache", false);
     }
     JsonNode data =
         postJson("/v1/sessions/" + requireSession() + "/plans", body, Duration.ofSeconds(120));
@@ -174,7 +178,7 @@ public final class HttpClient implements AutoCloseable {
 
   public ActionResult executeAction(
       String goal, String step, String accessibilityTree, String app, String screenshot) {
-    return executeAction(goal, step, accessibilityTree, app, screenshot, Map.of());
+    return executeAction(goal, step, accessibilityTree, app, screenshot, Map.of(), true);
   }
 
   public ActionResult executeAction(
@@ -183,7 +187,8 @@ public final class HttpClient implements AutoCloseable {
       String accessibilityTree,
       String app,
       String screenshot,
-      Map<String, String> params) {
+      Map<String, String> params,
+      boolean cache) {
     Map<String, Object> body = new LinkedHashMap<>();
     body.put("goal", goal);
     body.put("step", step);
@@ -194,6 +199,9 @@ public final class HttpClient implements AutoCloseable {
     }
     if (!params.isEmpty()) {
       body.put("params", params);
+    }
+    if (!cache) {
+      body.put("cache", false);
     }
     JsonNode data =
         postJson("/v1/sessions/" + requireSession() + "/steps", body, Duration.ofSeconds(120));
@@ -211,7 +219,7 @@ public final class HttpClient implements AutoCloseable {
       String url,
       String screenshot,
       String app) {
-    return retrieve(statement, accessibilityTree, title, url, screenshot, app, Map.of());
+    return retrieve(statement, accessibilityTree, title, url, screenshot, app, Map.of(), true);
   }
 
   public RetrieveResult retrieve(
@@ -221,7 +229,8 @@ public final class HttpClient implements AutoCloseable {
       String url,
       String screenshot,
       String app,
-      Map<String, String> params) {
+      Map<String, String> params,
+      boolean cache) {
     Map<String, Object> body = new LinkedHashMap<>();
     body.put("statement", statement);
     body.put("accessibility_tree", accessibilityTree);
@@ -231,6 +240,9 @@ public final class HttpClient implements AutoCloseable {
     body.put("app", app == null ? "unknown" : app);
     if (!params.isEmpty()) {
       body.put("params", params);
+    }
+    if (!cache) {
+      body.put("cache", false);
     }
     JsonNode data =
         postJson("/v1/sessions/" + requireSession() + "/statements", body, Duration.ofSeconds(120));
@@ -276,11 +288,23 @@ public final class HttpClient implements AutoCloseable {
 
   public String analyzeChanges(
       String beforeTree, String beforeUrl, String afterTree, String afterUrl, String app) {
-    Map<String, Object> body =
-        Map.of(
-            "before", Map.of("accessibility_tree", beforeTree, "url", beforeUrl),
-            "after", Map.of("accessibility_tree", afterTree, "url", afterUrl),
-            "app", app == null ? "unknown" : app);
+    return analyzeChanges(beforeTree, beforeUrl, afterTree, afterUrl, app, true);
+  }
+
+  public String analyzeChanges(
+      String beforeTree,
+      String beforeUrl,
+      String afterTree,
+      String afterUrl,
+      String app,
+      boolean cache) {
+    Map<String, Object> body = new LinkedHashMap<>();
+    body.put("before", Map.of("accessibility_tree", beforeTree, "url", beforeUrl));
+    body.put("after", Map.of("accessibility_tree", afterTree, "url", afterUrl));
+    body.put("app", app == null ? "unknown" : app);
+    if (!cache) {
+      body.put("cache", false);
+    }
     JsonNode data =
         postJson("/v1/sessions/" + requireSession() + "/changes", body, Duration.ofSeconds(120));
     return data.path("result").asText("");

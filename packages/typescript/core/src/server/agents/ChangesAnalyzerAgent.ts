@@ -23,7 +23,7 @@ export class ChangesAnalyzerAgent extends BaseAgent {
   }
 
   @span("agent.invoke", { "agent.kind": "changes-analyzer" })
-  async invoke(diff: string): Promise<string> {
+  async invoke(diff: string, cache?: boolean): Promise<string> {
     logger.info("Starting changes analysis:");
     logger.debug(this.formatLog("in", "Diff"), { detail: diff });
 
@@ -40,6 +40,7 @@ export class ChangesAnalyzerAgent extends BaseAgent {
         },
       ],
       meta,
+      cache,
     });
 
     const content = response.content.replaceAll("\n\n", " ");

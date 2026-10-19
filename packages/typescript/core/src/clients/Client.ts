@@ -44,6 +44,7 @@ export namespace Client {
     app: AppId;
     screenshot?: string | undefined;
     params?: Params.Values | undefined;
+    cache?: boolean | undefined;
   }
 
   export interface PlanActionsProps {
@@ -52,6 +53,7 @@ export namespace Client {
     app: AppId;
     screenshot?: string | undefined;
     params?: Params.Values | undefined;
+    cache?: boolean | undefined;
   }
 
   export interface AddExampleProps {
@@ -66,6 +68,7 @@ export namespace Client {
     app: AppId;
     screenshot?: string | undefined;
     params?: Params.Values | undefined;
+    cache?: boolean | undefined;
   }
 
   export interface FindAreaProps {
@@ -86,6 +89,7 @@ export namespace Client {
     afterAccessibilityTree: string;
     afterUrl: string;
     app: AppId;
+    cache?: boolean | undefined;
   }
 }
 

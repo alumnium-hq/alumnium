@@ -67,7 +67,7 @@ describe("waitMcpTool", () => {
       },
     ]);
     expect(check).toHaveBeenCalledTimes(1);
-    expect(check).toHaveBeenCalledWith("user is logged in");
+    expect(check).toHaveBeenCalledWith("user is logged in", { cache: true });
   });
 
   it("retries until condition is met", async () => {
@@ -90,7 +90,7 @@ describe("waitMcpTool", () => {
       },
     ]);
     expect(check).toHaveBeenCalledTimes(3);
-    expect(check).toHaveBeenCalledWith("page loaded");
+    expect(check).toHaveBeenCalledWith("page loaded", { cache: true });
   });
 
   it("returns timeout message when condition is never met", async () => {
@@ -113,7 +113,7 @@ describe("waitMcpTool", () => {
         }),
       },
     ]);
-    expect(check).toHaveBeenCalledWith("element visible");
+    expect(check).toHaveBeenCalledWith("element visible", { cache: true });
   });
 
   it("rethrows non-assertion errors", async () => {
@@ -147,7 +147,7 @@ describe("waitMcpTool", () => {
       },
     ]);
     expect(check).toHaveBeenCalledTimes(1);
-    expect(check).toHaveBeenCalledWith("test condition");
+    expect(check).toHaveBeenCalledWith("test condition", { cache: true });
   });
 });
 

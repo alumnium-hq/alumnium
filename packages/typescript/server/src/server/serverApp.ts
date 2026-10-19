@@ -171,6 +171,7 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                       accessibilityTree.toXml(session.excludeAttributes),
                       ctx.body.screenshot ?? undefined,
                       ctx.body.params,
+                      ctx.body.cache,
                     );
                   return {
                     explanation,
@@ -211,6 +212,7 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                   accessibilityTree.toXml(session.excludeAttributes),
                   ctx.body.screenshot ?? undefined,
                   ctx.body.params,
+                  ctx.body.cache,
                 );
                 return {
                   explanation,
@@ -278,7 +280,8 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                 const accessibilityTree = session.parseTree(
                   ctx.body.accessibility_tree,
                 );
-                const { statement, title, url, screenshot, params } = ctx.body;
+                const { statement, title, url, screenshot, params, cache } =
+                  ctx.body;
                 const treeXml = accessibilityTree.toXml(
                   new Set([
                     ...RetrieverAgent.EXCLUDE_ATTRIBUTES,
@@ -292,6 +295,7 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                     title,
                     url,
                     screenshot,
+                    cache,
                   });
                 return {
                   result: value,
@@ -397,6 +401,7 @@ export const serverApp = new Elysia({ prefix: "/v1" })
 
                 analysis += await session.changesAnalyzerAgent.invoke(
                   diff.compute(),
+                  ctx.body.cache,
                 );
 
                 return {
