@@ -100,17 +100,17 @@ export class MaestroDriver extends BaseDriver<never> {
   }
 
   @span("driver.app", BaseDriver.spanAttrs)
-  app(): AppId {
+  async app(): Promise<AppId> {
     return AppId.parse(this.session.appId);
   }
 
   @span("driver.title", BaseDriver.spanAttrs)
-  title(): string {
+  async title(): Promise<string> {
     return "";
   }
 
   @span("driver.url", BaseDriver.spanAttrs)
-  url(): string {
+  async url(): Promise<string> {
     return "";
   }
 
@@ -135,7 +135,7 @@ export class MaestroDriver extends BaseDriver<never> {
   }
 
   @span("driver.drag_slider", BaseDriver.spanAttrs)
-  dragSlider(): void {
+  async dragSlider(): Promise<void> {
     throw new Error("Dragging slider is not supported on Maestro");
   }
 
@@ -192,7 +192,7 @@ export class MaestroDriver extends BaseDriver<never> {
   ): Promise<string> {
     let element: AccessibilityElement;
     try {
-      element = tree.elementById(rawId);
+      element = await tree.elementById(rawId);
     } catch (error) {
       throw new TreeDevDrillError("resolve", error);
     }
@@ -224,7 +224,7 @@ export class MaestroDriver extends BaseDriver<never> {
 
   async #elementOf(id: number): Promise<{ bounds: string }> {
     const tree = await this.getAccessibilityTree();
-    const element = tree.elementById(id);
+    const element = await tree.elementById(id);
     const bounds = element.maestroBounds;
     if (!bounds) {
       throw new Error(`Element with raw_id=${id} has no bounds to act on`);

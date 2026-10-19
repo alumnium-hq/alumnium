@@ -4,7 +4,7 @@ import type { Data } from "../clients/typecasting.ts";
 import type { BaseDriver } from "../drivers/BaseDriver.ts";
 import { NavigationBlockedError } from "../NavigationPolicy.ts";
 import { Telemetry } from "../telemetry/Telemetry.ts";
-import type { Tracer } from "../telemetry/Tracer.ts";
+import { Tracer } from "../telemetry/Tracer.ts";
 import { BaseTool, type ToolClass } from "../tools/BaseTool.ts";
 import { retry } from "../utils/retry.ts";
 import type { Alumni } from "./Alumni.ts";
@@ -54,7 +54,7 @@ export class Area<TDriver extends BaseDriver = BaseDriver> {
 
         const { explanation, steps } = await this.client.planActions({
           goal,
-          accessibilityTree: this.accessibilityTree.toStr(),
+          accessibilityTree: await this.accessibilityTree.toStr(),
           app,
           screenshot: options.vision
             ? await this.driver.screenshot()
@@ -71,7 +71,7 @@ export class Area<TDriver extends BaseDriver = BaseDriver> {
             await this.client.executeAction({
               goal,
               step,
-              accessibilityTree: this.accessibilityTree.toStr(),
+              accessibilityTree: await this.accessibilityTree.toStr(),
               app,
               screenshot,
             });
@@ -117,7 +117,7 @@ export class Area<TDriver extends BaseDriver = BaseDriver> {
         : undefined;
       const [explanation, value] = await this.client.retrieve({
         statement: `Is the following true or false - ${statement}`,
-        accessibilityTree: this.accessibilityTree.toStr(),
+        accessibilityTree: await this.accessibilityTree.toStr(),
         title: await this.driver.title(),
         url: await this.driver.url(),
         app: await this.driver.app(),
@@ -143,7 +143,7 @@ export class Area<TDriver extends BaseDriver = BaseDriver> {
         : undefined;
       const [explanation, value] = await this.client.retrieve({
         statement: data,
-        accessibilityTree: this.accessibilityTree.toStr(),
+        accessibilityTree: await this.accessibilityTree.toStr(),
         title: await this.driver.title(),
         url: await this.driver.url(),
         app: await this.driver.app(),
@@ -162,7 +162,7 @@ export class Area<TDriver extends BaseDriver = BaseDriver> {
       this.driver.setAccessibilityTree(this.accessibilityTree);
       const response = await this.client.findElement({
         description,
-        accessibilityTree: this.accessibilityTree.toStr(),
+        accessibilityTree: await this.accessibilityTree.toStr(),
         app: await this.driver.app(),
       });
       if (response?.id == null) return;

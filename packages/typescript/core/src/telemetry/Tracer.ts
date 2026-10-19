@@ -540,25 +540,9 @@ export namespace Tracer {
     >(
       this: void,
       spanName: SpanName,
-      ...attrs: NoInfer<SpanMethodDecArgs<This, GetterArgs, SpanName>>
-    ): DecMethod<This, GetterArgs>;
-
-    span<
-      SpanName extends keyof Spans,
-      GetterArgs extends unknown[] = any[],
-      This = any,
-    >(
-      this: void,
-      spanName: SpanName,
       ...attrs: NoInfer<SpanMethodDecArgsAsync<This, GetterArgs, SpanName>>
     ): DecMethodAsync<This, GetterArgs>;
   }
-
-  export type DecMethod<This, Args extends unknown[]> = <Result>(
-    target: object,
-    propertyKey: string | symbol,
-    descriptor: TypedPropertyDescriptor<(this: This, ...args: Args) => Result>,
-  ) => void | TypedPropertyDescriptor<(this: This, ...args: Args) => Result>;
 
   export type DecMethodAsync<This, Args extends unknown[]> = <Result>(
     target: object,
@@ -694,18 +678,6 @@ export namespace Tracer {
 
   //#region Dec
 
-  export type SpanMethodDecArgs<
-    This,
-    GetterArgs extends unknown[],
-    Name extends SpanName,
-  > = Spans[Name] extends {
-    Attrs: infer Attrs;
-  }
-    ? TypeUtils.IsNever<Attrs> extends true
-      ? []
-      : SpanMethodDecArgsWithAttrs<This, GetterArgs, Attrs>
-    : [];
-
   export type SpanMethodDecArgsAsync<
     This,
     GetterArgs extends unknown[],
@@ -717,12 +689,6 @@ export namespace Tracer {
       ? []
       : SpanMethodDecArgsAsyncWithAttrs<This, GetterArgs, Attrs>
     : [];
-
-  export type SpanMethodDecArgsWithAttrs<
-    This,
-    GetterArgs extends unknown[],
-    Attrs,
-  > = [attrs: Attrs | ((this: This, ...args: GetterArgs) => Attrs)];
 
   export type SpanMethodDecArgsAsyncWithAttrs<
     This,
@@ -878,15 +844,13 @@ export abstract class Tracer {
       dec: (): Tracer.Dec => ({
         span: <This>(
           spanName: any,
-          ...attrsArgs:
-            | Tracer.SpanMethodDecArgs<any, any, any>
-            | Tracer.SpanMethodDecArgsAsync<any, any, any>
+          ...attrsArgs: Tracer.SpanMethodDecArgsAsync<any, any, any>
         ) =>
           function <Result>(
             _target: object,
             propertyKey: string | symbol,
             descriptor: TypedPropertyDescriptor<
-              (this: This, ...args: any[]) => Result
+              (this: This, ...args: any[]) => Promise<Result>
             >,
           ) {
             const value = descriptor.value;
@@ -894,23 +858,18 @@ export abstract class Tracer {
             if (typeof value !== "function")
               throw new Error("@span can only decorate methods");
 
-            const fn = function (this: This, ...args: any[]): Result {
+            const fn = async function (
+              this: This,
+              ...args: any[]
+            ): Promise<Result> {
+              await Tracer.init();
+
               const attrsOrGetter = attrsArgs[0];
+              const attrs = await (typeof attrsOrGetter === "function"
+                ? attrsOrGetter.call(this, ...args)
+                : attrsOrGetter);
 
-              const attrsOrPromise =
-                typeof attrsOrGetter === "function"
-                  ? attrsOrGetter.call(this, ...args)
-                  : attrsOrGetter;
-
-              if (attrsOrPromise instanceof Promise) {
-                return attrsOrPromise.then((resolvedAttrs) =>
-                  spanMethod(spanName, resolvedAttrs || {}, () =>
-                    value.call(this, ...args),
-                  ),
-                ) as Result;
-              }
-
-              return spanMethod(spanName, attrsOrPromise || {}, () =>
+              return spanMethod(spanName, attrs || {}, () =>
                 value.call(this, ...args),
               );
             };

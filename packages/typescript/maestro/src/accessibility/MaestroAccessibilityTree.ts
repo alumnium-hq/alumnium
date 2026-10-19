@@ -77,7 +77,7 @@ export class MaestroAccessibilityTree extends BaseAccessibilityTree<MaestroSessi
   }
 
   /** Renders the hierarchy as XML, stamping `raw_id` on every node. */
-  toStr(): string {
+  async toStr(): Promise<string> {
     if (this.xml !== null) {
       return this.xml;
     }
@@ -270,9 +270,9 @@ export class MaestroAccessibilityTree extends BaseAccessibilityTree<MaestroSessi
     }
   }
 
-  elementById(rawId: number): AccessibilityElement {
+  async elementById(rawId: number): Promise<AccessibilityElement> {
     // Rendering populates the id map.
-    this.toStr();
+    await this.toStr();
 
     const element = this.#elementsByRawId.get(rawId);
     if (!element) {
@@ -282,7 +282,7 @@ export class MaestroAccessibilityTree extends BaseAccessibilityTree<MaestroSessi
   }
 
   /** Scopes the tree to the subtree rooted at `rawId`. */
-  scopeToArea(rawId: number): MaestroAccessibilityTree {
+  async scopeToArea(rawId: number): Promise<MaestroAccessibilityTree> {
     const found = this.#findNode(this.#hierarchy.elements, rawId);
     if (!found) return this;
 

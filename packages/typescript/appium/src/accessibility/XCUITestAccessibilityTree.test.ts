@@ -16,34 +16,36 @@ describe("XCUITestAccessibilityTree", () => {
     it("returns correct element for given ID", async () => {
       const xml = await fs.readFile(SIMPLE_FIXTURE_PATH, "utf-8");
       const tree = new XCUITestAccessibilityTree(xml);
-      expect(tree.elementById(74)).toMatchObject({
+      expect(await tree.elementById(74)).toMatchObject({
         id: 74,
         name: "Continue",
         type: "XCUIElementTypeButton",
       });
     });
 
-    it("tracks positions among elements with the same locator attributes", () => {
+    it("tracks positions among elements with the same locator attributes", async () => {
       const tree = duplicateElementsTree();
 
-      expect(tree.elementById(2)).toMatchObject({ index: 0 });
-      expect(tree.elementById(5)).toMatchObject({ index: 1 });
-      expect(tree.elementById(7)).toMatchObject({ index: 2 });
+      expect(await tree.elementById(2)).toMatchObject({ index: 0 });
+      expect(await tree.elementById(5)).toMatchObject({ index: 1 });
+      expect(await tree.elementById(7)).toMatchObject({ index: 2 });
     });
   });
 
   describe("scopeToArea", () => {
-    it("preserves full-tree IDs and locator positions", () => {
+    it("preserves full-tree IDs and locator positions", async () => {
       const tree = duplicateElementsTree();
-      const area = tree.scopeToArea(4);
+      const area = await tree.scopeToArea(4);
 
-      expect(area.toStr()).toContain("raw_id=7");
-      expect(area.elementById(7)).toMatchObject({ index: 2 });
+      expect(await area.toStr()).toContain("raw_id=7");
+      expect(await area.elementById(7)).toMatchObject({ index: 2 });
     });
 
-    it("resolves elements cached within area to full-tree predicate index", () => {
-      const area = duplicateElementsTree().scopeToArea(4);
-      const serverTree = new ServerXCUITestAccessibilityTree(area.toStr());
+    it("resolves elements cached within area to full-tree predicate index", async () => {
+      const area = await duplicateElementsTree().scopeToArea(4);
+      const serverTree = new ServerXCUITestAccessibilityTree(
+        await area.toStr(),
+      );
       const cacheTree = new ElementsCacheTree(serverTree.toXml());
 
       const cached = cacheTree.extractAttrs(4);
@@ -56,7 +58,7 @@ describe("XCUITestAccessibilityTree", () => {
 
       const resolved = cacheTree.resolveElements([cached!]);
       const rawId = serverTree.getRawId(resolved![0]);
-      expect(area.elementById(rawId)).toMatchObject({ id: 7, index: 2 });
+      expect(await area.elementById(rawId)).toMatchObject({ id: 7, index: 2 });
     });
   });
 
@@ -65,7 +67,9 @@ describe("XCUITestAccessibilityTree", () => {
       const xml = await fs.readFile(SIMPLE_FIXTURE_PATH, "utf-8");
       const tree = new XCUITestAccessibilityTree(xml);
 
-      expect(tree.scopeToArea(99999).toStr()).toBe(tree.toStr());
+      expect(await (await tree.scopeToArea(99999)).toStr()).toBe(
+        await tree.toStr(),
+      );
     });
   });
 });

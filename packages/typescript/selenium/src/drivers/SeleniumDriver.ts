@@ -351,7 +351,7 @@ export class SeleniumDriver extends BaseDriver<WebElement> {
   @span("driver.find_element", BaseDriver.spanAttrs)
   async findElement(id: number): Promise<WebElement> {
     const tree = await this.getAccessibilityTree();
-    const accessibilityElement = tree.elementById(id);
+    const accessibilityElement = await tree.elementById(id);
     const backendNodeId = accessibilityElement.backendNodeId!;
     const frameChain = accessibilityElement.frameChain;
 
@@ -889,7 +889,7 @@ export class SeleniumDriver extends BaseDriver<WebElement> {
   ): Promise<number> {
     let accessibilityElement;
     try {
-      accessibilityElement = tree.elementById(rawId);
+      accessibilityElement = await tree.elementById(rawId);
     } catch (error) {
       throw new TreeDevDrillError("resolve", error);
     }

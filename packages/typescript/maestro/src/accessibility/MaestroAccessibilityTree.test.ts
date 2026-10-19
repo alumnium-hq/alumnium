@@ -21,7 +21,7 @@ describe("MaestroAccessibilityTree", () => {
   describe("toStr", () => {
     it("expands abbreviated keys and stamps raw ids", async () => {
       const tree = await loadTree();
-      const xml = tree.toStr();
+      const xml = await tree.toStr();
 
       expect(xml).toContain(
         '<Text raw_id=29 accessibilityText="Buy milk" bounds="[66,177][146,203]" />',
@@ -39,7 +39,7 @@ describe("MaestroAccessibilityTree", () => {
         elements: [{ b: "[0,0][10,10]", hint: "Type something Here ..." }],
       });
 
-      expect(tree.toStr()).toContain("<TextField");
+      expect(await tree.toStr()).toContain("<TextField");
     });
 
     it("drops values that match the schema defaults", async () => {
@@ -51,7 +51,7 @@ describe("MaestroAccessibilityTree", () => {
         elements: [{ b: "[0,0][10,10]", txt: "", enabled: true }],
       });
 
-      const xml = tree.toStr();
+      const xml = await tree.toStr();
       expect(xml).not.toContain("enabled");
       expect(xml).not.toContain("text=");
     });
@@ -72,7 +72,7 @@ describe("MaestroAccessibilityTree", () => {
       );
 
     it("derives roles from the widget class, so an EditText is a TextField even though it is clickable", async () => {
-      const xml = (await load("maestro_android_row_unchecked")).toStr();
+      const xml = await (await load("maestro_android_row_unchecked")).toStr();
       expect(xml).toMatch(
         /<CheckBox raw_id=\d+ class="android.widget.CheckBox"/,
       );
@@ -82,20 +82,20 @@ describe("MaestroAccessibilityTree", () => {
     });
 
     it("marks an unlabelled clickable view as a Button so the model can target it", async () => {
-      const xml = (await load("maestro_android_row_unchecked")).toStr();
+      const xml = await (await load("maestro_android_row_unchecked")).toStr();
       expect(xml).toMatch(
         /<Button raw_id=\d+ class="android.view.View" clickable/,
       );
     });
 
     it("emits Android's content-desc as its own attribute", async () => {
-      const xml = (await load("maestro_android_row_unchecked")).toStr();
+      const xml = await (await load("maestro_android_row_unchecked")).toStr();
       expect(xml).toContain('content-desc="New Task"');
     });
 
     it("hoists a lone child label onto its unlabelled clickable wrapper", async () => {
       const tree = await load("maestro_android_row_unchecked");
-      const xml = tree.toStr();
+      const xml = await tree.toStr();
       // The Compose FAB: wrapper Button > (labelled View, empty widget Button).
       expect(xml).toMatch(
         /<Button raw_id=(\d+) class="android.view.View" content-desc="New Task" clickable bounds="[^"]+" \/>/,
@@ -104,11 +104,11 @@ describe("MaestroAccessibilityTree", () => {
       const rawId = Number(
         xml.match(/<Button raw_id=(\d+)[^>]*content-desc="New Task"/)?.[1],
       );
-      expect(tree.elementById(rawId).name).toBe("New Task");
+      expect((await tree.elementById(rawId)).name).toBe("New Task");
     });
 
     it("leaves a task row alone, since its checkbox is interactive", async () => {
-      const xml = (await load("maestro_android_row_unchecked")).toStr();
+      const xml = await (await load("maestro_android_row_unchecked")).toStr();
       expect(xml).toMatch(/<Button [^>]*clickable[^>]*>\s*<CheckBox /);
     });
 
@@ -123,12 +123,12 @@ describe("MaestroAccessibilityTree", () => {
     });
 
     it("states checked=false on an unchecked checkbox", async () => {
-      const xml = (await load("maestro_android_row_unchecked")).toStr();
+      const xml = await (await load("maestro_android_row_unchecked")).toStr();
       expect(xml).toMatch(/<CheckBox [^>]*checked="false"/);
     });
 
     it("keeps checked=true on a ticked checkbox", async () => {
-      const xml = (await load("maestro_android_row_checked")).toStr();
+      const xml = await (await load("maestro_android_row_checked")).toStr();
       expect(xml).toMatch(/<CheckBox (?:[^>]* )?checked(?: |\/)/);
     });
   });
@@ -137,7 +137,7 @@ describe("MaestroAccessibilityTree", () => {
     it("returns the element with its bounds", async () => {
       const tree = await loadTree();
 
-      expect(tree.elementById(29)).toMatchObject({
+      expect(await tree.elementById(29)).toMatchObject({
         id: 29,
         type: "Text",
         name: "Buy milk",
@@ -148,15 +148,17 @@ describe("MaestroAccessibilityTree", () => {
     it("throws for an unknown raw id", async () => {
       const tree = await loadTree();
 
-      expect(() => tree.elementById(99999)).toThrow("No element with raw_id");
+      await expect(tree.elementById(99999)).rejects.toThrow(
+        "No element with raw_id",
+      );
     });
   });
 
   describe("scopeToArea", () => {
     it("scopes the tree to the requested subtree", async () => {
       const tree = await loadTree();
-      const scoped = tree.scopeToArea(27);
-      const xml = scoped.toStr();
+      const scoped = await tree.scopeToArea(27);
+      const xml = await scoped.toStr();
 
       expect(xml).toContain('accessibilityText="Buy milk"');
       expect(xml).not.toContain('accessibilityText="Add"');
@@ -165,7 +167,9 @@ describe("MaestroAccessibilityTree", () => {
     it("returns the original tree when the element is not found", async () => {
       const tree = await loadTree();
 
-      expect(tree.scopeToArea(99999).toStr()).toBe(tree.toStr());
+      expect(await (await tree.scopeToArea(99999)).toStr()).toBe(
+        await tree.toStr(),
+      );
     });
   });
 

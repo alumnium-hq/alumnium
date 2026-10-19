@@ -148,16 +148,16 @@ class TestTree extends BaseAccessibilityTree {
     this.xml = xml;
   }
 
-  toStr(): string {
+  async toStr(): Promise<string> {
     always(this.xml);
     return this.xml;
   }
 
-  elementById(id: number): AccessibilityElement {
+  async elementById(id: number): Promise<AccessibilityElement> {
     return { backendNodeId: id * 10 };
   }
 
-  scopeToArea(): BaseAccessibilityTree {
+  async scopeToArea(): Promise<BaseAccessibilityTree> {
     return this;
   }
 }

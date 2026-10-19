@@ -719,7 +719,9 @@ async function basicChromiumTree(): Promise<ServerChromiumAccessibilityTree> {
   );
   const json = JSON.parse(await fs.readFile(path, "utf-8"));
   const clientAccessibilityTree = new ClientChromiumAccessibilityTree(json);
-  return new ServerChromiumAccessibilityTree(clientAccessibilityTree.toStr());
+  return new ServerChromiumAccessibilityTree(
+    await clientAccessibilityTree.toStr(),
+  );
 }
 
 function expectVisibleMappings(

@@ -45,21 +45,21 @@ export class XcodeAccessibilityTree extends BaseAccessibilityTree<string> {
     this.#nodes = this.#roots.flatMap(flatten);
   }
 
-  toStr(): string {
+  async toStr(): Promise<string> {
     return (this.xml ??= XmlRenderer.render(this.#roots.map(toXml), {
       compactAttrs: false,
     }));
   }
 
-  elementById(id: number): XcodeAccessibilityTree.Node {
+  async elementById(id: number): Promise<XcodeAccessibilityTree.Node> {
     const node = this.#nodes.find((candidate) => candidate.id === id);
     if (!node) throw new Error(`No element with raw_id=${id} found`);
     return node;
   }
 
-  override scopeToArea(id: number): XcodeAccessibilityTree {
+  override async scopeToArea(id: number): Promise<XcodeAccessibilityTree> {
     const node = this.#nodes.find((candidate) => candidate.id === id);
-    return node ? new XcodeAccessibilityTree(this.toStr(), [node]) : this;
+    return node ? new XcodeAccessibilityTree(await this.toStr(), [node]) : this;
   }
 
   /** Resolve a previous target in a fresh capture, ignoring IDs, values, and coordinates. */

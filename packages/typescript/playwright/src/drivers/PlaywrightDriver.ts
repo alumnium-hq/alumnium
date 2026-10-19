@@ -463,7 +463,7 @@ export class PlaywrightDriver extends BaseDriver<Locator> {
   @span("driver.find_element", BaseDriver.spanAttrs)
   async findElement(id: number): Promise<Locator> {
     const tree = await this.getAccessibilityTree();
-    const accessibilityElement = tree.elementById(id);
+    const accessibilityElement = await tree.elementById(id);
 
     // Get frame reference (default to main frame)
     const frame = (accessibilityElement.frame ||
@@ -906,7 +906,7 @@ export class PlaywrightDriver extends BaseDriver<Locator> {
   ): Promise<number> {
     let accessibilityElement;
     try {
-      accessibilityElement = tree.elementById(rawId);
+      accessibilityElement = await tree.elementById(rawId);
     } catch (error) {
       throw new TreeDevDrillError("resolve", error);
     }

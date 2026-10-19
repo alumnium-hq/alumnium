@@ -78,7 +78,7 @@ export class AppiumDriver extends BaseDriver<WebdriverIO.Element> {
   }
 
   @span("driver.drag_slider", BaseDriver.spanAttrs)
-  dragSlider(): void {
+  async dragSlider(): Promise<void> {
     throw new Error("Dragging slider is not supported for this driver");
   }
 
@@ -199,7 +199,7 @@ export class AppiumDriver extends BaseDriver<WebdriverIO.Element> {
   @span("driver.find_element", BaseDriver.spanAttrs)
   async findElement(id: number): Promise<WebdriverIO.Element> {
     const tree = await this.getAccessibilityTree();
-    const element = tree.elementById(id);
+    const element = await tree.elementById(id);
     const locator = this.#elementLocator(element);
     const index = element.index ?? 0;
     logger.debug(`Finding element by locator: ${locator} (index ${index})`);
@@ -351,7 +351,7 @@ export class AppiumDriver extends BaseDriver<WebdriverIO.Element> {
   ): Promise<string> {
     let element: AccessibilityElement;
     try {
-      element = tree.elementById(rawId);
+      element = await tree.elementById(rawId);
     } catch (error) {
       throw new TreeDevDrillError("resolve", error);
     }

@@ -61,7 +61,7 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree<
 
   /** Convert CDP response to raw XML format preserving all data. */
   @span("driver.tree.to_str", { "driver.tree.platform": "chromium" })
-  toStr(): string {
+  async toStr(): Promise<string> {
     if (this.xml !== null) {
       return this.xml;
     }
@@ -241,9 +241,9 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree<
    * @returns AccessibilityElement with backend_node_id set
    */
   @span("driver.tree.element_by_id", { "driver.tree.platform": "chromium" })
-  elementById(rawId: number): AccessibilityElement {
+  async elementById(rawId: number): Promise<AccessibilityElement> {
     // Get raw XML with raw_id attributes
-    const rawXml = this.toStr();
+    const rawXml = await this.toStr();
     const root = Xml.parseRoot(`<root>${rawXml}</root>`);
     // Find element with matching raw_id
     const findElement = (elem: Element, targetId: string): Element | null => {
@@ -286,8 +286,8 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree<
 
   /** Scope the tree to a smaller subtree identified by raw_id. */
   @span("driver.tree.scope_to_area", { "driver.tree.platform": "chromium" })
-  scopeToArea(rawId: number): ChromiumAccessibilityTree {
-    const rawXml = this.toStr();
+  async scopeToArea(rawId: number): Promise<ChromiumAccessibilityTree> {
+    const rawXml = await this.toStr();
 
     // Parse the XML
     const root = Xml.parseRoot(`<root>${rawXml}</root>`);

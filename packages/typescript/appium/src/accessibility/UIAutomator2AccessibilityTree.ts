@@ -30,7 +30,7 @@ export class UIAutomator2AccessibilityTree extends BaseAccessibilityTree<string>
   }
 
   /** Parse XML and add raw_id attributes to all elements. */
-  toStr(): string {
+  async toStr(): Promise<string> {
     if (this.xml !== null) {
       return this.xml;
     }
@@ -64,9 +64,9 @@ export class UIAutomator2AccessibilityTree extends BaseAccessibilityTree<string>
    * @param rawId The raw_id to search for
    * @returns AccessibilityElement with type, androidresourceid, androidtext, androidcontentdesc, androidbounds
    */
-  elementById(rawId: number): AccessibilityElement {
+  async elementById(rawId: number): Promise<AccessibilityElement> {
     // Get raw XML with raw_id attributes
-    const rawXml = this.toStr();
+    const rawXml = await this.toStr();
     const root = Xml.parseRoot(rawXml);
 
     // Find element with matching raw_id
@@ -104,8 +104,8 @@ export class UIAutomator2AccessibilityTree extends BaseAccessibilityTree<string>
   }
 
   /** Scope the tree to a smaller subtree identified by raw_id. */
-  scopeToArea(rawId: number): UIAutomator2AccessibilityTree {
-    const rawXml = this.toStr();
+  async scopeToArea(rawId: number): Promise<UIAutomator2AccessibilityTree> {
+    const rawXml = await this.toStr();
 
     // Parse the XML
     const root = Xml.parseRoot(rawXml);

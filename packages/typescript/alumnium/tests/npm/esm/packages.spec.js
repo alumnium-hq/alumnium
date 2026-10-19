@@ -60,6 +60,6 @@ test("models built in ESM work in CommonJS", async ({ page }) => {
   const require = createRequire(import.meta.url);
   const { Alumni: CommonJsAlumni } = require("@alumnium/playwright");
   const al = new CommonJsAlumni(page, { model: providers.openai.openai() });
-  expect(al.client.session.llm).toBeDefined();
+  expect((await al.client.session).llm).toBeDefined();
   await al.quit();
 });

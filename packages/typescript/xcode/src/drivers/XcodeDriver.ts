@@ -95,8 +95,8 @@ export class XcodeDriver extends BaseDriver<never> {
   @stateful
   async dragAndDrop(fromId: number, toId: number): Promise<void> {
     const previous = await this.#tree();
-    const from = previous.elementById(fromId);
-    const to = previous.elementById(toId);
+    const from = await previous.elementById(fromId);
+    const to = await previous.elementById(toId);
     if (from.activationBundleId !== to.activationBundleId)
       throw new Error("Xcode cannot drag between applications");
     const fresh = (
@@ -133,7 +133,7 @@ export class XcodeDriver extends BaseDriver<never> {
   @span("driver.scroll_to", BaseDriver.spanAttrs)
   @stateful
   async scrollTo(id: number): Promise<void> {
-    const target = (await this.#tree()).elementById(id);
+    const target = await (await this.#tree()).elementById(id);
     for (let attempt = 0; attempt < 10; attempt++) {
       const tree = (await this.session.capture()).tree;
       const node = tree.resolve(target);
@@ -259,7 +259,7 @@ export class XcodeDriver extends BaseDriver<never> {
   }
 
   async #resolve(id: number): Promise<XcodeAccessibilityTree.Node> {
-    return this.#resolveNode((await this.#tree()).elementById(id));
+    return this.#resolveNode(await (await this.#tree()).elementById(id));
   }
 
   async #resolveNode(

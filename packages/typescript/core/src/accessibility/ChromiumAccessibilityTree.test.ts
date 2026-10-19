@@ -10,7 +10,7 @@ const FIXTURE_PATH = path.resolve(
 );
 
 describe("ChromiumAccessibilityTree", () => {
-  it("renders node value as an attribute", () => {
+  it("renders node value as an attribute", async () => {
     const tree = new ChromiumAccessibilityTree({
       nodes: [
         {
@@ -21,10 +21,10 @@ describe("ChromiumAccessibilityTree", () => {
       ],
     });
 
-    expect(tree.toStr()).toContain('value="Option 2"');
+    expect(await tree.toStr()).toContain('value="Option 2"');
   });
 
-  it("preserves unchecked state", () => {
+  it("preserves unchecked state", async () => {
     const tree = new ChromiumAccessibilityTree({
       nodes: [
         {
@@ -38,17 +38,17 @@ describe("ChromiumAccessibilityTree", () => {
       ],
     });
 
-    expect(tree.toStr()).toContain('checked="false"');
-    expect(tree.toStr()).not.toContain("invalid");
+    expect(await tree.toStr()).toContain('checked="false"');
+    expect(await tree.toStr()).not.toContain("invalid");
   });
 
   describe("elementById", () => {
     it("returns correct element for given ID", async () => {
       const json = await fs.readFile(FIXTURE_PATH, "utf-8").then(JSON.parse);
       const tree = new ChromiumAccessibilityTree(json);
-      expect(tree.elementById(1).backendNodeId).toBe(7);
-      expect(tree.elementById(2).backendNodeId).toBe(6);
-      expect(tree.elementById(3).backendNodeId).toBe(5);
+      expect((await tree.elementById(1)).backendNodeId).toBe(7);
+      expect((await tree.elementById(2)).backendNodeId).toBe(6);
+      expect((await tree.elementById(3)).backendNodeId).toBe(5);
     });
   });
 
@@ -57,10 +57,12 @@ describe("ChromiumAccessibilityTree", () => {
       const json = await fs.readFile(FIXTURE_PATH, "utf-8").then(JSON.parse);
       const tree = new ChromiumAccessibilityTree(json);
 
-      expect(tree.scopeToArea(99999).toStr()).toBe(tree.toStr());
+      expect(await (await tree.scopeToArea(99999)).toStr()).toBe(
+        await tree.toStr(),
+      );
     });
 
-    it("preserves unchecked state in a scoped tree", () => {
+    it("preserves unchecked state in a scoped tree", async () => {
       const tree = new ChromiumAccessibilityTree({
         nodes: [
           {
@@ -72,7 +74,9 @@ describe("ChromiumAccessibilityTree", () => {
         ],
       });
 
-      expect(tree.scopeToArea(1).toStr()).toContain('checked="false"');
+      expect(await (await tree.scopeToArea(1)).toStr()).toContain(
+        'checked="false"',
+      );
     });
   });
 });

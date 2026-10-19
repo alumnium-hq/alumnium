@@ -17,15 +17,15 @@ class TestTree extends BaseAccessibilityTree<AccessibilityElement> {
     this.element = element;
   }
 
-  toStr(): string {
+  async toStr(): Promise<string> {
     return "";
   }
 
-  elementById(): AccessibilityElement {
+  async elementById(): Promise<AccessibilityElement> {
     return this.element;
   }
 
-  scopeToArea(): BaseAccessibilityTree<AccessibilityElement> {
+  async scopeToArea(): Promise<BaseAccessibilityTree<AccessibilityElement>> {
     return this;
   }
 }

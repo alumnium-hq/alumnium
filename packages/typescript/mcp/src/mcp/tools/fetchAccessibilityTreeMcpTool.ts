@@ -28,14 +28,13 @@ export const fetchAccessibilityTreeMcpTool = McpTool.define(
       const client = al.client;
       always(client instanceof NativeClient);
       al.driver.resetAccessibilityTree();
-      const tree = client.session.parseTree(
-        (await al.driver.getAccessibilityTree()).toStr(),
+      const session = await client.session;
+      const tree = session.parseTree(
+        await (await al.driver.getAccessibilityTree()).toStr(),
       );
       state.tree = tree;
 
-      return [
-        { type: "text", text: tree.toXml(client.session.excludeAttributes) },
-      ];
+      return [{ type: "text", text: tree.toXml(session.excludeAttributes) }];
     },
   },
 );

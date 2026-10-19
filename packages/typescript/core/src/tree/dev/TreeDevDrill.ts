@@ -10,7 +10,7 @@ export abstract class TreeDevDrill {
     props: TreeDevDrill.RunProps,
   ): Promise<TreeDevDrill.RunResult> {
     const { action, platform, driver, tree, probe } = props;
-    const input = tree.toStr();
+    const input = await tree.toStr();
     const serverTree = TreeFactory.create(platform, driver, input);
     const output = serverTree.toXml();
     const failures: TreeDevDrill.Failure[] = [];
