@@ -119,7 +119,7 @@ You can change host and port to bind using `--host` and `--port` respectively. B
 To pre-install the browser for a driver instead of downloading it on first use, run `alumnium install --driver <driver>` where the driver is `playwright`, `selenium`, or `cloakbrowser`. Docker images are published as `alumnium/alumnium:<version>` (binary only) and `alumnium/alumnium:<version>-web` (with browsers for all drivers pre-installed).
 
 ```bash
-docker run --rm -p 8014:8014 alumnium/alumnium:<version>-web mcp --transport http
+docker run --rm -p 8014:8014 alumnium/alumnium:<version>-web mcp
 ```
 
 Once running, you can connect to the MCP user using `/mcp` endpoint, e.g. for Claude Code:

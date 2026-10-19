@@ -15,7 +15,8 @@ RUN --mount=type=bind,source=packages/typescript/dist/bin,target=/tmp/bins \
     cp /tmp/bins/alumnium-${VERSION}-linux-${ARCH} /app/alumnium && \
     chmod +x /app/alumnium
 
-ENV ALUMNIUM_HOST=0.0.0.0
+ENV ALUMNIUM_HOST=0.0.0.0 \
+    ALUMNIUM_MCP_TRANSPORT=http
 
 EXPOSE 8013 8014
 VOLUME ["/app/.alumnium/cache"]

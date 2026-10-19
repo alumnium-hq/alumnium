@@ -204,6 +204,10 @@ MCP execution mode:
 - `agentic` (default) uses an LLM to interpret instructions, providing high-level tools (do/get/check)
 - `direct` skips LLM, instead providing low-level interaction tools (click/type/upload/etc.)
 
+### `ALUMNIUM_MCP_TRANSPORT`
+
+MCP server transport: `stdio` (default) or `http`. The Docker images set it to `http`.
+
 ### `ALUMNIUM_MCP_ARTIFACTS_DIR`
 
 Sets the directory where the MCP server stores artifacts such as screenshots. Default is `.alumnium/artifacts`.

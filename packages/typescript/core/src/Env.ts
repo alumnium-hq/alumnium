@@ -6,6 +6,7 @@ import ansi from "picocolors";
 import z from "zod";
 import { Driver } from "./drivers/Driver.ts";
 import { McpMode } from "./mcp/McpMode.ts";
+import { McpTransport } from "./mcp/McpTransport.ts";
 import { defaultModelProvider, Model } from "./Model.ts";
 import { LoggerSchema } from "./telemetry/LoggerSchema.ts";
 import {
@@ -198,6 +199,10 @@ export const Env = {
 
   get ALUMNIUM_MCP_MODE() {
     return envVar("ALUMNIUM_MCP_MODE", McpMode.default("agentic"));
+  },
+
+  get ALUMNIUM_MCP_TRANSPORT() {
+    return envVar("ALUMNIUM_MCP_TRANSPORT", McpTransport.default("stdio"));
   },
 
   get ALUMNIUM_MCP_RECORD_VIDEOS() {

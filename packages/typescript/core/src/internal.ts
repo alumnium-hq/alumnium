@@ -35,6 +35,7 @@ export * from "./llm/LanguageModel.ts";
 export * from "./llm/llmSchema.ts";
 export * from "./llm/providerUtils.ts";
 export * from "./mcp/McpMode.ts";
+export * from "./mcp/McpTransport.ts";
 export * from "./package.ts";
 export * from "./pythonic/pythonicFormat.ts";
 export * from "./pythonic/pythonicSplitlines.ts";
