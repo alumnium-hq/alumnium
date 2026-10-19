@@ -8,6 +8,7 @@ import { Env } from "../Env.ts";
 import { LlmUsageStats } from "../llm/llmSchema.ts";
 import { Model } from "../Model.ts";
 import { NavigationPolicy } from "../NavigationPolicy.ts";
+import type { Params } from "../Params.ts";
 import { Telemetry } from "../telemetry/Telemetry.ts";
 import { Tracer } from "../telemetry/Tracer.ts";
 import { BaseTool, type ToolClass } from "../tools/BaseTool.ts";
@@ -32,13 +33,21 @@ export namespace Alumni {
     navigationPolicy?: NavigationPolicy.Options | undefined;
   }
 
-  export interface VisionOptions {
+  interface ParamsOptions {
+    params?: Params.Values | undefined;
+  }
+
+  interface VisionOptions {
     vision?: boolean;
   }
 
-  export interface CheckOptions extends VisionOptions {
+  interface AssertOptions {
     assert?: CheckAssert;
   }
+
+  export type CheckOptions = VisionOptions & ParamsOptions & AssertOptions;
+  export type DoOptions = VisionOptions & ParamsOptions;
+  export type GetOptions = VisionOptions & ParamsOptions;
 
   export type CheckAssert = (
     expression: any,
@@ -121,12 +130,10 @@ export class Alumni<TDriver extends BaseDriver = BaseDriver> {
 
   @span("alumni.do", (_, options) => ({
     "alumni.flavor": "alumni",
+    "alumni.method.args.params": options?.params,
     "alumni.method.args.vision": !!options?.vision,
   }))
-  async do(
-    goal: string,
-    options: Alumni.VisionOptions = {},
-  ): Promise<DoResult> {
+  async do(goal: string, options: Alumni.DoOptions = {}): Promise<DoResult> {
     return retry(async () => {
       const app = await this.driver.app();
 
@@ -138,6 +145,7 @@ export class Alumni<TDriver extends BaseDriver = BaseDriver> {
       const beforeUrl = this.changeAnalysis ? await this.driver.url() : null;
       const { explanation, steps } = await this.client.planActions({
         goal,
+        params: options.params,
         accessibilityTree: await initialAccessibilityTree.toStr(),
         app,
         screenshot: options.vision ? await this.driver.screenshot() : undefined,
@@ -162,6 +170,7 @@ export class Alumni<TDriver extends BaseDriver = BaseDriver> {
             accessibilityTree: await accessibilityTree.toStr(),
             app,
             screenshot,
+            params: options.params,
           });
 
         // When planner is off, explanation is just the goal — replace with actor's reasoning.
@@ -206,6 +215,7 @@ export class Alumni<TDriver extends BaseDriver = BaseDriver> {
 
   @span("alumni.check", (_, options) => ({
     "alumni.flavor": "alumni",
+    "alumni.method.args.params": options?.params,
     "alumni.method.args.vision": !!options?.vision,
   }))
   async check(
@@ -220,6 +230,7 @@ export class Alumni<TDriver extends BaseDriver = BaseDriver> {
       const accessibilityTree = await this.driver.getAccessibilityTree();
       const [explanation, value] = await this.client.retrieve({
         statement: `Is the following true or false - ${statement}`,
+        params: options.params,
         accessibilityTree: await accessibilityTree.toStr(),
         title: await this.driver.title(),
         url: await this.driver.url(),
@@ -242,9 +253,10 @@ export class Alumni<TDriver extends BaseDriver = BaseDriver> {
 
   @span("alumni.get", (_, options) => ({
     "alumni.flavor": "alumni",
+    "alumni.method.args.params": options?.params,
     "alumni.method.args.vision": !!options?.vision,
   }))
-  async get(data: string, options: Alumni.VisionOptions = {}): Promise<Data> {
+  async get(data: string, options: Alumni.GetOptions = {}): Promise<Data> {
     return retry(async () => {
       const screenshot = options.vision
         ? await this.driver.screenshot()
@@ -253,6 +265,7 @@ export class Alumni<TDriver extends BaseDriver = BaseDriver> {
       const accessibilityTree = await this.driver.getAccessibilityTree();
       const [explanation, value] = await this.client.retrieve({
         statement: data,
+        params: options.params,
         accessibilityTree: await accessibilityTree.toStr(),
         title: await this.driver.title(),
         url: await this.driver.url(),

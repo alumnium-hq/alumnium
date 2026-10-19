@@ -3,6 +3,7 @@ import { AppId } from "../AppId.ts";
 import type { Driver } from "../drivers/Driver.ts";
 import { LlmUsageStats } from "../llm/llmSchema.ts";
 import { Model } from "../Model.ts";
+import type { Params } from "../Params.ts";
 import type { ElementRef } from "../server/serverSchema.ts";
 import type { ToolCall, ToolClass } from "../tools/BaseTool.ts";
 import type { Data } from "./typecasting.ts";
@@ -42,6 +43,7 @@ export namespace Client {
     url: string;
     app: AppId;
     screenshot?: string | undefined;
+    params?: Params.Values | undefined;
   }
 
   export interface PlanActionsProps {
@@ -49,6 +51,7 @@ export namespace Client {
     accessibilityTree: string;
     app: AppId;
     screenshot?: string | undefined;
+    params?: Params.Values | undefined;
   }
 
   export interface AddExampleProps {
@@ -62,6 +65,7 @@ export namespace Client {
     accessibilityTree: string;
     app: AppId;
     screenshot?: string | undefined;
+    params?: Params.Values | undefined;
   }
 
   export interface FindAreaProps {

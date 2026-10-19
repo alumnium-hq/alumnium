@@ -2,6 +2,7 @@ import { always } from "alwaysly";
 import { AppId } from "../AppId.ts";
 import { LlmUsageStats } from "../llm/llmSchema.ts";
 import { Model } from "../Model.ts";
+import { Params } from "../Params.ts";
 import { AccessibilityTreeDiff } from "../server/accessibility/AccessibilityTreeDiff.ts";
 import { ChangesAnalyzerAgent } from "../server/agents/ChangesAnalyzerAgent.ts";
 import { RetrieverAgent } from "../server/agents/RetrieverAgent.ts";
@@ -89,7 +90,7 @@ export class NativeClient extends Client {
     props: Client.PlanActionsProps,
   ): Promise<Client.PlanActionsResult> {
     const session = await this.session;
-    const { goal, accessibilityTree, app, screenshot } = props;
+    const { goal, accessibilityTree, app, screenshot, params } = props;
     session.updateContext({ app });
 
     if (!session.planner) {
@@ -101,6 +102,7 @@ export class NativeClient extends Client {
       goal,
       tree.toXml(session.excludeAttributes),
       screenshot,
+      params,
     );
     return { explanation, steps };
   }
@@ -126,7 +128,7 @@ export class NativeClient extends Client {
     props: Client.ExecuteActionProps,
   ): Promise<Client.ExecuteActionResult> {
     const session = await this.session;
-    const { goal, step, accessibilityTree, app, screenshot } = props;
+    const { goal, step, accessibilityTree, app, screenshot, params } = props;
     session.updateContext({ app });
 
     const tree = session.parseTree(accessibilityTree);
@@ -135,6 +137,7 @@ export class NativeClient extends Client {
       step,
       tree.toXml(session.excludeAttributes),
       screenshot,
+      params,
     );
     return {
       explanation,
@@ -150,7 +153,15 @@ export class NativeClient extends Client {
   })
   async retrieve(props: Client.RetrieveProps): Promise<[string, Data]> {
     const session = await this.session;
-    const { statement, accessibilityTree, title, url, app, screenshot } = props;
+    const {
+      statement,
+      accessibilityTree,
+      title,
+      url,
+      app,
+      screenshot,
+      params,
+    } = props;
 
     session.updateContext({ app });
 
@@ -160,7 +171,7 @@ export class NativeClient extends Client {
       ...session.excludeAttributes,
     ]);
     const [explanation, result] = await session.retrieverAgent.invoke({
-      statement: statement,
+      statement: Params.substitute(statement, params),
       treeXml: tree.toXml(excludeAttrs),
       title,
       url,

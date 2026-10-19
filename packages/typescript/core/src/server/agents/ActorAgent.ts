@@ -3,6 +3,7 @@ import z from "zod";
 import type { LanguageModel } from "../../llm/LanguageModel.ts";
 import { loadAi } from "../../llm/loadAi.ts";
 import type { Model } from "../../Model.ts";
+import { Params } from "../../Params.ts";
 import { pythonicFormat } from "../../pythonic/pythonicFormat.ts";
 import { Telemetry } from "../../telemetry/Telemetry.ts";
 import type { ToolCall } from "../../tools/BaseTool.ts";
@@ -24,6 +25,7 @@ export class ActorAgent extends BaseAgent {
     goal: BaseAgent.Goal,
     step: BaseAgent.Step,
     treeXml: z.string(),
+    params: z.record(z.string(), z.string()).optional(),
   });
 
   #toolSchemas: ToolDefinition[];
@@ -55,6 +57,7 @@ export class ActorAgent extends BaseAgent {
     step: string,
     treeXml: string,
     screenshot?: string,
+    params?: Params.Values,
   ): Promise<ActorAgent.InvokeResult> {
     if (!step.trim()) {
       return ["", []];
@@ -70,13 +73,14 @@ export class ActorAgent extends BaseAgent {
     const meta: ActorAgent.Meta = {
       kind: "actor",
       goal: goal as BaseAgent.Goal,
-      step: step as BaseAgent.Step,
+      step: Params.mask(step, params) as BaseAgent.Step,
       treeXml,
+      ...(params && Object.keys(params).length ? { params } : {}),
     };
 
     const prompt = pythonicFormat(this.prompts.user, {
-      goal,
-      step,
+      goal: Params.substitute(goal, params),
+      step: Params.substitute(step, params),
       accessibility_tree: treeXml,
     });
     const content: Extract<ModelMessage, { role: "user" }>["content"] =

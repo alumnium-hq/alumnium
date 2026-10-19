@@ -227,6 +227,7 @@ describe("serverApp", () => {
           "open settings",
           expect.stringContaining("<RootWebArea"),
           screenshot ?? undefined,
+          {},
         );
       },
     );
@@ -322,6 +323,7 @@ describe("serverApp", () => {
         "click New Todo Input field",
         expect.not.stringContaining('url="'),
         screenshot,
+        {},
       );
       expect(await response.json()).toEqual({
         actions: [

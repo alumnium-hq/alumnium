@@ -91,6 +91,7 @@ class HttpClient:
         accessibility_tree: str,
         app: str = "unknown",
         screenshot: str | None = None,
+        params: dict[str, str] | None = None,
     ) -> tuple[str, list[str]]:
         """
         Plan actions to achieve a goal.
@@ -104,6 +105,7 @@ class HttpClient:
                 "accessibility_tree": accessibility_tree,
                 "app": app,
                 **({"screenshot": screenshot} if screenshot is not None else {}),
+                **({"params": params} if params else {}),
             },
             timeout=120,
         )
@@ -134,6 +136,7 @@ class HttpClient:
         accessibility_tree: str,
         app: str = "unknown",
         screenshot: str | None = None,
+        params: dict[str, str] | None = None,
     ) -> tuple[str, list[dict]]:
         response = post(
             f"{self.base_url}/v1/sessions/{self.session_id}/steps",
@@ -143,6 +146,7 @@ class HttpClient:
                 "accessibility_tree": accessibility_tree,
                 "app": app,
                 **({"screenshot": screenshot} if screenshot is not None else {}),
+                **({"params": params} if params else {}),
             },
             timeout=120,
         )
@@ -158,6 +162,7 @@ class HttpClient:
         url: str,
         screenshot: str | None,
         app: str = "unknown",
+        params: dict[str, str] | None = None,
     ) -> tuple[str, Data]:
         response = post(
             f"{self.base_url}/v1/sessions/{self.session_id}/statements",
@@ -168,6 +173,7 @@ class HttpClient:
                 "url": url,
                 "screenshot": screenshot if screenshot else None,
                 "app": app,
+                **({"params": params} if params else {}),
             },
             timeout=120,
         )

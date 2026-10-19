@@ -86,13 +86,14 @@ class Alumni:
         self.driver.quit()
 
     @retry(tries=RETRIES, delay=DELAY, logger=logger)  # pyright: ignore[reportArgumentType]
-    def do(self, goal: str, vision: bool = False) -> DoResult:
+    def do(self, goal: str, vision: bool = False, params: dict[str, str] | None = None) -> DoResult:
         """
         Executes a series of steps to achieve the given goal.
 
         Args:
             goal: The goal to be achieved.
             vision: Include current screenshots when planning and choosing actions. Defaults to False.
+            params: Values for `{placeholder}` tokens. Defaults to None.
 
         Returns:
             DoResult containing the explanation and executed steps with their actions.
@@ -107,6 +108,7 @@ class Alumni:
             initial_accessibility_tree.to_str(),
             app=app,
             screenshot=self.driver.screenshot if vision else None,
+            params=params,
         )
 
         executed_steps = []
@@ -121,6 +123,7 @@ class Alumni:
                 accessibility_tree.to_str(),
                 app=app,
                 screenshot=self.driver.screenshot if vision else None,
+                params=params,
             )
 
             # When planner is off, explanation is just the goal — replace with actor's reasoning.
@@ -152,13 +155,14 @@ class Alumni:
         return DoResult(explanation=explanation, steps=executed_steps, changes=changes)
 
     @retry(tries=RETRIES, delay=DELAY, logger=logger)  # pyright: ignore[reportArgumentType]
-    def check(self, statement: str, vision: bool = False) -> str:
+    def check(self, statement: str, vision: bool = False, params: dict[str, str] | None = None) -> str:
         """
         Checks a given statement true or false.
 
         Args:
             statement: The statement to be checked.
             vision: A flag indicating whether to use a vision-based verification via a screenshot. Defaults to False.
+            params: Values for `{placeholder}` tokens. Defaults to None.
 
         Returns:
             The summary of verification result.
@@ -174,18 +178,20 @@ class Alumni:
             url=self.driver.url,
             screenshot=self.driver.screenshot if vision else None,
             app=self.driver.app,
+            params=params,
         )
         assert value is True, explanation
         return explanation
 
     @retry(tries=RETRIES, delay=DELAY, logger=logger)  # pyright: ignore[reportArgumentType]
-    def get(self, data: str, vision: bool = False) -> Data:
+    def get(self, data: str, vision: bool = False, params: dict[str, str] | None = None) -> Data:
         """
         Extracts requested data from the page.
 
         Args:
             data: The data to extract.
             vision: A flag indicating whether to use a vision-based extraction via a screenshot. Defaults to False.
+            params: Values for `{placeholder}` tokens. Defaults to None.
 
         Returns:
             The extracted data. If data cannot be extracted, returns the explanation string.
@@ -198,6 +204,7 @@ class Alumni:
             url=self.driver.url,
             screenshot=self.driver.screenshot if vision else None,
             app=self.driver.app,
+            params=params,
         )
         return explanation if value is None else value
 

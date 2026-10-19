@@ -86,6 +86,7 @@ public class Area {
     return Retry.execute(
         () -> {
           boolean vision = opts != null && opts.vision();
+          Map<String, String> params = opts != null ? opts.params() : Map.of();
           driver.setAccessibilityTree(accessibilityTree);
 
           PlanResult response =
@@ -93,7 +94,8 @@ public class Area {
                   goal,
                   accessibilityTree.toStr(),
                   driver.app(),
-                  vision ? driver.screenshot() : null);
+                  vision ? driver.screenshot() : null,
+                  params);
           String explanation = response.explanation();
           List<String> steps = response.steps();
           List<DoStep> executedSteps = new ArrayList<>();
@@ -104,7 +106,8 @@ public class Area {
                     step,
                     accessibilityTree.toStr(),
                     driver.app(),
-                    vision ? driver.screenshot() : null);
+                    vision ? driver.screenshot() : null,
+                    params);
 
             if (explanation.equals(goal)) {
               explanation = actionResult.explanation();
@@ -141,6 +144,7 @@ public class Area {
     return Retry.execute(
         () -> {
           boolean vision = opts != null && opts.vision();
+          Map<String, String> params = opts != null ? opts.params() : Map.of();
           HttpClient.RetrieveResult result =
               client.retrieve(
                   "Is the following true or false - " + statement,
@@ -148,7 +152,8 @@ public class Area {
                   driver.title(),
                   driver.url(),
                   vision ? driver.screenshot() : null,
-                  driver.app());
+                  driver.app(),
+                  params);
 
           if (!Boolean.TRUE.equals(result.result().boxedValue())) {
             throw new AssertionError(result.explanation());
@@ -178,6 +183,7 @@ public class Area {
     return Retry.execute(
         () -> {
           boolean vision = opts != null && opts.vision();
+          Map<String, String> params = opts != null ? opts.params() : Map.of();
           HttpClient.RetrieveResult result =
               client.retrieve(
                   data,
@@ -185,7 +191,8 @@ public class Area {
                   driver.title(),
                   driver.url(),
                   vision ? driver.screenshot() : null,
-                  driver.app());
+                  driver.app(),
+                  params);
 
           Data value = result.result();
           if (value == null || value.isNoop()) {

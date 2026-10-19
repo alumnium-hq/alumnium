@@ -12,6 +12,7 @@ export * from "./FileStore/GlobalFileStorePaths.ts";
 export * from "./Http.ts";
 export * from "./Model.ts";
 export * from "./NavigationPolicy.ts";
+export * from "./Params.ts";
 export * from "./accessibility/AccessibilityElement.ts";
 export * from "./accessibility/BaseAccessibilityTree.ts";
 export * from "./accessibility/ChromiumAccessibilityTree.ts";

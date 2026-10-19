@@ -88,12 +88,13 @@ export class HttpClient extends Client {
   async planActions(
     props: Client.PlanActionsProps,
   ): Promise<Client.PlanActionsResult> {
-    const { goal, accessibilityTree, app, screenshot } = props;
+    const { goal, accessibilityTree, app, screenshot, params } = props;
     const body: PlanRequest = {
       goal,
       accessibility_tree: accessibilityTree,
       app,
       screenshot,
+      params,
     };
     return this.#sessionFetch<PlanResponse>("POST", "/plans", body);
   }
@@ -123,13 +124,14 @@ export class HttpClient extends Client {
   async executeAction(
     props: Client.ExecuteActionProps,
   ): Promise<Client.ExecuteActionResult> {
-    const { goal, step, accessibilityTree, app, screenshot } = props;
+    const { goal, step, accessibilityTree, app, screenshot, params } = props;
     const body: StepRequest = {
       goal,
       step,
       accessibility_tree: accessibilityTree,
       app,
       screenshot,
+      params,
     };
     return this.#sessionFetch<StepResponse>("POST", "/steps", body);
   }
@@ -141,7 +143,15 @@ export class HttpClient extends Client {
     };
   })
   async retrieve(props: Client.RetrieveProps): Promise<[string, Data]> {
-    const { statement, accessibilityTree, title, url, app, screenshot } = props;
+    const {
+      statement,
+      accessibilityTree,
+      title,
+      url,
+      app,
+      screenshot,
+      params,
+    } = props;
 
     const body: StatementRequest = {
       statement,
@@ -150,6 +160,7 @@ export class HttpClient extends Client {
       url,
       screenshot: screenshot || null,
       app,
+      params,
     };
     const result = await this.#sessionFetch<StatementResponse>(
       "POST",

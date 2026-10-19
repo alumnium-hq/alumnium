@@ -3,6 +3,7 @@ import { xxh64Str } from "@js-fns/xxhash/str";
 import { Logger } from "../../../telemetry/Logger.ts";
 import { PlannerAgent } from "../../agents/PlannerAgent.ts";
 import { BaseAgentElementsCache } from "./BaseAgentElementsCache.ts";
+import { ElementsCacheMask } from "./ElementsCacheMask.ts";
 
 const logger = Logger.get(import.meta.url);
 const CACHE_VERSION = "ai-sdk-v1";
@@ -35,7 +36,7 @@ export class PlannerAgentElementsCache extends BaseAgentElementsCache<PlannerAge
     props: BaseAgentElementsCache.UpdateProps<PlannerAgent.Meta>,
   ): Promise<void> {
     const { cacheHash, memoryKey, meta, generation } = props;
-    const { goal } = meta;
+    const { goal, params } = meta;
 
     if (!generation.content.length) {
       logger.warn(
@@ -51,13 +52,16 @@ export class PlannerAgentElementsCache extends BaseAgentElementsCache<PlannerAge
       return;
     }
 
+    const masked = ElementsCacheMask.mask(generation, [], params);
+    if (!masked) return;
+
     logger.debug(
       `Caching planner response for goal: "${goal.slice(0, 50)}..."`,
     );
 
     this.setRecord({
       cacheHash,
-      generation,
+      generation: masked,
       elements: [],
       agentKind: "planner",
       memoryKey,

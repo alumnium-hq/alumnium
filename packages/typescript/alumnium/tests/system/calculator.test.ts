@@ -24,6 +24,9 @@ describe("Calculator", () => {
     const { al, $ } = await setup();
     await $.navigate("https://seleniumbase.io/apps/calculator");
     await al.do("2 + 2 =");
+    await al.check("calculator result is {result}", {
+      params: { result: "4" },
+    });
     const result = await al.get("calculator result from textfield");
     expect(result).toBe(4);
   });
@@ -32,6 +35,9 @@ describe("Calculator", () => {
     const { al, $ } = await setup();
     await $.navigate("https://seleniumbase.io/apps/calculator");
     await al.do("5 - 3 =");
+    await al.check("calculator result is {result}", {
+      params: { result: "2" },
+    });
     const result = await al.get("calculator result from textfield");
     expect(result).toBe(2);
   });
@@ -40,6 +46,9 @@ describe("Calculator", () => {
     const { al, $ } = await setup();
     await $.navigate("https://seleniumbase.io/apps/calculator");
     await al.do("3 * 4 =");
+    await al.check("calculator result is {result}", {
+      params: { result: "12" },
+    });
     const result = await al.get("calculator result from textfield");
     expect(result).toBe(12);
   });
@@ -48,6 +57,9 @@ describe("Calculator", () => {
     const { al, $ } = await setup();
     await $.navigate("https://seleniumbase.io/apps/calculator");
     await al.do("8 / 2 =");
+    await al.check("calculator result is {result}", {
+      params: { result: "4" },
+    });
     const result = await al.get("calculator result from textfield");
     expect(result).toBe(4);
   });

@@ -24,22 +24,26 @@ def learn(al):
 def test_addition(al, navigate):
     navigate("https://seleniumbase.io/apps/calculator")
     al.do("2 + 2 =")
+    al.check("calculator result is {result}", params={"result": "4"})
     assert al.get("calculator result from textfield") == 4
 
 
 def test_subtraction(al, navigate):
     navigate("https://seleniumbase.io/apps/calculator")
     al.do("5 - 3 =")
+    al.check("calculator result is {result}", params={"result": "2"})
     assert al.get("calculator result from textfield") == 2
 
 
 def test_multiplication(al, navigate):
     navigate("https://seleniumbase.io/apps/calculator")
     al.do("3 * 4 =")
+    al.check("calculator result is {result}", params={"result": "12"})
     assert al.get("calculator result from textfield") == 12
 
 
 def test_division(al, navigate):
     navigate("https://seleniumbase.io/apps/calculator")
     al.do("8 / 2 =")
+    al.check("calculator result is {result}", params={"result": "4"})
     assert al.get("calculator result from textfield") == 4

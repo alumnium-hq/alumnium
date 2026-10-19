@@ -155,6 +155,39 @@ Alumnium uses two complementary cache layers that work together to skip LLM call
 | Response | Stores full AI responses keyed by the exact request content — instruction, accessibility tree, and model. A cache miss occurs when the instruction or the page structure changes.                                                                                                                             |
 | Elements | Stores AI decisions together with the UI elements they reference. Resolves cached elements to their current IDs in the accessibility tree, so the cache remains valid even when element IDs change between runs. |
 
+## Placeholders
+
+Goals that differ only in data, like `search for Paris` and `search for London`, are cached separately. Use `{placeholder}` tokens with `params` to share one cache entry:
+
+<LanguageContent lang="java">
+
+```java
+al.act("search for {city}", new DoOptions().withParams(Map.of("city", "Paris")));
+al.check("results mention {city}", new CheckOptions().withParams(Map.of("city", "Paris")));
+```
+
+</LanguageContent>
+
+<LanguageContent lang="python">
+
+```python
+al.do("search for {city}", params={"city": "Paris"})
+al.check("results mention {city}", params={"city": "Paris"})
+```
+
+</LanguageContent>
+
+<LanguageContent lang="typescript">
+
+```typescript
+await al.do("search for {city}", { params: { city: "Paris" } });
+await al.check("results mention {city}", { params: { city: "Paris" } });
+```
+
+</LanguageContent>
+
+The model sees the real values, while the elements cache stores placeholders. A goal cached with `Paris` is then replayed for `London` without LLM calls, as long as the matching elements are on the page. In `check` and `get`, placeholders are only substituted.
+
 ## Providers
 
 You can select the cache provider by setting the `ALUMNIUM_CACHE` environment variable.
