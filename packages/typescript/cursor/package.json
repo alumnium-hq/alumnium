@@ -1,6 +1,6 @@
 {
   "name": "@alumnium/cursor",
-  "version": "0.24.0-alpha.3",
+  "version": "0.24.0-alpha.4",
   "description": "Alumnium Cursor LLM provider",
   "license": "MIT",
   "type": "module",

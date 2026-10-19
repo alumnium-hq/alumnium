@@ -1,6 +1,6 @@
 {
   "name": "@alumnium/typescript",
-  "version": "0.24.0-alpha.3",
+  "version": "0.24.0-alpha.4",
   "private": true,
   "description": "Alumnium TypeScript packages workspace: shared scripts, tests and tooling",
   "license": "MIT",

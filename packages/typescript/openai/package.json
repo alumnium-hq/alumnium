@@ -1,6 +1,6 @@
 {
   "name": "@alumnium/openai",
-  "version": "0.24.0-alpha.3",
+  "version": "0.24.0-alpha.4",
   "description": "Alumnium OpenAI LLM provider",
   "license": "MIT",
   "type": "module",
