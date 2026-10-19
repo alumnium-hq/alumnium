@@ -49,7 +49,6 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           args:
-            - /app/alumnium
             - server
             - --host
             - 0.0.0.0

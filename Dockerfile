@@ -15,13 +15,15 @@ RUN --mount=type=bind,source=packages/typescript/dist/bin,target=/tmp/bins \
     cp /tmp/bins/alumnium-${VERSION}-linux-${ARCH} /app/alumnium && \
     chmod +x /app/alumnium
 
+ENV ALUMNIUM_HOST=0.0.0.0
+
 EXPOSE 8013 8014
 VOLUME ["/app/.alumnium/cache"]
 
 USER 10001
 
-ENTRYPOINT ["/tini", "--"]
-CMD ["/app/alumnium", "server", "--host", "0.0.0.0"]
+ENTRYPOINT ["/tini", "--", "/app/alumnium"]
+CMD ["server"]
 
 FROM binary AS web
 
