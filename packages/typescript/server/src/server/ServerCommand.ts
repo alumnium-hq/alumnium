@@ -16,7 +16,6 @@ import { serverApp } from "./serverApp.ts";
 
 const logger = Logger.get(import.meta.url);
 
-const DEFAULT_SERVER_HOST = "127.0.0.1";
 const DEFAULT_SERVER_PORT = 8013;
 const DEFAULT_SERVER_TIMEOUT_MS = 15000;
 const DEFAULT_DAEMON_PID_NAME = "server.pid";
@@ -27,10 +26,10 @@ export const ServerCommand = CliCommand.define({
   description: "Run HTTP server",
 
   Args: z.object({
-    host: z.string().default(DEFAULT_SERVER_HOST).register(CliCommand.option, {
+    host: z.string().default(Env.ALUMNIUM_HOST).register(CliCommand.option, {
       name: "host",
       syntax: "--host <host>",
-      description: "Host to bind to",
+      description: "Host to bind to (defaults to ALUMNIUM_HOST or 127.0.0.1)",
     }),
 
     port: z.coerce

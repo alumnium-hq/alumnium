@@ -1,7 +1,12 @@
 import z from "zod";
-import { CliCommand, Env, Logger, McpMode } from "@alumnium/core/internal";
+import {
+  CliCommand,
+  Env,
+  Logger,
+  McpMode,
+  McpTransport,
+} from "@alumnium/core/internal";
 import { McpServer } from "./McpServer.ts";
-import { McpTransport } from "./McpTransport.ts";
 
 const logger = Logger.get(import.meta.url);
 
@@ -12,16 +17,21 @@ export const McpCommand = CliCommand.define({
   description: "Run MCP server",
 
   Args: z.object({
-    transport: McpTransport.default("stdio").register(CliCommand.option, {
-      name: "transport",
-      syntax: "--transport <transport>",
-      description: "Transport: stdio or http",
-    }),
+    transport: McpTransport.default(Env.ALUMNIUM_MCP_TRANSPORT).register(
+      CliCommand.option,
+      {
+        name: "transport",
+        syntax: "--transport <transport>",
+        description:
+          "Transport: stdio or http (defaults to ALUMNIUM_MCP_TRANSPORT or stdio)",
+      },
+    ),
 
-    host: z.string().default("127.0.0.1").register(CliCommand.option, {
+    host: z.string().default(Env.ALUMNIUM_HOST).register(CliCommand.option, {
       name: "host",
       syntax: "--host <host>",
-      description: "Host to bind to for HTTP transport",
+      description:
+        "Host to bind to for HTTP transport (defaults to ALUMNIUM_HOST or 127.0.0.1)",
     }),
 
     port: z.coerce

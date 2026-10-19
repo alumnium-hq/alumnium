@@ -107,6 +107,10 @@ Comma-separated list of accessibility tree attributes to exclude (e.g. `focusabl
 
 Set to `true` to capture full-page screenshots instead of viewport-only screenshots. Default is `false`.
 
+### `ALUMNIUM_HOST`
+
+Host the server and MCP HTTP transport bind to. Default is `127.0.0.1`. The Docker images set it to `0.0.0.0`.
+
 ### `ALUMNIUM_LOG_LEVEL`
 
 Sets the level used by Alumnium logger. Supported values are:
@@ -199,6 +203,10 @@ MCP execution mode:
 
 - `agentic` (default) uses an LLM to interpret instructions, providing high-level tools (do/get/check)
 - `direct` skips LLM, instead providing low-level interaction tools (click/type/upload/etc.)
+
+### `ALUMNIUM_MCP_TRANSPORT`
+
+MCP server transport: `stdio` (default) or `http`. The Docker images set it to `http`.
 
 ### `ALUMNIUM_MCP_ARTIFACTS_DIR`
 

@@ -2,7 +2,7 @@ apiVersion: v2
 name: alumnium
 description: Alumnium server — AI-powered test automation backend used by Alumnium clients.
 type: application
-version: 0.1.0
+version: 0.2.0
 appVersion: "0.24.0-alpha.3"
 home: https://alumnium.ai
 sources:
