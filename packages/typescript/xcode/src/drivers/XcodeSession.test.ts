@@ -598,7 +598,9 @@ describe(XcodeSession, () => {
         },
       ],
     });
-    expect((await session.capture()).tree.elementById(2).label).toBe("Add");
+    expect((await (await session.capture()).tree.elementById(2)).label).toBe(
+      "Add",
+    );
   });
 
   it("recaptures a missing hierarchy without replaying the action", async () => {

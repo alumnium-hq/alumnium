@@ -35,7 +35,7 @@ export namespace NativeClient {
 
 export class NativeClient extends Client {
   #sessionManager: SessionManager;
-  session: Session;
+  readonly session: Promise<Session>;
 
   constructor(props: NativeClient.Props) {
     const { model, ...superProps } = props;
@@ -56,6 +56,8 @@ export class NativeClient extends Client {
       planner: this.planner,
       excludeAttributes: this.excludeAttributes,
     });
+    // NOTE: Failures surface when the session is awaited.
+    this.session.catch(() => {});
   }
 
   @span("client.get_health", spanAttrs)
@@ -67,12 +69,14 @@ export class NativeClient extends Client {
 
   @span("client.get_model", spanAttrs)
   async getModel(): Promise<Model> {
-    return this.session.model;
+    const session = await this.session;
+    return session.model;
   }
 
   @span("client.quit", spanAttrs)
   async quit(): Promise<void> {
-    this.#sessionManager.deleteSession(this.session.sessionId);
+    const session = await this.session;
+    await this.#sessionManager.deleteSession(session.sessionId);
   }
 
   /**
@@ -84,17 +88,18 @@ export class NativeClient extends Client {
   async planActions(
     props: Client.PlanActionsProps,
   ): Promise<Client.PlanActionsResult> {
+    const session = await this.session;
     const { goal, accessibilityTree, app, screenshot } = props;
-    this.session.updateContext({ app });
+    session.updateContext({ app });
 
-    if (!this.session.planner) {
+    if (!session.planner) {
       return { explanation: goal, steps: [goal] };
     }
 
-    const tree = this.session.parseTree(accessibilityTree);
-    const [explanation, steps] = await this.session.plannerAgent.invoke(
+    const tree = session.parseTree(accessibilityTree);
+    const [explanation, steps] = await session.plannerAgent.invoke(
       goal,
-      tree.toXml(this.session.excludeAttributes),
+      tree.toXml(session.excludeAttributes),
       screenshot,
     );
     return { explanation, steps };
@@ -102,30 +107,33 @@ export class NativeClient extends Client {
 
   @span("client.add_example", spanAttrs)
   async addExample(props: Client.AddExampleProps): Promise<void> {
+    const session = await this.session;
     const { goal, actions } = props;
     logger.debug(
       `Adding example. Goal: ${goal}, Actions: ${JSON.stringify(actions)}`,
     );
-    this.session.plannerAgent.addExample(goal, actions);
+    session.plannerAgent.addExample(goal, actions);
   }
 
   @span("client.clear_examples", spanAttrs)
   async clearExamples(): Promise<void> {
-    this.session.plannerAgent.clearExamples();
+    const session = await this.session;
+    session.plannerAgent.clearExamples();
   }
 
   @span("client.execute_action", spanAttrs)
   async executeAction(
     props: Client.ExecuteActionProps,
   ): Promise<Client.ExecuteActionResult> {
+    const session = await this.session;
     const { goal, step, accessibilityTree, app, screenshot } = props;
-    this.session.updateContext({ app });
+    session.updateContext({ app });
 
-    const tree = this.session.parseTree(accessibilityTree);
-    const [explanation, actions] = await this.session.actorAgent.invoke(
+    const tree = session.parseTree(accessibilityTree);
+    const [explanation, actions] = await session.actorAgent.invoke(
       goal,
       step,
-      tree.toXml(this.session.excludeAttributes),
+      tree.toXml(session.excludeAttributes),
       screenshot,
     );
     return {
@@ -134,23 +142,24 @@ export class NativeClient extends Client {
     };
   }
 
-  @span("client.retrieve", function (props) {
+  @span("client.retrieve", async function (props) {
     return {
-      ...spanAttrs.call(this),
+      ...(await spanAttrs.call(this)),
       "client.retrieve.args.has_screenshot": !!props.screenshot,
     };
   })
   async retrieve(props: Client.RetrieveProps): Promise<[string, Data]> {
+    const session = await this.session;
     const { statement, accessibilityTree, title, url, app, screenshot } = props;
 
-    this.session.updateContext({ app });
+    session.updateContext({ app });
 
-    const tree = this.session.parseTree(accessibilityTree);
+    const tree = session.parseTree(accessibilityTree);
     const excludeAttrs = new Set([
       ...RetrieverAgent.EXCLUDE_ATTRIBUTES,
-      ...this.session.excludeAttributes,
+      ...session.excludeAttributes,
     ]);
-    const [explanation, result] = await this.session.retrieverAgent.invoke({
+    const [explanation, result] = await session.retrieverAgent.invoke({
       statement: statement,
       treeXml: tree.toXml(excludeAttrs),
       title,
@@ -162,13 +171,14 @@ export class NativeClient extends Client {
 
   @span("client.find_area", spanAttrs)
   async findArea(props: Client.FindAreaProps): Promise<Client.FindAreaResult> {
+    const session = await this.session;
     const { description, accessibilityTree, app } = props;
-    this.session.updateContext({ app });
+    session.updateContext({ app });
 
-    const tree = this.session.parseTree(accessibilityTree);
-    const area = await this.session.areaAgent.invoke(
+    const tree = session.parseTree(accessibilityTree);
+    const area = await session.areaAgent.invoke(
       description,
-      tree.toXml(this.session.excludeAttributes),
+      tree.toXml(session.excludeAttributes),
     );
     return { id: tree.getRawId(area.id), explanation: area.explanation };
   }
@@ -177,14 +187,15 @@ export class NativeClient extends Client {
   async findElement(
     props: Client.FindElementProps,
   ): Promise<Client.FindElementResult | undefined> {
+    const session = await this.session;
     const { description, accessibilityTree, app } = props;
-    this.session.updateContext({ app });
+    session.updateContext({ app });
 
-    const tree = this.session.parseTree(accessibilityTree);
+    const tree = session.parseTree(accessibilityTree);
     const element = (
-      await this.session.locatorAgent.invoke(
+      await session.locatorAgent.invoke(
         description,
-        tree.toXml(this.session.excludeAttributes),
+        tree.toXml(session.excludeAttributes),
       )
     )[0];
     always(element);
@@ -194,6 +205,7 @@ export class NativeClient extends Client {
 
   @span("client.analyze_changes", spanAttrs)
   async analyzeChanges(props: Client.AnalyzeChangesProps): Promise<string> {
+    const session = await this.session;
     const {
       beforeAccessibilityTree,
       beforeUrl,
@@ -201,13 +213,13 @@ export class NativeClient extends Client {
       afterUrl,
       app,
     } = props;
-    this.session.updateContext({ app });
+    session.updateContext({ app });
 
-    const beforeTree = this.session.parseTree(beforeAccessibilityTree);
-    const afterTree = this.session.parseTree(afterAccessibilityTree);
+    const beforeTree = session.parseTree(beforeAccessibilityTree);
+    const afterTree = session.parseTree(afterAccessibilityTree);
     const excludeAttrs = new Set([
       ...ChangesAnalyzerAgent.EXCLUDE_ATTRIBUTES,
-      ...this.session.excludeAttributes,
+      ...session.excludeAttributes,
     ]);
     const diff = new AccessibilityTreeDiff(
       beforeTree.toXml(excludeAttrs),
@@ -223,29 +235,34 @@ export class NativeClient extends Client {
       }
     }
 
-    analysis += await this.session.changesAnalyzerAgent.invoke(diff.compute());
+    analysis += await session.changesAnalyzerAgent.invoke(diff.compute());
     return analysis;
   }
 
   @span("client.save_cache", spanAttrs)
   async saveCache(): Promise<void> {
-    return this.session.cache.save();
+    const session = await this.session;
+    return session.cache.save();
   }
 
   @span("client.discard_cache", spanAttrs)
   async discardCache(): Promise<void> {
-    return this.session.cache.discard();
+    const session = await this.session;
+    return session.cache.discard();
   }
 
   @span("client.get_stats", spanAttrs)
   async getStats(): Promise<LlmUsageStats> {
-    return this.session.stats;
+    const session = await this.session;
+    return session.stats;
   }
 }
 
-function spanAttrs(this: NativeClient): Tracer.SpansClientAttrsBase {
+async function spanAttrs(
+  this: NativeClient,
+): Promise<Tracer.SpansClientAttrsBase> {
   return {
     "client.kind": "native",
-    "session.id": this.session.sessionId,
+    "session.id": (await this.session).sessionId,
   };
 }

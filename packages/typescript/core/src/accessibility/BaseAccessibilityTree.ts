@@ -30,11 +30,11 @@ export abstract class BaseAccessibilityTree<Source = unknown> {
     void this.#devCaptureTree(this.#sourceId, source);
   }
 
-  abstract toStr(): string;
+  abstract toStr(): Promise<string>;
 
-  abstract elementById(id: number): AccessibilityElement;
+  abstract elementById(id: number): Promise<AccessibilityElement>;
 
-  abstract scopeToArea(rawId: number): BaseAccessibilityTree<Source>;
+  abstract scopeToArea(rawId: number): Promise<BaseAccessibilityTree<Source>>;
 
   protected set xml(xml: string) {
     this.#xml = xml;

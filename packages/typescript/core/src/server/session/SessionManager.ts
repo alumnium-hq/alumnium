@@ -41,7 +41,7 @@ export class SessionManager {
    * @param props Session creation properties
    * @returns Session instance
    */
-  createSession(props: SessionManager.CreateSessionProps): Session {
+  createSession(props: SessionManager.CreateSessionProps): Promise<Session> {
     const sessionId = props.sessionId || Session.createId();
     return this.createSessionInner({ ...props, sessionId });
   }
@@ -49,12 +49,12 @@ export class SessionManager {
   @span("session.create", (props) => ({ "session.id": props.sessionId }))
   // TODO: Rename back to `#createSessionInner` after Oxc gets support for
   // ES decorators: https://github.com/oxc-project/oxc/issues/9170
-  private createSessionInner(
+  private async createSessionInner(
     props: TypeUtils.RequiredKeys<
       SessionManager.CreateSessionProps,
       "sessionId"
     >,
-  ): Session {
+  ): Promise<Session> {
     const { sessionId } = props;
 
     logger.debug(`Creating session with {props}`, { props });
@@ -86,7 +86,7 @@ export class SessionManager {
    * Delete a session by ID.
    */
   @span("session.delete", (sessionId) => ({ "session.id": sessionId }))
-  deleteSession(sessionId: SessionId): boolean {
+  async deleteSession(sessionId: SessionId): Promise<boolean> {
     tracer.end(sessionId);
 
     if (sessionId in this.#sessions) {

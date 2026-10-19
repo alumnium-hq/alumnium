@@ -25,7 +25,7 @@ Logger.level = "error";
 
 const alumni = new Alumni(page);
 const a11yTree = await alumni.driver.getAccessibilityTree();
-const a11yXml = a11yTree.toStr();
+const a11yXml = await a11yTree.toStr();
 
 if (raw) await end(a11yXml);
 

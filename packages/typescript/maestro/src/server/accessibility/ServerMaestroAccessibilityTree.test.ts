@@ -12,16 +12,16 @@ const FIXTURE_PATH = path.resolve(
   "../../accessibility/__fixtures__/maestro_accessibility_tree.json",
 );
 
-function buildTrees(json: string): {
+async function buildTrees(json: string): Promise<{
   clientTree: MaestroAccessibilityTree;
   serverTree: ServerMaestroAccessibilityTree;
-} {
+}> {
   const clientTree = new MaestroAccessibilityTree(
     JSON.parse(json) as MaestroSession.Hierarchy,
   );
   return {
     clientTree,
-    serverTree: new ServerMaestroAccessibilityTree(clientTree.toStr()),
+    serverTree: new ServerMaestroAccessibilityTree(await clientTree.toStr()),
   };
 }
 
@@ -60,7 +60,7 @@ describe(ServerMaestroAccessibilityTree, () => {
     expect(match).not.toBeNull();
 
     const rawId = serverTree.getRawId(Number(match![1]));
-    expect(clientTree.elementById(rawId)).toMatchObject({
+    expect(await clientTree.elementById(rawId)).toMatchObject({
       name: "Buy milk",
       maestroBounds: "[66,177][146,203]",
     });
@@ -80,7 +80,7 @@ describe(ServerMaestroAccessibilityTree, () => {
         new URL(fixtureName, fixturesPath),
         "utf-8",
       );
-      const { serverTree } = buildTrees(fixtureJson);
+      const { serverTree } = await buildTrees(fixtureJson);
 
       await expect(serverTree.toXml()).toMatchFileSnapshot(
         `./__snapshots__/maestro/${fixtureName.replace(".json", ".snap.xml")}`,

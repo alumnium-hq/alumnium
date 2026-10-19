@@ -14,17 +14,17 @@ describe(XcodeAccessibilityTree, () => {
   ]) {
     it(`renders the ${name} hierarchy as XML`, async () => {
       const tree = await fixture(name);
-      expect(tree.toStr()).toMatchSnapshot();
+      expect(await tree.toStr()).toMatchSnapshot();
       expect(
-        new ServerXcodeAccessibilityTree(tree.toStr()).toXml(),
+        new ServerXcodeAccessibilityTree(await tree.toStr()).toXml(),
       ).toMatchSnapshot();
-      expect(tree.toStr()).toBe(tree.toStr());
+      expect(await tree.toStr()).toBe(await tree.toStr());
     });
   }
 
   it("keeps hit points and frames available for targeting", async () => {
     const tree = await fixture("todo-list");
-    expect(tree.elementById(5)).toMatchObject({
+    expect(await tree.elementById(5)).toMatchObject({
       type: "Button",
       identifier: "add-task",
       label: "Add Task",
@@ -32,17 +32,17 @@ describe(XcodeAccessibilityTree, () => {
       frame: { x: 340, y: 65, width: 40, height: 40 },
       activationBundleId: "com.ayodeji.TodoList",
     });
-    expect(tree.toStr()).not.toContain("hitPoint");
-    expect(tree.toStr()).not.toContain("pid");
+    expect(await tree.toStr()).not.toContain("hitPoint");
+    expect(await tree.toStr()).not.toContain("pid");
   });
 
   it("preserves raw IDs when scoped to a subtree", async () => {
     const tree = await fixture("todo-list");
-    const scoped = tree.scopeToArea(7);
-    expect(scoped.toStr()).toMatchSnapshot();
-    expect(scoped.elementById(8)).toBe(tree.elementById(8));
-    expect(() => scoped.elementById(5)).toThrow("No element");
-    expect(tree.scopeToArea(1000)).toBe(tree);
+    const scoped = await tree.scopeToArea(7);
+    expect(await scoped.toStr()).toMatchSnapshot();
+    expect(await scoped.elementById(8)).toBe(await tree.elementById(8));
+    await expect(scoped.elementById(5)).rejects.toThrow("No element");
+    expect(await tree.scopeToArea(1000)).toBe(tree);
   });
 
   it("resolves by identifier after an element moves and IDs change", async () => {
@@ -56,7 +56,7 @@ describe(XcodeAccessibilityTree, () => {
         )
         .replace("{360.0, 85.0}", "{300.0, 90.0}"),
     );
-    expect(fresh.resolve(tree.elementById(5))).toMatchObject({
+    expect(fresh.resolve(await tree.elementById(5))).toMatchObject({
       id: 6,
       identifier: "add-task",
       hitPoint: { x: 300, y: 90 },
@@ -71,19 +71,21 @@ describe(XcodeAccessibilityTree, () => {
     );
     const fresh = new XcodeAccessibilityTree(source);
     expect(
-      fresh.resolve(new XcodeAccessibilityTree(source).elementById(8)).parent
-        ?.label,
+      fresh.resolve(await new XcodeAccessibilityTree(source).elementById(8))
+        .parent?.label,
     ).toBe("Buy milk");
-    expect(() =>
-      tree.resolve({ ...tree.elementById(5), identifier: "missing" }),
-    ).toThrow("no longer present");
+    const element = await tree.elementById(5);
+    expect(() => tree.resolve({ ...element, identifier: "missing" })).toThrow(
+      "no longer present",
+    );
   });
 
-  it("rejects indistinguishable controls instead of falling back to an index", () => {
+  it("rejects indistinguishable controls instead of falling back to an index", async () => {
     const tree = new XcodeAccessibilityTree(
       "Application, label: 'Todo'\n  Button, label: 'Edit'\n  Button, label: 'Edit'",
     );
-    expect(() => tree.resolve(tree.elementById(2))).toThrow("ambiguous");
+    const element = await tree.elementById(2);
+    expect(() => tree.resolve(element)).toThrow("ambiguous");
   });
 
   it("resolves duplicated remove icons by row text after rows move", async () => {
@@ -98,18 +100,19 @@ describe(XcodeAccessibilityTree, () => {
     );
     // The second row now holds milk; neither the old ID nor coordinates identify it.
     for (const id of [36, 38]) {
-      expect(fresh.resolve(tree.elementById(id))).toMatchObject({
+      expect(fresh.resolve(await tree.elementById(id))).toMatchObject({
         id: 50,
         hitPoint: { x: 44, y: 289.8 },
       });
     }
   });
 
-  it("rejects repeated controls at different points within the same row", () => {
+  it("rejects repeated controls at different points within the same row", async () => {
     const tree = new XcodeAccessibilityTree(
       "Application, label: 'Todo'\n Cell\n  StaticText, label: 'Buy milk'\n  Button, label: 'Delete', hitPoint: {20, 30}\n  Button, label: 'Delete', hitPoint: {40, 30}",
     );
-    expect(() => tree.resolve(tree.elementById(4))).toThrow("ambiguous");
+    const element = await tree.elementById(4);
+    expect(() => tree.resolve(element)).toThrow("ambiguous");
   });
 
   it("rejects controls in rows with identical titles", async () => {
@@ -118,18 +121,19 @@ describe(XcodeAccessibilityTree, () => {
       "Buy milk",
     );
     const tree = new XcodeAccessibilityTree(source);
-    expect(() => tree.resolve(tree.elementById(36))).toThrow("ambiguous");
+    const element = await tree.elementById(36);
+    expect(() => tree.resolve(element)).toThrow("ambiguous");
   });
 
-  it("handles overlapping applications and activation annotations", () => {
+  it("handles overlapping applications and activation annotations", async () => {
     const tree = new XcodeAccessibilityTree(
       "Application bundle identifier: com.todo\nApplication, label: 'Todo'\n  Button, label: 'Allow', activationBundleId: com.apple.springboard\nApplication bundle identifier: com.other\nApplication, label: 'Other'\n  Button, label: 'Allow'",
     );
-    expect(tree.elementById(2).activationBundleId).toBe(
+    expect((await tree.elementById(2)).activationBundleId).toBe(
       "com.apple.springboard",
     );
-    expect(tree.elementById(4).activationBundleId).toBe("com.other");
-    expect(tree.resolve(tree.elementById(4)).id).toBe(4);
+    expect((await tree.elementById(4)).activationBundleId).toBe("com.other");
+    expect(tree.resolve(await tree.elementById(4)).id).toBe(4);
   });
 
   it("reports an empty or unavailable hierarchy", () => {
@@ -141,22 +145,22 @@ describe(XcodeAccessibilityTree, () => {
     ).toThrow("no application");
   });
 
-  it("parses XCTest's unquoted values, apostrophes, and control flags", () => {
+  it("parses XCTest's unquoted values, apostrophes, and control flags", async () => {
     const tree = new XcodeAccessibilityTree(
       "Application, 0xabc, pid: 123, label: 'Todo'\n  TextField, 0xdef, {{0, 0}, {100, 40}}, identifier: 'title', label: 'Alice's task', value: Buy milk, Focused, hitPoint: {50, 20}\n  Button, 0x123, label: 'Save', Disabled\n  Switch, value: 0, Selected, hitPoint: {20, 20}",
     );
-    expect(tree.elementById(2)).toMatchObject({
+    expect(await tree.elementById(2)).toMatchObject({
       label: "Alice's task",
       value: "Buy milk",
       attributes: { focused: "true" },
     });
-    expect(tree.elementById(3).attributes["enabled"]).toBe("false");
-    expect(tree.elementById(4).attributes["selected"]).toBe("true");
+    expect((await tree.elementById(3)).attributes["enabled"]).toBe("false");
+    expect((await tree.elementById(4)).attributes["selected"]).toBe("true");
   });
 
   it("separates keyboard focus from a text field's value in a live iOS 27 tree", async () => {
     const tree = await fixture("todo-ios27-focused");
-    expect(tree.elementById(20)).toMatchObject({
+    expect(await tree.elementById(20)).toMatchObject({
       type: "TextField",
       value: "Buy milk",
       attributes: { focused: "true" },
@@ -167,14 +171,14 @@ describe(XcodeAccessibilityTree, () => {
         "",
       ),
     );
-    expect(tree.resolve(unfocused.elementById(20)).id).toBe(20);
+    expect(tree.resolve(await unfocused.elementById(20)).id).toBe(20);
   });
 
-  it("keeps every overlapping application's elements addressable on the server", () => {
+  it("keeps every overlapping application's elements addressable on the server", async () => {
     const tree = new XcodeAccessibilityTree(
       "Application bundle identifier: com.todo\nApplication, label: 'Todo'\n  Button, label: 'Add'\nApplication bundle identifier: com.other\nApplication, label: 'Other'\n  Button, label: 'Allow'",
     );
-    const server = new ServerXcodeAccessibilityTree(tree.toStr());
+    const server = new ServerXcodeAccessibilityTree(await tree.toStr());
     expect(server.toXml()).toContain('name="Allow"');
     expect(
       server.mapToolCallsToRawId([{ name: "ClickTool", args: { id: 4 } }])[0]

@@ -80,15 +80,15 @@ describe(BaseDriver, () => {
         this.name = name;
       }
 
-      toStr(): string {
+      async toStr(): Promise<string> {
         return `<RootWebArea raw_id="1" backendDOMNodeId="10"><button raw_id="2" backendDOMNodeId="20" name="${this.name}"/></RootWebArea>`;
       }
 
-      elementById(id: number): AccessibilityElement {
+      async elementById(id: number): Promise<AccessibilityElement> {
         return { backendNodeId: id * 10 };
       }
 
-      scopeToArea(): BaseAccessibilityTree {
+      async scopeToArea(): Promise<BaseAccessibilityTree> {
         return this;
       }
     }

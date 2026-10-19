@@ -9,7 +9,7 @@ import { LlmUsageStats } from "../llm/llmSchema.ts";
 import { Model } from "../Model.ts";
 import { NavigationPolicy } from "../NavigationPolicy.ts";
 import { Telemetry } from "../telemetry/Telemetry.ts";
-import type { Tracer } from "../telemetry/Tracer.ts";
+import { Tracer } from "../telemetry/Tracer.ts";
 import { BaseTool, type ToolClass } from "../tools/BaseTool.ts";
 import { retry } from "../utils/retry.ts";
 import { Area } from "./Area.ts";
@@ -133,12 +133,12 @@ export class Alumni<TDriver extends BaseDriver = BaseDriver> {
       this.driver.resetAccessibilityTree();
       const initialAccessibilityTree = await this.driver.getAccessibilityTree();
       const beforeTree = this.changeAnalysis
-        ? initialAccessibilityTree.toStr()
+        ? await initialAccessibilityTree.toStr()
         : null;
       const beforeUrl = this.changeAnalysis ? await this.driver.url() : null;
       const { explanation, steps } = await this.client.planActions({
         goal,
-        accessibilityTree: initialAccessibilityTree.toStr(),
+        accessibilityTree: await initialAccessibilityTree.toStr(),
         app,
         screenshot: options.vision ? await this.driver.screenshot() : undefined,
       });
@@ -159,7 +159,7 @@ export class Alumni<TDriver extends BaseDriver = BaseDriver> {
           await this.client.executeAction({
             goal,
             step,
-            accessibilityTree: accessibilityTree.toStr(),
+            accessibilityTree: await accessibilityTree.toStr(),
             app,
             screenshot,
           });
@@ -188,7 +188,7 @@ export class Alumni<TDriver extends BaseDriver = BaseDriver> {
         changes = await this.client.analyzeChanges({
           beforeAccessibilityTree: beforeTree!,
           beforeUrl: beforeUrl!,
-          afterAccessibilityTree: (
+          afterAccessibilityTree: await (
             await this.driver.getAccessibilityTree()
           ).toStr(),
           afterUrl: await this.driver.url(),
@@ -220,7 +220,7 @@ export class Alumni<TDriver extends BaseDriver = BaseDriver> {
       const accessibilityTree = await this.driver.getAccessibilityTree();
       const [explanation, value] = await this.client.retrieve({
         statement: `Is the following true or false - ${statement}`,
-        accessibilityTree: accessibilityTree.toStr(),
+        accessibilityTree: await accessibilityTree.toStr(),
         title: await this.driver.title(),
         url: await this.driver.url(),
         app: await this.driver.app(),
@@ -253,7 +253,7 @@ export class Alumni<TDriver extends BaseDriver = BaseDriver> {
       const accessibilityTree = await this.driver.getAccessibilityTree();
       const [explanation, value] = await this.client.retrieve({
         statement: data,
-        accessibilityTree: accessibilityTree.toStr(),
+        accessibilityTree: await accessibilityTree.toStr(),
         title: await this.driver.title(),
         url: await this.driver.url(),
         app: await this.driver.app(),
@@ -273,7 +273,7 @@ export class Alumni<TDriver extends BaseDriver = BaseDriver> {
       const accessibilityTree = await this.driver.getAccessibilityTree();
       const response = await this.client.findElement({
         description,
-        accessibilityTree: accessibilityTree.toStr(),
+        accessibilityTree: await accessibilityTree.toStr(),
         app: await this.driver.app(),
       });
       if (response?.id == null) return;
@@ -289,10 +289,10 @@ export class Alumni<TDriver extends BaseDriver = BaseDriver> {
     const accessibilityTree = await this.driver.getAccessibilityTree();
     const response = await this.client.findArea({
       description,
-      accessibilityTree: accessibilityTree.toStr(),
+      accessibilityTree: await accessibilityTree.toStr(),
       app: await this.driver.app(),
     });
-    const scopedTree = accessibilityTree.scopeToArea(response.id);
+    const scopedTree = await accessibilityTree.scopeToArea(response.id);
     return new Area(
       response.id,
       response.explanation,

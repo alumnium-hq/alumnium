@@ -35,7 +35,7 @@ export class XCUITestAccessibilityTree extends BaseAccessibilityTree<string> {
   }
 
   /** Parse XML and add raw_id attributes to all elements. */
-  toStr(): string {
+  async toStr(): Promise<string> {
     if (this.xml !== null) {
       return this.xml;
     }
@@ -69,13 +69,13 @@ export class XCUITestAccessibilityTree extends BaseAccessibilityTree<string> {
    * @param rawId The raw_id to search for
    * @returns AccessibilityElement with type, name, value, label attributes
    */
-  elementById(rawId: number): AccessibilityElement {
+  async elementById(rawId: number): Promise<AccessibilityElement> {
     if (this.#fullTree) {
       return this.#fullTree.elementById(rawId);
     }
 
     // Get raw XML with raw_id attributes
-    const rawXml = this.toStr();
+    const rawXml = await this.toStr();
     const root = this.#parseRoot(rawXml);
 
     // Find element with matching raw_id
@@ -146,8 +146,8 @@ export class XCUITestAccessibilityTree extends BaseAccessibilityTree<string> {
   }
 
   /** Scope the tree to a smaller subtree identified by raw_id. */
-  scopeToArea(rawId: number): XCUITestAccessibilityTree {
-    const rawXml = this.toStr();
+  async scopeToArea(rawId: number): Promise<XCUITestAccessibilityTree> {
+    const rawXml = await this.toStr();
 
     // Parse the XML
     const root = this.#parseRoot(rawXml);

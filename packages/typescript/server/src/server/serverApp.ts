@@ -86,12 +86,15 @@ export const serverApp = new Elysia({ prefix: "/v1" })
 
       .post(
         "/",
-        (ctx) => {
+        async (ctx) => {
           const { provider, name, ...props } = ctx.body;
           const model = resolveModel(
             provider ? Model.new(provider, name) : Env.ALUMNIUM_MODEL,
           );
-          const session = ctx.store.sessions.createSession({ ...props, model });
+          const session = await ctx.store.sessions.createSession({
+            ...props,
+            model,
+          });
           return {
             session_id: session.sessionId,
             model: Model.toString(session.model),
