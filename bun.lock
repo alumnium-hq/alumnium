@@ -17,7 +17,7 @@
     },
     "packages/typescript": {
       "name": "@alumnium/typescript",
-      "version": "0.24.0-alpha.2",
+      "version": "0.24.0-alpha.3",
       "devDependencies": {
         "@ai-sdk/amazon-bedrock": "^5.0.61",
         "@ai-sdk/anthropic": "^4.0.41",
@@ -105,7 +105,7 @@
     },
     "packages/typescript/alumnium": {
       "name": "alumnium",
-      "version": "0.24.0-alpha.2",
+      "version": "0.24.0-alpha.3",
       "bin": {
         "alumnium": "./src/cli/binWrapper.ts",
       },
@@ -133,7 +133,7 @@
     },
     "packages/typescript/anthropic": {
       "name": "@alumnium/anthropic",
-      "version": "0.24.0-alpha.2",
+      "version": "0.24.0-alpha.3",
       "dependencies": {
         "@ai-sdk/anthropic": "^4.0.41",
         "@ai-sdk/provider": "^4.0.7",
@@ -143,7 +143,7 @@
     },
     "packages/typescript/appium": {
       "name": "@alumnium/appium",
-      "version": "0.24.0-alpha.2",
+      "version": "0.24.0-alpha.3",
       "dependencies": {
         "@alumnium/core": "workspace:*",
         "alwaysly": "^0.4.0",
@@ -154,7 +154,7 @@
     },
     "packages/typescript/aws": {
       "name": "@alumnium/aws",
-      "version": "0.24.0-alpha.2",
+      "version": "0.24.0-alpha.3",
       "dependencies": {
         "@ai-sdk/amazon-bedrock": "^5.0.61",
         "@ai-sdk/provider": "^4.0.7",
@@ -167,7 +167,7 @@
     },
     "packages/typescript/azure": {
       "name": "@alumnium/azure",
-      "version": "0.24.0-alpha.2",
+      "version": "0.24.0-alpha.3",
       "dependencies": {
         "@ai-sdk/azure": "^4.0.48",
         "@ai-sdk/provider": "^4.0.7",
@@ -177,7 +177,7 @@
     },
     "packages/typescript/cli": {
       "name": "@alumnium/cli",
-      "version": "0.24.0-alpha.2",
+      "version": "0.24.0-alpha.3",
       "bin": {
         "alumnium": "./src/cli/bin.ts",
       },
@@ -191,7 +191,7 @@
     },
     "packages/typescript/codex": {
       "name": "@alumnium/codex",
-      "version": "0.24.0-alpha.2",
+      "version": "0.24.0-alpha.3",
       "dependencies": {
         "@ai-sdk/openai": "^4.0.46",
         "@ai-sdk/provider": "^4.0.7",
@@ -205,7 +205,7 @@
     },
     "packages/typescript/core": {
       "name": "@alumnium/core",
-      "version": "0.24.0-alpha.2",
+      "version": "0.24.0-alpha.3",
       "dependencies": {
         "@ai-sdk/provider": "^4.0.7",
         "@js-fns/canon": "^0.2.0",
@@ -243,7 +243,7 @@
     },
     "packages/typescript/cursor": {
       "name": "@alumnium/cursor",
-      "version": "0.24.0-alpha.2",
+      "version": "0.24.0-alpha.3",
       "dependencies": {
         "@ai-sdk/provider": "^4.0.7",
         "@alumnium/core": "workspace:*",
@@ -254,7 +254,7 @@
     },
     "packages/typescript/deepseek": {
       "name": "@alumnium/deepseek",
-      "version": "0.24.0-alpha.2",
+      "version": "0.24.0-alpha.3",
       "dependencies": {
         "@ai-sdk/deepseek": "^3.0.31",
         "@ai-sdk/provider": "^4.0.7",
@@ -264,7 +264,7 @@
     },
     "packages/typescript/google": {
       "name": "@alumnium/google",
-      "version": "0.24.0-alpha.2",
+      "version": "0.24.0-alpha.3",
       "dependencies": {
         "@ai-sdk/google": "^4.0.50",
         "@ai-sdk/provider": "^4.0.7",
@@ -274,7 +274,7 @@
     },
     "packages/typescript/maestro": {
       "name": "@alumnium/maestro",
-      "version": "0.24.0-alpha.2",
+      "version": "0.24.0-alpha.3",
       "dependencies": {
         "@alumnium/core": "workspace:*",
         "@modelcontextprotocol/sdk": "^1.29.0",
@@ -286,7 +286,7 @@
     },
     "packages/typescript/mcp": {
       "name": "@alumnium/mcp",
-      "version": "0.24.0-alpha.2",
+      "version": "0.24.0-alpha.3",
       "dependencies": {
         "@alumnium/core": "workspace:*",
         "@alumnium/maestro": "workspace:*",
@@ -305,7 +305,7 @@
     },
     "packages/typescript/mistral": {
       "name": "@alumnium/mistral",
-      "version": "0.24.0-alpha.2",
+      "version": "0.24.0-alpha.3",
       "dependencies": {
         "@ai-sdk/mistral": "^4.0.32",
         "@ai-sdk/provider": "^4.0.7",
@@ -315,7 +315,7 @@
     },
     "packages/typescript/ollama": {
       "name": "@alumnium/ollama",
-      "version": "0.24.0-alpha.2",
+      "version": "0.24.0-alpha.3",
       "dependencies": {
         "@ai-sdk/provider": "^4.0.7",
         "@alumnium/core": "workspace:*",
@@ -325,7 +325,7 @@
     },
     "packages/typescript/openai": {
       "name": "@alumnium/openai",
-      "version": "0.24.0-alpha.2",
+      "version": "0.24.0-alpha.3",
       "dependencies": {
         "@ai-sdk/openai": "^4.0.46",
         "@ai-sdk/provider": "^4.0.7",
@@ -335,7 +335,7 @@
     },
     "packages/typescript/openrouter": {
       "name": "@alumnium/openrouter",
-      "version": "0.24.0-alpha.2",
+      "version": "0.24.0-alpha.3",
       "dependencies": {
         "@ai-sdk/provider": "^4.0.7",
         "@alumnium/core": "workspace:*",
@@ -345,7 +345,7 @@
     },
     "packages/typescript/playwright": {
       "name": "@alumnium/playwright",
-      "version": "0.24.0-alpha.2",
+      "version": "0.24.0-alpha.3",
       "dependencies": {
         "@alumnium/core": "workspace:*",
         "alwaysly": "^0.4.0",
@@ -354,7 +354,7 @@
     },
     "packages/typescript/selenium": {
       "name": "@alumnium/selenium",
-      "version": "0.24.0-alpha.2",
+      "version": "0.24.0-alpha.3",
       "dependencies": {
         "@alumnium/core": "workspace:*",
         "alwaysly": "^0.4.0",
@@ -363,7 +363,7 @@
     },
     "packages/typescript/server": {
       "name": "@alumnium/server",
-      "version": "0.24.0-alpha.2",
+      "version": "0.24.0-alpha.3",
       "dependencies": {
         "@alumnium/anthropic": "workspace:*",
         "@alumnium/aws": "workspace:*",
@@ -386,7 +386,7 @@
     },
     "packages/typescript/telemetry": {
       "name": "@alumnium/telemetry",
-      "version": "0.24.0-alpha.2",
+      "version": "0.24.0-alpha.3",
       "dependencies": {
         "@logtape/logtape": "^2.0.2",
         "@logtape/otel": "^2.0.5",
@@ -402,7 +402,7 @@
     },
     "packages/typescript/xai": {
       "name": "@alumnium/xai",
-      "version": "0.24.0-alpha.2",
+      "version": "0.24.0-alpha.3",
       "dependencies": {
         "@ai-sdk/provider": "^4.0.7",
         "@ai-sdk/xai": "^4.0.43",
@@ -412,7 +412,7 @@
     },
     "packages/typescript/xcode": {
       "name": "@alumnium/xcode",
-      "version": "0.24.0-alpha.2",
+      "version": "0.24.0-alpha.3",
       "dependencies": {
         "@alumnium/core": "workspace:*",
         "@modelcontextprotocol/sdk": "^1.29.0",

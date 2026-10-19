@@ -1,6 +1,6 @@
 {
   "name": "@alumnium/azure",
-  "version": "0.24.0-alpha.2",
+  "version": "0.24.0-alpha.3",
   "description": "Alumnium Azure (OpenAI and Foundry) LLM provider",
   "license": "MIT",
   "type": "module",

@@ -1,6 +1,6 @@
 {
   "name": "@alumnium/mistral",
-  "version": "0.24.0-alpha.2",
+  "version": "0.24.0-alpha.3",
   "description": "Alumnium Mistral AI LLM provider",
   "license": "MIT",
   "type": "module",

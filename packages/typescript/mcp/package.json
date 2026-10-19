@@ -1,6 +1,6 @@
 {
   "name": "@alumnium/mcp",
-  "version": "0.24.0-alpha.2",
+  "version": "0.24.0-alpha.3",
   "private": true,
   "description": "Alumnium MCP server",
   "license": "MIT",

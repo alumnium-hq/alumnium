@@ -1,6 +1,6 @@
 {
   "name": "@alumnium/anthropic",
-  "version": "0.24.0-alpha.2",
+  "version": "0.24.0-alpha.3",
   "description": "Alumnium Anthropic LLM provider",
   "license": "MIT",
   "type": "module",
