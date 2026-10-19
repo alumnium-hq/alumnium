@@ -200,6 +200,42 @@ You can also disable the cache completely by setting the provider to `none` or `
 
 The storage directory for the `filesystem` provider can be changed with the `ALUMNIUM_CACHE_PATH` environment variable.
 
+## Disabling
+
+To bypass the cache for a single call, pass `cache: false`. The call neither reads from nor writes to the cache:
+
+<LanguageContent lang="java">
+
+```java
+al.act("search for Paris", new DoOptions().withCache(false));
+al.check("results mention Paris", new CheckOptions().withCache(false));
+al.get("number of results", new GetOptions().withCache(false));
+```
+
+</LanguageContent>
+
+<LanguageContent lang="python">
+
+```python
+al.do("search for Paris", cache=False)
+al.check("results mention Paris", cache=False)
+al.get("number of results", cache=False)
+```
+
+</LanguageContent>
+
+<LanguageContent lang="typescript">
+
+```typescript
+await al.do("search for Paris", { cache: false });
+await al.check("results mention Paris", { cache: false });
+await al.get("number of results", { cache: false });
+```
+
+</LanguageContent>
+
+To disable the cache for all calls, set `ALUMNIUM_CACHE` to `false`.
+
 ## GitHub Actions
 
 While cache maybe less useful for local test execution, it's a good idea to use it in CI systems like GitHub Actions. This way, you can avoid unnecessary LLM calls and speed up your test runs. Saving and restoring the cache can be done using the `actions/cache` action:

@@ -24,10 +24,14 @@ export namespace McpTool {
 
   export type DefinitionExecuteFn<Input> = (
     input: z.infer<Input>,
+    meta?: Meta,
   ) => Promise<Output>;
+
+  export type Meta = Record<string, unknown>;
 
   export interface ExecuteHelpers {
     logger: LoggerSchema.Like;
+    cache: boolean;
   }
 
   export type OutputContent = z.infer<typeof McpTool.OutputContent>;
@@ -36,6 +40,8 @@ export namespace McpTool {
 }
 
 export abstract class McpTool {
+  static readonly CACHE_META_KEY = "alumnium.ai/cache";
+
   static IdInput = z.object({ id: z.string() });
 
   static OutputContent = z.object({
@@ -50,7 +56,7 @@ export abstract class McpTool {
     props: McpTool.DefineProps<Input>,
   ): McpTool.Definition<Name, Input> {
     // Instrument with input/output logging
-    const execute = async (input: z.infer<Input>) =>
+    const execute = async (input: z.infer<Input>, meta?: McpTool.Meta) =>
       tracer.span("mcp.tool.invoke", { "mcp.tool.name": name }, async () => {
         const parsedInput = McpTool.IdInput.safeParse(input);
         const id = parsedInput.data?.id;
@@ -62,7 +68,10 @@ export abstract class McpTool {
         executeLogger.info("Executing");
         executeLogger.debug(`  -> Input: {input}`, { input });
 
-        const result = await props.execute(input, { logger: executeLogger });
+        const result = await props.execute(input, {
+          logger: executeLogger,
+          cache: meta?.[McpTool.CACHE_META_KEY] !== false,
+        });
 
         executeLogger.info("Completed");
         executeLogger.debug("  -> Result: {result}", { result });

@@ -49,6 +49,37 @@ describe(createCacheMiddleware, () => {
     expect(cache.updates).toEqual([[cache.requests[0], generated]]);
   });
 
+  it("bypasses lookup and update when cache is disabled", async () => {
+    const cache = new MockCache(
+      AiSdkFactory.generateResult({ text: "cached" }),
+    );
+    const generated = AiSdkFactory.generateResult({ text: "generated" });
+    const doGenerate = vi.fn(async () => generated);
+
+    const result = await runMiddleware(
+      cache,
+      paramsWithMeta({}, undefined, undefined, [], false),
+      model(),
+      doGenerate,
+    );
+
+    expect(result).toBe(generated);
+    expect(doGenerate).toHaveBeenCalledOnce();
+    expect(cache.requests).toEqual([]);
+    expect(cache.updates).toEqual([]);
+  });
+
+  it("keeps the same key regardless of cache flag", async () => {
+    const cache = new MockCache(null);
+    await runMiddleware(cache, paramsWithMeta());
+    await runMiddleware(
+      cache,
+      paramsWithMeta({}, undefined, undefined, [], true),
+    );
+
+    expect(cache.requests[0]?.key).toBe(cache.requests[1]?.key);
+  });
+
   it("preserves provider options other than Alumnium metadata", async () => {
     const cache = new MockCache(null);
     const params = paramsWithMeta({ openai: { reasoningEffort: "low" } });
@@ -196,6 +227,7 @@ function paramsWithMeta(
   abortSignal?: AbortSignal,
   meta = { kind: "locator", description: "button", treeXml: "<button />" },
   prompt: LanguageModelV4CallOptions["prompt"] = [],
+  cache?: boolean,
 ): LanguageModelV4CallOptions {
   return {
     prompt,
@@ -204,6 +236,7 @@ function paramsWithMeta(
       ...provider,
       alumnium: {
         meta,
+        ...(cache === undefined ? {} : { cache }),
       },
     },
   };

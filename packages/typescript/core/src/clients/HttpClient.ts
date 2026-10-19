@@ -88,13 +88,14 @@ export class HttpClient extends Client {
   async planActions(
     props: Client.PlanActionsProps,
   ): Promise<Client.PlanActionsResult> {
-    const { goal, accessibilityTree, app, screenshot, params } = props;
+    const { goal, accessibilityTree, app, screenshot, params, cache } = props;
     const body: PlanRequest = {
       goal,
       accessibility_tree: accessibilityTree,
       app,
       screenshot,
       params,
+      cache,
     };
     return this.#sessionFetch<PlanResponse>("POST", "/plans", body);
   }
@@ -124,7 +125,8 @@ export class HttpClient extends Client {
   async executeAction(
     props: Client.ExecuteActionProps,
   ): Promise<Client.ExecuteActionResult> {
-    const { goal, step, accessibilityTree, app, screenshot, params } = props;
+    const { goal, step, accessibilityTree, app, screenshot, params, cache } =
+      props;
     const body: StepRequest = {
       goal,
       step,
@@ -132,6 +134,7 @@ export class HttpClient extends Client {
       app,
       screenshot,
       params,
+      cache,
     };
     return this.#sessionFetch<StepResponse>("POST", "/steps", body);
   }
@@ -151,6 +154,7 @@ export class HttpClient extends Client {
       app,
       screenshot,
       params,
+      cache,
     } = props;
 
     const body: StatementRequest = {
@@ -161,6 +165,7 @@ export class HttpClient extends Client {
       screenshot: screenshot || null,
       app,
       params,
+      cache,
     };
     const result = await this.#sessionFetch<StatementResponse>(
       "POST",
@@ -217,6 +222,7 @@ export class HttpClient extends Client {
       afterAccessibilityTree,
       afterUrl,
       app,
+      cache,
     } = props;
     const body: ChangesRequest = {
       before: {
@@ -225,6 +231,7 @@ export class HttpClient extends Client {
       },
       after: { accessibility_tree: afterAccessibilityTree, url: afterUrl },
       app,
+      cache,
     };
     const result = await this.#sessionFetch<ChangesResponse>(
       "POST",

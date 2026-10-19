@@ -162,6 +162,7 @@ Actions: [${actionsStr}]`.trim();
     treeXml: string,
     screenshot?: string,
     params?: Params.Values,
+    cache?: boolean,
   ): Promise<[string, string[]]> {
     const { Output } = await loadAi();
     logger.info("Starting planning:");
@@ -197,6 +198,7 @@ Actions: [${actionsStr}]`.trim();
       messages: [{ role: "user", content }],
       output: Output.object({ schema: PlannerAgent.Plan }),
       meta,
+      cache,
     });
 
     const structured = result.structured as PlannerAgent.Plan;

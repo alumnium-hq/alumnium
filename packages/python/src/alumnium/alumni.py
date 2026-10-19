@@ -86,7 +86,9 @@ class Alumni:
         self.driver.quit()
 
     @retry(tries=RETRIES, delay=DELAY, logger=logger)  # pyright: ignore[reportArgumentType]
-    def do(self, goal: str, vision: bool = False, params: dict[str, str] | None = None) -> DoResult:
+    def do(
+        self, goal: str, vision: bool = False, params: dict[str, str] | None = None, cache: bool = True
+    ) -> DoResult:
         """
         Executes a series of steps to achieve the given goal.
 
@@ -94,6 +96,7 @@ class Alumni:
             goal: The goal to be achieved.
             vision: Include current screenshots when planning and choosing actions. Defaults to False.
             params: Values for `{placeholder}` tokens. Defaults to None.
+            cache: Use the response cache. Defaults to True.
 
         Returns:
             DoResult containing the explanation and executed steps with their actions.
@@ -109,6 +112,7 @@ class Alumni:
             app=app,
             screenshot=self.driver.screenshot if vision else None,
             params=params,
+            cache=cache,
         )
 
         executed_steps = []
@@ -124,6 +128,7 @@ class Alumni:
                 app=app,
                 screenshot=self.driver.screenshot if vision else None,
                 params=params,
+                cache=cache,
             )
 
             # When planner is off, explanation is just the goal — replace with actor's reasoning.
@@ -148,6 +153,7 @@ class Alumni:
                     before_url=before_url,
                     after_accessibility_tree=self.driver.accessibility_tree.to_str(),
                     after_url=self.driver.url,
+                    cache=cache,
                 )
             except Exception as e:
                 logger.error(f"Error analyzing changes: {e}")
@@ -155,7 +161,9 @@ class Alumni:
         return DoResult(explanation=explanation, steps=executed_steps, changes=changes)
 
     @retry(tries=RETRIES, delay=DELAY, logger=logger)  # pyright: ignore[reportArgumentType]
-    def check(self, statement: str, vision: bool = False, params: dict[str, str] | None = None) -> str:
+    def check(
+        self, statement: str, vision: bool = False, params: dict[str, str] | None = None, cache: bool = True
+    ) -> str:
         """
         Checks a given statement true or false.
 
@@ -163,6 +171,7 @@ class Alumni:
             statement: The statement to be checked.
             vision: A flag indicating whether to use a vision-based verification via a screenshot. Defaults to False.
             params: Values for `{placeholder}` tokens. Defaults to None.
+            cache: Use the response cache. Defaults to True.
 
         Returns:
             The summary of verification result.
@@ -179,12 +188,13 @@ class Alumni:
             screenshot=self.driver.screenshot if vision else None,
             app=self.driver.app,
             params=params,
+            cache=cache,
         )
         assert value is True, explanation
         return explanation
 
     @retry(tries=RETRIES, delay=DELAY, logger=logger)  # pyright: ignore[reportArgumentType]
-    def get(self, data: str, vision: bool = False, params: dict[str, str] | None = None) -> Data:
+    def get(self, data: str, vision: bool = False, params: dict[str, str] | None = None, cache: bool = True) -> Data:
         """
         Extracts requested data from the page.
 
@@ -192,6 +202,7 @@ class Alumni:
             data: The data to extract.
             vision: A flag indicating whether to use a vision-based extraction via a screenshot. Defaults to False.
             params: Values for `{placeholder}` tokens. Defaults to None.
+            cache: Use the response cache. Defaults to True.
 
         Returns:
             The extracted data. If data cannot be extracted, returns the explanation string.
@@ -205,6 +216,7 @@ class Alumni:
             screenshot=self.driver.screenshot if vision else None,
             app=self.driver.app,
             params=params,
+            cache=cache,
         )
         return explanation if value is None else value
 

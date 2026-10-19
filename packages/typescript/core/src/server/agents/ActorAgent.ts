@@ -58,6 +58,7 @@ export class ActorAgent extends BaseAgent {
     treeXml: string,
     screenshot?: string,
     params?: Params.Values,
+    cache?: boolean,
   ): Promise<ActorAgent.InvokeResult> {
     if (!step.trim()) {
       return ["", []];
@@ -96,6 +97,7 @@ export class ActorAgent extends BaseAgent {
       messages: [{ role: "user", content }],
       tools: await this.#getTools(),
       meta,
+      cache,
     });
 
     this.logData(logger, "out", {

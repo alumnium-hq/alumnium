@@ -42,6 +42,7 @@ export class Area<TDriver extends BaseDriver = BaseDriver> {
     "alumni.flavor": "area",
     "alumni.method.args.params": options?.params,
     "alumni.method.args.vision": !!options?.vision,
+    "alumni.method.args.cache": options?.cache ?? true,
   }))
   async do(goal: string, options: Alumni.DoOptions = {}): Promise<DoResult> {
     return retry(
@@ -58,6 +59,7 @@ export class Area<TDriver extends BaseDriver = BaseDriver> {
           screenshot: options.vision
             ? await this.driver.screenshot()
             : undefined,
+          cache: options.cache,
         });
 
         let finalExplanation = explanation;
@@ -74,6 +76,7 @@ export class Area<TDriver extends BaseDriver = BaseDriver> {
               app,
               screenshot,
               params: options.params,
+              cache: options.cache,
             });
 
           // When planner is off, explanation is just the goal — replace with actor's reasoning.
@@ -107,6 +110,7 @@ export class Area<TDriver extends BaseDriver = BaseDriver> {
     "alumni.flavor": "area",
     "alumni.method.args.params": options?.params,
     "alumni.method.args.vision": !!options?.vision,
+    "alumni.method.args.cache": options?.cache ?? true,
   }))
   async check(
     statement: string,
@@ -124,6 +128,7 @@ export class Area<TDriver extends BaseDriver = BaseDriver> {
         url: await this.driver.url(),
         app: await this.driver.app(),
         screenshot,
+        cache: options.cache,
       });
 
       if (!value) {
@@ -138,6 +143,7 @@ export class Area<TDriver extends BaseDriver = BaseDriver> {
     "alumni.flavor": "area",
     "alumni.method.args.params": options?.params,
     "alumni.method.args.vision": !!options?.vision,
+    "alumni.method.args.cache": options?.cache ?? true,
   }))
   async get(data: string, options: Alumni.GetOptions = {}): Promise<Data> {
     return retry(async () => {
@@ -152,6 +158,7 @@ export class Area<TDriver extends BaseDriver = BaseDriver> {
         url: await this.driver.url(),
         app: await this.driver.app(),
         screenshot,
+        cache: options.cache,
       });
 
       return value === null ? explanation : value;

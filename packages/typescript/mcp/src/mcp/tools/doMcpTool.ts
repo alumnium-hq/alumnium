@@ -99,11 +99,14 @@ export const doMcpTool = McpTool.define("do", {
       ),
   }),
 
-  async execute(input, { logger }) {
+  async execute(input, { logger, cache }) {
     const { id, goal, vision } = input;
 
     const al = McpState.getDriverAlumni(id);
-    const { steps, explanation, changes } = await al.do(goal, { vision });
+    const { steps, explanation, changes } = await al.do(goal, {
+      vision,
+      cache,
+    });
 
     logger.debug(`Completed with ${steps.length} steps`);
     await McpArtifactsStore.saveScreenshot({ id, description: goal });

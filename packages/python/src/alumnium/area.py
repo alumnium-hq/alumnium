@@ -33,7 +33,9 @@ class Area:
         self.client = client
 
     @retry(tries=RETRIES, delay=DELAY, logger=logger)
-    def do(self, goal: str, vision: bool = False, params: dict[str, str] | None = None) -> DoResult:
+    def do(
+        self, goal: str, vision: bool = False, params: dict[str, str] | None = None, cache: bool = True
+    ) -> DoResult:
         """
         Executes a series of steps to achieve the given goal within the area.
 
@@ -41,6 +43,7 @@ class Area:
             goal: The goal to be achieved.
             vision: Include current screenshots when planning and choosing actions. Defaults to False.
             params: Values for `{placeholder}` tokens. Defaults to None.
+            cache: Use the response cache. Defaults to True.
 
         Returns:
             DoResult containing the explanation and executed steps with their actions.
@@ -53,6 +56,7 @@ class Area:
             app=self.driver.app,
             screenshot=self.driver.screenshot if vision else None,
             params=params,
+            cache=cache,
         )
 
         executed_steps = []
@@ -64,6 +68,7 @@ class Area:
                 app=self.driver.app,
                 screenshot=self.driver.screenshot if vision else None,
                 params=params,
+                cache=cache,
             )
 
             # When planner is off, explanation is just the goal — replace with actor's reasoning.
@@ -80,7 +85,9 @@ class Area:
         return DoResult(explanation=explanation, steps=executed_steps)
 
     @retry(tries=RETRIES, delay=DELAY, logger=logger)
-    def check(self, statement: str, vision: bool = False, params: dict[str, str] | None = None) -> str:
+    def check(
+        self, statement: str, vision: bool = False, params: dict[str, str] | None = None, cache: bool = True
+    ) -> str:
         """
         Checks a given statement true or false within the area.
 
@@ -88,6 +95,7 @@ class Area:
             statement: The statement to be checked.
             vision: A flag indicating whether to use a vision-based verification via a screenshot. Defaults to False.
             params: Values for `{placeholder}` tokens. Defaults to None.
+            cache: Use the response cache. Defaults to True.
 
         Returns:
             The summary of verification result.
@@ -103,12 +111,13 @@ class Area:
             screenshot=self.driver.screenshot if vision else None,
             app=self.driver.app,
             params=params,
+            cache=cache,
         )
         assert value is True, explanation
         return explanation
 
     @retry(tries=RETRIES, delay=DELAY, logger=logger)
-    def get(self, data: str, vision: bool = False, params: dict[str, str] | None = None) -> Data:
+    def get(self, data: str, vision: bool = False, params: dict[str, str] | None = None, cache: bool = True) -> Data:
         """
         Extracts requested data from the area.
 
@@ -116,6 +125,7 @@ class Area:
             data: The data to extract.
             vision: A flag indicating whether to use a vision-based extraction via a screenshot. Defaults to False.
             params: Values for `{placeholder}` tokens. Defaults to None.
+            cache: Use the response cache. Defaults to True.
 
         Returns:
             The extracted data. If data cannot be extracted, returns the explanation string.
@@ -128,6 +138,7 @@ class Area:
             screenshot=self.driver.screenshot if vision else None,
             app=self.driver.app,
             params=params,
+            cache=cache,
         )
         return explanation if value is None else value
 
