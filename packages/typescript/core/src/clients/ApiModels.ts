@@ -6,6 +6,7 @@
  */
 
 import type { AppId } from "../AppId.ts";
+import type { Params } from "../Params.ts";
 import type { ElementRef } from "../server/serverSchema.ts";
 import type { SessionId } from "../server/session/SessionId.ts";
 import type { ToolCall } from "../tools/BaseTool.ts";
@@ -41,6 +42,7 @@ export interface PlanRequest {
   title?: string;
   app: AppId;
   screenshot?: string | undefined;
+  params?: Params.Values | undefined;
 }
 
 export interface PlanResponse {
@@ -54,6 +56,7 @@ export interface StepRequest {
   accessibility_tree: string;
   app: AppId;
   screenshot?: string | undefined;
+  params?: Params.Values | undefined;
 }
 
 export interface StepResponse {
@@ -68,6 +71,7 @@ export interface StatementRequest {
   title?: string;
   screenshot?: string | null;
   app: AppId;
+  params?: Params.Values | undefined;
 }
 
 export interface StatementResponse {

@@ -41,7 +41,9 @@ export namespace Alumni {
 
   export type Options = BaseAlumni.Options;
 
-  export type VisionOptions = BaseAlumni.VisionOptions;
+  export type DoOptions = BaseAlumni.DoOptions;
+
+  export type GetOptions = BaseAlumni.GetOptions;
 
   export type CheckOptions = BaseAlumni.CheckOptions;
 

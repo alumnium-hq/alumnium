@@ -40,12 +40,10 @@ export class Area<TDriver extends BaseDriver = BaseDriver> {
 
   @span("alumni.do", (_, options) => ({
     "alumni.flavor": "area",
+    "alumni.method.args.params": options?.params,
     "alumni.method.args.vision": !!options?.vision,
   }))
-  async do(
-    goal: string,
-    options: Alumni.VisionOptions = {},
-  ): Promise<DoResult> {
+  async do(goal: string, options: Alumni.DoOptions = {}): Promise<DoResult> {
     return retry(
       { doRetry: (error) => !(error instanceof NavigationBlockedError) },
       async () => {
@@ -54,6 +52,7 @@ export class Area<TDriver extends BaseDriver = BaseDriver> {
 
         const { explanation, steps } = await this.client.planActions({
           goal,
+          params: options.params,
           accessibilityTree: await this.accessibilityTree.toStr(),
           app,
           screenshot: options.vision
@@ -74,6 +73,7 @@ export class Area<TDriver extends BaseDriver = BaseDriver> {
               accessibilityTree: await this.accessibilityTree.toStr(),
               app,
               screenshot,
+              params: options.params,
             });
 
           // When planner is off, explanation is just the goal — replace with actor's reasoning.
@@ -105,11 +105,12 @@ export class Area<TDriver extends BaseDriver = BaseDriver> {
 
   @span("alumni.check", (_, options) => ({
     "alumni.flavor": "area",
+    "alumni.method.args.params": options?.params,
     "alumni.method.args.vision": !!options?.vision,
   }))
   async check(
     statement: string,
-    options: Alumni.VisionOptions = {},
+    options: Alumni.CheckOptions = {},
   ): Promise<string> {
     return retry(async () => {
       const screenshot = options.vision
@@ -117,6 +118,7 @@ export class Area<TDriver extends BaseDriver = BaseDriver> {
         : undefined;
       const [explanation, value] = await this.client.retrieve({
         statement: `Is the following true or false - ${statement}`,
+        params: options.params,
         accessibilityTree: await this.accessibilityTree.toStr(),
         title: await this.driver.title(),
         url: await this.driver.url(),
@@ -134,15 +136,17 @@ export class Area<TDriver extends BaseDriver = BaseDriver> {
 
   @span("alumni.get", (_, options) => ({
     "alumni.flavor": "area",
+    "alumni.method.args.params": options?.params,
     "alumni.method.args.vision": !!options?.vision,
   }))
-  async get(data: string, options: Alumni.VisionOptions = {}): Promise<Data> {
+  async get(data: string, options: Alumni.GetOptions = {}): Promise<Data> {
     return retry(async () => {
       const screenshot = options.vision
         ? await this.driver.screenshot()
         : undefined;
       const [explanation, value] = await this.client.retrieve({
         statement: data,
+        params: options.params,
         accessibilityTree: await this.accessibilityTree.toStr(),
         title: await this.driver.title(),
         url: await this.driver.url(),

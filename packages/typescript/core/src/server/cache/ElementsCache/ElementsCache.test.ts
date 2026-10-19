@@ -125,6 +125,60 @@ describe(ElementsCache, () => {
       expect(toolCallInputs(changedHit!)).toEqual([{ id: 99 }]);
     });
 
+    it("resolves actor response for different params", async () => {
+      const { cache } = await setup();
+      const paramsRequest = (number: string) =>
+        request({
+          kind: "actor",
+          goal: "type {number}" as BaseAgent.Goal,
+          step: "type {number}" as BaseAgent.Step,
+          treeXml:
+            '<div><button id="1" name="3" /><button id="2" name="8" /></div>',
+          params: { number },
+        });
+
+      await cache.update(
+        paramsRequest("8"),
+        AiSdkFactory.generateResult({
+          toolCalls: [AiSdkFactory.toolCall({ args: { id: 2, text: "8" } })],
+        }),
+      );
+      await cache.save();
+
+      const hit = await cache.lookup(paramsRequest("3"));
+      expect(toolCallInputs(hit!)).toEqual([{ id: 1, text: "3" }]);
+    });
+
+    it("resolves planner response for different params", async () => {
+      const { cache } = await setup();
+      const treeXml =
+        '<div><button id="1" name="3" /><button id="2" name="8" /></div>';
+      const goal = "click {number}" as BaseAgent.Goal;
+      const plan = (number: string) =>
+        JSON.stringify({ explanation: number, actions: [`click ${number}`] });
+      const plannerParamsRequest = (number: string) =>
+        request({ kind: "planner", goal, treeXml, params: { number } });
+
+      await cache.update(
+        plannerParamsRequest("8"),
+        AiSdkFactory.generateResult({ text: plan("8") }),
+      );
+      await cache.update(
+        request({
+          kind: "actor",
+          goal,
+          step: "click {number}" as BaseAgent.Step,
+          treeXml,
+          params: { number: "8" },
+        }),
+        actorResult(2),
+      );
+      await cache.save();
+
+      const hit = await cache.lookup(plannerParamsRequest("3"));
+      expect(hit!.content).toEqual([{ type: "text", text: plan("3") }]);
+    });
+
     it("resolves null when cached elements cannot be resolved", async () => {
       const { cache } = await setup();
 

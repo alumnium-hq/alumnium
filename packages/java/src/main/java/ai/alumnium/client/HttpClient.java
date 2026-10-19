@@ -137,12 +137,24 @@ public final class HttpClient implements AutoCloseable {
 
   public PlanResult planActions(
       String goal, String accessibilityTree, String app, String screenshot) {
+    return planActions(goal, accessibilityTree, app, screenshot, Map.of());
+  }
+
+  public PlanResult planActions(
+      String goal,
+      String accessibilityTree,
+      String app,
+      String screenshot,
+      Map<String, String> params) {
     Map<String, Object> body = new LinkedHashMap<>();
     body.put("goal", goal);
     body.put("accessibility_tree", accessibilityTree);
     body.put("app", app);
     if (screenshot != null) {
       body.put("screenshot", screenshot);
+    }
+    if (!params.isEmpty()) {
+      body.put("params", params);
     }
     JsonNode data =
         postJson("/v1/sessions/" + requireSession() + "/plans", body, Duration.ofSeconds(120));
@@ -162,6 +174,16 @@ public final class HttpClient implements AutoCloseable {
 
   public ActionResult executeAction(
       String goal, String step, String accessibilityTree, String app, String screenshot) {
+    return executeAction(goal, step, accessibilityTree, app, screenshot, Map.of());
+  }
+
+  public ActionResult executeAction(
+      String goal,
+      String step,
+      String accessibilityTree,
+      String app,
+      String screenshot,
+      Map<String, String> params) {
     Map<String, Object> body = new LinkedHashMap<>();
     body.put("goal", goal);
     body.put("step", step);
@@ -169,6 +191,9 @@ public final class HttpClient implements AutoCloseable {
     body.put("app", app);
     if (screenshot != null) {
       body.put("screenshot", screenshot);
+    }
+    if (!params.isEmpty()) {
+      body.put("params", params);
     }
     JsonNode data =
         postJson("/v1/sessions/" + requireSession() + "/steps", body, Duration.ofSeconds(120));
@@ -186,6 +211,17 @@ public final class HttpClient implements AutoCloseable {
       String url,
       String screenshot,
       String app) {
+    return retrieve(statement, accessibilityTree, title, url, screenshot, app, Map.of());
+  }
+
+  public RetrieveResult retrieve(
+      String statement,
+      String accessibilityTree,
+      String title,
+      String url,
+      String screenshot,
+      String app,
+      Map<String, String> params) {
     Map<String, Object> body = new LinkedHashMap<>();
     body.put("statement", statement);
     body.put("accessibility_tree", accessibilityTree);
@@ -193,6 +229,9 @@ public final class HttpClient implements AutoCloseable {
     body.put("url", url);
     body.put("screenshot", screenshot);
     body.put("app", app == null ? "unknown" : app);
+    if (!params.isEmpty()) {
+      body.put("params", params);
+    }
     JsonNode data =
         postJson("/v1/sessions/" + requireSession() + "/statements", body, Duration.ofSeconds(120));
     Object rawResult = MAPPER.convertValue(data.path("result"), Object.class);

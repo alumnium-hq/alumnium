@@ -3,6 +3,7 @@ import z from "zod";
 import type { LanguageModel } from "../../llm/LanguageModel.ts";
 import { loadAi } from "../../llm/loadAi.ts";
 import type { Model } from "../../Model.ts";
+import { Params } from "../../Params.ts";
 import { pythonicFormat } from "../../pythonic/pythonicFormat.ts";
 import { Telemetry } from "../../telemetry/Telemetry.ts";
 import { NavigateToUrlTool } from "../../tools/NavigateToUrlTool.ts";
@@ -37,6 +38,7 @@ export class PlannerAgent extends BaseAgent {
     kind: z.literal("planner"),
     goal: BaseAgent.Goal,
     treeXml: z.string(),
+    params: z.record(z.string(), z.string()).optional(),
   });
 
   static readonly #NAVIGATE_TO_URL_EXAMPLE = `
@@ -159,6 +161,7 @@ Actions: [${actionsStr}]`.trim();
     goal: string,
     treeXml: string,
     screenshot?: string,
+    params?: Params.Values,
   ): Promise<[string, string[]]> {
     const { Output } = await loadAi();
     logger.info("Starting planning:");
@@ -171,10 +174,11 @@ Actions: [${actionsStr}]`.trim();
       kind: "planner",
       goal: goal as BaseAgent.Goal,
       treeXml,
+      ...(params && Object.keys(params).length ? { params } : {}),
     };
 
     const prompt = pythonicFormat(this.prompts.user, {
-      goal,
+      goal: Params.substitute(goal, params),
       accessibility_tree: treeXml,
     });
     const content: Extract<ModelMessage, { role: "user" }>["content"] =

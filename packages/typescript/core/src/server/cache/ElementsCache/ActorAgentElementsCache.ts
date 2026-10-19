@@ -1,3 +1,4 @@
+import { Params } from "../../../Params.ts";
 import { Logger } from "../../../telemetry/Logger.ts";
 import type { ActorAgent } from "../../agents/ActorAgent.ts";
 import type { SessionContext } from "../../session/SessionContext.ts";
@@ -30,7 +31,7 @@ export class ActorAgentElementsCache extends BaseAgentElementsCache<ActorAgent.M
     props: BaseAgentElementsCache.UpdateProps<ActorAgent.Meta>,
   ): Promise<void> {
     const { cacheHash, memoryKey, meta, generation } = props;
-    const { goal, step, treeXml } = meta;
+    const { goal, step, treeXml, params } = meta;
 
     const toolCalls = generation.content.filter(
       (part) => part.type === "tool-call",
@@ -48,7 +49,10 @@ export class ActorAgentElementsCache extends BaseAgentElementsCache<ActorAgent.M
     const els: ElementsCache.Elements = [];
     for (const elId of elIds) {
       const attrs = tree.extractAttrs(elId);
-      if (attrs) els.push(attrs);
+      if (attrs)
+        els.push(
+          Params.mapStrings(attrs, (value) => Params.mask(value, params)),
+        );
     }
 
     if (!els.length) {
@@ -60,7 +64,7 @@ export class ActorAgentElementsCache extends BaseAgentElementsCache<ActorAgent.M
 
     logger.debug(`Caching actor response for step: "${step.slice(0, 50)}..."`);
 
-    const masked = ElementsCacheMask.mask(generation, elIds);
+    const masked = ElementsCacheMask.mask(generation, elIds, params);
     if (!masked) {
       logger.debug(
         `Skipping actor cache update: malformed tool input for step: "${step.slice(0, 50)}..."`,

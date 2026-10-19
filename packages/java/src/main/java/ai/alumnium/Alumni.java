@@ -151,6 +151,7 @@ public final class Alumni implements AutoCloseable {
     return Retry.execute(
         () -> {
           boolean vision = opts != null && opts.vision();
+          Map<String, String> params = opts != null ? opts.params() : Map.of();
           driver.resetAccessibilityTree();
           HttpClient.RetrieveResult result =
               client.retrieve(
@@ -159,7 +160,8 @@ public final class Alumni implements AutoCloseable {
                   driver.title(),
                   driver.url(),
                   vision ? driver.screenshot() : null,
-                  driver.app());
+                  driver.app(),
+                  params);
           if (!Boolean.TRUE.equals(result.result().boxedValue())) {
             throw new AssertionError(result.explanation());
           }
@@ -176,6 +178,7 @@ public final class Alumni implements AutoCloseable {
     return Retry.execute(
         () -> {
           boolean vision = opts != null && opts.vision();
+          Map<String, String> params = opts != null ? opts.params() : Map.of();
           driver.resetAccessibilityTree();
           HttpClient.RetrieveResult result =
               client.retrieve(
@@ -184,7 +187,8 @@ public final class Alumni implements AutoCloseable {
                   driver.title(),
                   driver.url(),
                   vision ? driver.screenshot() : null,
-                  driver.app());
+                  driver.app(),
+                  params);
           Data value = result.result();
           if (value == null || value.isNoop()) {
             return result.explanation();
@@ -276,6 +280,7 @@ public final class Alumni implements AutoCloseable {
     return Retry.execute(
         () -> {
           boolean vision = opts != null && opts.vision();
+          Map<String, String> params = opts != null ? opts.params() : Map.of();
           String app = driver.app();
           // Start from a fresh snapshot; it stays cached until the next step resets it.
           driver.resetAccessibilityTree();
@@ -284,7 +289,8 @@ public final class Alumni implements AutoCloseable {
           String beforeUrl = changeAnalysis ? driver.url() : null;
 
           HttpClient.PlanResult plan =
-              client.planActions(goal, initial.toStr(), app, vision ? driver.screenshot() : null);
+              client.planActions(
+                  goal, initial.toStr(), app, vision ? driver.screenshot() : null, params);
           String explanation = plan.explanation();
 
           List<DoStep> executedSteps = new ArrayList<>();
@@ -298,7 +304,7 @@ public final class Alumni implements AutoCloseable {
             BaseAccessibilityTree tree = driver.accessibilityTree();
             HttpClient.ActionResult action =
                 client.executeAction(
-                    goal, step, tree.toStr(), app, vision ? driver.screenshot() : null);
+                    goal, step, tree.toStr(), app, vision ? driver.screenshot() : null, params);
 
             if (explanation.equals(goal)) {
               explanation = action.explanation();
@@ -420,36 +426,72 @@ public final class Alumni implements AutoCloseable {
     }
   }
 
-  /** Vision flag for {@link #act(String, DoOptions)}. */
-  public record DoOptions(boolean vision) {
+  /** Vision flag and placeholder values for {@link #act(String, DoOptions)}. */
+  public record DoOptions(boolean vision, Map<String, String> params) {
+    public DoOptions {
+      params = params == null ? Map.of() : Map.copyOf(params);
+    }
+
     public DoOptions() {
       this(false);
     }
 
+    public DoOptions(boolean vision) {
+      this(vision, Map.of());
+    }
+
     public DoOptions withVision(boolean vision) {
-      return new DoOptions(vision);
+      return new DoOptions(vision, params);
+    }
+
+    public DoOptions withParams(Map<String, String> params) {
+      return new DoOptions(vision, params);
     }
   }
 
-  /** Vision flag for {@link #get(String, GetOptions)}. */
-  public record GetOptions(boolean vision) {
+  /** Vision flag and placeholder values for {@link #get(String, GetOptions)}. */
+  public record GetOptions(boolean vision, Map<String, String> params) {
+    public GetOptions {
+      params = params == null ? Map.of() : Map.copyOf(params);
+    }
+
     public GetOptions() {
       this(false);
     }
 
+    public GetOptions(boolean vision) {
+      this(vision, Map.of());
+    }
+
     public GetOptions withVision(boolean vision) {
-      return new GetOptions(vision);
+      return new GetOptions(vision, params);
+    }
+
+    public GetOptions withParams(Map<String, String> params) {
+      return new GetOptions(vision, params);
     }
   }
 
-  /** Vision flag for {@link #check(String, CheckOptions)}. */
-  public record CheckOptions(boolean vision) {
+  /** Vision flag and placeholder values for {@link #check(String, CheckOptions)}. */
+  public record CheckOptions(boolean vision, Map<String, String> params) {
+    public CheckOptions {
+      params = params == null ? Map.of() : Map.copyOf(params);
+    }
+
     public CheckOptions() {
       this(false);
     }
 
+    public CheckOptions(boolean vision) {
+      this(vision, Map.of());
+    }
+
     public CheckOptions withVision(boolean vision) {
-      return new CheckOptions(vision);
+      return new CheckOptions(vision, params);
+    }
+
+    public CheckOptions withParams(Map<String, String> params) {
+      return new CheckOptions(vision, params);
     }
   }
 }

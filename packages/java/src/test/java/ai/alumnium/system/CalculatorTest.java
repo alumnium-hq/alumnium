@@ -1,7 +1,9 @@
 package ai.alumnium.system;
 
+import ai.alumnium.Alumni.CheckOptions;
 import ai.alumnium.Provider;
 import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -23,6 +25,7 @@ public class CalculatorTest extends BaseTest {
   void testAddition() {
     navigate(CALCULATOR_URL);
     al.act("2 + 2 =");
+    al.check("calculator result is {result}", new CheckOptions().withParams(Map.of("result", "4")));
     Assertions.assertEquals(4L, al.get("calculator result from textfield"));
   }
 
@@ -30,6 +33,7 @@ public class CalculatorTest extends BaseTest {
   void testSubtraction() {
     navigate(CALCULATOR_URL);
     al.act("5 - 3 =");
+    al.check("calculator result is {result}", new CheckOptions().withParams(Map.of("result", "2")));
     Assertions.assertEquals(2L, al.get("calculator result from textfield"));
   }
 
@@ -37,6 +41,8 @@ public class CalculatorTest extends BaseTest {
   void testMultiplication() {
     navigate(CALCULATOR_URL);
     al.act("3 * 4 =");
+    al.check(
+        "calculator result is {result}", new CheckOptions().withParams(Map.of("result", "12")));
     Assertions.assertEquals(12L, al.get("calculator result from textfield"));
   }
 
@@ -44,6 +50,7 @@ public class CalculatorTest extends BaseTest {
   void testDivision() {
     navigate(CALCULATOR_URL);
     al.act("8 / 2 =");
+    al.check("calculator result is {result}", new CheckOptions().withParams(Map.of("result", "4")));
     Assertions.assertEquals(4L, al.get("calculator result from textfield"));
   }
 }

@@ -3,6 +3,7 @@ import { xxh64Str } from "@js-fns/xxhash/str";
 import z from "zod";
 import { AppId } from "../../../AppId.ts";
 import { AiSdk } from "../../../llm/AiSdk.ts";
+import { Params } from "../../../Params.ts";
 import { Telemetry } from "../../../telemetry/Telemetry.ts";
 import type { Tracer } from "../../../telemetry/Tracer.ts";
 import { ActorAgent } from "../../agents/ActorAgent.ts";
@@ -115,6 +116,14 @@ export class ElementsCache extends ServerCache {
         request,
       );
 
+      const { params } = agentMeta;
+      const substitute = (elements: ElementsCache.Elements) =>
+        elements.map((element) =>
+          Params.mapStrings(element, (value) =>
+            Params.substitute(value, params),
+          ),
+        );
+
       try {
         const tree = new ElementsCacheTree(agentMeta.treeXml);
 
@@ -123,12 +132,15 @@ export class ElementsCache extends ServerCache {
           memoryEntry &&
           !this.#isStaleEmptyPlan(agentMeta, memoryEntry.generation)
         ) {
-          const masksIdsMap = tree.resolveElements(memoryEntry.elements);
+          const masksIdsMap = tree.resolveElements(
+            substitute(memoryEntry.elements),
+          );
 
           if (masksIdsMap) {
             const unmaskedGeneration = ElementsCacheMask.unmask(
               memoryEntry.generation,
               masksIdsMap,
+              params,
             );
             if (!unmaskedGeneration) return null;
             this.applyUsage(unmaskedGeneration);
@@ -182,7 +194,7 @@ export class ElementsCache extends ServerCache {
           return null;
         }
 
-        const masksIdsMap = tree.resolveElements(elements);
+        const masksIdsMap = tree.resolveElements(substitute(elements));
         if (!masksIdsMap) {
           logger.debug(
             `Elements cache miss (resolution failed) for ${agentMeta.kind}: "${cacheKey.slice(0, 50)}..."`,
@@ -200,6 +212,7 @@ export class ElementsCache extends ServerCache {
         const unmaskedGeneration = ElementsCacheMask.unmask(
           hydratedGeneration,
           masksIdsMap,
+          params,
         );
         if (!unmaskedGeneration) return null;
 

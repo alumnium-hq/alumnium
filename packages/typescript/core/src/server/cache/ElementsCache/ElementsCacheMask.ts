@@ -1,5 +1,6 @@
 import type { LanguageModelV4GenerateResult } from "@ai-sdk/provider";
 import { AiSdk } from "../../../llm/AiSdk.ts";
+import { Params } from "../../../Params.ts";
 import { Logger } from "../../../telemetry/Logger.ts";
 
 const logger = Logger.get(import.meta.url);
@@ -11,6 +12,7 @@ export abstract class ElementsCacheMask {
   static mask(
     result: LanguageModelV4GenerateResult,
     elementIds: number[],
+    params?: Params.Values,
   ): LanguageModelV4GenerateResult | null {
     const masked = structuredClone(result);
 
@@ -19,9 +21,15 @@ export abstract class ElementsCacheMask {
       for (const toolCall of AiSdk.toolCalls(masked)) {
         const input = AiSdk.toolCallInput(toolCall);
         if (input.kind === "malformed") return null;
-        if (input.kind === "object" && this.#maskInput(input.value, idToMask)) {
+        if (
+          input.kind === "object" &&
+          this.#maskInput(input.value, idToMask, params)
+        ) {
           toolCall.input = JSON.stringify(input.value);
         }
+      }
+      for (const part of masked.content) {
+        if (part.type === "text") part.text = Params.mask(part.text, params);
       }
     } catch (error) {
       logger.debug(`Error masking response: ${error}`);
@@ -33,6 +41,7 @@ export abstract class ElementsCacheMask {
   static unmask(
     result: LanguageModelV4GenerateResult,
     maskToId: Record<number, number>,
+    params?: Params.Values,
   ): LanguageModelV4GenerateResult | null {
     const unmasked = structuredClone(result);
 
@@ -41,9 +50,14 @@ export abstract class ElementsCacheMask {
         const input = AiSdk.toolCallInput(toolCall);
         if (input.kind === "malformed") return null;
         if (input.kind === "object") {
-          const changed = this.#unmaskInput(input.value, maskToId);
+          const changed = this.#unmaskInput(input.value, maskToId, params);
           if (changed === null) return null;
           if (changed) toolCall.input = JSON.stringify(input.value);
+        }
+      }
+      for (const part of unmasked.content) {
+        if (part.type === "text") {
+          part.text = Params.substitute(part.text, params);
         }
       }
     } catch (error) {
@@ -56,8 +70,11 @@ export abstract class ElementsCacheMask {
   static #maskInput(
     input: Record<string, unknown>,
     idToMask: Map<number, number>,
+    params?: Params.Values,
   ): boolean {
-    let changed = false;
+    let changed = this.#mapStrings(input, (value) =>
+      Params.mask(value, params),
+    );
     for (const field of this.ID_FIELDS) {
       const value = input[field];
       const mask = typeof value === "number" ? idToMask.get(value) : undefined;
@@ -72,6 +89,7 @@ export abstract class ElementsCacheMask {
   static #unmaskInput(
     input: Record<string, unknown>,
     maskToId: Record<number, number>,
+    params?: Params.Values,
   ): boolean | null {
     let changed = false;
     for (const field of this.ID_FIELDS) {
@@ -83,6 +101,26 @@ export abstract class ElementsCacheMask {
       if (!(mask in maskToId)) return null;
       input[field] = maskToId[mask];
       changed = true;
+    }
+    return (
+      this.#mapStrings(input, (value) => Params.substitute(value, params)) ||
+      changed
+    );
+  }
+
+  static #mapStrings(
+    input: Record<string, unknown>,
+    fn: (value: string) => string,
+  ): boolean {
+    let changed = false;
+    for (const [field, value] of Object.entries(input)) {
+      if (value && typeof value === "object") {
+        changed =
+          this.#mapStrings(value as Record<string, unknown>, fn) || changed;
+      } else if (typeof value === "string" && fn(value) !== value) {
+        input[field] = fn(value);
+        changed = true;
+      }
     }
     return changed;
   }

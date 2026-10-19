@@ -14,6 +14,7 @@ import {
   Env,
   LlmUsageStats,
   Model,
+  Params,
   Telemetry,
 } from "@alumnium/core/internal";
 import * as s from "@alumnium/core/internal";
@@ -169,6 +170,7 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                       ctx.body.goal,
                       accessibilityTree.toXml(session.excludeAttributes),
                       ctx.body.screenshot ?? undefined,
+                      ctx.body.params,
                     );
                   return {
                     explanation,
@@ -208,6 +210,7 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                   ctx.body.step,
                   accessibilityTree.toXml(session.excludeAttributes),
                   ctx.body.screenshot ?? undefined,
+                  ctx.body.params,
                 );
                 return {
                   explanation,
@@ -275,7 +278,7 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                 const accessibilityTree = session.parseTree(
                   ctx.body.accessibility_tree,
                 );
-                const { statement, title, url, screenshot } = ctx.body;
+                const { statement, title, url, screenshot, params } = ctx.body;
                 const treeXml = accessibilityTree.toXml(
                   new Set([
                     ...RetrieverAgent.EXCLUDE_ATTRIBUTES,
@@ -284,7 +287,7 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                 );
                 const [explanation, value] =
                   await session.retrieverAgent.invoke({
-                    statement,
+                    statement: Params.substitute(statement, params),
                     treeXml,
                     title,
                     url,
