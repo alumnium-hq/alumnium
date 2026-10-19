@@ -3,7 +3,7 @@ import path from "node:path";
 import { always, never } from "alwaysly";
 import type z from "zod";
 import { Logger } from "../telemetry/Logger.ts";
-import { ensureDir, safePathJoin } from "../utils/fs.ts";
+import { ensureDir, safePathJoin, writeFileAtomic } from "../utils/fs.ts";
 import { GlobalFileStorePaths } from "./GlobalFileStorePaths.ts";
 
 const logger = Logger.get(import.meta.url);
@@ -92,7 +92,8 @@ export class FileStore {
   /**
    * Writes JSON-serializable data to a file at the specified relative path,
    * ensuring that the directory structure exists. Returns the resolved file path
-   * after writing.
+   * after writing. The write is atomic, so concurrent readers never see
+   * a partially written file.
    *
    * @param relPath Store-relative file path
    * @param data JSON-serializable data to write to the file.
@@ -101,13 +102,15 @@ export class FileStore {
   async writeJson(relPath: string, data: unknown): Promise<string> {
     const filePath = await this.ensureFilePath(relPath);
     logger.debug(`Writing JSON file ${filePath}...`);
-    await fs.writeFile(filePath, JSON.stringify(data, null, 2));
+    await writeFileAtomic(filePath, JSON.stringify(data, null, 2));
     return filePath;
   }
 
   /**
    * Writes data to a file at the specified relative path, ensuring that the
    * directory structure exists. Returns the resolved file path after writing.
+   * The write is atomic, so concurrent readers never see a partially written
+   * file.
    *
    * @param relPath Store-relative file path
    * @param data Data to write to the file.
@@ -116,7 +119,7 @@ export class FileStore {
   async writeFile(relPath: string, data: Buffer | string): Promise<string> {
     const filePath = await this.ensureFilePath(relPath);
     logger.debug(`Writing file ${filePath}...`);
-    await fs.writeFile(filePath, data);
+    await writeFileAtomic(filePath, data);
     return filePath;
   }
 
