@@ -12,15 +12,12 @@ export const InstallCommand = CliCommand.define({
   description: "Install browsers for a driver",
 
   Args: z.object({
-    driver: Driver.Id.default(Env.ALUMNIUM_DRIVER).register(
-      CliCommand.option,
-      {
-        name: "driver",
-        syntax: "--driver <driver>",
-        description:
-          "Driver to install browsers for (defaults to ALUMNIUM_DRIVER or selenium)",
-      },
-    ),
+    driver: Driver.Id.default(Env.ALUMNIUM_DRIVER).register(CliCommand.option, {
+      name: "driver",
+      syntax: "--driver <driver>",
+      description:
+        "Driver to install browsers for (defaults to ALUMNIUM_DRIVER or selenium)",
+    }),
   }),
 
   action: async ({ args, logFilenameHint }) => {
@@ -55,7 +52,9 @@ async function installSeleniumChrome() {
       "Chrome for Testing provides no Linux ARM64 builds, so Selenium Manager cannot install Chrome on this platform",
     );
   }
-  const { binaryPaths }: {
+  const {
+    binaryPaths,
+  }: {
     binaryPaths: (args: string[]) => {
       browserPath: string;
       driverPath: string;
