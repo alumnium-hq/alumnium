@@ -18,10 +18,11 @@ export const McpCommand = CliCommand.define({
       description: "Transport: stdio or http",
     }),
 
-    host: z.string().default("127.0.0.1").register(CliCommand.option, {
+    host: z.string().default(Env.ALUMNIUM_HOST).register(CliCommand.option, {
       name: "host",
       syntax: "--host <host>",
-      description: "Host to bind to for HTTP transport",
+      description:
+        "Host to bind to for HTTP transport (defaults to ALUMNIUM_HOST or 127.0.0.1)",
     }),
 
     port: z.coerce

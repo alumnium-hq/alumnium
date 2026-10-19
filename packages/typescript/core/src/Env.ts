@@ -141,6 +141,10 @@ export const Env = {
     return envVar("ALUMNIUM_TRACE", z.stringbool().default(false));
   },
 
+  get ALUMNIUM_HOST() {
+    return envVar("ALUMNIUM_HOST", z.string().default("127.0.0.1"));
+  },
+
   get ALUMNIUM_DRIVER() {
     return envVar("ALUMNIUM_DRIVER", Driver.Id);
   },
