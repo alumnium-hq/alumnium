@@ -1,4 +1,4 @@
-FROM debian:bookworm-slim AS binary
+FROM debian:bookworm-slim AS cli
 
 ARG TARGETARCH
 ARG VERSION
@@ -26,7 +26,7 @@ USER 10001
 ENTRYPOINT ["/tini", "--", "/app/alumnium"]
 CMD ["server"]
 
-FROM binary AS web
+FROM cli AS web
 
 USER root
 ENV PLAYWRIGHT_BROWSERS_PATH=/opt/alumnium/playwright \
