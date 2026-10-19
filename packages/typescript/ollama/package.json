@@ -1,6 +1,6 @@
 {
   "name": "@alumnium/ollama",
-  "version": "0.24.0-alpha.2",
+  "version": "0.24.0-alpha.3",
   "description": "Alumnium Ollama LLM provider",
   "license": "MIT",
   "type": "module",
