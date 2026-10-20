@@ -151,6 +151,8 @@ expect(await al.get("titles of pending tasks")).toEqual([
 
 Alumnium attempts to cast the data to an appropriate type. The currently supported types are integer, float, boolean, string, and lists of these types.
 
+The TypeScript client and MCP server return integers larger than `Number.MAX_SAFE_INTEGER` as strings to preserve every digit. This also applies to values in lists.
+
 <LanguageContent lang="java">
 You might need to further typecast returned value if you plan to store it in a variable.
 
