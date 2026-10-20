@@ -7,6 +7,7 @@ export type Data =
 
 /**
  * Convert string or list of strings to appropriate TypeScript types.
+ * Integers outside the safe range remain strings to preserve their exact value.
  */
 export function looselyTypecast(value: string | string[]): Data {
   if (Array.isArray(value)) {
@@ -20,7 +21,8 @@ export function looselyTypecast(value: string | string[]): Data {
   if (trimmed.toUpperCase() === "NOOP") {
     return null;
   } else if (/^\d+$/.test(trimmed)) {
-    return parseInt(trimmed, 10);
+    const number = parseInt(trimmed, 10);
+    return Number.isSafeInteger(number) ? number : trimmed;
   } else if (/^\d+\.\d+$/.test(trimmed)) {
     return parseFloat(trimmed);
   } else if (trimmed.toLowerCase() === "true") {
