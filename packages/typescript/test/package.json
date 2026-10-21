@@ -1,0 +1,15 @@
+{
+  "name": "@alumnium/test",
+  "version": "0.24.0-alpha.4",
+  "description": "Alumnium test record and replay: agent-agnostic recordings, masking and the test cache",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@alumnium/core": "workspace:*",
+    "@js-fns/xxhash": "^0.1.0",
+    "zod": "^4.4.1"
+  }
+}

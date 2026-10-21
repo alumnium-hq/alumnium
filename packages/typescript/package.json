@@ -35,6 +35,7 @@
     "@alumnium/selenium": "workspace:*",
     "@alumnium/server": "workspace:*",
     "@alumnium/telemetry": "workspace:*",
+    "@alumnium/test": "workspace:*",
     "@alumnium/xai": "workspace:*",
     "@alumnium/xcode": "workspace:*",
     "@babel/plugin-proposal-decorators": "^7.29.0",
