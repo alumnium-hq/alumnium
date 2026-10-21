@@ -20,8 +20,7 @@ export const InstallCommand = CliCommand.define({
     }),
   }),
 
-  action: async ({ args, logFilenameHint }) => {
-    Logger.path = { filename: logFilenameHint };
+  action: async ({ args }) => {
     await Logger.initEnv({ logger });
 
     switch (args.driver) {
