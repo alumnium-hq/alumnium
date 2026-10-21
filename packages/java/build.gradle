@@ -42,7 +42,10 @@ spotless {
 
     groovyGradle {
         target '*.gradle'
-        greclipse()
+        greclipse().withP2Mirrors([
+            'https://download.eclipse.org/': 'https://mirror.umd.edu/eclipse/',
+            'https://groovy.jfrog.io/': 'https://groovy.jfrog.io/',
+        ])
         leadingTabsToSpaces(4)
         trimTrailingWhitespace()
         endWithNewline()
