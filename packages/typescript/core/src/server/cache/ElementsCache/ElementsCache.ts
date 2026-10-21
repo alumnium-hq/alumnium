@@ -127,7 +127,7 @@ export class ElementsCache extends ServerCache {
       try {
         const tree = new ElementsCacheTree(agentMeta.treeXml);
 
-        const memoryEntry = this.#memoryRecord(memoryKey);
+        const memoryEntry = this.#memoryRecord(agentMeta.kind, memoryKey);
         if (
           memoryEntry &&
           !this.#isStaleEmptyPlan(agentMeta, memoryEntry.generation)
@@ -375,13 +375,22 @@ export class ElementsCache extends ServerCache {
     );
   }
 
+  /** Planner goals and actor steps can share text, so records are only looked up in the requesting agent's cache. */
   #memoryRecord(
+    agentKind: ElementsCache.EligibleAgentKind,
     memoryKey: ElementsCache.MemoryKey,
   ): ElementsCache.MemoryRecord | null {
-    return (
-      this.#actorCache.getRecord(memoryKey) ||
-      this.#plannerCache.getRecord(memoryKey)
-    );
+    switch (agentKind) {
+      case "planner":
+        return this.#plannerCache.getRecord(memoryKey);
+
+      case "actor":
+        return this.#actorCache.getRecord(memoryKey);
+
+      default:
+        agentKind satisfies never;
+        return null;
+    }
   }
 
   #memoryEntries(): ElementsCache.Entries {

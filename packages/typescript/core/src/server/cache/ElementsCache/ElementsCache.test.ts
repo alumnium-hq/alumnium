@@ -179,6 +179,53 @@ describe(ElementsCache, () => {
       expect(hit!.content).toEqual([{ type: "text", text: plan("3") }]);
     });
 
+    it("does not resolve unsaved actor response for planner with goal matching step", async () => {
+      const { cache } = await setup();
+      const treeXml = '<button id="1" name="Login" />';
+      const instruction = "click login";
+      const plan = AiSdkFactory.generateResult({
+        text: JSON.stringify({ explanation: "", actions: [instruction] }),
+      });
+      const planner = plannerRequest(treeXml, instruction);
+
+      await cache.update(planner, plan);
+      await cache.update(
+        request({
+          kind: "actor",
+          goal: instruction as BaseAgent.Goal,
+          step: instruction as BaseAgent.Step,
+          treeXml,
+        }),
+        actorResult(1),
+      );
+
+      expect(await cache.lookup(planner)).toEqual(plan);
+    });
+
+    it("does not resolve unsaved planner response for actor with step matching goal", async () => {
+      const { cache } = await setup();
+      const treeXml = '<button id="1" name="Login" />';
+      const instruction = "click login";
+
+      await cache.update(
+        plannerRequest(treeXml, instruction),
+        AiSdkFactory.generateResult({
+          text: JSON.stringify({ explanation: "", actions: [instruction] }),
+        }),
+      );
+
+      expect(
+        await cache.lookup(
+          request({
+            kind: "actor",
+            goal: instruction as BaseAgent.Goal,
+            step: instruction as BaseAgent.Step,
+            treeXml,
+          }),
+        ),
+      ).toBeNull();
+    });
+
     it("resolves null when cached elements cannot be resolved", async () => {
       const { cache } = await setup();
 
