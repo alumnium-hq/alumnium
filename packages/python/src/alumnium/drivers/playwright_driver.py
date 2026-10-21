@@ -18,6 +18,7 @@ from ..tools.type_tool import TypeTool
 from ..tools.upload_tool import UploadTool
 from .base_driver import BaseDriver
 from .keys import Key
+from .slider import Slider
 from .waiter import WAITER_SCRIPT, WAITER_SNAPSHOT_SCRIPT, wait_for_page_to_load
 
 logger = get_logger(__name__)
@@ -110,7 +111,21 @@ class PlaywrightDriver(BaseDriver):
     def drag_slider(self, id: int, value: float):
         element = self.find_element(id)
         self._scroll_element_if_needed(element)
-        element.fill(f"{value:g}")
+        slider = Slider.parse(element.evaluate(Slider.SCRIPT, value))
+        if not slider:
+            element.fill(f"{value:g}")
+        else:
+            # ARIA sliders (e.g. <div role="slider">) only respond to real pointer drags.
+            box = element.bounding_box()
+            if not box:
+                raise RuntimeError(f"Slider {id} is not visible")
+            mouse = self.page.mouse
+            start_x, start_y = slider.start_offset()
+            end_x, end_y = slider.end_offset()
+            mouse.move(box["x"] + start_x, box["y"] + start_y)
+            mouse.down()
+            mouse.move(box["x"] + end_x, box["y"] + end_y, steps=10)
+            mouse.up()
 
     def drag_and_drop(self, from_id: int, to_id: int):
         from_element = self.find_element(from_id)

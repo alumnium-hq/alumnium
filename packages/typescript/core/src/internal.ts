@@ -28,6 +28,7 @@ export * from "./drivers/BaseDriver.ts";
 export * from "./drivers/Driver.ts";
 export * from "./drivers/PageWaiter.ts";
 export * from "./drivers/SimulatorWindow.ts";
+export * from "./drivers/Slider.ts";
 export * from "./drivers/keys.ts";
 export * from "./drivers/scripts/bundledScripts.ts";
 export * from "./drivers/scripts/scripts.ts";

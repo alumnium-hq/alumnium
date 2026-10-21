@@ -19,6 +19,7 @@ import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.CDPSession;
 import com.microsoft.playwright.Frame;
 import com.microsoft.playwright.Locator;
+import com.microsoft.playwright.Mouse;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.PlaywrightException;
 import com.microsoft.playwright.TimeoutError;
@@ -157,7 +158,23 @@ public final class PlaywrightDriver extends BaseDriver {
   public void dragSlider(int id, double value) {
     Locator element = findElement(id);
     scrollElementIfNeeded(element);
-    element.fill(stripTrailingZeros(value));
+    Slider slider = Slider.parse(element.evaluate(Slider.SCRIPT, value));
+    if (slider == null) {
+      element.fill(stripTrailingZeros(value));
+    } else {
+      // ARIA sliders (e.g. <div role="slider">) only respond to real pointer drags.
+      var box = element.boundingBox();
+      if (box == null) {
+        throw new IllegalStateException("Slider " + id + " is not visible");
+      }
+
+      Slider.Offset start = slider.startOffset();
+      Slider.Offset end = slider.endOffset();
+      page.mouse().move(box.x + start.x(), box.y + start.y());
+      page.mouse().down();
+      page.mouse().move(box.x + end.x(), box.y + end.y(), new Mouse.MoveOptions().setSteps(10));
+      page.mouse().up();
+    }
   }
 
   @Override

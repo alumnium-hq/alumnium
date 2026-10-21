@@ -18,3 +18,16 @@ def test_drag_slider(al_factory, navigate):
 
     al.do("drag the slider to 33")
     al.check("the slider value is 33")
+
+
+@mark.xfail("appium" in driver_type, reason="Drag slider is not implemented in Appium yet")
+def test_drag_aria_slider(al_factory, navigate):
+    al = al_factory(extra_tools=[DragSliderTool])
+
+    navigate("aria_slider.html")
+
+    al.do("drag the distance slider to 70")
+    al.check("the distance is 70 miles")
+
+    al.do("drag the distance slider to 30")
+    al.check("the distance is 30 miles")
