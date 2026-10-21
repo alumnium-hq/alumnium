@@ -13,6 +13,7 @@ AI-powered test automation framework using natural language commands. Wraps Appi
   - `playwright/`, `selenium/`, `appium/`, `maestro/`, `xcode/` (`@alumnium/<driver>`) - Drivers, each exporting an `Alumni` bound to its native driver
   - `openai/`, `anthropic/`, `google/`, `azure/`, `aws/`, `deepseek/`, `mistral/`, `xai/`, `openrouter/`, `ollama/`, `codex/`, `cursor/` (`@alumnium/<provider>`) - One package per LLM provider, depending on `ai`. Each exports model builders made with `Model.builder()` (e.g. `openai()`), returning a `Model.WithProvider` that creates its LLM; there is no global provider registry. `Model.resolver(...providerModules)` maps providers to the builders the given packages export; `alumnium` (`alumnium/src/models.ts`) and `server` use it with all provider packages to resolve `ALUMNIUM_MODEL` and models of HTTP sessions. Shared helpers live in `core/src/llm/providerUtils.ts`
   - `telemetry/` (`@alumnium/telemetry`) - OpenTelemetry SDK and OTLP trace/log exporters, an optional peer of core loaded lazily via `core/src/telemetry/loadTelemetry.ts` when `ALUMNIUM_TRACE` is enabled
+  - `test/` (`@alumnium/test`) - Record & replay for host agents: agent-neutral `Recording` schema, `Masker`, `Recorder` sink and `TestCache`/`FileTestCache`
   - `server/`, `mcp/`, `cli/` - HTTP server, MCP server and CLI, only shipped inside the compiled `alumnium` binary (private)
   - `alumnium/` (`alumnium`) - Batteries-included package: all drivers and providers, `Alumni` accepting any native driver, and the `alumnium` bin
 

@@ -30,25 +30,26 @@ The TypeScript implementation is published as several npm packages, released tog
 | `@alumnium/maestro`, `@alumnium/xcode`                           | Maestro and Xcode drivers with their sessions.                                                                                                                                                                                                             |
 | `@alumnium/<provider>`                                           | LLM providers, one package per provider (see below). Each exports builders of its models to pass to `Alumni`.                                                                                                                                              |
 | `@alumnium/core`                                                 | `Alumni` and the AI agents, shared by all packages. Does not depend on browser drivers or LLM provider SDKs, and runs on Node.js without Bun. The agents run on the `ai` package, installed with any LLM provider package and loaded only when agents run. |
-| `@alumnium/telemetry`                                            | OpenTelemetry trace and log exporters, loaded by `@alumnium/core` when `ALUMNIUM_TRACE` is enabled. Included in `alumnium`.                                                                                                                               |
+| `@alumnium/telemetry`                                            | OpenTelemetry trace and log exporters, loaded by `@alumnium/core` when `ALUMNIUM_TRACE` is enabled. Included in `alumnium`.                                                                                                                                |
+| `@alumnium/test`                                                 | Record & replay of tests driven by a host agent: the recording schema, masking of run-produced values and secrets, the recorder and the test cache.                                                                                                        |
 | `@alumnium/cli-<os>-<arch>`                                      | Prebuilt CLI binaries, installed automatically as optional dependencies of `alumnium`.                                                                                                                                                                     |
 
 LLM provider packages and the model builders they export, by `ALUMNIUM_MODEL` provider:
 
-| Provider                        | Package                | Builders                        |
-| ------------------------------- | ---------------------- | ------------------------------- |
-| `anthropic`                     | `@alumnium/anthropic`  | `anthropic()`                   |
-| `aws_anthropic`, `aws_meta`     | `@alumnium/aws`        | `awsAnthropic()`, `awsMeta()`   |
+| Provider                        | Package                | Builders                          |
+| ------------------------------- | ---------------------- | --------------------------------- |
+| `anthropic`                     | `@alumnium/anthropic`  | `anthropic()`                     |
+| `aws_anthropic`, `aws_meta`     | `@alumnium/aws`        | `awsAnthropic()`, `awsMeta()`     |
 | `azure_openai`, `azure_foundry` | `@alumnium/azure`      | `azureOpenai()`, `azureFoundry()` |
-| `codex`                         | `@alumnium/codex`      | `codex()`                       |
-| `cursor`                        | `@alumnium/cursor`     | `cursor()`                      |
-| `deepseek`                      | `@alumnium/deepseek`   | `deepseek()`                    |
-| `google`                        | `@alumnium/google`     | `google()`                      |
-| `mistralai`                     | `@alumnium/mistral`    | `mistral()`                     |
-| `ollama`                        | `@alumnium/ollama`     | `ollama()`                      |
-| `openai`                        | `@alumnium/openai`     | `openai()`                      |
-| `openrouter`                    | `@alumnium/openrouter` | `openrouter()`                  |
-| `xai`                           | `@alumnium/xai`        | `xai()`                         |
+| `codex`                         | `@alumnium/codex`      | `codex()`                         |
+| `cursor`                        | `@alumnium/cursor`     | `cursor()`                        |
+| `deepseek`                      | `@alumnium/deepseek`   | `deepseek()`                      |
+| `google`                        | `@alumnium/google`     | `google()`                        |
+| `mistralai`                     | `@alumnium/mistral`    | `mistral()`                       |
+| `ollama`                        | `@alumnium/ollama`     | `ollama()`                        |
+| `openai`                        | `@alumnium/openai`     | `openai()`                        |
+| `openrouter`                    | `@alumnium/openrouter` | `openrouter()`                    |
+| `xai`                           | `@alumnium/xai`        | `xai()`                           |
 
 Use `alumnium` to write tests: it includes all providers and uses `ALUMNIUM_MODEL`. To install only what you use, pick a driver package and an LLM provider package, and pass the model built by the provider package:
 
@@ -346,6 +347,5 @@ API key used when `ALUMNIUM_MODEL` is set to `xai`.
 API key used when `ALUMNIUM_MODEL` is set to `openrouter`.
 
 [1]: https://docs.github.com/en/actions/monitoring-and-troubleshooting-workflows/troubleshooting-workflows/enabling-debug-logging
-[2]: https://github.com/alumnium-hq/alumnium/issues/112
 [3]: /docs/guides/mcp
 [4]: https://litterbox.catbox.moe

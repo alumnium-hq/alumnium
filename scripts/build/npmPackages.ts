@@ -135,6 +135,16 @@ const LIGHTWEIGHT_FORBIDDEN = [
  */
 export const FORBIDDEN_IMPORTS: Record<string, string[]> = {
   "@alumnium/core": LIGHTWEIGHT_FORBIDDEN,
+  "@alumnium/test": [
+    ...LIGHTWEIGHT_FORBIDDEN,
+    ...DRIVER_PKGS,
+    ...PROVIDER_PKGS,
+    "@alumnium/telemetry",
+    "@alumnium/server",
+    "@alumnium/mcp",
+    "@alumnium/cli",
+    "alumnium",
+  ],
   "@alumnium/telemetry": [
     ...DRIVER_IMPORTS,
     ...PROVIDER_IMPORTS,

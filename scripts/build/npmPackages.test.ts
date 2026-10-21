@@ -23,6 +23,7 @@ describe("workspace packages", () => {
       expect.arrayContaining([
         "alumnium",
         "@alumnium/core",
+        "@alumnium/test",
         "@alumnium/playwright",
         "@alumnium/codex",
       ]),
@@ -69,8 +70,8 @@ describe("workspace packages", () => {
       });
     });
 
-  it("keeps @alumnium/core free of drivers and LLMs", () => {
-    for (const name of ["@alumnium/core"]) {
+  it("keeps @alumnium/core and @alumnium/test free of drivers and LLMs", () => {
+    for (const name of ["@alumnium/core", "@alumnium/test"]) {
       const { imports } = getEntry(name).inspection;
       for (const dep of [
         "selenium-webdriver",

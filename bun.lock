@@ -48,6 +48,7 @@
         "@alumnium/selenium": "workspace:*",
         "@alumnium/server": "workspace:*",
         "@alumnium/telemetry": "workspace:*",
+        "@alumnium/test": "workspace:*",
         "@alumnium/xai": "workspace:*",
         "@alumnium/xcode": "workspace:*",
         "@babel/plugin-proposal-decorators": "^7.29.0",
@@ -400,6 +401,15 @@
         "@opentelemetry/sdk-trace-node": "^2.7.0",
       },
     },
+    "packages/typescript/test": {
+      "name": "@alumnium/test",
+      "version": "0.24.0-alpha.4",
+      "dependencies": {
+        "@alumnium/core": "workspace:*",
+        "@js-fns/xxhash": "^0.1.0",
+        "zod": "^4.4.1",
+      },
+    },
     "packages/typescript/xai": {
       "name": "@alumnium/xai",
       "version": "0.24.0-alpha.4",
@@ -545,6 +555,8 @@
     "@alumnium/server": ["@alumnium/server@workspace:packages/typescript/server"],
 
     "@alumnium/telemetry": ["@alumnium/telemetry@workspace:packages/typescript/telemetry"],
+
+    "@alumnium/test": ["@alumnium/test@workspace:packages/typescript/test"],
 
     "@alumnium/typescript": ["@alumnium/typescript@workspace:packages/typescript"],
 
