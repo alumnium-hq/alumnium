@@ -19,6 +19,7 @@ from ..tools.upload_tool import UploadTool
 from .base_driver import BaseDriver
 from .keys import Key
 from .playwright_driver import PlaywrightDriver
+from .slider import Slider
 from .waiter import WAITER_SCRIPT, WAITER_SNAPSHOT_SCRIPT, wait_for_page_to_load_async
 
 logger = get_logger(__name__)
@@ -122,7 +123,21 @@ class PlaywrightAsyncDriver(BaseDriver):
     async def _drag_slider(self, id: int, value: float):
         element = await self._find_element(id)
         await self._scroll_element_if_needed(element)
-        await element.fill(f"{value:g}")
+        slider = Slider.parse(await element.evaluate(Slider.SCRIPT, value))
+        if not slider:
+            await element.fill(f"{value:g}")
+        else:
+            # ARIA sliders (e.g. <div role="slider">) only respond to real pointer drags.
+            box = await element.bounding_box()
+            if not box:
+                raise RuntimeError(f"Slider {id} is not visible")
+            mouse = self.page.mouse
+            start_x, start_y = slider.start_offset()
+            end_x, end_y = slider.end_offset()
+            await mouse.move(box["x"] + start_x, box["y"] + start_y)
+            await mouse.down()
+            await mouse.move(box["x"] + end_x, box["y"] + end_y, steps=10)
+            await mouse.up()
 
     def drag_and_drop(self, from_id: int, to_id: int):
         self._run_async(self._drag_and_drop(from_id, to_id))

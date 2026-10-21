@@ -154,13 +154,30 @@ public final class SeleniumDriver extends BaseDriver {
   public void dragSlider(int id, double value) {
     WebElement element = findElement(id);
     scrollElementIntoCenter(element);
-    ((JavascriptExecutor) driver)
-        .executeScript(
-            "arguments[0].value = arguments[1];arguments[0].dispatchEvent(new"
-                + " Event('input', {bubbles: true}));arguments[0].dispatchEvent(new"
-                + " Event('change', {bubbles: true}));",
-            element,
-            Double.toString(value));
+    Slider slider =
+        Slider.parse(
+            ((JavascriptExecutor) driver).executeScript(Slider.EXECUTE_SCRIPT, element, value));
+
+    if (slider != null) {
+      // ARIA sliders (e.g. <div role="slider">) only respond to real pointer drags.
+      // Pointer offsets are relative to the element's center.
+      Slider.Offset start = slider.startCenterOffset();
+      Slider.Offset end = slider.endCenterOffset();
+      new Actions(driver)
+          .moveToElement(element, (int) start.x(), (int) start.y())
+          .clickAndHold()
+          .moveToElement(element, (int) end.x(), (int) end.y())
+          .release()
+          .perform();
+    } else {
+      ((JavascriptExecutor) driver)
+          .executeScript(
+              "arguments[0].value = arguments[1];arguments[0].dispatchEvent(new"
+                  + " Event('input', {bubbles: true}));arguments[0].dispatchEvent(new"
+                  + " Event('change', {bubbles: true}));",
+              element,
+              Double.toString(value));
+    }
   }
 
   @Override

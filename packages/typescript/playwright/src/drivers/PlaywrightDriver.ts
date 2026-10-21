@@ -18,6 +18,7 @@ import {
   type Keys,
   PressKeyTool,
   retry,
+  Slider,
   Telemetry,
   type ToolClass,
   TreeDevDrillError,
@@ -350,7 +351,23 @@ export class PlaywrightDriver extends BaseDriver<Locator> {
   async dragSlider(id: number, value: number): Promise<void> {
     const element = await this.findElement(id);
     await this.#scrollElementIfNeeded(element);
-    await element.fill(String(value));
+    const slider = Slider.parse(await element.evaluate(Slider.SCRIPT, value));
+    if (!slider) {
+      await element.fill(String(value));
+    } else {
+      // ARIA sliders (e.g. <div role="slider">) only respond to real pointer drags.
+      const box = await element.boundingBox();
+      if (!box) throw new Error(`Slider ${id} is not visible`);
+      const { mouse } = this.page;
+      const start = slider.startOffset();
+      const end = slider.endOffset();
+      await mouse.move(box.x + start.x, box.y + start.y);
+      await mouse.down();
+      await mouse.move(box.x + end.x, box.y + end.y, {
+        steps: 10,
+      });
+      await mouse.up();
+    }
   }
 
   @span("driver.drag_and_drop", BaseDriver.spanAttrs)

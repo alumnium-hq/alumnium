@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+  <head>
+    <title>ARIA Slider Test Page</title>
+    <style>
+      #track {
+        position: relative;
+        width: 400px;
+        height: 24px;
+        margin: 40px;
+        background: #ddd;
+        border-radius: 12px;
+      }
+      #thumb {
+        position: absolute;
+        top: 0;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: #36c;
+        cursor: grab;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>ARIA Slider Test Page</h1>
+
+    <p>Distance: <span id="value">10</span> miles</p>
+    <!-- Like many custom sliders, this one only responds to real pointer drags. -->
+    <div
+      id="track"
+      role="slider"
+      aria-label="Distance"
+      aria-valuemin="0"
+      aria-valuemax="100"
+      aria-valuenow="10"
+    >
+      <div id="thumb" tabindex="0"></div>
+    </div>
+
+    <script>
+      const track = document.getElementById("track");
+      const thumb = document.getElementById("thumb");
+      const output = document.getElementById("value");
+      const step = 10;
+
+      function render(value) {
+        const travel = track.clientWidth - thumb.offsetWidth;
+        thumb.style.left = `${(value / 100) * travel}px`;
+        track.setAttribute("aria-valuenow", value);
+        output.textContent = value;
+      }
+
+      function valueAt(clientX) {
+        const box = track.getBoundingClientRect();
+        const travel = box.width - thumb.offsetWidth;
+        const ratio = (clientX - box.left - thumb.offsetWidth / 2) / travel;
+        const value =
+          Math.round((Math.min(1, Math.max(0, ratio)) * 100) / step) * step;
+        return value;
+      }
+
+      thumb.addEventListener("pointerdown", (event) => {
+        if (!event.isTrusted) return;
+        event.preventDefault();
+        const move = (moved) => render(valueAt(moved.clientX));
+        const stop = () => {
+          document.removeEventListener("pointermove", move);
+          document.removeEventListener("pointerup", stop);
+        };
+        document.addEventListener("pointermove", move);
+        document.addEventListener("pointerup", stop);
+      });
+
+      render(10);
+    </script>
+  </body>
+</html>

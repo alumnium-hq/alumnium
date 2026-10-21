@@ -23,6 +23,7 @@ from ..tools.upload_tool import UploadTool
 from .base_driver import BaseDriver
 from .keys import Key
 from .selenium_cdp_connection import SeleniumCdpConnection
+from .slider import Slider
 from .waiter import WAITER_SCRIPT, WAITER_SNAPSHOT_SCRIPT, wait_for_page_to_load
 
 logger = get_logger(__name__)
@@ -147,13 +148,26 @@ class SeleniumDriver(BaseDriver):
     def drag_slider(self, id: int, value: float):
         element = self.find_element(id)
         self._scroll_element_into_center(element)
-        self.driver.execute_script(
-            "arguments[0].value = arguments[1];"
-            "arguments[0].dispatchEvent(new Event('input', {bubbles: true}));"
-            "arguments[0].dispatchEvent(new Event('change', {bubbles: true}));",
-            element,
-            str(value),
-        )
+        slider = Slider.parse(self.driver.execute_script(Slider.EXECUTE_SCRIPT, element, value))
+        if slider:
+            # ARIA sliders (e.g. <div role="slider">) only respond to real pointer drags.
+            # Pointer offsets are relative to the element's center.
+            (
+                ActionChains(self.driver)
+                .move_to_element_with_offset(element, *slider.start_center_offset())
+                .click_and_hold()
+                .move_to_element_with_offset(element, *slider.end_center_offset())
+                .release()
+                .perform()
+            )
+        else:
+            self.driver.execute_script(
+                "arguments[0].value = arguments[1];"
+                "arguments[0].dispatchEvent(new Event('input', {bubbles: true}));"
+                "arguments[0].dispatchEvent(new Event('change', {bubbles: true}));",
+                element,
+                str(value),
+            )
 
     def drag_and_drop(self, from_id: int, to_id: int):
         from_element = self.find_element(from_id)

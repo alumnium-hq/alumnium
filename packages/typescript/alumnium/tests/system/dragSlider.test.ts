@@ -32,4 +32,22 @@ describe("Drag Slider", () => {
       assert: expect.assert,
     });
   });
+
+  it("sets a pointer-only ARIA slider value", async ({ expect, setup }) => {
+    const { al, $ } = await setup({
+      extraTools: [DragSliderTool],
+    });
+
+    await $.navigate("aria_slider.html");
+
+    await al.do("drag the distance slider to 70");
+    await al.check("the distance is 70 miles", {
+      assert: expect.assert,
+    });
+
+    await al.do("drag the distance slider to 30");
+    await al.check("the distance is 30 miles", {
+      assert: expect.assert,
+    });
+  });
 });
