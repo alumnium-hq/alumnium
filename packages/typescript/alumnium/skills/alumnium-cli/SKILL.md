@@ -35,6 +35,8 @@ npx alumnium cli stop --save-cache                       # always stop when done
 | `stop [--save-cache]`                                      | Stop the session; prints the artifacts directory (screenshots; with Playwright also a trace and video, unless `ALUMNIUM_MCP_RECORD_VIDEOS=false`). |
 | `list`                                                     | List sessions and their status.                                                                                                                    |
 
+Every command also accepts `-s, --session <name>` to pick a session, see Sessions below.
+
 ## Rules
 
 - Run `start` before anything else. Errors tell you exactly which command to run.
@@ -80,13 +82,3 @@ npx alumnium cli do "tap the login button"
 npx alumnium cli get "visible error message"
 npx alumnium cli stop
 ```
-
-## Attaching screenshots to pull requests
-
-`stop` prints the artifacts directory. When a screenshot saves the reviewer a checkout (a UI fix, a before/after pair, a failure), attach it with `gh` 2.99+, which uploads local images and videos through the repeatable `--attach` flag:
-
-```sh
-gh pr comment 123 --body "Settings page after the fix." --attach './<artifacts-dir>/<screenshot>.png#Settings page after the fix'
-```
-
-Alt text goes after `#` and works for images only. The same flag works on `gh pr create` and `gh issue comment`.
