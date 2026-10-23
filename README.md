@@ -128,6 +128,19 @@ await al.quit();
 
 Check out [documentation][1] and more [Java][9], [Python][2] and [TypeScript][6] examples.
 
+## CLI
+
+Drive a persistent session from the shell, for example from a coding agent:
+
+```sh
+npx alumnium cli start
+npx alumnium cli do "navigate to https://example.com"
+npx alumnium cli check "page shows Example Domain"
+npx alumnium cli stop
+```
+
+See the [CLI docs][11] for all commands.
+
 ## Contributing
 
 See the [contributing guidelines][4] for information on how to get involved in the project and develop locally.
@@ -148,3 +161,4 @@ Alumnium is a member of the [TestMu AI][5] Open Source Program, which supports t
 [8]: https://alumnium.ai/docs/guides/mcp/
 [9]: packages/java/src/test/java/ai/alumnium/system
 [10]: https://alumnium.ai/docs/mcp/overview/
+[11]: https://alumnium.ai/docs/cli/overview/

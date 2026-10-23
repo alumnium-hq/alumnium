@@ -31,6 +31,7 @@ export namespace Tracer {
     SpansCache &
     SpansServer &
     SpansMcp &
+    SpansCli &
     SpansHttp &
     SpansLlm &
     SpansTest;
@@ -437,6 +438,19 @@ export namespace Tracer {
 
   export interface SpansMcpToolAttrsDriverBase {
     "mcp.driver.id": string;
+  }
+
+  //#endregion
+
+  //#region CLI
+
+  export interface SpansCli {
+    "cli.session.request": {
+      Attrs: {
+        "cli.session.name": string;
+        "cli.session.method": string;
+      };
+    };
   }
 
   //#endregion
