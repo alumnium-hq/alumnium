@@ -165,6 +165,7 @@ export const ChooseAreaResponse = z.object({
 export const FindElementBody = CacheableRequestBody.extend({
   description: z.string(),
   accessibility_tree: z.string(),
+  cache: z.boolean().default(true),
 });
 
 export const FindElementResponse = z.object({

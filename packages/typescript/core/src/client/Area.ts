@@ -4,7 +4,6 @@ import type { Data } from "../clients/typecasting.ts";
 import type { BaseDriver } from "../drivers/BaseDriver.ts";
 import { NavigationBlockedError } from "../NavigationPolicy.ts";
 import { Telemetry } from "../telemetry/Telemetry.ts";
-import { Tracer } from "../telemetry/Tracer.ts";
 import { BaseTool, type ToolClass } from "../tools/BaseTool.ts";
 import { retry } from "../utils/retry.ts";
 import type { Alumni } from "./Alumni.ts";
@@ -165,9 +164,13 @@ export class Area<TDriver extends BaseDriver = BaseDriver> {
     });
   }
 
-  @span("alumni.find", spanAttrs)
+  @span("alumni.find", (_, options) => ({
+    "alumni.flavor": "area",
+    "alumni.method.args.cache": options?.cache ?? true,
+  }))
   async find(
     description: string,
+    options: Alumni.FindOptions = {},
   ): Promise<BaseDriver.ElementOf<TDriver> | undefined> {
     return retry(async () => {
       this.driver.setAccessibilityTree(this.accessibilityTree);
@@ -175,6 +178,7 @@ export class Area<TDriver extends BaseDriver = BaseDriver> {
         description,
         accessibilityTree: await this.accessibilityTree.toStr(),
         app: await this.driver.app(),
+        cache: options.cache,
       });
       if (response?.id == null) return;
       return this.driver.findElement(+response.id) as Promise<
@@ -182,10 +186,4 @@ export class Area<TDriver extends BaseDriver = BaseDriver> {
       >;
     });
   }
-}
-
-function spanAttrs(this: Area): Tracer.SpansAlumniAttrsBase {
-  return {
-    "alumni.flavor": "area",
-  };
 }

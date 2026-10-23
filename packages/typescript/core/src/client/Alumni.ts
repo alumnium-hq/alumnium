@@ -50,6 +50,7 @@ export namespace Alumni {
   }
 
   export type DoOptions = VisionOptions & ParamsOptions & CacheOptions;
+  export type FindOptions = CacheOptions;
   export type GetOptions = VisionOptions & ParamsOptions & CacheOptions;
   export type CheckOptions = GetOptions & AssertOptions;
 
@@ -289,9 +290,13 @@ export class Alumni<TDriver extends BaseDriver = BaseDriver> {
     });
   }
 
-  @span("alumni.find", spanAttrs)
+  @span("alumni.find", (_, options) => ({
+    "alumni.flavor": "alumni",
+    "alumni.method.args.cache": options?.cache ?? true,
+  }))
   async find(
     description: string,
+    options: Alumni.FindOptions = {},
   ): Promise<BaseDriver.ElementOf<TDriver> | undefined> {
     return retry(async () => {
       this.driver.resetAccessibilityTree();
@@ -300,6 +305,7 @@ export class Alumni<TDriver extends BaseDriver = BaseDriver> {
         description,
         accessibilityTree: await accessibilityTree.toStr(),
         app: await this.driver.app(),
+        cache: options.cache,
       });
       if (response?.id == null) return;
       return this.driver.findElement(+response.id) as Promise<

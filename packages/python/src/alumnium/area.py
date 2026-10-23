@@ -149,16 +149,19 @@ class Area:
         return f"Use only the area described as {description} in the screenshot.\n{statement}"
 
     @retry(tries=RETRIES, delay=DELAY, logger=logger)
-    def find(self, description: str) -> Element:
+    def find(self, description: str, cache: bool = True) -> Element:
         """
         Finds an element within this area and returns the native driver element.
 
         Args:
             description: Natural language description of the element to find.
+            cache: Use the response cache. Defaults to True.
 
         Returns:
             Native driver element (Selenium WebElement, Playwright Locator, or Appium WebElement).
         """
         self.driver.set_accessibility_tree(self.accessibility_tree)
-        response = self.client.find_element(description, self.accessibility_tree.to_str(), app=self.driver.app)
+        response = self.client.find_element(
+            description, self.accessibility_tree.to_str(), app=self.driver.app, cache=cache
+        )
         return self.driver.find_element(response["id"])

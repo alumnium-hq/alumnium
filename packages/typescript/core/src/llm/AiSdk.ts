@@ -1,5 +1,6 @@
 import type {
   LanguageModelV4GenerateResult,
+  LanguageModelV4Text,
   LanguageModelV4ToolCall,
   LanguageModelV4Usage,
 } from "@ai-sdk/provider";
@@ -41,6 +42,18 @@ export abstract class AiSdk {
         : { kind: "non-object", value: input };
     } catch {
       return { kind: "malformed" };
+    }
+  }
+
+  /** Structured output (e.g. `Output.object`) is returned as JSON text. */
+  static textObject(part: LanguageModelV4Text): Record<string, unknown> | null {
+    try {
+      const value: unknown = JSON.parse(part.text);
+      return value && typeof value === "object" && !Array.isArray(value)
+        ? (value as Record<string, unknown>)
+        : null;
+    } catch {
+      return null;
     }
   }
 

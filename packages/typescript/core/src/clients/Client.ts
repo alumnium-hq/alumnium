@@ -81,6 +81,7 @@ export namespace Client {
     description: string;
     accessibilityTree: string;
     app: AppId;
+    cache?: boolean | undefined;
   }
 
   export interface AnalyzeChangesProps {

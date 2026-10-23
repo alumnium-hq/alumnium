@@ -221,18 +221,21 @@ class Alumni:
         return explanation if value is None else value
 
     @retry(tries=RETRIES, delay=DELAY, logger=logger)  # pyright: ignore[reportArgumentType]
-    def find(self, description: str) -> Element:
+    def find(self, description: str, cache: bool = True) -> Element:
         """
         Finds an element in the accessibility tree and returns the native driver element.
 
         Args:
             description: Natural language description of the element to find.
+            cache: Use the response cache. Defaults to True.
 
         Returns:
             Native driver element (Selenium WebElement, Playwright Locator, or Appium WebElement).
         """
         self.driver.reset_accessibility_tree()
-        response = self.client.find_element(description, self.driver.accessibility_tree.to_str(), app=self.driver.app)
+        response = self.client.find_element(
+            description, self.driver.accessibility_tree.to_str(), app=self.driver.app, cache=cache
+        )
         return self.driver.find_element(response["id"])
 
     def area(self, description: str) -> Area:

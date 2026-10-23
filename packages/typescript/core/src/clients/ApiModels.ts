@@ -97,6 +97,7 @@ export interface FindRequest {
   description: string;
   accessibility_tree: string;
   app: AppId;
+  cache?: boolean | undefined;
 }
 
 export interface FindResponse {
