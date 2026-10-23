@@ -18,8 +18,8 @@ async function log(
     Logger.get(${JSON.stringify(import.meta.url)}).info("Hello {name}", { name: "Alumnium" });
   `;
   const { status, stdout, stderr } = await spawn("bun", ["-e", script], {
-    // oxlint-disable-next-line no-process-env -- We need it to pass env vars
     env: {
+      // oxlint-disable-next-line no-process-env -- We need it to pass env vars
       ...process.env,
       ALUMNIUM_LOG_PATH: "",
       ALUMNIUM_LOG_FILENAME: "",
