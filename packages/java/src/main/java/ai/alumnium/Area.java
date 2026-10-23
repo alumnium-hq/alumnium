@@ -2,6 +2,7 @@ package ai.alumnium;
 
 import ai.alumnium.Alumni.CheckOptions;
 import ai.alumnium.Alumni.DoOptions;
+import ai.alumnium.Alumni.FindOptions;
 import ai.alumnium.Alumni.GetOptions;
 import ai.alumnium.accessibility.BaseAccessibilityTree;
 import ai.alumnium.client.Data;
@@ -216,11 +217,23 @@ public class Area {
    * @return Native driver element (Selenium WebElement, Playwright Locator, or Appium WebElement).
    */
   public Object find(String description) {
+    return find(description, new FindOptions());
+  }
+
+  /**
+   * Find an element in the area.
+   *
+   * @param description Natural language description of the element to find.
+   * @param opts Cache flag.
+   * @return Native driver element (Selenium WebElement, Playwright Locator, or Appium WebElement).
+   */
+  public Object find(String description, FindOptions opts) {
     return Retry.execute(
         () -> {
+          boolean cache = opts == null || opts.cache();
           driver.setAccessibilityTree(accessibilityTree);
           FindElementResult response =
-              client.findElement(description, accessibilityTree.toStr(), driver.app());
+              client.findElement(description, accessibilityTree.toStr(), driver.app(), cache);
           return driver.findElement(response.id());
         });
   }

@@ -352,6 +352,7 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                 const elements = await session.locatorAgent.invoke(
                   ctx.body.description,
                   accessibilityTree.toXml(session.excludeAttributes),
+                  ctx.body.cache,
                 );
                 return {
                   elements: elements.map((element) => ({

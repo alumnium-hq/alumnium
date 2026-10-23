@@ -29,7 +29,12 @@ export abstract class ElementsCacheMask {
         }
       }
       for (const part of masked.content) {
-        if (part.type === "text") part.text = Params.mask(part.text, params);
+        if (part.type !== "text") continue;
+        part.text = Params.mask(part.text, params);
+        const output = AiSdk.textObject(part);
+        if (output && this.#maskIds(output, idToMask)) {
+          part.text = JSON.stringify(output);
+        }
       }
     } catch (error) {
       logger.debug(`Error masking response: ${error}`);
@@ -56,9 +61,14 @@ export abstract class ElementsCacheMask {
         }
       }
       for (const part of unmasked.content) {
-        if (part.type === "text") {
-          part.text = Params.substitute(part.text, params);
+        if (part.type !== "text") continue;
+        const output = AiSdk.textObject(part);
+        if (output) {
+          const changed = this.#unmaskIds(output, maskToId);
+          if (changed === null) return null;
+          if (changed) part.text = JSON.stringify(output);
         }
+        part.text = Params.substitute(part.text, params);
       }
     } catch (error) {
       logger.debug(`Error unmasking response: ${error}`);
@@ -72,9 +82,17 @@ export abstract class ElementsCacheMask {
     idToMask: Map<number, number>,
     params?: Params.Values,
   ): boolean {
-    let changed = this.#mapStrings(input, (value) =>
+    const changed = this.#mapStrings(input, (value) =>
       Params.mask(value, params),
     );
+    return this.#maskIds(input, idToMask) || changed;
+  }
+
+  static #maskIds(
+    input: Record<string, unknown>,
+    idToMask: Map<number, number>,
+  ): boolean {
+    let changed = false;
     for (const field of this.ID_FIELDS) {
       const value = input[field];
       const mask = typeof value === "number" ? idToMask.get(value) : undefined;
@@ -91,6 +109,18 @@ export abstract class ElementsCacheMask {
     maskToId: Record<number, number>,
     params?: Params.Values,
   ): boolean | null {
+    const changed = this.#unmaskIds(input, maskToId);
+    if (changed === null) return null;
+    return (
+      this.#mapStrings(input, (value) => Params.substitute(value, params)) ||
+      changed
+    );
+  }
+
+  static #unmaskIds(
+    input: Record<string, unknown>,
+    maskToId: Record<number, number>,
+  ): boolean | null {
     let changed = false;
     for (const field of this.ID_FIELDS) {
       const value = input[field];
@@ -102,10 +132,7 @@ export abstract class ElementsCacheMask {
       input[field] = maskToId[mask];
       changed = true;
     }
-    return (
-      this.#mapStrings(input, (value) => Params.substitute(value, params)) ||
-      changed
-    );
+    return changed;
   }
 
   static #mapStrings(

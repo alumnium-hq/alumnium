@@ -52,5 +52,21 @@ describe("ElementsCacheToolCalls", () => {
         4, 1, 2,
       ]);
     });
+
+    it("extracts element ids from structured output text", () => {
+      const generation = AiSdkFactory.generateResult({
+        text: JSON.stringify({ explanation: "Login button", id: 7 }),
+      });
+
+      expect(ElementsCacheToolCalls.extractElementIds(generation)).toEqual([7]);
+    });
+
+    it("ignores text that is not a structured output object", () => {
+      const generation = AiSdkFactory.generateResult({
+        text: 'Clicking {"id": 7}',
+      });
+
+      expect(ElementsCacheToolCalls.extractElementIds(generation)).toEqual([]);
+    });
   });
 });

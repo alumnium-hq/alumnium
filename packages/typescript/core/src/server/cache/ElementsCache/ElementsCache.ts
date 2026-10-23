@@ -8,6 +8,7 @@ import { Telemetry } from "../../../telemetry/Telemetry.ts";
 import type { Tracer } from "../../../telemetry/Tracer.ts";
 import { ActorAgent } from "../../agents/ActorAgent.ts";
 import type { BaseAgent } from "../../agents/BaseAgent.ts";
+import type { LocatorAgent } from "../../agents/LocatorAgent.ts";
 import { PlannerAgent } from "../../agents/PlannerAgent.ts";
 import { SessionContext } from "../../session/SessionContext.ts";
 import { CacheStore } from "../CacheStore.ts";
@@ -15,6 +16,7 @@ import { ServerCache } from "../ServerCache.ts";
 import { ActorAgentElementsCache } from "./ActorAgentElementsCache.ts";
 import { ElementsCacheMask } from "./ElementsCacheMask.ts";
 import { ElementsCacheTree } from "./ElementsCacheTree.ts";
+import { LocatorAgentElementsCache } from "./LocatorAgentElementsCache.ts";
 import { PlannerAgentElementsCache } from "./PlannerAgentElementsCache.ts";
 
 const { logger, tracer } = Telemetry.get(import.meta.url);
@@ -43,13 +45,19 @@ export namespace ElementsCache {
    */
   export type Element = z.infer<typeof ElementsCache.Element>;
 
-  export type AgentMeta = PlannerAgent.Meta | ActorAgent.Meta;
+  export type AgentMeta =
+    | PlannerAgent.Meta
+    | ActorAgent.Meta
+    | LocatorAgent.Meta;
 
   export type EligibleAgentKind = AgentMeta["kind"];
 
   export type CacheHash = z.infer<typeof ElementsCache.CacheHash>;
 
-  export type CacheKey = BaseAgent.Goal | BaseAgent.Step;
+  export type CacheKey =
+    | BaseAgent.Goal
+    | BaseAgent.Step
+    | LocatorAgent.Meta["description"];
 
   export type MemoryKey = z.infer<typeof ElementsCache.MemoryKey>;
 
@@ -78,6 +86,7 @@ export class ElementsCache extends ServerCache {
   readonly #cacheStore: CacheStore;
   #plannerCache: PlannerAgentElementsCache;
   #actorCache: ActorAgentElementsCache;
+  #locatorCache: LocatorAgentElementsCache;
 
   constructor(sessionContext: SessionContext, cacheStore: CacheStore) {
     super(sessionContext);
@@ -87,6 +96,7 @@ export class ElementsCache extends ServerCache {
       plannerCache: this.#plannerCache,
       sessionContext,
     });
+    this.#locatorCache = new LocatorAgentElementsCache(sessionContext);
   }
 
   override async lookup(
@@ -95,10 +105,7 @@ export class ElementsCache extends ServerCache {
     return tracer.span("cache.lookup", this.#spanAttrs(), async (span) => {
       const agentMeta = request.meta;
 
-      if (
-        (agentMeta.kind !== "actor" && agentMeta.kind !== "planner") ||
-        this.#hasScreenshot(request)
-      ) {
+      if (!this.#isEligible(agentMeta) || this.#hasScreenshot(request)) {
         logger.debug(
           `Request for agent "${agentMeta.kind}" is not eligible for elements caching`,
         );
@@ -116,7 +123,7 @@ export class ElementsCache extends ServerCache {
         request,
       );
 
-      const { params } = agentMeta;
+      const params = "params" in agentMeta ? agentMeta.params : undefined;
       const substitute = (elements: ElementsCache.Elements) =>
         elements.map((element) =>
           Params.mapStrings(element, (value) =>
@@ -251,10 +258,7 @@ export class ElementsCache extends ServerCache {
       try {
         const agentMeta = request.meta;
 
-        if (
-          (agentMeta.kind !== "actor" && agentMeta.kind !== "planner") ||
-          this.#hasScreenshot(request)
-        ) {
+        if (!this.#isEligible(agentMeta) || this.#hasScreenshot(request)) {
           logger.debug(
             `Request for agent "${agentMeta.kind}" is not eligible for elements caching`,
           );
@@ -281,6 +285,14 @@ export class ElementsCache extends ServerCache {
 
           case "actor":
             return this.#actorCache.update({
+              cacheHash,
+              memoryKey,
+              generation,
+              meta: agentMeta,
+            });
+
+          case "locator":
+            return this.#locatorCache.update({
               cacheHash,
               memoryKey,
               generation,
@@ -327,6 +339,7 @@ export class ElementsCache extends ServerCache {
   async discard(): Promise<void> {
     this.#actorCache.discard();
     this.#plannerCache.discard();
+    this.#locatorCache.discard();
   }
 
   @span("cache.clear", spanAttrs)
@@ -354,7 +367,29 @@ export class ElementsCache extends ServerCache {
   }
 
   #cacheKey(meta: ElementsCache.AgentMeta): ElementsCache.CacheKey {
-    return meta.kind === "planner" ? meta.goal : meta.step;
+    switch (meta.kind) {
+      case "planner":
+        return meta.goal;
+
+      case "actor":
+        return meta.step;
+
+      case "locator":
+        return meta.description;
+
+      default:
+        return meta satisfies never;
+    }
+  }
+
+  #isEligible(
+    meta: ServerCache.CacheRequest["meta"],
+  ): meta is ElementsCache.AgentMeta {
+    return (
+      meta.kind === "planner" ||
+      meta.kind === "actor" ||
+      meta.kind === "locator"
+    );
   }
 
   #memoryKey(
@@ -375,7 +410,7 @@ export class ElementsCache extends ServerCache {
     );
   }
 
-  /** Planner goals and actor steps can share text, so records are only looked up in the requesting agent's cache. */
+  /** Goals, steps and descriptions can share text, so records are only looked up in the requesting agent's cache. */
   #memoryRecord(
     agentKind: ElementsCache.EligibleAgentKind,
     memoryKey: ElementsCache.MemoryKey,
@@ -387,6 +422,9 @@ export class ElementsCache extends ServerCache {
       case "actor":
         return this.#actorCache.getRecord(memoryKey);
 
+      case "locator":
+        return this.#locatorCache.getRecord(memoryKey);
+
       default:
         agentKind satisfies never;
         return null;
@@ -397,6 +435,7 @@ export class ElementsCache extends ServerCache {
     return [
       ...this.#plannerCache.getEntries(),
       ...this.#actorCache.getEntries(),
+      ...this.#locatorCache.getEntries(),
     ];
   }
 

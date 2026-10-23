@@ -204,7 +204,7 @@ export class NativeClient extends Client {
     props: Client.FindElementProps,
   ): Promise<Client.FindElementResult | undefined> {
     const session = await this.session;
-    const { description, accessibilityTree, app } = props;
+    const { description, accessibilityTree, app, cache } = props;
     session.updateContext({ app });
 
     const tree = session.parseTree(accessibilityTree);
@@ -212,6 +212,7 @@ export class NativeClient extends Client {
       await session.locatorAgent.invoke(
         description,
         tree.toXml(session.excludeAttributes),
+        cache,
       )
     )[0];
     always(element);

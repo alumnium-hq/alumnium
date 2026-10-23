@@ -198,11 +198,12 @@ export class HttpClient extends Client {
   async findElement(
     props: Client.FindElementProps,
   ): Promise<Client.FindElementResult | undefined> {
-    const { description, accessibilityTree, app } = props;
+    const { description, accessibilityTree, app, cache } = props;
     const body: FindRequest = {
       description,
       accessibility_tree: accessibilityTree,
       app,
+      cache,
     };
     const result = await this.#sessionFetch<FindResponse>(
       "POST",

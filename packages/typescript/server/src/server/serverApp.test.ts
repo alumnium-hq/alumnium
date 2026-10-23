@@ -457,6 +457,29 @@ describe("serverApp", () => {
         elements: [{ id: 16, explanation: "Found the checkbox element" }],
       });
     });
+
+    it.each([
+      [undefined, true],
+      [true, true],
+      [false, false],
+    ])("passes cache %s to the locator", async (cache, expected) => {
+      const sessionId = await createSession();
+      const response = await serverApp.handle(
+        createRequest("POST", `/sessions/${sessionId}/elements`, {
+          app: "test",
+          description: "submit button",
+          accessibility_tree: sampleAccessibilityTree,
+          cache,
+        }),
+      );
+
+      expect(response.status).toBe(200);
+      expect(LocatorAgent.prototype.invoke).toHaveBeenCalledWith(
+        "submit button",
+        expect.any(String),
+        expected,
+      );
+    });
   });
 
   describe("POST /sessions/:session_id/changes", () => {

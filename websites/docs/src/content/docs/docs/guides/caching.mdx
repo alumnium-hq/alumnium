@@ -210,6 +210,7 @@ To bypass the cache for a single call, pass `cache: false`. The call neither rea
 al.act("search for Paris", new DoOptions().withCache(false));
 al.check("results mention Paris", new CheckOptions().withCache(false));
 al.get("number of results", new GetOptions().withCache(false));
+al.find("search button", new FindOptions().withCache(false));
 ```
 
 </LanguageContent>
@@ -220,6 +221,7 @@ al.get("number of results", new GetOptions().withCache(false));
 al.do("search for Paris", cache=False)
 al.check("results mention Paris", cache=False)
 al.get("number of results", cache=False)
+al.find("search button", cache=False)
 ```
 
 </LanguageContent>
@@ -230,6 +232,7 @@ al.get("number of results", cache=False)
 await al.do("search for Paris", { cache: false });
 await al.check("results mention Paris", { cache: false });
 await al.get("number of results", { cache: false });
+await al.find("search button", { cache: false });
 ```
 
 </LanguageContent>
