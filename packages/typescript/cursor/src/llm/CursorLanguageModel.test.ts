@@ -17,7 +17,7 @@ const mocks = vi.hoisted(() => ({
   send: vi.fn<(payload: SDKUserMessage) => Promise<unknown>>(),
   wait: vi.fn<() => Promise<RunResult>>(),
   cancel: vi.fn(async () => {}),
-  close: vi.fn(),
+  dispose: vi.fn(async () => {}),
 }));
 
 vi.mock("@cursor/sdk", () => ({
@@ -38,9 +38,13 @@ const TOOLS: LanguageModelV4CallOptions["tools"] = [
 
 beforeEach(() => {
   vi.resetAllMocks();
-  mocks.create.mockResolvedValue({ send: mocks.send, close: mocks.close });
+  mocks.create.mockResolvedValue({
+    send: mocks.send,
+    [Symbol.asyncDispose]: mocks.dispose,
+  });
   mocks.send.mockResolvedValue({ wait: mocks.wait, cancel: mocks.cancel });
   mocks.cancel.mockResolvedValue();
+  mocks.dispose.mockResolvedValue();
   mocks.wait.mockResolvedValue({
     id: "run-1",
     status: "finished",
@@ -49,6 +53,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  vi.restoreAllMocks();
   vi.unstubAllEnvs();
   Env.reset();
 });
@@ -76,7 +81,7 @@ describe("CursorLanguageModel", () => {
         }),
       }),
     );
-    expect(mocks.close).toHaveBeenCalledOnce();
+    expect(mocks.dispose).toHaveBeenCalledOnce();
     const cwd = mocks.create.mock.calls[0]![0].local!.cwd!;
     await expect(fs.access(path.dirname(cwd))).rejects.toThrow();
   });
@@ -205,7 +210,7 @@ describe("CursorLanguageModel", () => {
         model().doGenerate({ ...OPTIONS, tools: TOOLS, toolChoice }),
       ).rejects.toThrow();
       expect(mocks.send).toHaveBeenCalledTimes(2);
-      expect(mocks.close).toHaveBeenCalledOnce();
+      expect(mocks.dispose).toHaveBeenCalledOnce();
     },
   );
 
@@ -268,7 +273,7 @@ describe("CursorLanguageModel", () => {
       model().doGenerate({ ...OPTIONS, abortSignal: controller.signal }),
     ).rejects.toThrow("cancelled by caller");
     expect(mocks.cancel).toHaveBeenCalledOnce();
-    expect(mocks.close).toHaveBeenCalledOnce();
+    expect(mocks.dispose).toHaveBeenCalledOnce();
     await expect(
       fs.access(path.dirname(mocks.create.mock.calls[0]![0].local!.cwd!)),
     ).rejects.toThrow();
@@ -286,7 +291,7 @@ describe("CursorLanguageModel", () => {
     ).rejects.toThrow();
     expect(signal.aborted).toBe(true);
     expect(mocks.cancel).toHaveBeenCalledOnce();
-    expect(mocks.close).toHaveBeenCalledOnce();
+    expect(mocks.dispose).toHaveBeenCalledOnce();
     expect(remove).toHaveBeenCalledOnce();
   });
 
@@ -326,7 +331,7 @@ describe("CursorLanguageModel", () => {
     expect(mocks.create).not.toHaveBeenCalled();
   });
 
-  it("closes an agent that finishes creating after cancellation", async () => {
+  it("disposes an agent that finishes creating after cancellation", async () => {
     const controller = new AbortController();
     const pending = Promise.withResolvers<unknown>();
     mocks.create.mockImplementation(() => {
@@ -336,9 +341,12 @@ describe("CursorLanguageModel", () => {
     await expect(
       model().doGenerate({ ...OPTIONS, abortSignal: controller.signal }),
     ).rejects.toThrow("cancel creation");
-    pending.resolve({ send: mocks.send, close: mocks.close });
+    pending.resolve({
+      send: mocks.send,
+      [Symbol.asyncDispose]: mocks.dispose,
+    });
     await pending.promise;
-    expect(mocks.close).toHaveBeenCalledOnce();
+    expect(mocks.dispose).toHaveBeenCalledOnce();
     expect(mocks.send).not.toHaveBeenCalled();
   });
 
@@ -366,14 +374,14 @@ describe("CursorLanguageModel", () => {
       name: "AI_APICallError",
       isRetryable: true,
     });
-    expect(mocks.close).toHaveBeenCalledOnce();
+    expect(mocks.dispose).toHaveBeenCalledOnce();
     mocks.send.mockRejectedValueOnce(new Error("authentication failed"));
     await expect(model().doGenerate(OPTIONS)).rejects.not.toBeInstanceOf(
       APICallError,
     );
   });
 
-  it("surfaces failed runs and still closes the agent", async () => {
+  it("surfaces failed runs and still disposes the agent", async () => {
     mocks.wait.mockResolvedValue({
       id: "run",
       status: "error",
@@ -382,6 +390,48 @@ describe("CursorLanguageModel", () => {
     await expect(model().doGenerate(OPTIONS)).rejects.toThrow(
       "Cursor agent run error: failed",
     );
-    expect(mocks.close).toHaveBeenCalledOnce();
+    expect(mocks.dispose).toHaveBeenCalledOnce();
+  });
+
+  it("disposes the agent before removing its workspace", async () => {
+    const disposed = Promise.withResolvers<void>();
+    mocks.dispose.mockReturnValue(disposed.promise);
+    const rm = vi.spyOn(fs, "rm");
+    const result = model().doGenerate(OPTIONS);
+    await vi.waitFor(() => expect(mocks.dispose).toHaveBeenCalledOnce());
+    expect(rm).not.toHaveBeenCalled();
+    disposed.resolve();
+    await result;
+    expect(rm).toHaveBeenCalledOnce();
+  });
+
+  it("retries removing a workspace that is briefly locked", async () => {
+    const rm = vi
+      .spyOn(fs, "rm")
+      .mockRejectedValueOnce(
+        Object.assign(new Error("busy"), { code: "EBUSY" }),
+      );
+    const result = await model().doGenerate(OPTIONS);
+    expect(result.content).toEqual([{ type: "text", text: "hello" }]);
+    expect(rm).toHaveBeenCalledTimes(2);
+    const cwd = mocks.create.mock.calls[0]![0].local!.cwd!;
+    await expect(fs.access(path.dirname(cwd))).rejects.toThrow();
+  });
+
+  it("does not let cleanup failures replace the result", async () => {
+    mocks.dispose.mockRejectedValue(new Error("dispose failed"));
+    const rm = vi
+      .spyOn(fs, "rm")
+      .mockRejectedValue(
+        Object.assign(new Error("denied"), { code: "EACCES" }),
+      );
+    const result = await model().doGenerate(OPTIONS);
+    expect(result.content).toEqual([{ type: "text", text: "hello" }]);
+    expect(rm).toHaveBeenCalledOnce();
+    rm.mockRestore();
+    await fs.rm(path.dirname(mocks.create.mock.calls[0]![0].local!.cwd!), {
+      recursive: true,
+      force: true,
+    });
   });
 });
