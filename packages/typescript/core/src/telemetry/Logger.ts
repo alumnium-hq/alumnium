@@ -12,6 +12,7 @@ import {
   getTextFormatter,
   type Config as LogtapeConfig,
   type Sink,
+  type TextFormatter,
 } from "@logtape/logtape";
 import { Env } from "../Env.ts";
 import { GlobalFileStorePaths } from "../FileStore/GlobalFileStorePaths.ts";
@@ -138,6 +139,23 @@ export abstract class Logger {
     this.#path = this.#resolvePath(newLogPath);
   }
 
+  static #stdoutProtected = false;
+
+  /**
+   * Redirects stdout logs to stderr. Use it when stdout carries a protocol
+   * (e.g., MCP over stdio).
+   */
+  static protectStdout() {
+    // NOTE: See NOTE in `level`.
+    if (this.#loggerPromise) {
+      const message = "Cannot protect stdout, the logger is already configured";
+      this.#logger().error(message);
+      throw new Error(message);
+    }
+
+    this.#stdoutProtected = true;
+  }
+
   static #resolvePath(
     propsOrPathStr?: string | Logger.PathObj,
   ): string | undefined {
@@ -174,39 +192,46 @@ export abstract class Logger {
   }
 
   static async #config(): Promise<LogtapeConfig<string, string>> {
-    if (this.#path && Env.ALUMNIUM_PRUNE_LOGS)
-      await fs.rm(this.#path, { force: true });
+    const target = this.#target();
+    const toFile = typeof target === "string";
+
+    if (toFile && Env.ALUMNIUM_PRUNE_LOGS) {
+      await fs.rm(target, { force: true });
+    }
 
     const depth = Env.ALUMNIUM_LOG_OBJECTS_DEPTH;
     const maxStringLength = Env.ALUMNIUM_LOG_MAX_STR_LENGTH;
-    const consoleSink = getConsoleSink({
-      formatter: getAnsiColorFormatter({
-        value: (value) =>
-          inspect(value, {
-            colors: true,
-            depth,
-            maxStringLength,
-          }),
-      }),
+    const textFormatter = getTextFormatter({
+      value: (value) => inspect(value, { depth, maxStringLength }),
     });
+    const ansiFormatter = getAnsiColorFormatter({
+      value: (value) =>
+        inspect(value, {
+          colors: true,
+          depth,
+          maxStringLength,
+        }),
+    });
+    const consoleSink = getConsoleSink({ formatter: ansiFormatter });
     const mainSinks: string[] = ["main"];
     const flushInterval = Env.ALUMNIUM_LOG_FLUSH_INTERVAL;
 
     const sinks: Logger.Sinks = {
       console: consoleSink,
-      main: this.#path
-        ? await this.#lazyFileSink(this.#path, {
+      main: toFile
+        ? await this.#lazyFileSink(target, {
             bufferSize: Env.ALUMNIUM_LOG_BUFFER_SIZE,
-            formatter: getTextFormatter({
-              value: (value) => inspect(value, { depth, maxStringLength }),
-            }),
+            formatter: textFormatter,
             flushInterval,
           })
-        : consoleSink,
+        : this.#streamSink(
+            target,
+            target.isTTY ? ansiFormatter : textFormatter,
+          ),
     };
 
     // NOTE: Wait for flush on process exit to ensure all logs are written.
-    if (this.#path) {
+    if (toFile) {
       process.on("exit", () => {
         void this.#flush();
       });
@@ -233,6 +258,21 @@ export abstract class Logger {
           sinks: mainSinks,
         },
       ],
+    };
+  }
+
+  static #target(): string | NodeJS.WriteStream {
+    if (this.#path === "stderr") return process.stderr;
+    if (this.#path && this.#path !== "stdout") return this.#path;
+    return this.#stdoutProtected ? process.stderr : process.stdout;
+  }
+
+  static #streamSink(
+    stream: NodeJS.WriteStream,
+    formatter: TextFormatter,
+  ): Sink {
+    return (record) => {
+      stream.write(formatter(record));
     };
   }
 

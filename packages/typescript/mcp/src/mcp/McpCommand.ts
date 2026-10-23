@@ -55,7 +55,10 @@ export const McpCommand = CliCommand.define({
   }),
 
   action: async ({ args, logFilenameHint }) => {
-    Logger.path = { filename: logFilenameHint };
+    if (args.transport === "stdio") {
+      Logger.protectStdout();
+      Logger.path = { filename: logFilenameHint };
+    }
     await Logger.initEnv({ logger });
 
     const server = new McpServer(args);

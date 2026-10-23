@@ -126,7 +126,12 @@ Sets the level used by Alumnium logger. Supported values are:
 Sets the output location used by Alumnium logger. Supported values are:
 
 - a path to a file (e.g. `alumnium.log`);
-- `stdout` to print logs to the standard output.
+- `stdout` to print logs to the standard output;
+- `stderr` to print logs to the standard error.
+
+By default, `alumnium install`, `alumnium server` and `alumnium mcp` over the HTTP transport log to stdout, which works well with `docker logs` and other container log collectors. `alumnium mcp` over the stdio transport logs to a file in the Alumnium store logs directory (`.alumnium/logs`) instead, and `stdout` is redirected to `stderr` there because stdout carries the MCP protocol.
+
+Log output is colorized only when it is written to a terminal.
 
 :::tip[Debug logs on GitHub Actions]
 The following workflow step enables debug logging in Alumnium when they are enabled in [GitHub Actions][1].

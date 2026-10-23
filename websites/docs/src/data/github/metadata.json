@@ -1,10 +1,10 @@
 {
-  "stars": 1015,
+  "stars": 1019,
   "contributors": [
     {
       "username": "p0deje",
       "avatarUrl": "https://avatars.githubusercontent.com/u/665846?v=4",
-      "contributions": 853
+      "contributions": 877
     },
     {
       "username": "kossnocorp",
@@ -29,7 +29,7 @@
     {
       "username": "reachsridhard",
       "avatarUrl": "https://avatars.githubusercontent.com/u/274074773?v=4",
-      "contributions": 11
+      "contributions": 12
     },
     {
       "username": "rookieInTraining",
@@ -49,6 +49,11 @@
     {
       "username": "shbenzer",
       "avatarUrl": "https://avatars.githubusercontent.com/u/69980130?v=4",
+      "contributions": 3
+    },
+    {
+      "username": "devin-ai-integration[bot]",
+      "avatarUrl": "https://avatars.githubusercontent.com/in/811515?v=4",
       "contributions": 3
     },
     {
@@ -99,7 +104,7 @@
     {
       "username": "billzzheng",
       "avatarUrl": "https://avatars.githubusercontent.com/u/47043849?v=4",
-      "contributions": 1
+      "contributions": 2
     },
     {
       "username": "WilliamK112",
@@ -124,6 +129,11 @@
     {
       "username": "radanskoric",
       "avatarUrl": "https://avatars.githubusercontent.com/u/1065097?v=4",
+      "contributions": 1
+    },
+    {
+      "username": "SHIL0018",
+      "avatarUrl": "https://avatars.githubusercontent.com/u/298333456?v=4",
       "contributions": 1
     },
     {
@@ -912,94 +922,6 @@
         {
           "name": "alumnium-0.13.0.tar.gz.publish.attestation",
           "size": 9380
-        }
-      ]
-    },
-    {
-      "version": "0.12.0",
-      "latest": false,
-      "artifacts": [
-        {
-          "name": "alumnium-0.12.0-py3-none-any.whl",
-          "size": 55033
-        },
-        {
-          "name": "alumnium-0.12.0-py3-none-any.whl.publish.attestation",
-          "size": 9063
-        },
-        {
-          "name": "alumnium-0.12.0.tar.gz",
-          "size": 25601
-        },
-        {
-          "name": "alumnium-0.12.0.tar.gz.publish.attestation",
-          "size": 9145
-        }
-      ]
-    },
-    {
-      "version": "0.11.0",
-      "latest": false,
-      "artifacts": [
-        {
-          "name": "alumnium-0.11.0-py3-none-any.whl",
-          "size": 41426
-        },
-        {
-          "name": "alumnium-0.11.0-py3-none-any.whl.publish.attestation",
-          "size": 9204
-        },
-        {
-          "name": "alumnium-0.11.0.tar.gz",
-          "size": 20736
-        },
-        {
-          "name": "alumnium-0.11.0.tar.gz.publish.attestation",
-          "size": 9239
-        }
-      ]
-    },
-    {
-      "version": "0.10.0",
-      "latest": false,
-      "artifacts": [
-        {
-          "name": "alumnium-0.10.0-py3-none-any.whl",
-          "size": 38477
-        },
-        {
-          "name": "alumnium-0.10.0-py3-none-any.whl.publish.attestation",
-          "size": 9295
-        },
-        {
-          "name": "alumnium-0.10.0.tar.gz",
-          "size": 19703
-        },
-        {
-          "name": "alumnium-0.10.0.tar.gz.publish.attestation",
-          "size": 9236
-        }
-      ]
-    },
-    {
-      "version": "0.9.0",
-      "latest": false,
-      "artifacts": [
-        {
-          "name": "alumnium-0.9.0-py3-none-any.whl",
-          "size": 35919
-        },
-        {
-          "name": "alumnium-0.9.0-py3-none-any.whl.publish.attestation",
-          "size": 9107
-        },
-        {
-          "name": "alumnium-0.9.0.tar.gz",
-          "size": 17710
-        },
-        {
-          "name": "alumnium-0.9.0.tar.gz.publish.attestation",
-          "size": 9001
         }
       ]
     }
