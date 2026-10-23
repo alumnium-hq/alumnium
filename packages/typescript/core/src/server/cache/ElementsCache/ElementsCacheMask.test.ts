@@ -150,6 +150,32 @@ describe("ElementsCacheMask", () => {
       ]);
     });
 
+    it("masks ids in structured output text", () => {
+      const generation = AiSdkFactory.generateResult({
+        text: JSON.stringify({ explanation: "Login button", id: 5 }),
+      });
+
+      const masked = ElementsCacheMask.mask(generation, [5]);
+
+      expect(masked!.content).toEqual([
+        {
+          type: "text",
+          text: JSON.stringify({
+            explanation: "Login button",
+            id: "<MASKED_0>",
+          }),
+        },
+      ]);
+    });
+
+    it("preserves text that is not a structured output object", () => {
+      const generation = AiSdkFactory.generateResult({ text: "[5]" });
+
+      const masked = ElementsCacheMask.mask(generation, [5]);
+
+      expect(masked!.content).toEqual(generation.content);
+    });
+
     it("preserves empty, non-object, and unrelated inputs byte-for-byte", () => {
       const inputs = [
         "",
@@ -294,6 +320,29 @@ describe("ElementsCacheMask", () => {
       const unmasked = ElementsCacheMask.unmask(generation, {});
 
       expect(unmasked).toBeNull();
+    });
+
+    it("unmasks ids in structured output text", () => {
+      const generation = AiSdkFactory.generateResult({
+        text: JSON.stringify({ explanation: "Login", id: "<MASKED_0>" }),
+      });
+
+      const unmasked = ElementsCacheMask.unmask(generation, { 0: 99 });
+
+      expect(unmasked!.content).toEqual([
+        {
+          type: "text",
+          text: JSON.stringify({ explanation: "Login", id: 99 }),
+        },
+      ]);
+    });
+
+    it("rejects an unresolved mask in structured output text", () => {
+      const generation = AiSdkFactory.generateResult({
+        text: JSON.stringify({ id: "<MASKED_1>" }),
+      });
+
+      expect(ElementsCacheMask.unmask(generation, { 0: 99 })).toBeNull();
     });
 
     it("supports mask/unmask roundtrip for tool calls", () => {

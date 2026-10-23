@@ -1,6 +1,6 @@
 import fs from "node:fs/promises";
 import type { LanguageModelV4GenerateResult } from "@ai-sdk/provider";
-import { generateText, tool, wrapLanguageModel } from "ai";
+import { generateText, Output, tool, wrapLanguageModel } from "ai";
 import { MockLanguageModelV4 } from "ai/test";
 import { describe, expect, it, vi } from "vitest";
 import z from "zod";
@@ -14,6 +14,7 @@ import { AiSdkFactory } from "../../../llm/__factories__/AiSdkFactory.ts";
 import { AiSdk } from "../../../llm/AiSdk.ts";
 import { Model } from "../../../Model.ts";
 import type { BaseAgent } from "../../agents/BaseAgent.ts";
+import { Locator } from "../../agents/LocatorAgent.ts";
 import { SessionContext } from "../../session/SessionContext.ts";
 import { SessionId } from "../../session/SessionId.ts";
 import { createCacheMiddleware } from "../CacheMiddleware.ts";
@@ -34,7 +35,7 @@ describe(ElementsCache, () => {
     it("resolves null for unsupported agent requests", async () => {
       const { cache } = await setup();
 
-      expect(await cache.lookup(unsupportedRequest("locator"))).toBeNull();
+      expect(await cache.lookup(unsupportedRequest("area"))).toBeNull();
     });
 
     it("resolves cached planner response for exact match", async () => {
@@ -179,6 +180,115 @@ describe(ElementsCache, () => {
       expect(hit!.content).toEqual([{ type: "text", text: plan("3") }]);
     });
 
+    it("does not resolve unsaved actor response for planner with goal matching step", async () => {
+      const { cache } = await setup();
+      const treeXml = '<button id="1" name="Login" />';
+      const instruction = "click login";
+      const plan = AiSdkFactory.generateResult({
+        text: JSON.stringify({ explanation: "", actions: [instruction] }),
+      });
+      const planner = plannerRequest(treeXml, instruction);
+
+      await cache.update(planner, plan);
+      await cache.update(
+        request({
+          kind: "actor",
+          goal: instruction as BaseAgent.Goal,
+          step: instruction as BaseAgent.Step,
+          treeXml,
+        }),
+        actorResult(1),
+      );
+
+      expect(await cache.lookup(planner)).toEqual(plan);
+    });
+
+    it("does not resolve unsaved planner response for actor with step matching goal", async () => {
+      const { cache } = await setup();
+      const treeXml = '<button id="1" name="Login" />';
+      const instruction = "click login";
+
+      await cache.update(
+        plannerRequest(treeXml, instruction),
+        AiSdkFactory.generateResult({
+          text: JSON.stringify({ explanation: "", actions: [instruction] }),
+        }),
+      );
+
+      expect(
+        await cache.lookup(
+          request({
+            kind: "actor",
+            goal: instruction as BaseAgent.Goal,
+            step: instruction as BaseAgent.Step,
+            treeXml,
+          }),
+        ),
+      ).toBeNull();
+    });
+
+    it("resolves cached locator response for exact match", async () => {
+      const { cache } = await setup();
+      const request = locatorRequest('<button id="1" name="Login" />');
+      const result = locatorResult(1);
+
+      await cache.update(request, result);
+      expect(await cache.lookup(request)).toEqual(result);
+      await cache.save();
+      expect(await cache.lookup(request)).toEqual(result);
+    });
+
+    it("resolves locator ids in similar trees with changed ids", async () => {
+      const { cache } = await setup();
+
+      await cache.update(
+        locatorRequest('<button id="1" name="Login" />'),
+        locatorResult(1),
+      );
+      await cache.save();
+
+      const hit = await cache.lookup(
+        locatorRequest(
+          '<div><button id="98" name="Logout" /><button id="99" name="Login" /></div>',
+        ),
+      );
+      expect(hit!.content).toEqual(locatorResult(99).content);
+    });
+
+    it("resolves null for locator when the element is gone", async () => {
+      const { cache } = await setup();
+
+      await cache.update(
+        locatorRequest('<button id="1" name="Login" />'),
+        locatorResult(1),
+      );
+      await cache.save();
+
+      expect(
+        await cache.lookup(locatorRequest('<button id="9" name="Logout" />')),
+      ).toBeNull();
+    });
+
+    it("does not resolve unsaved actor response for locator with description matching step", async () => {
+      const { cache } = await setup();
+      const treeXml = '<button id="1" name="Login" />';
+      const instruction = "login button";
+
+      await cache.update(
+        request({
+          kind: "actor",
+          goal: instruction as BaseAgent.Goal,
+          step: instruction as BaseAgent.Step,
+          treeXml,
+        }),
+        actorResult(1),
+      );
+
+      expect(
+        await cache.lookup(locatorRequest(treeXml, instruction)),
+      ).toBeNull();
+    });
+
     it("resolves null when cached elements cannot be resolved", async () => {
       const { cache } = await setup();
 
@@ -260,6 +370,37 @@ describe(ElementsCache, () => {
       ).toEqual([
         expect.objectContaining({ input: { id: 99 }, toolName: "ClickTool" }),
       ]);
+      expect(baseModel.doGenerateCalls).toHaveLength(1);
+    });
+
+    it("replays remapped locator output through generateText", async () => {
+      const { cache } = await setup();
+      const baseModel = new MockLanguageModelV4({
+        provider: "openai",
+        modelId: "test",
+        doGenerate: locatorResult(1),
+      });
+      const model = wrapLanguageModel({
+        model: baseModel,
+        middleware: createCacheMiddleware(cache),
+      });
+      const run = (treeXml: string) =>
+        generateText({
+          model,
+          prompt: "find login button",
+          output: Output.object({ schema: Locator }),
+          providerOptions: {
+            alumnium: { meta: locatorRequest(treeXml).meta },
+          },
+        });
+
+      expect((await run('<button id="1" name="Login" />')).output).toEqual({
+        explanation: "Login button",
+        id: 1,
+      });
+      expect(
+        (await run('<div><button id="99" name="Login" /></div>')).output,
+      ).toEqual({ explanation: "Login button", id: 99 });
       expect(baseModel.doGenerateCalls).toHaveLength(1);
     });
   });
@@ -354,6 +495,35 @@ describe(ElementsCache, () => {
           index: 0,
           name: "Login",
         },
+      ]);
+    });
+
+    it("stores locator instruction, masked response, and elements", async () => {
+      const { cache, cacheDir } = await setup();
+
+      await cache.update(
+        locatorRequest('<button id="1" name="Login" />'),
+        locatorResult(1),
+      );
+      await cache.save();
+
+      const files = await cacheDir.flatTree();
+      expect(files).toEqual([
+        expect.stringMatching(
+          /^test-app\/openai\/test\/elements\/locator\/\w+\/elements\.json$/,
+        ),
+        expect.stringMatching(/\/instruction\.json$/),
+        expect.stringMatching(/\/response\.json$/),
+      ]);
+      const baseDir = files[0]!.replace(/\/elements\.json$/, "");
+      expect(await cacheDir.readJson(`${baseDir}/response.json`)).toEqual(
+        locatorResult("<MASKED_0>"),
+      );
+      expect(await cacheDir.readJson(`${baseDir}/instruction.json`)).toEqual({
+        description: "login button",
+      });
+      expect(await cacheDir.readJson(`${baseDir}/elements.json`)).toEqual([
+        { role: "button", index: 0, name: "Login" },
       ]);
     });
   });
@@ -478,7 +648,7 @@ function actorRequest(treeXml: string): ServerCache.CacheRequest {
 }
 
 function unsupportedRequest(
-  kind: "changes-analyzer" | "locator",
+  kind: "changes-analyzer" | "area",
 ): ServerCache.CacheRequest {
   return kind === "changes-analyzer"
     ? request({ kind })
@@ -494,6 +664,19 @@ function request(
     params: { prompt: [] },
     meta,
   };
+}
+
+function locatorRequest(
+  treeXml: string,
+  description = "login button",
+): ServerCache.CacheRequest {
+  return request({ kind: "locator", description, treeXml });
+}
+
+function locatorResult(id: number | string) {
+  return AiSdkFactory.generateResult({
+    text: JSON.stringify({ explanation: "Login button", id }),
+  });
 }
 
 function actorResult(id: number | string, text?: string) {

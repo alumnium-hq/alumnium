@@ -266,17 +266,20 @@ public final class HttpClient implements AutoCloseable {
   }
 
   public FindElementResult findElement(String description, String accessibilityTree, String app) {
+    return findElement(description, accessibilityTree, app, true);
+  }
+
+  public FindElementResult findElement(
+      String description, String accessibilityTree, String app, boolean cache) {
+    Map<String, Object> body = new LinkedHashMap<>();
+    body.put("description", description);
+    body.put("accessibility_tree", accessibilityTree);
+    body.put("app", app == null ? "unknown" : app);
+    if (!cache) {
+      body.put("cache", false);
+    }
     JsonNode data =
-        postJson(
-            "/v1/sessions/" + requireSession() + "/elements",
-            Map.of(
-                "description",
-                description,
-                "accessibility_tree",
-                accessibilityTree,
-                "app",
-                app == null ? "unknown" : app),
-            Duration.ofSeconds(60));
+        postJson("/v1/sessions/" + requireSession() + "/elements", body, Duration.ofSeconds(60));
     JsonNode elements = data.path("elements");
     if (!elements.isArray() || elements.isEmpty()) {
       throw new IllegalStateException(

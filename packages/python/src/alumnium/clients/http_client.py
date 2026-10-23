@@ -197,10 +197,17 @@ class HttpClient:
         data = response.json()
         return {"id": data["id"], "explanation": data["explanation"]}
 
-    def find_element(self, description: str, accessibility_tree: str, app: str = "unknown") -> dict:
+    def find_element(
+        self, description: str, accessibility_tree: str, app: str = "unknown", cache: bool = True
+    ) -> dict:
         response = post(
             f"{self.base_url}/v1/sessions/{self.session_id}/elements",
-            json={"description": description, "accessibility_tree": accessibility_tree, "app": app},
+            json={
+                "description": description,
+                "accessibility_tree": accessibility_tree,
+                "app": app,
+                **({} if cache else {"cache": False}),
+            },
             timeout=60,
         )
         response.raise_for_status()

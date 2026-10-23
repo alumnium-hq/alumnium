@@ -48,6 +48,7 @@ export class LocatorAgent extends BaseAgent {
   async invoke(
     description: string,
     treeXml: string,
+    cache?: boolean,
   ): Promise<Array<ElementRef>> {
     const { Output } = await loadAi();
     logger.info("Starting element location:");
@@ -75,6 +76,7 @@ export class LocatorAgent extends BaseAgent {
       ],
       output: Output.object({ schema: Locator }),
       meta,
+      cache,
     });
 
     this.logData(logger, "out", {

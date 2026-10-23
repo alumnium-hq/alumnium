@@ -29,6 +29,7 @@ export interface CursorLanguageModelOptions {
 }
 
 const logger = Logger.get(import.meta.url);
+const CLEANUP_ATTEMPTS = 5;
 const CHAT_CONTEXT = `# Execution context
 You are used as a chat completion model inside another application.
 Do NOT read or write files, run terminal commands, search the web, or use any
@@ -158,13 +159,7 @@ export class CursorLanguageModel implements LanguageModelV4 {
             store,
           },
         }),
-        async (lateAgent) => {
-          try {
-            lateAgent.close();
-          } finally {
-            await fs.rm(root, { recursive: true, force: true });
-          }
-        },
+        (lateAgent) => disposeWorkspace(lateAgent, root),
       );
       const first = await send(
         agent,
@@ -204,17 +199,47 @@ export class CursorLanguageModel implements LanguageModelV4 {
         response: { id: first.id, modelId: this.modelId },
       };
     } finally {
-      try {
-        agent?.close();
-      } finally {
-        await fs.rm(root, { recursive: true, force: true });
-      }
+      await disposeWorkspace(agent, root);
     }
   }
 }
 
 async function loadCursorSdk(): Promise<CursorSdkModule> {
   return import("@cursor/sdk");
+}
+
+// Cleanup must never replace the call's result or error, so failures are only
+// logged. The agent is disposed (not just closed) first: close() releases the
+// local executor in the background, and Windows can't delete files it holds.
+async function disposeWorkspace(
+  agent: SDKAgent | undefined,
+  root: string,
+): Promise<void> {
+  try {
+    await agent?.[Symbol.asyncDispose]();
+  } catch (error) {
+    logger.warn(`Failed to dispose Cursor agent: ${String(error)}`);
+  }
+  for (let attempt = 1; ; attempt++) {
+    try {
+      await fs.rm(root, { recursive: true, force: true });
+      return;
+    } catch (error) {
+      // Windows briefly locks fresh files (e.g. antivirus scans).
+      const code = (error as NodeJS.ErrnoException).code;
+      if (
+        attempt < CLEANUP_ATTEMPTS &&
+        (code === "EBUSY" || code === "EPERM" || code === "ENOTEMPTY")
+      ) {
+        await new Promise((resolve) => setTimeout(resolve, 100 * attempt));
+        continue;
+      }
+      logger.warn(
+        `Failed to remove Cursor workspace ${root}: ${String(error)}`,
+      );
+      return;
+    }
+  }
 }
 
 function serializePrompt(options: LanguageModelV4CallOptions): {

@@ -208,11 +208,24 @@ public final class Alumni implements AutoCloseable {
    * @return Native driver element (Selenium WebElement, Playwright Locator, or Appium WebElement).
    */
   public Object find(String description) {
+    return find(description, new FindOptions());
+  }
+
+  /**
+   * Finds an element in the accessibility tree and returns the native driver element.
+   *
+   * @param description Natural language description of the element to find.
+   * @param opts Cache flag.
+   * @return Native driver element (Selenium WebElement, Playwright Locator, or Appium WebElement).
+   */
+  public Object find(String description, FindOptions opts) {
     return Retry.execute(
         () -> {
+          boolean cache = opts == null || opts.cache();
           driver.resetAccessibilityTree();
           FindElementResult response =
-              client.findElement(description, driver.accessibilityTree().toStr(), driver.app());
+              client.findElement(
+                  description, driver.accessibilityTree().toStr(), driver.app(), cache);
           int id = response.id();
           return driver.findElement(id);
         });
@@ -532,6 +545,17 @@ public final class Alumni implements AutoCloseable {
 
     public CheckOptions withCache(boolean cache) {
       return new CheckOptions(vision, params, cache);
+    }
+  }
+
+  /** Cache flag for {@link #find(String, FindOptions)}. */
+  public record FindOptions(boolean cache) {
+    public FindOptions() {
+      this(true);
+    }
+
+    public FindOptions withCache(boolean cache) {
+      return new FindOptions(cache);
     }
   }
 }
