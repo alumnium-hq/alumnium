@@ -41,4 +41,5 @@ runs:
         path: |
           ~/.gradle/caches
           ~/.gradle/wrapper
+          ~/.m2/repository/dev/equo
         key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle', '**/*.gradle.kts', '**/gradle-wrapper.properties', '**/gradle.properties') }}
