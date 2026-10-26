@@ -16,6 +16,13 @@ sanitize_filename() {
 PKG_DIR="$(dirname "${BASH_SOURCE[0]}")/.."
 ALUMNIUM_TEST_ARG="${ALUMNIUM_TEST_ARG:-}"
 
+case "$ALUMNIUM_DRIVER" in
+selenium-firefox)
+	export ALUMNIUM_SELENIUM_BROWSER="firefox"
+	export ALUMNIUM_DRIVER="selenium"
+	;;
+esac
+
 failed=0
 run_tests() {
 	if "$@"; then
@@ -55,7 +62,7 @@ if [ -n "$ALUMNIUM_TEST_ARG" ]; then
 fi
 
 export ALUMNIUM_LOG_LEVEL=debug
-export ALUMNIUM_LOG_FILENAME="test-system-${ALUMNIUM_DRIVER}-$(sanitize_filename "$ALUMNIUM_MODEL").log"
+export ALUMNIUM_LOG_FILENAME="test-system-${ALUMNIUM_DRIVER}${ALUMNIUM_SELENIUM_BROWSER:+-$ALUMNIUM_SELENIUM_BROWSER}-$(sanitize_filename "$ALUMNIUM_MODEL").log"
 export ALUMNIUM_PRUNE_LOGS=false
 export ALUMNIUM_LOG_BUFFER_SIZE=0
 export ALUMNIUM_LOG_FLUSH_INTERVAL=0
@@ -67,6 +74,9 @@ echo "🚧 Running system tests using:"
 echo
 echo "🔵 ALUMNIUM_MODEL=$ALUMNIUM_MODEL"
 echo "🔵 ALUMNIUM_DRIVER=$ALUMNIUM_DRIVER"
+if [ "$ALUMNIUM_DRIVER" = "selenium" ]; then
+	echo "🔵 ALUMNIUM_SELENIUM_BROWSER=${ALUMNIUM_SELENIUM_BROWSER:-chrome}"
+fi
 echo "🔵 ALUMNIUM_LOG_FILENAME=$ALUMNIUM_LOG_FILENAME"
 echo "🔵 ALUMNIUM_TEST_PASS_THRESHOLD_PCT=${ALUMNIUM_TEST_PASS_THRESHOLD_PCT:-}"
 echo "🔵 ALUMNIUM_TEST_RETRY_COUNT=${ALUMNIUM_TEST_RETRY_COUNT:-}"

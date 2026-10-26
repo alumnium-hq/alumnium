@@ -1,0 +1,33 @@
+<RootWebArea raw_id=1>
+  <heading raw_id=2 sharedId="236ea5fa-7aad-4889-b07a-9141f5221097" name="Welcome to the-internet" level=1 />
+  <heading raw_id=3 sharedId="84e8f76d-fbad-4191-afa3-f2ad1d00063e" name="Available Examples" level=2 />
+  <list raw_id=4 sharedId="075477f2-7103-4bf9-9695-d8b5e4b994a5">
+    <listitem raw_id=5 sharedId="f147cf8f-35d7-4f02-a8f9-16313d0b43f0">
+      <link raw_id=6 sharedId="845ab975-c9ee-4b34-a09c-233b472aca94" name="Drag and Drop" url="drag-and-drop.html" />
+    </listitem>
+    <listitem raw_id=7 sharedId="7937d57a-572a-4ece-b8ed-bd8ca4ab9df2">
+      <link raw_id=8 sharedId="a75d89c3-264f-4a1f-b2e6-38fef1db7385" name="Dropdown" url="dropdown.html" />
+    </listitem>
+    <listitem raw_id=9 sharedId="70f65014-20f3-469d-95fc-4b25cc98a8d9">
+      <link raw_id=10 sharedId="09765e1d-1a84-4638-821d-dc2837dbe64c" name="Dynamic Content" url="dynamic-content.html" />
+    </listitem>
+    <listitem raw_id=11 sharedId="ffb4ca71-bac6-475c-99b9-33283c89e481">
+      <link raw_id=12 sharedId="b40e9dfe-e4c9-46e9-b992-448b9475c5f1" name="File Upload" url="upload.html" />
+    </listitem>
+    <listitem raw_id=13 sharedId="8cb8997c-243c-400d-9de4-8b06ae37dd80">
+      <link raw_id=14 sharedId="a4627d8c-7b5f-4a37-9ad4-4132065abfdc" name="Forgot Password" url="forgot-password.html" />
+    </listitem>
+    <listitem raw_id=15 sharedId="de5a6d4a-1296-4130-864f-ef6755f84fd2">
+      <link raw_id=16 sharedId="fea34d00-46ca-42a0-a238-746518a73b3f" name="Large &amp; Deep DOM" url="large.html" />
+    </listitem>
+    <listitem raw_id=17 sharedId="dd1120c1-f02b-470d-b81c-8c4887516969">
+      <link raw_id=18 sharedId="22110d5b-ae5a-4b6f-a0a0-28429e01039f" name="Nested Frames" url="nested-frames.html" />
+    </listitem>
+    <listitem raw_id=19 sharedId="03e101f6-a135-4cf4-b965-c1bf369e6a62">
+      <link raw_id=20 sharedId="fa33a500-ed0f-4347-8d51-2a9bc3a4d7ad" name="Sortable Data Tables" url="tables.html" />
+    </listitem>
+    <listitem raw_id=21 sharedId="bcf061ce-7244-44d5-8c44-e9969a489a73">
+      <link raw_id=22 sharedId="218512d4-5475-43fb-ac29-220e35857047" name="Typos" url="typos.html" />
+    </listitem>
+  </list>
+</RootWebArea>

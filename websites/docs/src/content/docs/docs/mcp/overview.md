@@ -135,12 +135,13 @@ claude mcp add --transport http alumnium http://localhost:8014/mcp
 Both modes use `start` to initialize a browser or mobile driver session and return its session `id`. Pass capabilities as an inline JSON string or a path to a JSON file. Supports all drivers:
 
 - Chrome: Selenium, Playwright, CloakBrowser.
+- Firefox: Selenium.
 - iOS: Appium, Maestro, Xcode.
 - Android: Appium, Maestro.
 
 #### `platformName`
 
-Selects the platform to automate. Supported values are `chrome`, `ios`, and `android`.
+Selects the platform to automate. Supported values are `chrome`, `firefox`, `ios`, and `android`.
 
 #### `alumnium:options`
 
@@ -204,7 +205,7 @@ Mobile sessions describe the app and device the same way, and Alumnium translate
 | `device`                  | The device to run on. For browsers, a Playwright device preset such as `"Pixel 7"` or a device descriptor object with `viewport`, `userAgent`, `deviceScaleFactor`, `isMobile`, and `hasTouch` (Playwright only). For iOS and Android, a simulator/emulator UDID or serial, or a device name such as `"iPhone 16"`; defaults to the first connected device.     |
 | `disabledTools`           | Array of tool class names to disable for this session, e.g. `["ExecuteJavascriptTool"]`. |
 | `excludeAttributes`       | Array of accessibility tree attributes to exclude. Reduces tree size on large pages.                                                                                                                                                                                                                                                                            |
-| `executablePath`          | Path to a custom Chrome/Chromium executable (e.g. Arc, Brave). Selenium and Playwright only.                                                                                                                                                                                                                                                                    |
+| `executablePath`          | Path to a custom Chrome/Chromium (e.g. Arc, Brave) or Firefox executable. Selenium and Playwright only.                                                                                                                                                                                                                                                                    |
 | `fullPageScreenshot`      | Capture full-page screenshots instead of viewport-only. Default is `false`.                                                                                                                                                                                                                                                                                     |
 | `headers`                 | Custom HTTP headers. A string value is sent with every request (Selenium and Playwright). An object value is sent only to hosts matching the key, e.g. `".example.com"` for the domain and its subdomains or `"app.example.com"` for one host (Playwright only). Scope headers when the page embeds third-party origins whose CORS preflight would reject them. |
 | `headless`                | Run browsers/simulators headless. Maestro, Playwright, Selenium, and Xcode. Default is `false`. |
@@ -216,7 +217,7 @@ Mobile sessions describe the app and device the same way, and Alumnium translate
 | `profile`                 | Name of a persistent browser profile; cookies, sessions, and storage are preserved across restarts in `~/.alumnium/profiles/{name}`. Selenium and Playwright only.                                                                                                                                                                                              |
 | `proxy`                   | HTTP, HTTPS, or SOCKS5 proxy, e.g. `{"server": "http://myproxy.com:3128", "bypass": ".com", "username": "usr", "password": "pwd"}`. Selenium and Playwright only. Falls back to the `HTTP_PROXY`/`HTTPS_PROXY` environment variables.                                                                                                                           |
 | `recordVideos`            | Record a video of the browser session. Playwright only. Default is `true`; `ALUMNIUM_MCP_RECORD_VIDEOS=false` also disables it.                                                                                                                                                                                                                                 |
-| `userAgent`               | Custom User-Agent string sent with every request. Playwright only.                                                                                                                                                                                                                                                                                              |
+| `userAgent`               | Custom User-Agent string sent with every request. Selenium and Playwright only.                                                                                                                                                                                                                                                                                 |
 
 #### `appium:settings`
 
@@ -232,7 +233,7 @@ For iOS and Android sessions, pass `appium:settings` in capabilities to configur
 }
 ```
 
-Pass the returned `id` to subsequent tools. Use separate sessions to target Chrome, iOS, or Android, and call `stop` when finished. The `planner` and `changeAnalysis` options apply to agentic mode.
+Pass the returned `id` to subsequent tools. Use separate sessions to target Chrome, Firefox, iOS, or Android, and call `stop` when finished. The `planner` and `changeAnalysis` options apply to agentic mode.
 
 For verification runs that must use browser interactions instead of JavaScript, set `"disabledTools": ["ExecuteJavascriptTool"]`. The setting applies only to that session. Disabled tools cannot be executed, including through cached actions; an action that still requests a disabled tool fails. Direct MCP tools remain listed because other sessions may enable them, but calls are rejected for sessions that disable them.
 

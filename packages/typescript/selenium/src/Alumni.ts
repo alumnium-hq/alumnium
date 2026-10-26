@@ -1,11 +1,12 @@
 import { WebDriver } from "selenium-webdriver";
 import { Alumni as BaseAlumni } from "@alumnium/core";
-import { SeleniumDriver } from "./drivers/SeleniumDriver.ts";
+import type { SeleniumDriver } from "./drivers/SeleniumDriver.ts";
+import { SeleniumDriverFactory } from "./drivers/SeleniumDriverFactory.ts";
 
 /** Alumni driving a Selenium `WebDriver`. */
 export class Alumni extends BaseAlumni<SeleniumDriver> {
   constructor(driver: WebDriver, options: Alumni.Options = {}) {
-    super(new SeleniumDriver(driver), options);
+    super(SeleniumDriverFactory.create(driver), options);
   }
 
   /** Whether the given object is a native driver this Alumni accepts. */

@@ -51,7 +51,7 @@ class Alumni:
             # Asynchronous Playwright driver requires a shared event loop
             self.driver = PlaywrightAsyncDriver(driver[0], driver[1])
         elif isinstance(driver, WebDriver):
-            self.driver = SeleniumDriver(driver)
+            self.driver = SeleniumDriver.of(driver)
         else:
             raise NotImplementedError(f"Driver {driver} not implemented")
 

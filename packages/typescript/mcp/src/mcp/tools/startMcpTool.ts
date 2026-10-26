@@ -20,6 +20,7 @@ import {
 import { McpArtifactsStore } from "../McpArtifactsStore.ts";
 import {
   createChromeDriver,
+  createFirefoxDriver,
   createMobileDriver,
   type McpDriver,
 } from "../mcpDrivers.ts";
@@ -79,7 +80,7 @@ export const startMcpTool = McpTool.define("start", {
       `
           JSON string or path to a JSON file with Selenium/Appium/Playwright capabilities and Alumnium-specific options.
 
-          Must include "platformName" (e.g., "chrome", "ios", "android").
+          Must include "platformName" (e.g., "chrome", "firefox", "ios", "android"). Firefox always runs through Selenium.
 
           Example JSON string: '{"platformName": "ios", "appium:platformVersion": "18.0", "alumnium:options": {"app": "com.example.app", "device": "iPhone 16"}}'.
 
@@ -97,7 +98,7 @@ export const startMcpTool = McpTool.define("start", {
             - "device" (string or object) — the device to run on, e.g. "iPhone 16" (Playwright built-in preset name or a custom object with viewport/userAgent/deviceScaleFactor/isMobile/hasTouch, iOS real device unique device identifier, Android/iOS simulator name, etc.);
             - "disabledTools" (string[]) — tool class names to disable for this session, e.g. ["ExecuteJavascriptTool"];
             - "excludeAttributes" (string[]) — accessibility attributes to exclude from the tree, e.g., ["src"];
-            - "executablePath" (string) — path to a custom Chrome executable;
+            - "executablePath" (string) — path to a custom Chrome or Firefox executable;
             - "fullPageScreenshot" (boolean, default false) — capture full-page screenshots.
             - "headers" (object) — extra HTTP headers, supported for Selenium and Playwright. A string value is sent with every request, e.g. {"Authorization": "Bearer token"}; an object value is sent only to hosts matching the key, e.g. {".example.com": {"X-Feature": "on"}};
             - "headless" (boolean, default false) — run browsers/simulators headless, supported for Maestro, Playwright, Selenium, and Xcode;
@@ -370,10 +371,23 @@ export const startMcpTool = McpTool.define("start", {
         }
         break;
 
+      case "firefox": {
+        driver = await tracer.span(
+          "mcp.driver.start",
+          {
+            "mcp.driver.id": id,
+            "driver.kind": "selenium",
+            "driver.platform": platform,
+          },
+          () => createFirefoxDriver(capabilities, serverUrl, driverOptions),
+        );
+        break;
+      }
+
       case undefined:
         logger.error(`Unsupported platformName: ${platformName}`);
         throw new Error(
-          `Unsupported platformName: ${platformName}. Supported values: chrome, chromium, ios, android`,
+          `Unsupported platformName: ${platformName}. Supported values: chrome, chromium, firefox, ios, android`,
         );
 
       default:
@@ -432,9 +446,7 @@ export const startMcpTool = McpTool.define("start", {
     McpState.registerDriver(id, al, driver, artifactsStore);
 
     const model = await al.model();
-    let driverName = al.driver.constructor.name
-      .replace(/Driver$/, "")
-      .toLowerCase();
+    let driverName: string = al.driver.kind;
 
     if (platform == "chromium" && Env.ALUMNIUM_DRIVER === "cloakbrowser") {
       driverName += " (cloakbrowser)";

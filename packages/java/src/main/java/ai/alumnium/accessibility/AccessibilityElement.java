@@ -13,6 +13,7 @@ import java.util.List;
 public final class AccessibilityElement {
   private Integer id;
   private Long backendNodeId;
+  private String sharedId;
   private String name;
   private String label;
   private String type;
@@ -25,6 +26,7 @@ public final class AccessibilityElement {
   private String androidBounds;
   private Object frame;
   private List<Integer> frameChain;
+  private List<String> frameSharedIds;
 
   public AccessibilityElement() {}
 
@@ -43,6 +45,15 @@ public final class AccessibilityElement {
 
   public AccessibilityElement backendNodeId(Long v) {
     this.backendNodeId = v;
+    return this;
+  }
+
+  public String sharedId() {
+    return sharedId;
+  }
+
+  public AccessibilityElement sharedId(String v) {
+    this.sharedId = v;
     return this;
   }
 
@@ -151,6 +162,16 @@ public final class AccessibilityElement {
 
   public AccessibilityElement frameChain(List<Integer> v) {
     this.frameChain = v;
+    return this;
+  }
+
+  /** For WebDriver BiDi: chain of iframe shared IDs from root to element's frame. */
+  public List<String> frameSharedIds() {
+    return frameSharedIds;
+  }
+
+  public AccessibilityElement frameSharedIds(List<String> v) {
+    this.frameSharedIds = v;
     return this;
   }
 }

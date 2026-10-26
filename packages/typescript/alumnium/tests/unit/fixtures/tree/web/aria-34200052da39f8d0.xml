@@ -1,0 +1,158 @@
+<RootWebArea raw_id=1>
+  <heading raw_id=2 sharedId="9a6e2f4c-2c25-48bb-b110-e54e837d12b3" name="Data Tables" level=3 />
+  <paragraph raw_id=3 sharedId="7895e3d6-6cc6-4690-9516-03da16679d4f">
+    <text raw_id=4 name="Often times when you see a table it contains data which is sortable -- sometimes with actions that can be taken within each row (e.g. edit, delete). And it can be challenging to automate interaction with sets of data in a table depending on how it is constructed." />
+  </paragraph>
+  <heading raw_id=5 sharedId="0847aa99-efa7-485a-9a12-4a5937eeadc9" name="Example 1" level=4 />
+  <paragraph raw_id=6 sharedId="b3a49b96-24fe-41c8-8276-5436c774f31c">
+    <text raw_id=7 name="No Class or ID attributes to signify groupings of rows and columns" />
+  </paragraph>
+  <table raw_id=8 sharedId="eac2637f-0ef5-4319-a8a2-ae9b5d941636">
+    <rowgroup raw_id=9 sharedId="79b3c4bd-4c08-413f-8bec-860583805cd2">
+      <row raw_id=10 sharedId="8090d81c-ccdc-4fce-8459-a5d5bcb33f6f" name="Last Name First Name Email Due Web Site Action">
+        <columnheader raw_id=11 sharedId="5ab0aaa8-2f92-4939-a308-d93cd32439d4" name="Last Name">
+          <button raw_id=12 sharedId="392bcd10-6f6d-4146-863e-4440102dc655" name="Last Name" />
+        </columnheader>
+        <columnheader raw_id=13 sharedId="f766e995-68bb-4c0e-bcde-808f74c35600" name="First Name">
+          <button raw_id=14 sharedId="31217b46-4c03-4289-9235-781c5a3ae065" name="First Name" />
+        </columnheader>
+        <columnheader raw_id=15 sharedId="8ed08b41-8010-4bfa-8c83-e092447bbf84" name="Email">
+          <button raw_id=16 sharedId="f4bb9a9f-9dd7-40cc-af78-7f621467ee6c" name="Email" />
+        </columnheader>
+        <columnheader raw_id=17 sharedId="f4df007d-b783-4d3a-a354-ae437b00687f" name="Due">
+          <button raw_id=18 sharedId="03d601e7-1fb2-4634-a7d8-c5bba40a620b" name="Due" />
+        </columnheader>
+        <columnheader raw_id=19 sharedId="6f73bfe8-6936-42e7-8b94-d57b7f266add" name="Web Site">
+          <button raw_id=20 sharedId="5c0c24d2-fcc7-48c6-98a3-186a804a9c1d" name="Web Site" />
+        </columnheader>
+        <columnheader raw_id=21 sharedId="912a6e35-2bcb-4f55-bfb2-10f89adfb794" name="Action">
+          <button raw_id=22 sharedId="3f8c38ac-0dfc-4f48-bd6a-9ede761b5c8d" name="Action" />
+        </columnheader>
+      </row>
+    </rowgroup>
+    <rowgroup raw_id=23 sharedId="8be27ef1-bd20-48ec-8ae1-02f80f5d3c5b">
+      <row raw_id=24 sharedId="144c4676-5f8d-41d1-aaf1-6508165411ff" name="Bach Frank fbach@yahoo.com $51.00 http://www.frank.com edit delete">
+        <cell raw_id=25 sharedId="e47f7b82-4fe5-4a80-a4b3-ac3b589b1a83" name="Bach" />
+        <cell raw_id=26 sharedId="fbdc3b5d-f7cf-424f-a565-9b409fb16a70" name="Frank" />
+        <cell raw_id=27 sharedId="dc630593-da28-4b64-8768-010364cd0d74" name="fbach@yahoo.com" />
+        <cell raw_id=28 sharedId="b990e2c4-5563-4425-a5fd-e7b7a04ac4fe" name="$51.00" />
+        <cell raw_id=29 sharedId="743155f5-0e21-497d-b401-74bdfc8a8288" name="http://www.frank.com" />
+        <cell raw_id=30 sharedId="1cd6eec4-0ed4-452a-b669-3d066de789eb" name="edit delete">
+          <link raw_id=31 sharedId="03b8e8bd-0e9b-41c6-a862-3b188adb2d30" name="edit" url="#edit" />
+          <link raw_id=32 sharedId="00020d5a-c963-4066-b871-e19fc42acd87" name="delete" url="#delete" />
+        </cell>
+      </row>
+      <row raw_id=33 sharedId="dcedff94-4c57-4be5-b589-87e5b51ad40b" name="Conway Tim tconway@earthlink.net $50.00 http://www.timconway.com edit delete">
+        <cell raw_id=34 sharedId="cc1ca3e6-b29c-4a91-bc94-788da15d3edf" name="Conway" />
+        <cell raw_id=35 sharedId="fa114b42-ba5a-472a-bec8-a0c9a31eb247" name="Tim" />
+        <cell raw_id=36 sharedId="fb0175aa-bb08-472a-b84b-d9144d86b752" name="tconway@earthlink.net" />
+        <cell raw_id=37 sharedId="bdda045c-dca6-4dd3-80b4-648a8a97bbb0" name="$50.00" />
+        <cell raw_id=38 sharedId="ca3fccb1-a385-4688-bd8a-79b7ffc67d7b" name="http://www.timconway.com" />
+        <cell raw_id=39 sharedId="665460aa-bcf4-47db-82d4-3b9985431655" name="edit delete">
+          <link raw_id=40 sharedId="18ffa5e8-0cc2-4d5c-bec9-f07d12c5fddf" name="edit" url="#edit" />
+          <link raw_id=41 sharedId="4aed58ab-1928-4964-80e5-86f3e82a5970" name="delete" url="#delete" />
+        </cell>
+      </row>
+      <row raw_id=42 sharedId="978ed970-4087-470a-8317-a8decaea8658" name="Doe Jason jdoe@hotmail.com $100.00 http://www.jdoe.com edit delete">
+        <cell raw_id=43 sharedId="6a7888aa-83dd-446e-8d46-afd5ceece377" name="Doe" />
+        <cell raw_id=44 sharedId="0b5464f1-1a3a-49eb-b7b1-53f472821b65" name="Jason" />
+        <cell raw_id=45 sharedId="ad649e99-7ffc-4619-b37a-9ac9a875250f" name="jdoe@hotmail.com" />
+        <cell raw_id=46 sharedId="46aeef36-0bcf-4035-bab1-2d238091d1ea" name="$100.00" />
+        <cell raw_id=47 sharedId="b319a6e9-9772-4d5b-9d50-596dfb34c87b" name="http://www.jdoe.com" />
+        <cell raw_id=48 sharedId="669100f6-0d80-45ae-9028-65a4c812294c" name="edit delete">
+          <link raw_id=49 sharedId="3776eef1-9e8a-4bb0-bda5-5488d1817d8a" name="edit" url="#edit" />
+          <link raw_id=50 sharedId="d1723f44-01bd-454d-a987-fef79a0d5d65" name="delete" url="#delete" />
+        </cell>
+      </row>
+      <row raw_id=51 sharedId="c52af21c-be65-4096-9078-dcaeb0c27477" name="Smith John jsmith@gmail.com $50.00 http://www.jsmith.com edit delete">
+        <cell raw_id=52 sharedId="31ce3d52-ea30-4f16-a2fa-acb01930b056" name="Smith" />
+        <cell raw_id=53 sharedId="930c1f61-2014-4914-8901-d293d40413e1" name="John" />
+        <cell raw_id=54 sharedId="b5ba608d-544f-4aaa-a540-5cd60e901129" name="jsmith@gmail.com" />
+        <cell raw_id=55 sharedId="062a1b9c-0126-4542-a72f-60870dee4723" name="$50.00" />
+        <cell raw_id=56 sharedId="c24a428d-7c76-4744-bb3d-8e77d6717019" name="http://www.jsmith.com" />
+        <cell raw_id=57 sharedId="b930ab68-cc47-45a6-b403-00ea9b266278" name="edit delete">
+          <link raw_id=58 sharedId="da55ad1c-545c-49a2-a7e2-2dfeed1e01ae" name="edit" url="#edit" />
+          <link raw_id=59 sharedId="21088203-5d1e-4eb3-9349-8b69c7237fb5" name="delete" url="#delete" />
+        </cell>
+      </row>
+    </rowgroup>
+  </table>
+  <heading raw_id=60 sharedId="3c2f064d-6dec-45e4-9bac-bbace814f9c4" name="Example 2" level=4 />
+  <paragraph raw_id=61 sharedId="6ca7903f-8f55-4f19-9c94-06d32573dbd3">
+    <text raw_id=62 name="Class and ID attributes to signify groupings of rows and columns" />
+  </paragraph>
+  <table raw_id=63 sharedId="fbdfb7f9-be66-44ea-be0f-0156c60d85b7">
+    <rowgroup raw_id=64 sharedId="286581e8-d35d-4a9c-bb3c-8cf9eab4fc3e">
+      <row raw_id=65 sharedId="3ec69f9a-0da7-4947-bb37-32c8efd1f524" name="Last Name First Name Email Due Web Site Action">
+        <columnheader raw_id=66 sharedId="c6cd2fbe-e0d0-4f96-a0ca-c18c70333cc2" name="Last Name">
+          <button raw_id=67 sharedId="6a2abbe6-21a1-4dcd-954c-c8e3b5d05085" name="Last Name" />
+        </columnheader>
+        <columnheader raw_id=68 sharedId="a40ebdf4-bd9a-4f58-9efa-b4e585ef47a0" name="First Name">
+          <button raw_id=69 sharedId="f93a4d93-bcae-4ea4-a58b-6eeb4a4cc03d" name="First Name" />
+        </columnheader>
+        <columnheader raw_id=70 sharedId="a2e5573b-aa01-49d8-a942-a1ca6fb17340" name="Email">
+          <button raw_id=71 sharedId="71d19462-19f1-468d-a10f-c837a8a3cd82" name="Email" />
+        </columnheader>
+        <columnheader raw_id=72 sharedId="27159481-52d0-4b30-9ff8-6eabd7b42ed7" name="Due">
+          <button raw_id=73 sharedId="366b12a2-bd63-44b9-9bde-2811d8b52c67" name="Due" />
+        </columnheader>
+        <columnheader raw_id=74 sharedId="ed145cb0-0354-4986-9511-22d6c0a820eb" name="Web Site">
+          <button raw_id=75 sharedId="3dcc0fc4-873c-4234-a2ab-1554ed4dc761" name="Web Site" />
+        </columnheader>
+        <columnheader raw_id=76 sharedId="5d6c5ac7-f790-4cd2-9143-e43e7e6df119" name="Action">
+          <button raw_id=77 sharedId="020f3bf6-cf59-453a-b526-e8a9c80673bb" name="Action" />
+        </columnheader>
+      </row>
+    </rowgroup>
+    <rowgroup raw_id=78 sharedId="ddb876e2-6e88-4526-8e78-e8246c09cc59">
+      <row raw_id=79 sharedId="09c9c24a-5d62-4a6e-b7c5-f001969648cc" name="Bach Frank fbach@yahoo.com $51.00 http://www.frank.com edit delete">
+        <cell raw_id=80 sharedId="50ba5226-0178-4ce4-a934-e25bc8ea1be2" name="Bach" />
+        <cell raw_id=81 sharedId="9706cdb7-6c93-403a-9125-c295d66596b7" name="Frank" />
+        <cell raw_id=82 sharedId="c86dc101-10ef-47e2-ae94-100a258ab0f8" name="fbach@yahoo.com" />
+        <cell raw_id=83 sharedId="5593f328-7bb7-4702-8fc7-216bb862248a" name="$51.00" />
+        <cell raw_id=84 sharedId="dbc32154-47b9-4897-abf2-152d5f69797f" name="http://www.frank.com" />
+        <cell raw_id=85 sharedId="a28e02a4-02cd-4611-993d-1740081814fd" name="edit delete">
+          <link raw_id=86 sharedId="62a7bc6b-2c08-49fe-aea5-a447a788c0ea" name="edit" url="#edit" />
+          <link raw_id=87 sharedId="37e05cae-3df3-4a70-b666-e01248066776" name="delete" url="#delete" />
+        </cell>
+      </row>
+      <row raw_id=88 sharedId="aac3ba15-1c15-4060-8293-582b25bd0169" name="Doe Jason jdoe@hotmail.com $100.00 http://www.jdoe.com edit delete">
+        <cell raw_id=89 sharedId="a9c0a59a-5de9-47ee-b124-23d17b2589e2" name="Doe" />
+        <cell raw_id=90 sharedId="dc9c8bf8-7e6e-4ed2-89a0-b21db253de36" name="Jason" />
+        <cell raw_id=91 sharedId="d99f0568-197b-46c9-a297-2339858ea4ee" name="jdoe@hotmail.com" />
+        <cell raw_id=92 sharedId="927fa385-3625-4bfa-b600-95f39aa4e282" name="$100.00" />
+        <cell raw_id=93 sharedId="c7b52778-0597-411f-9043-b5e40767c9f0" name="http://www.jdoe.com" />
+        <cell raw_id=94 sharedId="dea75691-c1c7-4dcb-871a-ec4eea0cbcc2" name="edit delete">
+          <link raw_id=95 sharedId="4b63b9a5-44cb-45d2-aaa6-3badf3e8928b" name="edit" url="#edit" />
+          <link raw_id=96 sharedId="42d8837d-409a-4e2b-a04a-9e105091cfd5" name="delete" url="#delete" />
+        </cell>
+      </row>
+      <row raw_id=97 sharedId="9ed8eb08-07d4-4300-89a0-cce05a11e15c" name="Smith John jsmith@gmail.com $50.00 http://www.jsmith.com edit delete">
+        <cell raw_id=98 sharedId="47e9e6f2-4df4-4693-a8aa-7beb04975a12" name="Smith" />
+        <cell raw_id=99 sharedId="9fdf0e30-5d2d-44a4-81d3-b9c80bab5075" name="John" />
+        <cell raw_id=100 sharedId="c7d99c3e-1ddd-47ce-ba6d-0502b8942d18" name="jsmith@gmail.com" />
+        <cell raw_id=101 sharedId="5f7f67d2-d2a1-4c7f-b2f2-0e61346b4874" name="$50.00" />
+        <cell raw_id=102 sharedId="7960ebb7-6c69-4581-89a0-ce2bc6b8185a" name="http://www.jsmith.com" />
+        <cell raw_id=103 sharedId="0dd89262-2f1c-40be-9c80-9a95a3fdb88d" name="edit delete">
+          <link raw_id=104 sharedId="680a8810-bdda-4660-b629-6cc68d739068" name="edit" url="#edit" />
+          <link raw_id=105 sharedId="857e7394-1573-495e-88dc-815530a5ef10" name="delete" url="#delete" />
+        </cell>
+      </row>
+      <row raw_id=106 sharedId="c7d2e5c4-122a-4a5e-b55f-032dad99d1e5" name="Conway Tim tconway@earthlink.net $50.00 http://www.timconway.com edit delete">
+        <cell raw_id=107 sharedId="09f85620-9492-4974-858b-a7affdc8c8f4" name="Conway" />
+        <cell raw_id=108 sharedId="723e5a42-8097-4c6b-85ac-84c9b20f20cc" name="Tim" />
+        <cell raw_id=109 sharedId="fa63b6fa-0279-4e2e-8edc-61319989cdc2" name="tconway@earthlink.net" />
+        <cell raw_id=110 sharedId="3d0f6452-4d9f-4c6f-9073-6eb78f77e677" name="$50.00" />
+        <cell raw_id=111 sharedId="f2f0c3d5-666a-41d9-80f4-7e0e83edbc33" name="http://www.timconway.com" />
+        <cell raw_id=112 sharedId="6b0e14f2-c785-4b66-ab77-8060d0e33fe3" name="edit delete">
+          <link raw_id=113 sharedId="4657ce96-4129-4350-9f22-b2758e7f29bd" name="edit" url="#edit" />
+          <link raw_id=114 sharedId="6ee4ccaa-e4a4-46ba-b0fe-065931fe8316" name="delete" url="#delete" />
+        </cell>
+      </row>
+    </rowgroup>
+  </table>
+  <contentinfo raw_id=115 sharedId="f17e6bd6-606e-4ea5-a4ca-dfd59c3c5320">
+    <separator raw_id=116 sharedId="718344e1-1df4-48fb-8678-75446304a175" />
+    <text raw_id=117 name="Powered by Elemental Selenium" />
+  </contentinfo>
+</RootWebArea>

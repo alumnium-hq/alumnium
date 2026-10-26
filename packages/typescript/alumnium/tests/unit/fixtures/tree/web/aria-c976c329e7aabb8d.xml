@@ -1,0 +1,7 @@
+<RootWebArea raw_id=1>
+  <heading raw_id=2 sharedId="4706655d-0723-461d-846e-4eeb3677d29f" name="ARIA Slider Test Page" level=1 />
+  <paragraph raw_id=3 sharedId="6a875725-59a4-4db3-9043-f08244525788">
+    <text raw_id=4 name="Distance: 70 miles" />
+  </paragraph>
+  <slider raw_id=5 sharedId="f3174b26-7285-4141-8ce8-669ba0a7a143" name="Distance" />
+</RootWebArea>

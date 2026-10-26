@@ -51,7 +51,9 @@ export class Session {
   });
 
   static defaultDriver(platform: Driver.Platform): Driver.Kind {
-    return platform === "chromium" ? "selenium" : "appium";
+    return platform === "chromium" || platform === "firefox"
+      ? "selenium"
+      : "appium";
   }
 
   sessionId: SessionId;

@@ -30,6 +30,11 @@ maestro-ios | maestro-android)
 	export ALUMNIUM_MAESTRO_OS="${ALUMNIUM_DRIVER#maestro-}"
 	export ALUMNIUM_DRIVER="maestro"
 	;;
+selenium-firefox)
+	export ALUMNIUM_SELENIUM_BROWSER="firefox"
+	export ALUMNIUM_DRIVER="selenium"
+	export ALUMNIUM_TEST_MAX_CONCURRENCY="${ALUMNIUM_TEST_MAX_CONCURRENCY:-2}"
+	;;
 esac
 
 failed=0
@@ -84,6 +89,12 @@ fi
 echo_setup() {
 	echo "🔵 ALUMNIUM_MODEL=\"$ALUMNIUM_MODEL\""
 	echo "🔵 ALUMNIUM_DRIVER=\"$ALUMNIUM_DRIVER\""
+	if [ "$ALUMNIUM_DRIVER" = "selenium" ]; then
+		echo "🔵 ALUMNIUM_SELENIUM_BROWSER=\"${ALUMNIUM_SELENIUM_BROWSER:-chrome}\""
+	fi
+	if [ -n "${ALUMNIUM_TEST_MAX_CONCURRENCY:-}" ]; then
+		echo "🔵 ALUMNIUM_TEST_MAX_CONCURRENCY=$ALUMNIUM_TEST_MAX_CONCURRENCY"
+	fi
 	echo "🔵 ALUMNIUM_LOG_FILENAME=\"$ALUMNIUM_LOG_FILENAME\""
 	echo "🔵 ALUMNIUM_CACHE_PATH=\"$ALUMNIUM_CACHE_PATH\""
 	echo "🔵 ALUMNIUM_TEST_CACHE=$test_cache"

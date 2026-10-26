@@ -1,0 +1,55 @@
+<RootWebArea raw_id=1>
+  <complementary raw_id=2 sharedId="09e3b8bd-191f-479e-bd25-74e60a7424e7">
+    <heading raw_id=3 sharedId="a60da05d-f5f9-4500-90e4-6bad2174f776" name="Vue.js" level=3 />
+    <heading raw_id=4 sharedId="da367110-2b27-426c-8cc6-194c8c6d8a11" name="Example" level=5 />
+    <link raw_id=5 sharedId="9dfc82fa-f148-4791-90e7-9d780430753c" name="Source" url="https://github.com/tastejs/todomvc/tree/gh-pages/examples/vue" />
+    <separator raw_id=6 sharedId="2b3b0c42-edea-4b7a-a85d-7e97cc6a9017" />
+    <blockquote raw_id=7 sharedId="fd17bb3b-145c-48cf-9eb1-f65a26d7dead">
+      <paragraph raw_id=8 sharedId="e64353f7-5632-4323-a5e8-bfbe551a60c7">
+        <text raw_id=9 name="“ Vue is an approachable, progressive framework for building user interfaces. Components are authored as Single-File Components, with reactive state via the Composition API and ` ”" />
+      </paragraph>
+    </blockquote>
+  </complementary>
+  <link raw_id=10 sharedId="d34afe3c-df07-4cba-aa3c-e71ae8fac562" name="todos" url="#/">
+    <heading raw_id=11 sharedId="fc4a07a0-86be-4624-b475-8cb1e729eb3b" name="todos" level=1 />
+  </link>
+  <textbox raw_id=12 sharedId="3406ab81-080a-487d-b104-b2cc6426e957" name="What needs to be done?" />
+  <main raw_id=13 sharedId="006df770-a6f8-4c6b-8236-1487451f3085">
+    <checkbox raw_id=14 sharedId="0382af45-dcbf-4b4e-9b5d-bd6d3b258567" name="❯ Toggle All Input" checked="false" />
+    <text raw_id=15 name="❯ Toggle All Input" />
+    <list raw_id=16 sharedId="325faa2f-7bb4-416b-b523-54e7375b14dc">
+      <listitem raw_id=17 sharedId="c0008339-2f8f-4b78-b825-235b8d203ecf">
+        <checkbox raw_id=18 sharedId="64115053-0722-4b54-9275-fc58196210e9" checked="false" />
+        <text raw_id=19 name="Buy bread" />
+      </listitem>
+    </list>
+  </main>
+  <strong raw_id=20 sharedId="b6eba136-6a86-4c73-ba1d-832f07537911">
+    <text raw_id=21 name=1 />
+  </strong>
+  <text raw_id=22 name="item left" />
+  <list raw_id=23 sharedId="7aa576f2-fab0-48f4-b258-61a037ad19e9">
+    <listitem raw_id=24 sharedId="1fb625db-0ee2-46c3-b291-311e73121df4">
+      <link raw_id=25 sharedId="60e40a67-f363-41c2-a526-d28c75fbd5ec" name="All" url="#/" />
+    </listitem>
+    <listitem raw_id=26 sharedId="c5d0b697-a26a-4cbc-9b45-6537f10a04a1">
+      <link raw_id=27 sharedId="30c86675-4ccc-4d70-9086-2aefd95c7700" name="Active" url="#/active" />
+    </listitem>
+    <listitem raw_id=28 sharedId="360e7f7d-6b36-40e7-85c5-08f6803ae58f">
+      <link raw_id=29 sharedId="5ddc7000-b7cb-4b88-b354-8bb2b573ed27" name="Completed" url="#/completed" />
+    </listitem>
+  </list>
+  <button raw_id=30 sharedId="6b8a062f-812a-44cb-be65-08f209a58dd4" name="Clear completed" />
+  <contentinfo raw_id=31 sharedId="49baf17c-3cff-4a0a-acb0-e51827c8d447">
+    <paragraph raw_id=32 sharedId="e841dbcf-4f93-4deb-8051-1d04956bfcf9">
+      <text raw_id=33 name="Double-click to edit a todo" />
+    </paragraph>
+    <paragraph raw_id=34 sharedId="fe6a09c0-179c-4300-b780-e94f071c1987">
+      <text raw_id=35 name="Created by the TodoMVC Team" />
+    </paragraph>
+    <paragraph raw_id=36 sharedId="108b108e-4f3f-4925-9195-7c2699be61ab">
+      <text raw_id=37 name="Part of" />
+      <link raw_id=38 sharedId="715a3d69-03ba-4fa7-a528-14fecd7b4e22" name="TodoMVC" url="http://todomvc.com" />
+    </paragraph>
+  </contentinfo>
+</RootWebArea>

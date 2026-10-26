@@ -5,11 +5,13 @@ description: Alumnium reference and notes
 
 ## Browser Support
 
-Alumnium works by building an accessibility tree of the webpage. Unfortunately, there is no standard API in browsers to provide this tree. Due to this limitation, the current version of Alumnium only works in Chromium-based browsers such as Google Chrome, Microsoft Edge, Opera, and others. Browser support is implemented via:
+Alumnium works by building an accessibility tree of the webpage, supporting Chromium-based browsers (such as Google Chrome, Microsoft Edge, and Opera) and Firefox. Browser support is implemented via:
 
-- Selenium
-- Playwright
-- CloakBrowser (only in MCP server)
+- Selenium, for Chromium-based browsers and Firefox
+- Playwright, for Chromium-based browsers
+- CloakBrowser, for Chromium-based browsers (only in MCP server)
+
+Firefox requires WebDriver BiDi to be enabled when creating the Selenium driver. Cross-origin frames are not supported in Firefox yet.
 
 ## Mobile Support
 
@@ -268,7 +270,7 @@ Set to `false` to start Playwright in headed mode. Only used in the [MCP server]
 
 ### `ALUMNIUM_SELENIUM_BROWSER_VERSION`
 
-Sets the `browserVersion` capability for Selenium, e.g. `stable`. Selenium Manager then downloads a matching Chrome for Testing build instead of using the locally installed Chrome. Only used in the [MCP server][3].
+Sets the `browserVersion` capability for Selenium, e.g. `stable`. Selenium Manager then downloads a matching browser (Chrome for Testing or Firefox) instead of using the locally installed one. Only used in the [MCP server][3].
 
 ### `ALUMNIUM_XCODE_AUTO_APPROVE`
 
