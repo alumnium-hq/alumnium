@@ -7,6 +7,10 @@ describe("TreeFactory.kindFor", () => {
     expect(TreeFactory.kindFor("chromium", "playwright")).toBe("chromium");
   });
 
+  it("gives Firefox the ARIA snapshot tree", () => {
+    expect(TreeFactory.kindFor("firefox", "selenium")).toBe("aria");
+  });
+
   it("picks the Appium tree by mobile OS", () => {
     expect(TreeFactory.kindFor("ios", "appium")).toBe("xcuitest");
     expect(TreeFactory.kindFor("android", "appium")).toBe("uiautomator2");

@@ -5,9 +5,11 @@ describe("Shadow DOM", () => {
   const it = baseIt.override("setup", async ({ setup, skip }) => {
     return async (options) => {
       const result = await setup(options);
-      const { isMobile } = result;
+      const { isFirefox, isMobile } = result;
 
       if (isMobile) skip("Shadow DOM support is not implemented in Appium yet");
+      if (isFirefox)
+        skip("Shadow DOM support is not implemented in Firefox yet");
 
       return result;
     };

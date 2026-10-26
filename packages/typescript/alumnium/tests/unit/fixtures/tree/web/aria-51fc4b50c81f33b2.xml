@@ -1,0 +1,8 @@
+<RootWebArea raw_id=1>
+  <heading raw_id=2 sharedId="2665e0b2-2305-46d3-a41b-538c6b4c2091" name="File Uploader" level=3 />
+  <paragraph raw_id=3 sharedId="728b4d1b-993b-4fac-9e7f-766485284539">
+    <text raw_id=4 name="Choose a file on your system and then click upload." />
+  </paragraph>
+  <button raw_id=5 sharedId="8d7f61a8-2e3a-4c61-a04e-42ecba2810be" name="Choose File" />
+  <button raw_id=6 sharedId="94f6ed19-ab3b-4185-b3a7-6b2c543eff20" name="Upload" />
+</RootWebArea>

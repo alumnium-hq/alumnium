@@ -1,0 +1,6 @@
+<RootWebArea>
+  <heading name="File Uploader" id=2 level=3 />
+  <paragraph id=3>Choose a file on your system and then click upload.</paragraph>
+  <button name="Choose File" id=5 />
+  <button name="Upload" id=6 />
+</RootWebArea>

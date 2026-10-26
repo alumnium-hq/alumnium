@@ -1,0 +1,601 @@
+<RootWebArea>
+  <banner id=2>
+    <link id=3 url="/">
+      <img name="Brave logo" id=4 />
+    </link>
+    <textbox name="Search" id=5 placeholder="Ask anything, find anything…">selenium</textbox>
+    <button name="Clear" id=7>
+      <img id=8 />
+    </button>
+    <button name="Search" id=9>
+      <img id=10 />
+    </button>
+    <button name="Ask" id=11>
+      <img id=12 />
+    </button>
+    <button name="Rerank" id=13>
+      <img id=14 />
+    </button>
+    <button name="Quick settings" id=15>
+      <img id=16 />
+    </button>
+  </banner>
+  <navigation id=17>
+    <list id=18>
+      <listitem id=19>
+        <link name="Ask" id=20 url="/ask?q=selenium&amp;source=web" />
+      </listitem>
+      <listitem id=21>
+        <link name="All" id=22 url="/search?q=selenium&amp;source=web" />
+      </listitem>
+      <listitem id=23>
+        <link name="Images" id=24 url="/images?q=selenium&amp;source=web" />
+      </listitem>
+      <listitem id=25>
+        <link name="News" id=26 url="/news?q=selenium&amp;source=web" />
+      </listitem>
+      <listitem id=27>
+        <link name="Videos" id=28 url="/videos?q=selenium&amp;source=web" />
+      </listitem>
+      <listitem id=29>
+        <link name="Maps" id=30 url="/maps/search?q=selenium&amp;source=web" />
+      </listitem>
+      <listitem id=31>
+        <link name="Goggles" id=32 url="/goggles?q=selenium&amp;source=web" />
+      </listitem>
+    </list>
+    <list id=33>
+      <button name="Filters" id=34>
+        <img id=35 />
+      </button>
+    </list>
+  </navigation>
+  <main id=36>
+    <paragraph id=37>
+      <strong id=38>Selenium</strong>
+      is an essential trace mineral that functions as a cofactor for selenoproteins, playing a critical role in
+      <strong id=41>thyroid hormone metabolism</strong>
+      ,
+      <strong id=44>immune system support</strong>
+      , and protection against
+      <strong id=47>oxidative stress</strong>
+      via antioxidant enzymes like glutathione peroxidase.
+      <button id=50>
+        <img id=51 />
+      </button>
+    </paragraph>
+    <paragraph id=52>
+      The
+      <strong id=54>Recommended Dietary Allowance (RDA)</strong>
+      for most adults is
+      <strong id=57>55 micrograms (mcg)</strong>
+      daily, increasing to 60–70 mcg during pregnancy and lactation.
+      <button id=60>
+        <img id=61 />
+      </button>
+      The
+      <strong id=63>Tolerable Upper Intake Level (UL)</strong>
+      is
+      <strong id=66>400 mcg per day</strong>
+      ; exceeding this can cause toxicity, characterized by brittle hair, nail loss, and gastrointestinal distress.
+      <button id=69>
+        <img id=70 />
+      </button>
+    </paragraph>
+    <paragraph id=71>Key dietary sources include:</paragraph>
+    <list id=73>
+      <listitem id=74>
+        <paragraph id=75>
+          <strong id=76>Brazil nuts</strong>
+          : The most potent source, with a single nut containing ~95 mcg.
+          <button id=79>
+            <img id=80 />
+          </button>
+        </paragraph>
+      </listitem>
+      <listitem id=81>
+        <paragraph id=82>
+          <strong id=83>Seafood</strong>
+          : Tuna, halibut, sardines, and oysters.
+        </paragraph>
+      </listitem>
+      <listitem id=86>
+        <paragraph id=87>
+          <strong id=88>Animal proteins</strong>
+          : Organ meats, poultry, eggs, and red meat.
+          <button id=91>
+            <img id=92 />
+          </button>
+        </paragraph>
+      </listitem>
+      <listitem id=93>
+        <paragraph id=94>
+          <strong id=95>Grains and vegetables</strong>
+          : Whole grains, mushrooms, and dairy products (content varies by soil quality).
+        </paragraph>
+      </listitem>
+    </list>
+    AI-generated answer. Please verify critical facts.
+    <link id=99 url="/ask?q=elaborate&amp;source=chatllm-elaborate&amp;conversation=09b71d62211b89c73c1cb21675f8684993b1&amp;query_type=answer_with_ai_follow_up">
+      <img id=100 />
+      Elaborate
+    </link>
+    <link id=102 url="/ask?q=What%20are%20signs%20of%20selenium%20deficiency%3F&amp;source=llmFollowup&amp;conversation=09b71d62211b89c73c1cb21675f8684993b1&amp;query_type=answer_with_ai_follow_up">
+      <img id=103 />
+      What are signs of selenium deficiency?
+    </link>
+    <link id=105 url="/ask?q=How%20does%20soil%20quality%20affect%20selenium%20levels%3F&amp;source=llmFollowup&amp;conversation=09b71d62211b89c73c1cb21675f8684993b1&amp;query_type=answer_with_ai_follow_up">
+      <img id=106 />
+      How does soil quality affect selenium levels?
+    </link>
+    <link id=108 url="/ask?q=Can%20selenium%20supplements%20cause%20interactions%20with%20medications%3F&amp;source=llmFollowup&amp;conversation=09b71d62211b89c73c1cb21675f8684993b1&amp;query_type=answer_with_ai_follow_up">
+      <img id=109 />
+      Can selenium supplements cause interactions with medications?
+    </link>
+    <button id=111>
+      <img id=112 />
+      Copy
+    </button>
+    <button id=114>
+      <img id=115 />
+      Share
+    </button>
+    <button name="Good response" id=117>
+      <img id=118 />
+    </button>
+    <button name="Bad response" id=119>
+      <img id=120 />
+    </button>
+    <button name="View all" id=121>
+      <img name="🌐" id=122 />
+      <img name="🌐" id=123 />
+      <img name="🌐" id=124 />
+      <img name="🌐" id=125 />
+      +2
+    </button>
+    <textbox name="Search" id=127 placeholder="Ask a follow-up question" />
+    <button id=128 disabled>
+      <img id=129 />
+    </button>
+    <button id=130>
+      More
+      <img id=132 />
+    </button>
+    <main id=133>
+      <link id=134 url="https://www.webmd.com/a-to-z-guides/supplement-guide-selenium">
+        <img name="🌐" id=135 />
+        WebMD webmd.com › a to z guides › reference Selenium: Benefits, Uses, Side Effects, Dosage, and More
+      </link>
+      August 4, 2025 - Selenium is
+      <strong id=138>a trace mineral</strong>
+      essential for thyroid and immune health. Learn the benefits, food sources, deficiency, recommended intake, and risks of too much selenium.
+      <link id=141 url="https://ods.od.nih.gov/factsheets/Selenium-HealthProfessional/">
+        <img name="🌐" id=142 />
+        Office of Dietary Supplements ods.od.nih.gov › factsheets › Selenium-HealthProfessional Selenium - Health Professional Fact Sheet
+      </link>
+      3 hours ago - Selenium is
+      <strong id=145>a constituent of 25 selenoproteins, including thioredoxin reductases, glutathione peroxidases, and selenoprotein P</strong>
+      [1]. Selenoproteins play critical roles in thyroid hormone metabolism, DNA synthesis, reproduction, and protection from oxidative damage and infection [2-4].
+      <img id=148 />
+      Discussions
+      <separator id=150 />
+      <group id=151>
+        Playwright vs Selenium pro's/con's
+        <button id=153>
+          <img id=154 />
+        </button>
+      </group>
+      <img name="🌐" id=155 />
+      r/QualityAssurance
+      <img id=157 />
+      <img id=158 />
+      11
+      <img id=160 />
+      <img id=161 />
+      19
+      <img id=163 />
+      April 7, 2023
+      <group id=165>
+        What is the best way to learn Selenium?
+        <button id=167>
+          <img id=168 />
+        </button>
+      </group>
+      <img name="🌐" id=169 />
+      r/learnprogramming
+      <img id=171 />
+      <img id=172 />
+      7
+      <img id=174 />
+      <img id=175 />
+      2
+      <img id=177 />
+      April 23, 2022
+      <group id=179>
+        Selenium WebDriver or Cypress for new project?
+        <button id=181>
+          <img id=182 />
+        </button>
+      </group>
+      <img name="🌐" id=183 />
+      r/softwaretesting
+      <img id=185 />
+      <img id=186 />
+      26
+      <img id=188 />
+      <img id=189 />
+      16
+      <img id=191 />
+      June 16, 2022
+      <group id=193>
+        What problems did you solve by migrating from Selenium to Playwright?
+        <button id=195>
+          <img id=196 />
+        </button>
+      </group>
+      <img name="🌐" id=197 />
+      r/QualityAssurance
+      <img id=199 />
+      <img id=200 />
+      13
+      <img id=202 />
+      <img id=203 />
+      22
+      <img id=205 />
+      February 15, 2023
+      <button id=207>
+        Show more
+        <img id=209 />
+      </button>
+      <link name="Learn more" id=210 url="/help/discussions">
+        <img id=211 />
+      </link>
+      <img id=212 />
+      <button name="Feedback" id=213>
+        <img id=214 />
+      </button>
+      <img id=215 />
+      People also ask
+      <separator id=217 />
+      <group id=218>
+        What is selenium good for?
+        <button id=220>
+          <img id=221 />
+        </button>
+      </group>
+      <group id=222>
+        Who should not take selenium?
+        <button id=224>
+          <img id=225 />
+        </button>
+      </group>
+      <group id=226>
+        What are the side effects of selenium?
+        <button id=228>
+          <img id=229 />
+        </button>
+      </group>
+      <button name="Feedback" id=230>
+        <img id=231 />
+      </button>
+      <img id=232 />
+      Videos
+      <link id=234 url="https://www.youtube.com/watch?v=HApjk2FKJL0">
+        <img id=235 />
+        08:02
+        <img name="🌐" id=237 />
+        YouTube Selenium - The True Nutrients - YouTube September 5, 2024
+      </link>
+      <link id=239 url="https://www.youtube.com/watch?v=vS7OcVUi4fU">
+        <img id=240 />
+        03:39
+        <img name="🌐" id=242 />
+        YouTube Selenium Supplements: How They Work and Why Your Body Needs Them ... September 9, 2025
+      </link>
+      <link id=244 url="https://www.youtube.com/watch?v=qVmLqZ3QnMg">
+        <img id=245 />
+        10:21
+        <img name="🌐" id=247 />
+        YouTube Selenium is good for your heart &amp; joints (antioxidant) - YouTube June 4, 2023
+      </link>
+      <link id=249 url="https://www.youtube.com/watch?v=qVmLqZ3QnMg&amp;xstg=CAMSEBUJ_b-oH-PhF0yjBgb_zzE%3D">
+        <img id=250 />
+        <img name="🌐" id=251 />
+        youtube.com Selenium is good for your heart &amp; joints (antioxidant)
+      </link>
+      <link id=253 url="https://www.youtube.com/watch?v=vS7OcVUi4fU&amp;xstg=CAMSEBUJ_b-oH-PhF0yjBgb_zzE%3D">
+        <img id=254 />
+        <img name="🌐" id=255 />
+        youtube.com Selenium Supplements: How They Work and Why Your Body ...
+      </link>
+      <link id=257 url="https://www.youtube.com/watch?v=SpA5MJjvRt0">
+        <img id=258 />
+        08:03
+        <img name="🌐" id=260 />
+        YouTube Top Selenium Benefits You've Never Heard Before - YouTube February 9, 2023
+      </link>
+      <link name="View all" id=262 url="/videos?q=selenium&amp;source=vcluster" />
+      <link id=263 url="https://www.selenium.dev/">
+        <img name="🌐" id=264 />
+        Selenium selenium.dev Selenium
+      </link>
+      If you want to create robust, browser-based regression automation suites and tests, scale and distribute scripts across many environments, then you want to use Selenium WebDriver, a collection of language specific bindings to drive a browser - the way it is meant to be driven.
+      <link id=267 url="https://en.wikipedia.org/wiki/Selenium">
+        <img name="🌐" id=268 />
+        Wikipedia en.wikipedia.org › wiki › Selenium Selenium - Wikipedia
+      </link>
+      1 week ago -
+      <strong id=271>Selenium</strong>
+      is a chemical element; it has symbol Se and atomic number 34. It has various physical appearances, including a brick-red powder, a vitreous black solid, and a grey metallic-looking form. It seldom occurs in this elemental state or as pure ore compounds in Earth's crust.
+      <link id=274 url="https://en.wikipedia.org/wiki/Selenium" />
+      <link name="Characteristics" id=275 url="https://en.wikipedia.org/wiki/Selenium#Characteristics" />
+      <link name="Chemical compounds" id=276 url="https://en.wikipedia.org/wiki/Selenium#Chemical_compounds" />
+      <link name="History" id=277 url="https://en.wikipedia.org/wiki/Selenium#History" />
+      <link name="Occurrence" id=278 url="https://en.wikipedia.org/wiki/Selenium#Occurrence" />
+      <link name="Production" id=279 url="https://en.wikipedia.org/wiki/Selenium#Production" />
+      <button name="Show more" id=280>
+        <img id=281 />
+      </button>
+      <link id=282 url="https://nutritionsource.hsph.harvard.edu/selenium/">
+        <img name="🌐" id=283 />
+        The Nutrition Source nutritionsource.hsph.harvard.edu › selenium Selenium • The Nutrition Source
+      </link>
+      November 7, 2024 - Selenium is
+      <strong id=286>an essential component of various enzymes and proteins, called selenoproteins, that help to make DNA and protect against cell damage and infections</strong>
+      ; these proteins are also involved in reproduction and the metabolism of thyroid hormones.
+      <link id=289 url="https://nutritionsource.hsph.harvard.edu/selenium/" />
+      <link id=290 url="https://www.codeage.com/blogs/education/the-importance-of-selenium-understanding-the-benefits-of-selenium-supplements">
+        <img name="🌐" id=291 />
+        Codeage codeage.com › blogs › education › the-importance-of-selenium-understanding-the-benefits-of-selenium-supplements The Importance of Selenium: Understanding the Benefits of Selenium Supplements | Codeage
+      </link>
+      January 9, 2023 - Selenium is
+      <strong id=294>a trace mineral that is essential for human health</strong>
+      . It is found in a wide range of foods, including nuts, grains, and seafood, and is also available in supplement form.
+      <link id=297 url="https://www.codeage.com/blogs/education/the-importance-of-selenium-understanding-the-benefits-of-selenium-supplements" />
+      <img id=298 />
+      Find elsewhere
+      <link name="Google" id=300 url="/search?q=selenium%20!g" />
+      <link name="Bing" id=301 url="/search?q=selenium%20!b" />
+      <link name="Mojeek" id=302 url="/search?q=selenium%20!mojeek" />
+      <link id=303 url="https://lpi.oregonstate.edu/mic/minerals/selenium">
+        <img name="🌐" id=304 />
+        Linus Pauling Institute lpi.oregonstate.edu › mic › minerals › selenium Selenium | Linus Pauling Institute | Oregon State University
+      </link>
+      April 23, 2014 - The tolerable upper intake level (UL) for
+      <strong id=307>selenium</strong>
+      is 400 μg/day for adolescents and adults and includes both
+      <strong id=310>selenium</strong>
+      obtained from food, which averages about 100 μg/day for adults in the US, and
+      <strong id=313>selenium</strong>
+      from supplements.
+      <link id=316 url="https://www.arthritis-uk.org/information-and-support/understanding-arthritis/arthritis-treatments/complementary-and-alternative-treatments/types-of-complementary-treatments/selenium/">
+        <img name="🌐" id=317 />
+        Arthritis UK arthritis-uk.org › information-and-support › understanding-arthritis › arthritis-treatments › complementary-and-alternative-treatments › types-of-complementary-treatments › selenium Selenium | Uses, side-effects | Arthritis UK
+      </link>
+      Read about
+      <strong id=320>selenium</strong>
+      as an alternative treatment for arthritis, taken as a dietary supplement, including clinical trial results for rheumatoid arthritis.
+      <link id=323 url="https://www.arthritis-uk.org/information-and-support/understanding-arthritis/arthritis-treatments/complementary-and-alternative-treatments/types-of-complementary-treatments/selenium/" />
+      <link id=324 url="https://www.vitaminexpress.org/uk/selenium-information">
+        <img name="🌐" id=325 />
+        VitaminExpress vitaminexpress.org › home › knowledge hub: experts, interviews &amp; guides › counselor › what is selenium and why is it important for health? Selenium: Benefits, Signs of Deficiency, and Potential Overdose | VitaminExpress
+      </link>
+      April 28, 2026 - Selenium is a very important trace element for the human body, since it
+      <strong id=328>increases the immune defense, is involved in the antioxidative activity against free radicals and inflammation and plays an important role in maintaining a healthy metabolism</strong>
+      .
+      <link id=331 url="https://www.vitaminexpress.org/uk/selenium-information" />
+      <link id=332 url="https://www.vita4you.gr/blog-vita4you/en/item/selenium-health-benefits-and-where-to-find-it.html">
+        <img name="🌐" id=333 />
+        Vita4You vita4you.gr › all articles › foods › health › supplements › selenium: properties and how to take it Selenium: Health Benefits and Where to Find It!
+      </link>
+      October 7, 2024 - Selenium is
+      <strong id=336>an essential trace element for the normal functioning of the body with strong antioxidant properties</strong>
+      .
+      <link id=339 url="https://www.vita4you.gr/blog-vita4you/en/item/selenium-health-benefits-and-where-to-find-it.html" />
+      <link id=340 url="https://www.peacehealth.org/medical-topics/id/hn-2908005">
+        <img name="🌐" id=341 />
+        PeaceHealth peacehealth.org › medical-topics › id › hn-2908005 Selenium – Health Information Library | PeaceHealth
+      </link>
+      Selenium is
+      <strong id=344>an essential trace mineral</strong>
+      .
+      <link id=347 url="https://ostrovit.com/en/blog/what-is-selenium-good-for-properties-effects-and-importance-for-health-1748933771.html">
+        <img name="🌐" id=348 />
+        OstroVit ostrovit.com › en › blog › what-is-selenium-good-for-properties-effects-and-importance-for-health-1748933771.html What is selenium good for? Properties, effects, and importance for health | OstroVit
+      </link>
+      June 3, 2025 - Even though it occurs in microscopic ... Selenium is
+      <strong id=351>an essential element that supports the immune system, protects against oxidative stress, and plays a significant role in preventing chronic diseases</strong>
+      ....
+      <link id=354 url="https://ostrovit.com/en/blog/what-is-selenium-good-for-properties-effects-and-importance-for-health-1748933771.html" />
+      <link id=355 url="https://www.medicalnewstoday.com/articles/287842">
+        <img name="🌐" id=356 />
+        Medical News Today medicalnewstoday.com › articles › 287842 Selenium: Health benefits, sources, and potential risks
+      </link>
+      January 2, 2024 - Selenium is
+      <strong id=359>a nutrient that plays a key role in maintaining thyroid hormone metabolism and DNA synthesis and protecting the body from oxidative damage and infection</strong>
+      .
+      <link id=362 url="https://www.medicalnewstoday.com/articles/287842" />
+      <link id=363 url="https://www.prohealth.com/blogs/control-how-you-age/all-about-selenium-why-you-need-this-mineral-in-your-diet-for-healthy-aging">
+        <img name="🌐" id=364 />
+        ProHealth Longevity prohealth.com › blogs › control-how-you-age › all-about-selenium-why-you-need-this-mineral-in-your-diet-for-healthy-aging The Benefits of Selenium: Why You Need This Mineral In Your Diet For H – ProHealth.com
+      </link>
+      October 23, 2020 - Selenium is
+      <strong id=367>an essential mineral that is found in many foods and can be taken supplementally</strong>
+      . The benefits of selenium include support to the cardiovascular system, brain, thyroid, and immune system.
+      <link id=370 url="https://www.prohealth.com/blogs/control-how-you-age/all-about-selenium-why-you-need-this-mineral-in-your-diet-for-healthy-aging" />
+      <link id=371 url="https://pmc.ncbi.nlm.nih.gov/articles/PMC6241719/">
+        <img name="🌐" id=372 />
+        PubMed Central pmc.ncbi.nlm.nih.gov › articles › PMC6241719 Selenium as a pleiotropic agent for medical discovery and drug delivery - PMC
+      </link>
+      Organic
+      <strong id=375>selenium</strong>
+      (mainly selenomethionine) and ionic
+      <strong id=378>selenium</strong>
+      (eg, selenite and selenate) are highly bioavailable, but elemental
+      <strong id=381>selenium</strong>
+      is difficult to absorb by the gastrointestinal tract unless nanosized.3 Organic
+      <strong id=384>selenium</strong>
+      from foods is relatively safe for the human body, whereas the inorganic one supplemented with chemicals exhibits a narrow window from therapeutic effect to toxic effect.4 Once being absorbed into the circulatory system,
+      <strong id=387>selenium</strong>
+      will bind with various proteins in vivo to form Se/protein complexes, ie, selenoproteins, to exert the physiological actions.
+      <link id=390 url="https://shawellness.com/shamagazine/en/selenium-benefits/">
+        <img name="🌐" id=391 />
+        SHA Magazine shawellness.com › portada › the benefits of selenium for your health Selenium benefits and function | SHA Magazine
+      </link>
+      March 6, 2023 - Selenium is a mineral perhaps not often enough mentioned, but its functions make it essential. Make sure to choose
+      <strong id=394>selenium</strong>
+      rich foods at least twice or three times per week to ensure good overall health thanks to this nutrient.
+      <link id=397 url="https://shawellness.com/shamagazine/en/selenium-benefits/" />
+      <link id=398 url="https://experiencelife.lifetime.life/article/why-your-body-needs-selenium-and-how-to-maximize-your-intake/">
+        <img name="🌐" id=399 />
+        Experience Life experiencelife.lifetime.life › home › articles › why your body needs selenium and how to maximize your intake Why Your Body Needs Selenium and How to Maximize Your Intake
+      </link>
+      October 2, 2023 -
+      <strong id=402>An essential trace mineral</strong>
+      , selenium has a hand in fertility, hormone balance (especially thyroid), and DNA synthesis.
+      <link id=405 url="https://experiencelife.lifetime.life/article/why-your-body-needs-selenium-and-how-to-maximize-your-intake/" />
+      <link id=406 url="https://www.goodrx.com/well-being/diet-nutrition/foods-high-in-selenium">
+        <img name="🌐" id=407 />
+        GoodRx goodrx.com › goodrx health › well-being › nutrition and healthy eating › 10 selenium-rich foods (plus the benefits) 10 Selenium-Rich Foods (Plus the Benefits) - GoodRx
+      </link>
+      July 1, 2025 - Selenium is
+      <strong id=410>an essential trace mineral that supports thyroid function and immune health</strong>
+      .
+      <link id=413 url="https://www.goodrx.com/well-being/diet-nutrition/foods-high-in-selenium" />
+      <link id=414 url="https://uwaterloo.ca/earth-sciences-museum/educational-resources/articles/selenium">
+        <img name="🌐" id=415 />
+        University of Waterloo uwaterloo.ca › earth-sciences-museum › educational-resources › articles › selenium Selenium | Earth Sciences Museum | University of Waterloo
+      </link>
+      4 weeks ago - The word “selenium” was
+      <strong id=418>derived from the Greek word “selene,” which means “moon”.</strong>
+      In its pure form, selenium may produce metallic gray to black hexagonal crystals, however these crystals are rare and it is usually found as a massive specimen. When crystals do form they are often ...
+      <img id=421 />
+      Related queries
+      <link id=423 url="/search?q=selenium%20vitamin&amp;source=relatedQueries">
+        <img id=424 />
+        selenium
+        <strong id=426>vitamin</strong>
+      </link>
+      <link id=428 url="/search?q=selenium%20medicine&amp;source=relatedQueries">
+        <img id=429 />
+        selenium
+        <strong id=431>medicine</strong>
+      </link>
+      <link id=433 url="/search?q=selenium%20foods&amp;source=relatedQueries">
+        <img id=434 />
+        selenium
+        <strong id=436>foods</strong>
+      </link>
+      <link id=438 url="/search?q=selenium%20nutrient&amp;source=relatedQueries">
+        <img id=439 />
+        selenium
+        <strong id=441>nutrient</strong>
+      </link>
+      <link id=443 url="/search?q=selenium%20tablets&amp;source=relatedQueries">
+        <img id=444 />
+        selenium
+        <strong id=446>tablets</strong>
+      </link>
+      <link id=448 url="/search?q=selenium%20supplement&amp;source=relatedQueries">
+        <img id=449 />
+        selenium
+        <strong id=451>supplement</strong>
+      </link>
+      <link id=453 url="/search?q=selenium%20mineral&amp;source=relatedQueries">
+        <img id=454 />
+        selenium
+        <strong id=456>mineral</strong>
+      </link>
+      <link id=458 url="/search?q=selenium%20python&amp;source=relatedQueries">
+        <img id=459 />
+        selenium
+        <strong id=461>python</strong>
+      </link>
+      <link id=463 url="/search?q=selenium&amp;offset=1&amp;spellcheck=0">
+        Next
+        <img id=465 />
+      </link>
+    </main>
+    <link name="Selenium" id=466 url="https://en.wikipedia.org/wiki/Selenium_(software)" />
+    testing framework for web applications
+    <img id=468 />
+    <link name="selenium.dev" id=469 url="https://selenium.dev/" />
+    <img id=470 />
+    Selenium is an open source umbrella project for a range of tools and libraries aimed at supporting browser automation. It provides a playback tool for authoring functional tests across most modern web …
+    <link name="Wikipedia" id=472 url="https://en.wikipedia.org/wiki/Selenium_(software)" />
+    Release 2004; 22 years ago Stable release 4.51.0 / 9 October 2026; 11 days ago Written in Selenium Server:
+    <link name="Java" id=474 url="https://en.wikipedia.org/wiki/Java_(programming_language)" />
+    ; Selenium WebDriver (works without Selenium Server), official support:
+    <link name="JavaScript" id=476 url="https://en.wikipedia.org/wiki/JavaScript" />
+    (
+    <link name="Node.js" id=478 url="https://en.wikipedia.org/wiki/Node.js" />
+    ),
+    <link name="Python" id=480 url="https://en.wikipedia.org/wiki/Python_(programming_language)" />
+    ,
+    <link name="Ruby" id=482 url="https://en.wikipedia.org/wiki/Ruby_(programming_language)" />
+    , Java or
+    <link name="C#" id=484 url="https://en.wikipedia.org/wiki/C_Sharp_(programming_language)" />
+    <button id=485>
+      More about Selenium
+      <img id=487 />
+    </button>
+    <link name="Wikipedia" id=488 url="https://en.wikipedia.org/wiki/Selenium_(software)">
+      <img name="🌐" id=489 />
+    </link>
+    <link name="Reddit" id=490 url="https://www.reddit.com/r/selenium/">
+      <img name="🌐" id=491 />
+    </link>
+    <link name="GitHub" id=492 url="https://github.com/topics/selenium">
+      <img name="🌐" id=493 />
+    </link>
+    <link name="Quora" id=494 url="https://www.quora.com/topic/Selenium-testing-framework">
+      <img name="🌐" id=495 />
+    </link>
+    <link name="Wikidata" id=496 url="http://www.wikidata.org/entity/Q752522">
+      <img name="🌐" id=497 />
+    </link>
+    <link name="X" id=498 url="https://x.com/SeleniumHQ">
+      <img name="🌐" id=499 />
+    </link>
+    <link name="Open Hub" id=500 url="https://openhub.net/p/selenium">
+      <img name="🌐" id=501 />
+    </link>
+    <link name="DNB" id=502 url="https://d-nb.info/gnd/7712939-8">
+      <img name="🌐" id=503 />
+    </link>
+    <link name="Freshports" id=504 url="https://www.freshports.org/www/selenium">
+      <img name="🌐" id=505 />
+    </link>
+    <link name="Code" id=506 url="https://code.gouv.fr/sill/fr/software?id=129">
+      <img name="🌐" id=507 />
+    </link>
+    Data from
+    <link name="Wikipedia" id=509 url="https://en.wikipedia.org/wiki/Selenium_(software)" />
+    <button name="Feedback" id=510>
+      <img id=511 />
+    </button>
+  </main>
+  <contentinfo id=512>
+    <heading name="Resources" id=513 level=6 />
+    <link name="Brave Search Premium" id=514 url="https://account.brave.com/?intent=checkout&amp;product=search" />
+    <link name="Brave Search Help" id=515 url="/help" />
+    <link name="Transparency Report" id=516 url="https://brave.com/transparency/" />
+    <link name="Report a security issue" id=517 url="https://hackerone.com/brave" />
+    <link name="Status" id=518 url="https://status.brave.app/" />
+    <heading name="Products" id=519 level=6 />
+    <link name="Brave Browser" id=520 url="https://brave.com/download/?mtm_source=brave-search&amp;mtm_medium=searchfooter&amp;mtm_campaign=brave-search&amp;mtm_content=evergreen" />
+    <link name="Brave Search" id=521 url="https://search.brave.com" />
+    <link name="Brave Wallet" id=522 url="https://brave.com/wallet/?mtm_source=brave-search&amp;mtm_medium=searchfooter&amp;mtm_campaign=brave-search&amp;mtm_content=evergreen" />
+    <link name="Brave Talk" id=523 url="https://talk.brave.com/?mtm_source=brave-search&amp;mtm_medium=searchfooter&amp;mtm_campaign=brave-search&amp;mtm_content=evergreen" />
+    <link name="Brave Firewall + VPN" id=524 url="https://brave.com/firewall-vpn/?mtm_source=brave-search&amp;mtm_medium=searchfooter&amp;mtm_campaign=brave-search&amp;mtm_content=evergreen" />
+    <link name="Brave Playlist" id=525 url="https://brave.com/playlist/?mtm_source=brave-search&amp;mtm_medium=searchfooter&amp;mtm_campaign=brave-search&amp;mtm_content=evergreen" />
+    <link name="Brave News" id=526 url="https://brave.com/brave-news/?mtm_source=brave-search&amp;mtm_medium=searchfooter&amp;mtm_campaign=brave-search&amp;mtm_content=evergreen" />
+    <link name="Brave Rewards" id=527 url="https://brave.com/brave-rewards/?mtm_source=brave-search&amp;mtm_medium=searchfooter&amp;mtm_campaign=brave-search&amp;mtm_content=evergreen" />
+    <link name="Brave Search API" id=528 url="https://brave.com/search/api/?mtm_source=brave-search&amp;mtm_medium=searchfooter&amp;mtm_campaign=brave-search&amp;mtm_content=evergreen" />
+    <link name="Brave Ads" id=529 url="https://brave.com/brave-ads/?mtm_source=brave-search&amp;mtm_medium=searchfooter&amp;mtm_campaign=brave-search&amp;mtm_content=evergreen" />
+    <heading name="Policies" id=530 level=6 />
+    <link name="Privacy Policy" id=531 url="/help/privacy-policy" />
+    <link name="Terms of Use" id=532 url="https://brave.com/terms-of-use/" />
+  </contentinfo>
+  selenium - Brave Search
+</RootWebArea>

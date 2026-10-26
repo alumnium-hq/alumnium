@@ -1,0 +1,5 @@
+<RootWebArea>
+  <heading name="ARIA Slider Test Page" id=2 level=1 />
+  <paragraph id=3>Distance: 10 miles</paragraph>
+  <slider name="Distance" id=5 />
+</RootWebArea>

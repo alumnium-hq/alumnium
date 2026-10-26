@@ -1,0 +1,163 @@
+<RootWebArea>
+  <link id=2 url="/">
+    <img name="logo" id=3 />
+  </link>
+  <link id=4 url="/favourites">
+    <strong id=5>Favourites</strong>
+  </link>
+  <link id=7 url="/orders">
+    <strong id=8>Orders</strong>
+  </link>
+  <link id=10 url="/offers">
+    <strong id=11>Offers</strong>
+  </link>
+  <textbox name="Search" id=13 />
+  <button id=14>
+    <img name="flowchart main" id=15 />
+    Search
+  </button>
+  <navigation id=17>
+    <link name="Sign In" id=18 />
+  </navigation>
+  <main id=19>
+    <link id=20 url="#">
+      <img name="banner main" id=21 />
+    </link>
+    <heading name="Vendors:" id=22 level=4 />
+    <checkbox name="Apple" id=23 checked="false" />
+    Apple
+    <checkbox name="Samsung" id=25 checked="false" />
+    Samsung
+    <checkbox name="Google" id=27 checked="false" />
+    Google
+    <checkbox name="OnePlus" id=29 checked="false" />
+    OnePlus Products
+    <heading name="25 Product(s) found." id=31 level=3 />
+    Order by
+    <combobox id=33>
+      <option name="Select" id=34 checked="false" selected />
+      <option name="Lowest to highest" id=35 checked="false" />
+      <option name="Highest to lowest" id=36 checked="false" />
+    </combobox>
+    <button name="delete" id=37 />
+    <img name="img" id=38 />
+    <paragraph id=39>iPhone 12</paragraph>
+    $799.00 or 9 x $ 88.78 Add to cart
+    <button name="delete" id=42 />
+    <img name="img" id=43 />
+    <paragraph id=44>iPhone 12 Mini</paragraph>
+    $699.00 or 9 x $ 77.67 Add to cart
+    <button name="delete" id=47 />
+    <img name="img" id=48 />
+    <paragraph id=49>iPhone 12 Pro Max</paragraph>
+    $1099.00 or 9 x $ 122.11 Add to cart
+    <button name="delete" id=52 />
+    <img name="img" id=53 />
+    <paragraph id=54>iPhone 12 Pro</paragraph>
+    $999.00 or 5 x $ 199.80 Add to cart
+    <button name="delete" id=57 />
+    <img name="img" id=58 />
+    <paragraph id=59>iPhone 11</paragraph>
+    $599.00 or 8 x $ 74.88 Add to cart
+    <button name="delete" id=62 />
+    <img name="img" id=63 />
+    <paragraph id=64>iPhone 11 Pro</paragraph>
+    $699.00 or 3 x $ 233.00 Add to cart
+    <button name="delete" id=67 />
+    <img name="iPhone XS" id=68 />
+    <paragraph id=69>iPhone XS</paragraph>
+    $549.00 or 4 x $ 137.25 Add to cart
+    <button name="delete" id=72 />
+    <img name="iPhone XR" id=73 />
+    <paragraph id=74>iPhone XR</paragraph>
+    $499.00 or 5 x $ 99.80 Add to cart
+    <button name="delete" id=77 />
+    <img name="iPhone XS Max" id=78 />
+    <paragraph id=79>iPhone XS Max</paragraph>
+    $649.00 or 7 x $ 92.71 Add to cart
+    <button name="delete" id=82 />
+    <img name="Galaxy S20" id=83 />
+    <paragraph id=84>Galaxy S20</paragraph>
+    $999.00 or 9 x $ 111.00 Add to cart
+    <button name="delete" id=87 />
+    <img name="Galaxy S20+" id=88 />
+    <paragraph id=89>Galaxy S20+</paragraph>
+    $1199.00 or 9 x $ 133.22 Add to cart
+    <button name="delete" id=92 />
+    <img name="Galaxy S20 Ultra" id=93 />
+    <paragraph id=94>Galaxy S20 Ultra</paragraph>
+    $1399.00 or 12 x $ 116.58 Add to cart
+    <button name="delete" id=97 />
+    <img name="Galaxy S10" id=98 />
+    <paragraph id=99>Galaxy S10</paragraph>
+    $899.00 or 5 x $ 179.80 Add to cart
+    <button name="delete" id=102 />
+    <img name="Galaxy S9" id=103 />
+    <paragraph id=104>Galaxy S9</paragraph>
+    $699.00 or 5 x $ 139.80 Add to cart
+    <button name="delete" id=107 />
+    <img name="Galaxy Note 20" id=108 />
+    <paragraph id=109>Galaxy Note 20</paragraph>
+    $999.00 or 7 x $ 142.71 Add to cart
+    <button name="delete" id=112 />
+    <img name="Galaxy Note 20 Ultra" id=113 />
+    <paragraph id=114>Galaxy Note 20 Ultra</paragraph>
+    $1299.00 or 7 x $ 185.57 Add to cart
+    <button name="delete" id=117 />
+    <img name="Pixel 4" id=118 />
+    <paragraph id=119>Pixel 4</paragraph>
+    $899.00 or 5 x $ 179.80 Add to cart
+    <button name="delete" id=122 />
+    <img name="Pixel 3" id=123 />
+    <paragraph id=124>Pixel 3</paragraph>
+    $599.00 or 5 x $ 119.80 Add to cart
+    <button name="delete" id=127 />
+    <img name="Pixel 2" id=128 />
+    <paragraph id=129>Pixel 2</paragraph>
+    $399.00 or 3 x $ 133.00 Add to cart
+    <button name="delete" id=132 />
+    <img name="One Plus 8" id=133 />
+    <paragraph id=134>One Plus 8</paragraph>
+    $799.00 or 6 x $ 133.17 Add to cart
+    <button name="delete" id=137 />
+    <img name="One Plus 8T" id=138 />
+    <paragraph id=139>One Plus 8T</paragraph>
+    $899.00 or 6 x $ 149.83 Add to cart
+    <button name="delete" id=142 />
+    <img name="One Plus 8 Pro" id=143 />
+    <paragraph id=144>One Plus 8 Pro</paragraph>
+    $899.00 or 6 x $ 149.83 Add to cart
+    <button name="delete" id=147 />
+    <img name="One Plus 7T" id=148 />
+    <paragraph id=149>One Plus 7T</paragraph>
+    $599.00 or 6 x $ 99.83 Add to cart
+    <button name="delete" id=152 />
+    <img name="One Plus 7" id=153 />
+    <paragraph id=154>One Plus 7</paragraph>
+    $499.00 or 3 x $ 166.33 Add to cart
+    <button name="delete" id=157 />
+    <img name="One Plus 6T" id=158 />
+    <paragraph id=159>One Plus 6T</paragraph>
+    $429.00 or 3 x $ 143.00 Add to cart
+  </main>
+  0 0 Bag
+  <paragraph id=163>Add some products in the bag :)</paragraph>
+  SUBTOTAL
+  <paragraph id=166>$ 0.00</paragraph>
+  Continue Shopping
+  <separator id=169 />
+  <img name="flowchart main" id=170 />
+  Exclusive offers coming soon
+  <link name="Offers" id=172 url="/offers" />
+  <link name="Contact Us" id=173 url="/contact" />
+  <link name="Privacy Policy" id=174 url="/privacy" />
+  <link name="Careers" id=175 url="/careers" />
+  <list id=176>
+    <listitem id=177>A single, simple list item.</listitem>
+  </list>
+  <paragraph id=179>© 2026 BrowserStack Demo</paragraph>
+  Privacy Policy
+  <link name="Read More" id=182 url="/" />
+  <textbox name="Email" id=183 />
+  <button name="Subscribe to Newsletter" id=184 />
+</RootWebArea>

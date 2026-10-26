@@ -1,0 +1,8 @@
+<RootWebArea raw_id=1>
+  <heading raw_id=2 sharedId="b1acc2dc-2c9e-435e-9e55-a4d4ee1b40f3" name="Dropdown List" level=3 />
+  <combobox raw_id=3 sharedId="2b23e098-39fe-4ca5-a729-e3b4ba43b482">
+    <option raw_id=4 sharedId="961d0a45-843a-4f07-a605-aacf322c348b" name="Please select an option" checked="false" disabled selected />
+    <option raw_id=5 sharedId="600df3fa-4a54-4055-8cd8-7ca8324eb192" name="Option 1" checked="false" />
+    <option raw_id=6 sharedId="1a952ec7-cb6a-47ac-996d-d7e7e37b386f" name="Option 2" checked="false" />
+  </combobox>
+</RootWebArea>

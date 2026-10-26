@@ -27,6 +27,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 
 public class BaseTest {
 
@@ -40,6 +42,8 @@ public class BaseTest {
   private static final boolean IS_LAMBDA_TEST = LT_USERNAME != null && LT_ACCESS_KEY != null;
   private static final boolean PLAYWRIGHT_HEADLESS =
       !"false".equalsIgnoreCase(System.getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS"));
+  private static final String SELENIUM_BROWSER =
+      System.getenv().getOrDefault("ALUMNIUM_SELENIUM_BROWSER", "chrome");
   private static final String SELENIUM_BROWSER_VERSION =
       System.getenv("ALUMNIUM_SELENIUM_BROWSER_VERSION");
 
@@ -78,6 +82,16 @@ public class BaseTest {
       options.setBrowserVersion(SELENIUM_BROWSER_VERSION);
     }
     return new ChromeDriver(options);
+  }
+
+  private static FirefoxDriver buildFirefoxDriver() {
+    FirefoxOptions options = new FirefoxOptions();
+    options.enableBiDi();
+    options.setBrowserVersion(
+        SELENIUM_BROWSER_VERSION != null && !SELENIUM_BROWSER_VERSION.isBlank()
+            ? SELENIUM_BROWSER_VERSION
+            : "stable");
+    return new FirefoxDriver(options);
   }
 
   // io.appium.java_client.AppiumDriver conflicts with ai.alumnium.driver.AppiumDriver
@@ -160,7 +174,7 @@ public class BaseTest {
         ((AppiumDriver) al.driver()).delay = 0.1;
       }
       default -> {
-        webDriver = buildChromeDriver();
+        webDriver = "firefox".equals(SELENIUM_BROWSER) ? buildFirefoxDriver() : buildChromeDriver();
         al = new Alumni(webDriver, options);
       }
     }

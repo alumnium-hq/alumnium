@@ -40,7 +40,7 @@ run = "pytest --cov=alumnium --cov-report=html --cov-report=xml tests/"
 [tasks."test/system"]
 usage = '''
 arg "<driver>" help="Driver to use for system tests" {
-  choices "selenium" "playwright" "appium-ios" "appium-android"
+  choices "selenium" "selenium-firefox" "playwright" "appium-ios" "appium-android"
   default "selenium"
 }
 arg "[test]" help="System test to run" default=""
@@ -53,6 +53,7 @@ arg "[test]" help="System test to run" default=""
 '''
 run = [
   { task = "test/system:selenium", args = ["{{usage.test}}"] },
+  { task = "test/system:selenium-firefox", args = ["{{usage.test}}"] },
   { task = "test/system:playwright", args = ["{{usage.test}}"] },
   { task = "test/system:appium-ios", args = ["{{usage.test}}"] },
   { task = "test/system:appium-android", args = ["{{usage.test}}"] },
@@ -63,6 +64,12 @@ usage = '''
 arg "[test]" help="System test to run" default=""
 '''
 run = [{ task = "test/system", args = ["selenium", "{{usage.test}}"] }]
+
+[tasks."test/system:selenium-firefox"]
+usage = '''
+arg "[test]" help="System test to run" default=""
+'''
+run = [{ task = "test/system", args = ["selenium-firefox", "{{usage.test}}"] }]
 
 [tasks."test/system:playwright"]
 usage = '''

@@ -1,0 +1,28 @@
+<RootWebArea raw_id=1>
+  <text raw_id=2 name="Dark Mode" />
+  <link raw_id=3 sharedId="f68c6a0b-b75c-4fe5-876b-32b2471e52e1" name="Calculator" url="https://seleniumbase.io/apps/calculator" />
+  <link raw_id=4 sharedId="cf73d2f8-75e5-4060-bfe2-dfe7c7415932" name="SB" url="https://seleniumbase.io" />
+  <textbox raw_id=5 sharedId="60a12920-52f1-4328-aab9-929f2e28ad3f">
+    <text raw_id=6 name=2 />
+  </textbox>
+  <button raw_id=7 sharedId="cb62a1e8-9080-4ec7-a985-5ab1bd07f3f1" name="C" />
+  <button raw_id=8 sharedId="d8ed72b3-4dd6-4aff-86e4-be6f28c98d3b" name="(" />
+  <button raw_id=9 sharedId="b36caaec-cbf5-4046-ab62-f1ba7d9f1e65" name=")" />
+  <button raw_id=10 sharedId="d53bf6d9-017c-41af-86e4-a0de00b20e86" name="÷" />
+  <button raw_id=11 sharedId="ce7f7582-40e9-45ee-a1de-3b8bbfa5503c" name=7 />
+  <button raw_id=12 sharedId="3bf951f3-3434-4b2c-9b33-f88162b35c97" name=8 />
+  <button raw_id=13 sharedId="3e436602-e617-4a87-9d58-79d5bc73f902" name=9 />
+  <button raw_id=14 sharedId="58b8d9c0-3be2-4cf5-a21e-c585d7a791b1" name="×" />
+  <button raw_id=15 sharedId="ac2a00e2-0ca9-4e2b-81f9-37458c883576" name=4 />
+  <button raw_id=16 sharedId="23316246-f075-453f-88e9-e9594ef3afc7" name=5 />
+  <button raw_id=17 sharedId="138d6418-71f4-4b70-a63b-a973ae490364" name=6 />
+  <button raw_id=18 sharedId="6646ba44-fc77-40b0-95ec-6120e28b1e48" name="-" />
+  <button raw_id=19 sharedId="fa749fc0-a354-4f77-a038-a6263cf6dd8b" name=1 />
+  <button raw_id=20 sharedId="6d671ed8-5bee-40ee-9d5f-b839f24646c2" name=2 />
+  <button raw_id=21 sharedId="da2778e7-fcbc-4dce-a4fa-64823c714d23" name=3 />
+  <button raw_id=22 sharedId="2eba023e-e9a1-417f-b439-5fca9573eb91" name="+" />
+  <button raw_id=23 sharedId="18f76ff3-97a1-4442-bb79-3eb9d57d5d59" name="←" />
+  <button raw_id=24 sharedId="cdb9e1c8-2d66-489a-aaa3-91545f492a83" name=0 />
+  <button raw_id=25 sharedId="59309e49-39ab-4de1-84a7-ce1a77bf3b80" name="." />
+  <button raw_id=26 sharedId="b5220544-2c3a-44ce-a7fa-85ba8493da9d" name="=" />
+</RootWebArea>

@@ -1,0 +1,16 @@
+<RootWebArea raw_id=1>
+  <text raw_id=2 name="Swag Labs" />
+  <main raw_id=3 sharedId="d113b38e-6c9b-415c-96b7-c04448f225a1">
+    <form raw_id=4 sharedId="f47c9319-1151-4d24-8d2f-3028fede9e1e" name="Login">
+      <textbox raw_id=5 sharedId="6b3211e1-7266-415f-844d-7c60e04163d9" name="Username">
+        <text raw_id=6 name="standard_user" />
+      </textbox>
+      <textbox raw_id=7 sharedId="c17ff15a-7d7b-4787-ac4d-ef6d6741f49e" name="Password" />
+      <button raw_id=8 sharedId="df5d3348-0194-4265-b5de-bd6b33777564" name="Login" />
+    </form>
+    <heading raw_id=9 sharedId="df73826f-cfe8-4199-ad50-d8d91fa9845e" name="Accepted usernames are:" level=4 />
+    <text raw_id=10 name="standard_user locked_out_user problem_user performance_glitch_user error_user visual_user" />
+    <heading raw_id=11 sharedId="369eca71-ac34-4710-b9d4-00b41b6acb95" name="Password for all users:" level=4 />
+    <text raw_id=12 name="secret_sauce" />
+  </main>
+</RootWebArea>

@@ -1,0 +1,8 @@
+<RootWebArea raw_id=1>
+  <text raw_id=2 name="Sticky Header" />
+  <button raw_id=3 sharedId="d9571cbd-5a5b-41bb-a217-5add367b4e51" name="Click Me" />
+  <paragraph raw_id=4 sharedId="ad2c6d7c-24dd-49f9-9be0-76f62328c364">
+    <text raw_id=5 name="Status: nothing clicked" />
+  </paragraph>
+  <text raw_id=6 name="Sticky Footer" />
+</RootWebArea>

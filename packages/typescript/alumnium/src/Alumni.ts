@@ -9,7 +9,10 @@ import {
   Alumni as PlaywrightAlumni,
   PlaywrightDriver,
 } from "@alumnium/playwright";
-import { Alumni as SeleniumAlumni, SeleniumDriver } from "@alumnium/selenium";
+import {
+  Alumni as SeleniumAlumni,
+  SeleniumDriverFactory,
+} from "@alumnium/selenium";
 import { Alumni as XcodeAlumni, XcodeDriver } from "@alumnium/xcode";
 import type { Element } from "./drivers/index.ts";
 import { resolveModel } from "./models.ts";
@@ -52,9 +55,8 @@ export namespace Alumni {
 
 /** Wraps a native driver into the matching Alumnium driver. */
 export function wrapDriver(driver: Alumni.Driver): BaseDriver<Element> {
-  // NOTE: Selenium goes first as the Playwright and WebdriverIO checks are
-  // duck-typed.
-  if (SeleniumAlumni.accepts(driver)) return new SeleniumDriver(driver);
+  if (SeleniumAlumni.accepts(driver))
+    return SeleniumDriverFactory.create(driver);
   if (PlaywrightAlumni.accepts(driver)) return new PlaywrightDriver(driver);
   if (AppiumAlumni.accepts(driver)) return new AppiumDriver(driver);
   if (MaestroAlumni.accepts(driver)) return new MaestroDriver(driver);

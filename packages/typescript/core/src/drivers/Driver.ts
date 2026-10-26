@@ -28,11 +28,17 @@ export abstract class Driver {
     return val;
   }, this.ChromiumPlatformStrict);
 
+  static firefoxPlatform = "firefox" as const;
+
   static mobileOses = ["android", "ios"] as const;
 
   static MobileOs = z.enum(this.mobileOses);
 
-  static platforms = [this.chromiumPlatform, ...this.mobileOses] as const;
+  static platforms = [
+    this.chromiumPlatform,
+    this.firefoxPlatform,
+    ...this.mobileOses,
+  ] as const;
 
   static PlatformStrict = z.enum(this.platforms);
 

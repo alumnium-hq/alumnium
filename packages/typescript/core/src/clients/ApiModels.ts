@@ -12,7 +12,7 @@ import type { SessionId } from "../server/session/SessionId.ts";
 import type { ToolCall } from "../tools/BaseTool.ts";
 
 export interface SessionRequest {
-  platform: "chromium" | "ios" | "android";
+  platform: "chromium" | "firefox" | "ios" | "android";
   /** Optional since Java/Python don't support Maestro/Xcode. */
   driver?:
     | "selenium"
@@ -32,7 +32,7 @@ export interface SessionRequest {
 export interface SessionResponse {
   session_id: SessionId;
   model: string;
-  platform: "chromium" | "ios" | "android";
+  platform: "chromium" | "firefox" | "ios" | "android";
 }
 
 export interface PlanRequest {

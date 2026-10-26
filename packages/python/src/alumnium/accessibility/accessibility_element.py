@@ -6,6 +6,7 @@ from typing import Any
 class AccessibilityElement:
     id: int | None = None
     backend_node_id: int | None = None
+    shared_id: str | None = None  # WebDriver BiDi node shared ID
     name: str | None = None
     label: str | None = None
     type: str | None = None

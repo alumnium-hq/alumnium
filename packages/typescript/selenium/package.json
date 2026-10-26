@@ -11,5 +11,8 @@
     "@alumnium/core": "workspace:*",
     "alwaysly": "^0.4.0",
     "selenium-webdriver": "^4.41.0"
+  },
+  "devDependencies": {
+    "acquiescence": "^0.1.20"
   }
 }

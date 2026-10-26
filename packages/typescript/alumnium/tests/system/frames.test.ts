@@ -5,10 +5,11 @@ describe("Frames", () => {
   const it = baseIt.override("setup", async ({ setup, skip }) => {
     return async (options) => {
       const result = await setup(options);
-      const { isMobile } = result;
+      const { isFirefox, isMobile } = result;
 
       // Frames support is not implemented in Appium yet
       if (isMobile) skip("Frames support is not implemented in Appium yet");
+      if (isFirefox) skip("Frames support is not implemented in Firefox yet");
 
       return result;
     };

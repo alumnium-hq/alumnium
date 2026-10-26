@@ -1,5 +1,6 @@
 import type { Driver } from "../drivers/Driver.ts";
 import type { BaseServerAccessibilityTree } from "../server/accessibility/BaseServerAccessibilityTree.ts";
+import { ServerAriaAccessibilityTree } from "../server/accessibility/ServerAriaAccessibilityTree.ts";
 import { ServerChromiumAccessibilityTree } from "../server/accessibility/ServerChromiumAccessibilityTree.ts";
 import { ServerMaestroAccessibilityTree } from "../server/accessibility/ServerMaestroAccessibilityTree.ts";
 import { ServerUIAutomator2AccessibilityTree } from "../server/accessibility/ServerUIAutomator2AccessibilityTree.ts";
@@ -13,6 +14,7 @@ export namespace TreeFactory {
 export abstract class TreeFactory {
   static kinds = [
     "chromium",
+    "aria",
     "xcuitest",
     "uiautomator2",
     "maestro",
@@ -26,6 +28,9 @@ export abstract class TreeFactory {
     switch (platform) {
       case "chromium":
         return "chromium";
+
+      case "firefox":
+        return "aria";
 
       case "ios":
       case "android":
@@ -43,6 +48,9 @@ export abstract class TreeFactory {
     switch (this.kindFor(platform, driver)) {
       case "chromium":
         return new ServerChromiumAccessibilityTree(xml);
+
+      case "aria":
+        return new ServerAriaAccessibilityTree(xml);
 
       case "maestro":
         return new ServerMaestroAccessibilityTree(xml);

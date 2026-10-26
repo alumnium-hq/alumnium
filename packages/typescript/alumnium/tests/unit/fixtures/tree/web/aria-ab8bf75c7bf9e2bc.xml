@@ -1,0 +1,9 @@
+<RootWebArea raw_id=1>
+  <heading raw_id=2 sharedId="d00d6924-f72b-4bae-abf4-f37138299664" name="Forgot Password" level=2 />
+  <text raw_id=3 name="E-mail" />
+  <textbox raw_id=4 sharedId="798653c6-bc59-4a95-a08f-d456e42669bd" name="E-mail">
+    <text raw_id=5 name="test@example.com" />
+  </textbox>
+  <button raw_id=6 sharedId="d05b0fc2-45f9-4ed6-95c5-047f9fd210ef" name="Retrieve password" />
+  <status raw_id=7 sharedId="e2d5c05f-acde-43ff-a67f-d624c023ad0a" />
+</RootWebArea>

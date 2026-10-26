@@ -7,6 +7,10 @@ from pytest import mark
     "appium" in getenv("ALUMNIUM_DRIVER", "selenium"),
     reason="Shadow DOM support is not implemented in Appium yet",
 )
+@mark.xfail(
+    getenv("ALUMNIUM_SELENIUM_BROWSER", "chrome") == "firefox",
+    reason="Shadow DOM support is not implemented in Firefox yet",
+)
 def test_shadow_dom(al, navigate):
     navigate("shadow_dom.html")
 

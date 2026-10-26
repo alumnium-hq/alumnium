@@ -1,0 +1,79 @@
+<RootWebArea raw_id=1>
+  <banner raw_id=2 sharedId="545e91a7-c3ec-419e-9985-85aa210fe890">
+    <button raw_id=3 sharedId="73a4f79a-4349-4320-972b-f98d67e24de2" name="Open Menu" />
+    <img raw_id=4 sharedId="b04dd3a8-2c91-4b33-abc8-2ccec28022bd" name="Open Menu" />
+    <text raw_id=5 name="Swag Labs" />
+    <button raw_id=6 sharedId="65b1ab5a-a17f-40ad-b8ea-208a58b70a4f" name="Cart, empty" />
+    <text raw_id=7 name="Products Name (A to Z)" />
+    <combobox raw_id=8 sharedId="08d1748a-9382-4960-937d-116e74842115" name="Sort products">
+      <option raw_id=9 sharedId="ae90715f-974e-4528-844a-c723698f9bab" name="Name (A to Z)" checked="false" selected />
+      <option raw_id=10 sharedId="7bbfbc83-2a5f-42e1-86ff-0f0ba644437f" name="Name (Z to A)" checked="false" />
+      <option raw_id=11 sharedId="3968af52-79d5-4164-97c9-f2bf926a5cca" name="Price (low to high)" checked="false" />
+      <option raw_id=12 sharedId="d55e6619-92e2-45b0-be82-796b11b2feef" name="Price (high to low)" checked="false" />
+    </combobox>
+  </banner>
+  <main raw_id=13 sharedId="0191e9ab-d651-45c0-bc8f-37dda0d80e56">
+    <button raw_id=14 sharedId="faa7e3fd-5eef-4837-91d7-6ebce026766c" name="View details for Sauce Labs Backpack">
+      <img raw_id=15 sharedId="a3503c39-225e-4ee2-b6e2-05d4ee3b0f51" name="Sauce Labs Backpack" />
+    </button>
+    <button raw_id=16 sharedId="e730d5c4-2feb-4281-bea8-36587860aba9" name="View details for Sauce Labs Backpack">
+      <text raw_id=17 name="Sauce Labs Backpack" />
+    </button>
+    <text raw_id=18 name="carry.allTheThings() with the sleek, streamlined Sly Pack that melds uncompromising style with unequaled laptop and tablet protection. $29.99" />
+    <button raw_id=19 sharedId="ada18017-ee4f-4340-9cec-b4d9ce56445d" name="Add to cart" />
+    <button raw_id=20 sharedId="c8d34ef0-b92a-4b15-b191-74ce7b3a99fd" name="View details for Sauce Labs Bike Light">
+      <img raw_id=21 sharedId="717304b5-cae9-49d3-afd3-f419cf8f6300" name="Sauce Labs Bike Light" />
+    </button>
+    <button raw_id=22 sharedId="33066dfe-77bd-466f-b42f-f0ee05c12ef9" name="View details for Sauce Labs Bike Light">
+      <text raw_id=23 name="Sauce Labs Bike Light" />
+    </button>
+    <text raw_id=24 name="A red light isn't the desired state in testing but it sure helps when riding your bike at night. Water-resistant with 3 lighting modes, 1 AAA battery included. $9.99" />
+    <button raw_id=25 sharedId="8b1c2e86-66d8-4fde-8df5-eaa9d1727c04" name="Add to cart" />
+    <button raw_id=26 sharedId="ddab0ea1-8287-4f05-80d0-bcdbbe18acd8" name="View details for Sauce Labs Bolt T-Shirt">
+      <img raw_id=27 sharedId="fb876b79-5b5f-4031-af7c-f0126aa781f1" name="Sauce Labs Bolt T-Shirt" />
+    </button>
+    <button raw_id=28 sharedId="86dccfd9-9bb9-4e5b-9391-71854fc57c15" name="View details for Sauce Labs Bolt T-Shirt">
+      <text raw_id=29 name="Sauce Labs Bolt T-Shirt" />
+    </button>
+    <text raw_id=30 name="Get your testing superhero on with the Sauce Labs bolt T-shirt. From American Apparel, 100% ringspun combed cotton, heather gray with red bolt. $15.99" />
+    <button raw_id=31 sharedId="0e24c56d-5069-4a57-bea2-8325d08a265e" name="Add to cart" />
+    <button raw_id=32 sharedId="9ba98c57-277b-4462-a2f4-751670628d09" name="View details for Sauce Labs Fleece Jacket">
+      <img raw_id=33 sharedId="ca7fb3a0-0717-4b73-87fe-79006f6f8052" name="Sauce Labs Fleece Jacket" />
+    </button>
+    <button raw_id=34 sharedId="7e430d7b-1784-47ae-9390-1d938259ef1d" name="View details for Sauce Labs Fleece Jacket">
+      <text raw_id=35 name="Sauce Labs Fleece Jacket" />
+    </button>
+    <text raw_id=36 name="It's not every day that you come across a midweight quarter-zip fleece jacket capable of handling everything from a relaxing day outdoors to a busy day at the office. $49.99" />
+    <button raw_id=37 sharedId="1c250354-9bd2-4f81-9758-b8461601a8a9" name="Add to cart" />
+    <button raw_id=38 sharedId="db13300c-62e6-4ded-976e-377fbc7b12bf" name="View details for Sauce Labs Onesie">
+      <img raw_id=39 sharedId="06e98e2c-ff92-4f30-a66c-11d268c3b78d" name="Sauce Labs Onesie" />
+    </button>
+    <button raw_id=40 sharedId="79fb6ed3-fe71-4b85-9fe7-927acf102434" name="View details for Sauce Labs Onesie">
+      <text raw_id=41 name="Sauce Labs Onesie" />
+    </button>
+    <text raw_id=42 name="Rib snap infant onesie for the junior automation engineer in development. Reinforced 3-snap bottom closure, two-needle hemmed sleeved and bottom won't unravel. $7.99" />
+    <button raw_id=43 sharedId="b1e2a275-7487-401f-b6ba-969f15c2ed13" name="Add to cart" />
+    <button raw_id=44 sharedId="77c83aee-17db-4abe-83b5-e0ca769d2673" name="View details for Test.allTheThings() T-Shirt (Red)">
+      <img raw_id=45 sharedId="9389bc64-10cd-40f4-867e-280d7961bd8a" name="Test.allTheThings() T-Shirt (Red)" />
+    </button>
+    <button raw_id=46 sharedId="24fddb8e-0f8a-4e96-ade8-307e7d07a681" name="View details for Test.allTheThings() T-Shirt (Red)">
+      <text raw_id=47 name="Test.allTheThings() T-Shirt (Red)" />
+    </button>
+    <text raw_id=48 name="This classic Sauce Labs t-shirt is perfect to wear when cozying up to your keyboard to automate a few tests. Super-soft and comfy ringspun combed cotton. $15.99" />
+    <button raw_id=49 sharedId="8f659e64-6401-4c02-8cb9-aed4dddde7cf" name="Add to cart" />
+  </main>
+  <contentinfo raw_id=50 sharedId="f0781a7b-1f8c-461f-ab47-8ff6c1ed4193">
+    <list raw_id=51 sharedId="2f254583-d21d-4108-a98e-a475584fba1e">
+      <listitem raw_id=52 sharedId="0070bf7f-91a9-47ce-9872-0092821d669e">
+        <link raw_id=53 sharedId="b823f900-5ae3-466f-b1b0-1bdda54bc9c6" name="X" url="https://x.com/saucelabs" />
+      </listitem>
+      <listitem raw_id=54 sharedId="e5968c21-ad6f-404e-930f-8016e054f9c2">
+        <link raw_id=55 sharedId="99b41903-3287-437a-9c00-1467df098243" name="Facebook" url="https://www.facebook.com/saucelabs" />
+      </listitem>
+      <listitem raw_id=56 sharedId="21defd36-61c5-4b85-8576-cd930b20e880">
+        <link raw_id=57 sharedId="f8df7656-bb9e-4e12-ad35-73070dea53a5" name="LinkedIn" url="https://www.linkedin.com/company/sauce-labs/" />
+      </listitem>
+    </list>
+    <text raw_id=58 name="© 2026 Sauce Labs. All Rights Reserved. Terms of Service | Privacy Policy" />
+  </contentinfo>
+</RootWebArea>

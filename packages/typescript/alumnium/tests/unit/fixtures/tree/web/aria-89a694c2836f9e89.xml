@@ -1,0 +1,96 @@
+<RootWebArea raw_id=1>
+  <img raw_id=2 sharedId="9d63e077-d1e8-4c55-b659-340a1afb1e2b" />
+  <link raw_id=3 sharedId="e9849082-4018-4ccb-8e35-4ded6bffa53c" name="Brave Search Brave Search Brave logo" url="/">
+    <img raw_id=4 sharedId="b818d668-6439-4835-a1ae-e03ae066742f" name="Brave logo" />
+  </link>
+  <button raw_id=5 sharedId="fa503648-829c-442e-9abb-3345c20f534b" name="AI Features">
+    <img raw_id=6 sharedId="5234f08a-9b08-4459-b2d9-3a5385855d8c" />
+  </button>
+  <textbox raw_id=7 sharedId="0798ae2c-dee1-4b07-97fc-805e304f7cb0" name="Search" placeholder="Ask anything, find anything…">
+    <text raw_id=8 name="selenium" />
+  </textbox>
+  <button raw_id=9 sharedId="0ae3dbcb-24b2-49ac-9d6c-eaf998ea345c" name="Clear">
+    <img raw_id=10 sharedId="7c8de39f-56f1-49e6-8beb-b1988d1817ce" />
+  </button>
+  <button raw_id=11 sharedId="dba750a8-5e84-4a93-8ec5-c649c35dce98" name="Ask">
+    <img raw_id=12 sharedId="fab83b9c-24c9-48e3-b5ad-8b3758eea5e8" />
+    <text raw_id=13 name="Ask" />
+  </button>
+  <listbox raw_id=14 sharedId="0d5c6245-9641-44db-b8da-49155bd8b7da">
+    <button raw_id=15 sharedId="c98e8696-d099-444d-a67a-3419310b06e5" name="Selenium chemical element with symbol Se and atomic number 34" />
+    <button raw_id=16 sharedId="60988046-b159-4744-8442-2bea5ca0c230" name="selenium supplement">
+      <img raw_id=17 sharedId="ab3708bf-0f72-4452-8f1d-0ec78c3a0055" />
+      <text raw_id=18 name="selenium" />
+      <strong raw_id=19 sharedId="19262183-5b96-48f8-bc8c-a269093b4e75">
+        <text raw_id=20 name="supplement" />
+      </strong>
+    </button>
+    <button raw_id=21 sharedId="634c9262-47f4-4806-88f8-a9c4160a7f25" name="selenium vitamin">
+      <img raw_id=22 sharedId="a0db719d-f110-4a88-b110-259c7dff9ed7" />
+      <text raw_id=23 name="selenium" />
+      <strong raw_id=24 sharedId="c4c6e154-6e1a-42ff-a185-e41c85da05d0">
+        <text raw_id=25 name="vitamin" />
+      </strong>
+    </button>
+    <button raw_id=26 sharedId="6f555cfa-f9c6-45bd-89b1-0c5522386bdd" name="selenium python">
+      <img raw_id=27 sharedId="eba4fb68-82db-48c5-85b0-ad84c83fd30c" />
+      <text raw_id=28 name="selenium" />
+      <strong raw_id=29 sharedId="650970a9-fea1-4428-8a30-c1f67ffb3eec">
+        <text raw_id=30 name="python" />
+      </strong>
+    </button>
+    <button raw_id=31 sharedId="627f13b1-bb80-4132-a3d8-67f6c7cf6871" name="selenium foods">
+      <img raw_id=32 sharedId="753ec347-c7f4-465d-9e5e-e84f46405d49" />
+      <text raw_id=33 name="selenium" />
+      <strong raw_id=34 sharedId="958f1e22-0f1f-4fb9-8299-0525bcf46ea1">
+        <text raw_id=35 name="foods" />
+      </strong>
+    </button>
+    <button raw_id=36 sharedId="e7ae1c82-3e6a-4c28-85f3-4752e8fdeec7" name="selenium benefits">
+      <img raw_id=37 sharedId="bee5221a-adb5-4746-9a07-74a0586743ee" />
+      <text raw_id=38 name="selenium" />
+      <strong raw_id=39 sharedId="7bbdb12a-3c2b-410c-90b2-775d155aadd3">
+        <text raw_id=40 name="benefits" />
+      </strong>
+    </button>
+    <button raw_id=41 sharedId="d6c54c83-b37e-432e-8284-1000f5b424f8" name="selenium webdriver">
+      <img raw_id=42 sharedId="03cbca3f-21a2-4b59-8701-d28fc894bdab" />
+      <text raw_id=43 name="selenium" />
+      <strong raw_id=44 sharedId="66989bb3-8dfb-4dea-9399-768cff822f6a">
+        <text raw_id=45 name="webdriver" />
+      </strong>
+    </button>
+    <button raw_id=46 sharedId="ae9f6d57-e49d-41a0-91a4-f3607b765a1e" name="selenium tablets">
+      <img raw_id=47 sharedId="4cc28d0c-0b29-4dad-a01d-210ce853cc04" />
+      <text raw_id=48 name="selenium" />
+      <strong raw_id=49 sharedId="0872634c-1fab-4a60-829c-47bbc9f403f2">
+        <text raw_id=50 name="tablets" />
+      </strong>
+    </button>
+  </listbox>
+  <img raw_id=51 sharedId="4d9fcfc7-200d-4d2b-8c81-0eafa8f11d81" name="Brave logo" />
+  <text raw_id=52 name="Brave Browser Enjoying private search? Try the browser that puts you first." />
+  <link raw_id=53 sharedId="d9bb7aa2-1205-4361-91bd-4e24f6103a16" name="Download" url="https://brave.com/download/now/?mtm_campaign=search-homepage-cta">
+    <text raw_id=54 name="Download" />
+    <img raw_id=55 sharedId="1b64547b-6b99-4872-ba74-02430de9f431" />
+  </link>
+  <button raw_id=56 sharedId="07ef0c4d-65a9-4ff3-9414-d9f4f6adb276" name="Quick settings">
+    <img raw_id=57 sharedId="2ebe4035-db10-431c-82ad-f3bfbb55e697" />
+  </button>
+  <contentinfo raw_id=58 sharedId="58376c08-d36d-4bb7-9e2d-56bf66ea1229">
+    <text raw_id=59 name="© Brave Software" />
+    <link raw_id=60 sharedId="edd100c8-6aa4-49c3-af80-0f3848116e9f" name="Advertise" url="https://ads.brave.com/register/search?mtm_source=brave-search&amp;mtm_medium=searchhome&amp;mtm_campaign=brave-search&amp;mtm_content=evergreen" />
+    <link raw_id=61 sharedId="469b3c23-98b3-43c9-932a-2a00ecd42ae6" name="API" url="https://brave.com/search/api/?mtm_source=brave-search&amp;mtm_medium=searchhome&amp;mtm_campaign=brave-search&amp;mtm_content=evergreen" />
+    <link raw_id=62 sharedId="dcbbc4e6-0b15-4eac-a1f7-64ad7ea010ec" name="News" url="https://brave.com/category/brave-search/?mtm_source=brave-search&amp;mtm_medium=searchhome&amp;mtm_campaign=brave-search&amp;mtm_content=evergreen" />
+    <link raw_id=63 sharedId="57ef6172-45fa-446b-8bb2-a44553046666" name="FAQ" url="https://brave.com/search/#search-faq?mtm_source=brave-search&amp;mtm_medium=searchhome&amp;mtm_campaign=brave-search&amp;mtm_content=evergreen" />
+    <link raw_id=64 sharedId="34795b55-c1f5-4446-ba1a-e97c5d24ec5e" name="Privacy Policy" url="/help/privacy-policy" />
+    <link raw_id=65 sharedId="03435a48-c392-418f-b746-dd0b9035959a" name="Report a security issue" url="https://hackerone.com/brave" />
+  </contentinfo>
+  <text raw_id=66 name="Brave Search uses private usage metrics to estimate overall activity and performance. You can turn off this option in" />
+  <link raw_id=67 sharedId="d881dfa5-bcf2-4d56-b064-38ee14b70302" name="Settings" url="/settings" />
+  <text raw_id=68 name="." />
+  <link raw_id=69 sharedId="b83305ef-d1ca-494b-8e2e-c4f040ef1498" name="Learn more." url="/help/usage-metrics" />
+  <button raw_id=70 sharedId="16d965cd-a5d9-47e1-a18a-60e98f9c8168" name="Close">
+    <img raw_id=71 sharedId="18bf2be1-9637-4ea4-bd92-cc4aae95ec6c" />
+  </button>
+</RootWebArea>

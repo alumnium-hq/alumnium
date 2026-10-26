@@ -6,7 +6,8 @@ import { never } from "alwaysly";
 import { chromium } from "playwright";
 import type { Locator, Page } from "playwright-core";
 import { Builder, WebElement, type WebDriver } from "selenium-webdriver";
-import { Options } from "selenium-webdriver/chrome.js";
+import { Options as ChromeOptions } from "selenium-webdriver/chrome.js";
+import { Options as FirefoxOptions } from "selenium-webdriver/firefox.js";
 import { inject, it as vitestIt, type RunnerTask } from "vitest";
 import { attach, type Browser } from "webdriverio";
 import {
@@ -52,6 +53,7 @@ export interface Setup {
   al: Alumni;
   $: Setup.Helpers;
   driverId: Driver.Id;
+  isFirefox: boolean;
   isMobile: boolean;
   model: Model;
 }
@@ -111,28 +113,19 @@ export async function useSetup(props: useSetup.Props): Promise<Setup> {
 
   const model = await al.model();
   const isMobile = Driver.isMobile(driverId);
+  const isFirefox = al.driver.platform === "firefox";
 
-  return { driver, driverId, isMobile, al, $, model };
+  return { driver, driverId, isFirefox, isMobile, al, $, model };
 }
 
 async function createDriver(driverId: Driver.Id): Promise<Alumni.Driver> {
   switch (driverId) {
     case "selenium": {
-      const options = new Options();
-      options.addArguments("--disable-blink-features=AutomationControlled");
-      options.setUserPreferences({
-        credentials_enable_service: false,
-        profile: {
-          password_manager_enabled: false,
-          password_manager_leak_detection: false,
-        },
-      });
-      const browserVersion = Env.ALUMNIUM_SELENIUM_BROWSER_VERSION;
-      if (browserVersion) options.setBrowserVersion(browserVersion);
-      return new Builder()
-        .forBrowser("chrome")
-        .setChromeOptions(options)
-        .build();
+      if (Env.ALUMNIUM_SELENIUM_BROWSER === "firefox") {
+        return createFirefoxDriver();
+      } else {
+        return createChromeDriver();
+      }
     }
 
     case "playwright": {
@@ -183,6 +176,31 @@ async function createDriver(driverId: Driver.Id): Promise<Alumni.Driver> {
     default:
       never();
   }
+}
+
+async function createChromeDriver() {
+  const options = new ChromeOptions();
+  options.addArguments("--disable-blink-features=AutomationControlled");
+  options.setUserPreferences({
+    credentials_enable_service: false,
+    profile: {
+      password_manager_enabled: false,
+      password_manager_leak_detection: false,
+    },
+  });
+  const browserVersion = Env.ALUMNIUM_SELENIUM_BROWSER_VERSION;
+  if (browserVersion) options.setBrowserVersion(browserVersion);
+  return new Builder().forBrowser("chrome").setChromeOptions(options).build();
+}
+
+async function createFirefoxDriver() {
+  const options = new FirefoxOptions();
+  options.enableBidi();
+  options.setBrowserVersion(Env.ALUMNIUM_SELENIUM_BROWSER_VERSION || "stable");
+  return await new Builder()
+    .forBrowser("firefox")
+    .setFirefoxOptions(options)
+    .build();
 }
 
 async function stopTracing(

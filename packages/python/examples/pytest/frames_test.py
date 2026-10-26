@@ -7,6 +7,10 @@ from pytest import mark
     "appium" in getenv("ALUMNIUM_DRIVER", "selenium"),
     reason="Frames support is only implemented for Playwright and Selenium currently",
 )
+@mark.xfail(
+    getenv("ALUMNIUM_SELENIUM_BROWSER", "chrome") == "firefox",
+    reason="Frames support is not implemented in Firefox yet",
+)
 def test_nested_frames(al, navigate):
     navigate("the-internet/nested-frames.html")
 

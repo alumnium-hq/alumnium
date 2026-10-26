@@ -42,12 +42,17 @@ sources = [
   "core/src/drivers/scripts/*.js",
   "core/src/server/agents/prompts/**/*.md",
   "cursor/src/standalone/cursorSdkManifest.ts",
+  "selenium/node_modules/acquiescence/package.json",
+  "selenium/src/drivers/scripts/*.js",
   "../../bun.lock",
 ]
 outputs = [
   "core/src/server/agents/prompts/bundledPrompts.ts",
   "core/src/drivers/scripts/bundledScripts.ts",
   "cursor/src/standalone/cursorSdkVendorManifest.ts",
+  "selenium/src/drivers/scripts/bundledScripts.ts",
+  "../python/src/alumnium/drivers/scripts/acquiescence.js",
+  "../python/src/alumnium/drivers/scripts/ariaSnapshot.js",
 ]
 
 [tasks.publish]
@@ -90,7 +95,7 @@ run = "bun vitest --project unit --coverage --coverage.reportsDirectory alumnium
 [tasks."test/system"]
 usage = '''
 arg "<driver>" help="Driver to use for system tests" {
-  choices "selenium" "playwright" "appium-ios" "appium-android" "maestro-ios" "maestro-android"
+  choices "selenium" "selenium-firefox" "playwright" "appium-ios" "appium-android" "maestro-ios" "maestro-android"
   default "selenium"
 }
 arg "[test]" help="System test to run" default=""
@@ -111,6 +116,11 @@ flag "--model <model>" env="ALUMNIUM_MODEL"
 '''
 run = [
   { task = "test/system:selenium", args = [
+    "{{usage.test}}",
+    "--model",
+    "{{usage.model}}",
+  ] },
+  { task = "test/system:selenium-firefox", args = [
     "{{usage.test}}",
     "--model",
     "{{usage.model}}",
@@ -163,6 +173,20 @@ flag "--model <model>" help="Model to use for selenium tests" env="ALUMNIUM_MODE
 run = [
   { task = "test/system", args = [
     "selenium",
+    "{{usage.test}}",
+    "--model",
+    "{{usage.model}}",
+  ] },
+]
+
+[tasks."test/system:selenium-firefox"]
+usage = '''
+arg "[test]" help="System test to run" default=""
+flag "--model <model>" help="Model to use for selenium-firefox tests" env="ALUMNIUM_MODEL"
+'''
+run = [
+  { task = "test/system", args = [
+    "selenium-firefox",
     "{{usage.test}}",
     "--model",
     "{{usage.model}}",

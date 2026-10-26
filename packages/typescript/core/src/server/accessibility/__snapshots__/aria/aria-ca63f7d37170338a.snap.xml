@@ -1,0 +1,8 @@
+<RootWebArea>
+  <heading name="Dropdown List" id=2 level=3 />
+  <combobox id=3>
+    <option name="Please select an option" id=4 checked="false" disabled selected />
+    <option name="Option 1" id=5 checked="false" />
+    <option name="Option 2" id=6 checked="false" />
+  </combobox>
+</RootWebArea>

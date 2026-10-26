@@ -1,0 +1,9 @@
+<RootWebArea raw_id=1>
+  <heading raw_id=2 sharedId="b01b63fd-4c1e-49ed-b6fe-5c47e53c9a3a" name="Multi-Tab Test Page" level=1 />
+  <paragraph raw_id=3 sharedId="55816280-d9ae-43ad-b880-3c8f24b0026f">
+    <text raw_id=4 name="This page is used to test tab management functionality." />
+  </paragraph>
+  <button raw_id=5 sharedId="8c0031c6-8fb0-402d-83ce-991ae4484d62" name="Open New Tab" />
+  <button raw_id=6 sharedId="3a19617e-efde-424f-b1f6-323ca914f173" name="Open Popup (auto-closes)" />
+  <button raw_id=7 sharedId="e1c73be4-1018-4b43-82d0-faba22267210" name="Show Delayed Element" />
+</RootWebArea>

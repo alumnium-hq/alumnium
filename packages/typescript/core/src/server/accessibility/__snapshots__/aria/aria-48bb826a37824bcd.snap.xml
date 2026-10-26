@@ -1,0 +1,7 @@
+<RootWebArea>
+  <heading name="Multiple File Upload Test" id=2 level=1 />
+  <heading name="📁 Upload Multiple Files" id=3 level=2 />
+  <paragraph id=4>Select multiple files to test the upload functionality</paragraph>
+  <button name="Multiple File Input" id=6 />
+  <button name="Upload Files" id=7 disabled />
+</RootWebArea>

@@ -1,0 +1,67 @@
+<RootWebArea>
+  <banner id=2>
+    <button name="Open Menu" id=3 />
+    <img name="Open Menu" id=4 />
+    Swag Labs
+    <button name="Cart, empty" id=6 />
+    Products Name (A to Z)
+    <combobox name="Sort products" id=8>
+      <option name="Name (A to Z)" id=9 checked="false" selected />
+      <option name="Name (Z to A)" id=10 checked="false" />
+      <option name="Price (low to high)" id=11 checked="false" />
+      <option name="Price (high to low)" id=12 checked="false" />
+    </combobox>
+  </banner>
+  <main id=13>
+    <button name="View details for" id=14>
+      <img name="Sauce Labs Backpack" id=15 />
+    </button>
+    <button name="View details for" id=16>Sauce Labs Backpack</button>
+    carry.allTheThings() with the sleek, streamlined Sly Pack that melds uncompromising style with unequaled laptop and tablet protection. $29.99
+    <button name="Add to cart" id=19 />
+    <button name="View details for" id=20>
+      <img name="Sauce Labs Bike Light" id=21 />
+    </button>
+    <button name="View details for" id=22>Sauce Labs Bike Light</button>
+    A red light isn't the desired state in testing but it sure helps when riding your bike at night. Water-resistant with 3 lighting modes, 1 AAA battery included. $9.99
+    <button name="Add to cart" id=25 />
+    <button name="View details for" id=26>
+      <img name="Sauce Labs Bolt T-Shirt" id=27 />
+    </button>
+    <button name="View details for" id=28>Sauce Labs Bolt T-Shirt</button>
+    Get your testing superhero on with the Sauce Labs bolt T-shirt. From American Apparel, 100% ringspun combed cotton, heather gray with red bolt. $15.99
+    <button name="Add to cart" id=31 />
+    <button name="View details for" id=32>
+      <img name="Sauce Labs Fleece Jacket" id=33 />
+    </button>
+    <button name="View details for" id=34>Sauce Labs Fleece Jacket</button>
+    It's not every day that you come across a midweight quarter-zip fleece jacket capable of handling everything from a relaxing day outdoors to a busy day at the office. $49.99
+    <button name="Add to cart" id=37 />
+    <button name="View details for" id=38>
+      <img name="Sauce Labs Onesie" id=39 />
+    </button>
+    <button name="View details for" id=40>Sauce Labs Onesie</button>
+    Rib snap infant onesie for the junior automation engineer in development. Reinforced 3-snap bottom closure, two-needle hemmed sleeved and bottom won't unravel. $7.99
+    <button name="Add to cart" id=43 />
+    <button name="View details for" id=44>
+      <img name="Test.allTheThings() T-Shirt (Red)" id=45 />
+    </button>
+    <button name="View details for" id=46>Test.allTheThings() T-Shirt (Red)</button>
+    This classic Sauce Labs t-shirt is perfect to wear when cozying up to your keyboard to automate a few tests. Super-soft and comfy ringspun combed cotton. $15.99
+    <button name="Add to cart" id=49 />
+  </main>
+  <contentinfo id=50>
+    <list id=51>
+      <listitem id=52>
+        <link name="X" id=53 url="https://x.com/saucelabs" />
+      </listitem>
+      <listitem id=54>
+        <link name="Facebook" id=55 url="https://www.facebook.com/saucelabs" />
+      </listitem>
+      <listitem id=56>
+        <link name="LinkedIn" id=57 url="https://www.linkedin.com/company/sauce-labs/" />
+      </listitem>
+    </list>
+    © 2026 Sauce Labs. All Rights Reserved. Terms of Service | Privacy Policy
+  </contentinfo>
+</RootWebArea>

@@ -13,6 +13,7 @@ import java.util.List;
 public final class AccessibilityElement {
   private Integer id;
   private Long backendNodeId;
+  private String sharedId;
   private String name;
   private String label;
   private String type;
@@ -43,6 +44,15 @@ public final class AccessibilityElement {
 
   public AccessibilityElement backendNodeId(Long v) {
     this.backendNodeId = v;
+    return this;
+  }
+
+  public String sharedId() {
+    return sharedId;
+  }
+
+  public AccessibilityElement sharedId(String v) {
+    this.sharedId = v;
     return this;
   }
 

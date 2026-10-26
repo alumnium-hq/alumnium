@@ -1,0 +1,8 @@
+<RootWebArea raw_id=1>
+  <heading raw_id=2 sharedId="54a86f87-0baa-409b-8a19-c3a67243c5e6" name="Navigation Target Page" level=1 />
+  <paragraph raw_id=3 sharedId="56c395ea-3632-4984-993b-7cff5d0f0ab9">
+    <text raw_id=4 name="Used to test the navigation domain policy's post-invoke hook." />
+  </paragraph>
+  <button raw_id=5 sharedId="72e5f85c-6a14-4e76-b17c-da92134ff231" name="Redirect Here" />
+  <button raw_id=6 sharedId="8f9d2df9-292f-43a2-aa8f-fd7442a388c5" name="Open Tab Here" />
+</RootWebArea>

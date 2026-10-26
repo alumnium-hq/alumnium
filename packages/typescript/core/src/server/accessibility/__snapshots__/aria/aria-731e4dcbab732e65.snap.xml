@@ -1,0 +1,42 @@
+<RootWebArea>
+  <img id=2 />
+  <link name="Brave Search Brave Search" id=3 url="/">
+    <img name="Brave logo" id=4 />
+  </link>
+  <button name="AI Features" id=5>
+    <img id=6 />
+  </button>
+  <textbox name="Search" id=7 placeholder="Ask anything, find anything…" />
+  <button name="Start voice input" id=8>
+    <img id=9 />
+  </button>
+  <button id=10>
+    <img id=11 />
+    Ask
+  </button>
+  <img name="Brave logo" id=13 />
+  Brave Browser Enjoying private search? Try the browser that puts you first.
+  <link id=15 url="https://brave.com/download/now/?mtm_campaign=search-homepage-cta">
+    Download
+    <img id=17 />
+  </link>
+  <button name="Quick settings" id=18>
+    <img id=19 />
+  </button>
+  <contentinfo id=20>
+    © Brave Software
+    <link name="Advertise" id=22 url="https://ads.brave.com/register/search?mtm_source=brave-search&amp;mtm_medium=searchhome&amp;mtm_campaign=brave-search&amp;mtm_content=evergreen" />
+    <link name="API" id=23 url="https://brave.com/search/api/?mtm_source=brave-search&amp;mtm_medium=searchhome&amp;mtm_campaign=brave-search&amp;mtm_content=evergreen" />
+    <link name="News" id=24 url="https://brave.com/category/brave-search/?mtm_source=brave-search&amp;mtm_medium=searchhome&amp;mtm_campaign=brave-search&amp;mtm_content=evergreen" />
+    <link name="FAQ" id=25 url="https://brave.com/search/#search-faq?mtm_source=brave-search&amp;mtm_medium=searchhome&amp;mtm_campaign=brave-search&amp;mtm_content=evergreen" />
+    <link name="Privacy Policy" id=26 url="/help/privacy-policy" />
+    <link name="Report a security issue" id=27 url="https://hackerone.com/brave" />
+  </contentinfo>
+  Brave Search uses private usage metrics to estimate overall activity and performance. You can turn off this option in
+  <link name="Settings" id=29 url="/settings" />
+  .
+  <link name="Learn more." id=31 url="/help/usage-metrics" />
+  <button name="Close" id=32>
+    <img id=33 />
+  </button>
+</RootWebArea>
