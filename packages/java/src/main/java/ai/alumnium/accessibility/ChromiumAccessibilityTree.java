@@ -268,7 +268,7 @@ public final class ChromiumAccessibilityTree extends BaseAccessibilityTree {
     }
   }
 
-  private static String sanitizeTag(String tag) {
+  static String sanitizeTag(String tag) {
     if (tag == null || tag.isEmpty()) return "unknown";
     StringBuilder sb = new StringBuilder();
     char first = tag.charAt(0);

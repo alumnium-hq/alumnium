@@ -1,0 +1,7 @@
+<RootWebArea raw_id=1>
+  <heading raw_id=2 sharedId="b3bb20af-b98d-43af-9c74-9b8c451288ba" name="Slider Test Page" level=1 />
+  <text raw_id=3 name="Value: 50" />
+  <slider raw_id=4 sharedId="60a78714-4078-47ce-ae4b-7b53ac4f1516" name="Value: 50">
+    <text raw_id=5 name=50 />
+  </slider>
+</RootWebArea>

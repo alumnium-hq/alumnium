@@ -1,24 +1,31 @@
+from typing import cast
+
+from selenium.webdriver.remote.webdriver import WebDriver
+
+from alumnium.drivers.selenium.bidi_driver import BiDiDriver
+from alumnium.drivers.selenium.cdp_driver import CdpDriver
 from alumnium.drivers.selenium_driver import SeleniumDriver
-from alumnium.drivers.waiter import WAITER_SCRIPT, WAITER_SNAPSHOT_SCRIPT
 
 
-def test_injects_waiter_when_new_tab_session_is_not_ready():
-    selenium = object.__new__(SeleniumDriver)
-    snapshot = {
-        "lastMutationAt": 0,
-        "now": 100,
-        "pendingTimeouts": 0,
-        "readyState": "complete",
-    }
-    results = [None, None, snapshot]
-    scripts = []
+def test_creates_cdp_driver_for_chromium_browsers(monkeypatch):
+    monkeypatch.setattr(CdpDriver, "__init__", lambda self, driver: None)
 
     class Driver:
-        def execute_script(self, script):
-            scripts.append(script)
-            return results.pop(0)
+        capabilities = {"browserName": "chrome"}
 
-    selenium.driver = Driver()
+    driver = SeleniumDriver.of(cast(WebDriver, Driver()))
 
-    assert selenium._waiter_snapshot() == snapshot
-    assert scripts == [f"return {WAITER_SNAPSHOT_SCRIPT}", WAITER_SCRIPT, f"return {WAITER_SNAPSHOT_SCRIPT}"]
+    assert isinstance(driver, CdpDriver)
+    assert driver.platform == "chromium"
+
+
+def test_creates_bidi_driver_for_firefox(monkeypatch):
+    monkeypatch.setattr(BiDiDriver, "__init__", lambda self, driver: None)
+
+    class Driver:
+        capabilities = {"browserName": "firefox"}
+
+    driver = SeleniumDriver.of(cast(WebDriver, Driver()))
+
+    assert isinstance(driver, BiDiDriver)
+    assert driver.platform == "firefox"

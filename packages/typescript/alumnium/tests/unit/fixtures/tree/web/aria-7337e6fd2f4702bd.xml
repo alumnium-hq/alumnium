@@ -1,0 +1,28 @@
+<RootWebArea raw_id=1>
+  <text raw_id=2 name="Dark Mode" />
+  <link raw_id=3 sharedId="4adbf4c7-2d40-4b60-9217-f226cd7eaddc" name="Calculator" url="https://seleniumbase.io/apps/calculator" />
+  <link raw_id=4 sharedId="30625cdc-dd35-4af6-ab3f-23283fbd7251" name="SB" url="https://seleniumbase.io" />
+  <textbox raw_id=5 sharedId="7471a4e6-eedd-4c49-b62c-3d5ffc3aec13">
+    <text raw_id=6 name="3×4" />
+  </textbox>
+  <button raw_id=7 sharedId="64e38631-eed9-42de-bc5c-a555e5b4c6a8" name="C" />
+  <button raw_id=8 sharedId="0494a729-44a8-4aa1-92d4-9a91225e5ca6" name="(" />
+  <button raw_id=9 sharedId="2929ba4d-c613-40e7-a585-467a135ae35c" name=")" />
+  <button raw_id=10 sharedId="366adf8f-3de6-4fa5-9335-9f14fb6921f8" name="÷" />
+  <button raw_id=11 sharedId="b06a0b76-b8c1-4829-99ef-a0f06c7cd8e0" name=7 />
+  <button raw_id=12 sharedId="ffd2e8e6-b66d-4e2c-809b-47494b2f9494" name=8 />
+  <button raw_id=13 sharedId="2a8fffbe-4ad2-4b6b-86ff-c88aa9b373a6" name=9 />
+  <button raw_id=14 sharedId="59a31f1a-c2b9-4954-992e-89745370611b" name="×" />
+  <button raw_id=15 sharedId="3030abfe-c31b-48ac-8c5f-c087583f0ae3" name=4 />
+  <button raw_id=16 sharedId="4db18635-f312-4265-ad4e-b90324efb74d" name=5 />
+  <button raw_id=17 sharedId="f671f3c9-39e5-4ad5-ad08-bf3af49e6706" name=6 />
+  <button raw_id=18 sharedId="a08e5699-8e92-4d4d-9f16-6156a65bd347" name="-" />
+  <button raw_id=19 sharedId="fe4303b9-9da8-421a-9225-1af8878ac540" name=1 />
+  <button raw_id=20 sharedId="99a99cfc-e609-47e7-8da3-2509b1bf4ff9" name=2 />
+  <button raw_id=21 sharedId="8ad8a4ce-f19a-4eee-8a6f-0286310cce09" name=3 />
+  <button raw_id=22 sharedId="b6ef829a-cdba-451d-bc0f-429f57f9f7ba" name="+" />
+  <button raw_id=23 sharedId="039d5c98-c953-4802-ab34-3845261b0210" name="←" />
+  <button raw_id=24 sharedId="0c5e91f5-cd77-472c-918a-e50978db4f4d" name=0 />
+  <button raw_id=25 sharedId="6c3a7647-b9ca-4cc3-a2d0-dd19fb5c3985" name="." />
+  <button raw_id=26 sharedId="aa3490c4-cb5b-4046-8298-115674de8213" name="=" />
+</RootWebArea>

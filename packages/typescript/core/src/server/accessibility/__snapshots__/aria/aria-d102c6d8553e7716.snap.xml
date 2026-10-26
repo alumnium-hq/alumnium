@@ -1,0 +1,5 @@
+<RootWebArea>
+  <heading name="Slider Test Page" id=2 level=1 />
+  Value: 50
+  <slider name="Value:" id=4>50</slider>
+</RootWebArea>

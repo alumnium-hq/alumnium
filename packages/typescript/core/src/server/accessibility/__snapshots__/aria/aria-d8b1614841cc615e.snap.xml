@@ -1,0 +1,33 @@
+<RootWebArea>
+  <heading name="Welcome to the-internet" id=2 level=1 />
+  <heading name="Available Examples" id=3 level=2 />
+  <list id=4>
+    <listitem id=5>
+      <link name="Drag and Drop" id=6 url="drag-and-drop.html" />
+    </listitem>
+    <listitem id=7>
+      <link name="Dropdown" id=8 url="dropdown.html" />
+    </listitem>
+    <listitem id=9>
+      <link name="Dynamic Content" id=10 url="dynamic-content.html" />
+    </listitem>
+    <listitem id=11>
+      <link name="File Upload" id=12 url="upload.html" />
+    </listitem>
+    <listitem id=13>
+      <link name="Forgot Password" id=14 url="forgot-password.html" />
+    </listitem>
+    <listitem id=15>
+      <link name="Large &amp; Deep DOM" id=16 url="large.html" />
+    </listitem>
+    <listitem id=17>
+      <link name="Nested Frames" id=18 url="nested-frames.html" />
+    </listitem>
+    <listitem id=19>
+      <link name="Sortable Data Tables" id=20 url="tables.html" />
+    </listitem>
+    <listitem id=21>
+      <link name="Typos" id=22 url="typos.html" />
+    </listitem>
+  </list>
+</RootWebArea>

@@ -6,6 +6,7 @@ from typing import Any
 class AccessibilityElement:
     id: int | None = None
     backend_node_id: int | None = None
+    shared_id: str | None = None  # WebDriver BiDi node shared ID
     name: str | None = None
     label: str | None = None
     type: str | None = None
@@ -18,3 +19,6 @@ class AccessibilityElement:
     androidbounds: str | None = None
     frame: Any | None = None  # Playwright Frame object for iframe support
     frame_chain: list[int] | None = None  # For Selenium: chain of iframe backendNodeIds from root to element's frame
+    frame_shared_ids: list[str] | None = (
+        None  # For WebDriver BiDi: chain of iframe shared IDs from root to element's frame
+    )

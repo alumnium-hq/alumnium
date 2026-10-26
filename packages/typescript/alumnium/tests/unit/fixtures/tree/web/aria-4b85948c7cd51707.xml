@@ -1,0 +1,227 @@
+<RootWebArea raw_id=1>
+  <link raw_id=2 sharedId="ecd2f179-f600-4841-9dd5-45af60834fcb" name="logo" url="/">
+    <img raw_id=3 sharedId="014568b7-9a5c-49fe-a6e1-73c7d87dbee1" name="logo" />
+  </link>
+  <link raw_id=4 sharedId="dac040e8-8643-4016-b99f-0af958909761" name="Favourites" url="/favourites">
+    <strong raw_id=5 sharedId="9415151e-8829-4cc3-b7ca-29ff6d3de2a1">
+      <text raw_id=6 name="Favourites" />
+    </strong>
+  </link>
+  <link raw_id=7 sharedId="8cca2311-21ed-41bc-8214-ac9656de729a" name="Orders" url="/orders">
+    <strong raw_id=8 sharedId="8cb4abe6-3653-461c-b1e6-bde5bc42ad31">
+      <text raw_id=9 name="Orders" />
+    </strong>
+  </link>
+  <link raw_id=10 sharedId="9e129fef-6c1d-476c-a149-c73a52a61693" name="Offers" url="/offers">
+    <strong raw_id=11 sharedId="ef91bf02-58ff-4941-b6ab-c9ce05502648">
+      <text raw_id=12 name="Offers" />
+    </strong>
+  </link>
+  <textbox raw_id=13 sharedId="4b4cf247-2cf9-4de3-b4a6-c7aacc4b6eb3" name="Search" />
+  <button raw_id=14 sharedId="dc0461a7-a149-443c-8f6c-44f2cf7feb2a" name="flowchart main Search">
+    <img raw_id=15 sharedId="ad799adb-2ab9-4745-b0a0-c69d479d3e91" name="flowchart main" />
+    <text raw_id=16 name="Search" />
+  </button>
+  <navigation raw_id=17 sharedId="7ea39131-c75f-4c3e-9af1-3e33c2ad0585">
+    <link raw_id=18 sharedId="b2d2d475-9912-4d98-8abc-2df20c99c02c" name="Sign In" />
+  </navigation>
+  <main raw_id=19 sharedId="f89ccf65-2f84-405d-b857-d8347e8caa55">
+    <link raw_id=20 sharedId="8584c919-eb99-49da-bff0-6411b92e7a40" name="banner main" url="#">
+      <img raw_id=21 sharedId="53d0e0eb-4c8a-45db-8a74-e52abe0a39e1" name="banner main" />
+    </link>
+    <heading raw_id=22 sharedId="71d43d37-e5e1-491e-ad6d-49922a588d93" name="Vendors:" level=4 />
+    <checkbox raw_id=23 sharedId="d7ee5b03-0037-4e64-94b1-066ef28c4887" name="Apple" checked="false" />
+    <text raw_id=24 name="Apple" />
+    <checkbox raw_id=25 sharedId="547c5d09-f661-4859-8973-6ad6fdd3746f" name="Samsung" checked="false" />
+    <text raw_id=26 name="Samsung" />
+    <checkbox raw_id=27 sharedId="f82f7aec-a3f9-486d-8a9c-337968ea505e" name="Google" checked="false" />
+    <text raw_id=28 name="Google" />
+    <checkbox raw_id=29 sharedId="b30ca569-efb2-4f9c-82a0-b82fe20e79e7" name="OnePlus" checked="false" />
+    <text raw_id=30 name="OnePlus Products" />
+    <heading raw_id=31 sharedId="c75d433b-d624-46cd-b7f5-acdeb09621b4" name="25 Product(s) found." level=3 />
+    <text raw_id=32 name="Order by" />
+    <combobox raw_id=33 sharedId="320f9d0e-4f49-4a38-8104-6a54a4747d0e">
+      <option raw_id=34 sharedId="aa1d7f57-a8a8-4433-a37e-0a8c3b3a58fc" name="Select" checked="false" selected />
+      <option raw_id=35 sharedId="cac29559-3d16-4414-926e-22c16415b79a" name="Lowest to highest" checked="false" />
+      <option raw_id=36 sharedId="35dd1288-435d-4bec-a7af-8ff8285b2852" name="Highest to lowest" checked="false" />
+    </combobox>
+    <button raw_id=37 sharedId="3e33bbd6-66b6-4e00-b7fa-b4a37b0e18dc" name="delete" />
+    <img raw_id=38 sharedId="eec929ab-543d-41d1-b38f-41d2319dd1e9" name="img" />
+    <paragraph raw_id=39 sharedId="5cf21626-42c8-47a5-bd93-a46eb32d09f6">
+      <text raw_id=40 name="iPhone 12" />
+    </paragraph>
+    <text raw_id=41 name="$799.00 or 9 x $ 88.78 Add to cart" />
+    <button raw_id=42 sharedId="22342ef8-5c93-4062-a246-ff534d58f13a" name="delete" />
+    <img raw_id=43 sharedId="c3339c09-c492-4085-b6b8-cab3db4bc05a" name="img" />
+    <paragraph raw_id=44 sharedId="c21d5d48-8f66-497d-9b49-b2b1e22958c0">
+      <text raw_id=45 name="iPhone 12 Mini" />
+    </paragraph>
+    <text raw_id=46 name="$699.00 or 9 x $ 77.67 Add to cart" />
+    <button raw_id=47 sharedId="402404c4-0383-4e0f-9828-bb7e31e06c25" name="delete" />
+    <img raw_id=48 sharedId="2d180cdd-f0b0-485a-a861-0c6a65d91d0d" name="img" />
+    <paragraph raw_id=49 sharedId="796e9968-899d-4e8b-bd20-321d89028e2b">
+      <text raw_id=50 name="iPhone 12 Pro Max" />
+    </paragraph>
+    <text raw_id=51 name="$1099.00 or 9 x $ 122.11 Add to cart" />
+    <button raw_id=52 sharedId="bbc11a2f-ac03-49a8-837b-37e9c9e05f2d" name="delete" />
+    <img raw_id=53 sharedId="a27607f0-28a3-4ca2-99d8-2fc87467c11f" name="img" />
+    <paragraph raw_id=54 sharedId="ea99a3d1-3368-46f0-8e03-7739ac033ab5">
+      <text raw_id=55 name="iPhone 12 Pro" />
+    </paragraph>
+    <text raw_id=56 name="$999.00 or 5 x $ 199.80 Add to cart" />
+    <button raw_id=57 sharedId="e6942ba5-1e03-470e-b6ee-94881bd6f87d" name="delete" />
+    <img raw_id=58 sharedId="f7475e15-60e7-4a06-b6cf-5b64ce5b1b5f" name="img" />
+    <paragraph raw_id=59 sharedId="01ed1fa6-26de-48dc-85d5-4c6a12f143da">
+      <text raw_id=60 name="iPhone 11" />
+    </paragraph>
+    <text raw_id=61 name="$599.00 or 8 x $ 74.88 Add to cart" />
+    <button raw_id=62 sharedId="c48ce425-e1bf-467f-9158-d7e4565f024e" name="delete" />
+    <img raw_id=63 sharedId="4e04f465-0b80-4596-b3db-002f2761be3e" name="img" />
+    <paragraph raw_id=64 sharedId="db8f2260-a278-4c75-9519-3e3279b62337">
+      <text raw_id=65 name="iPhone 11 Pro" />
+    </paragraph>
+    <text raw_id=66 name="$699.00 or 3 x $ 233.00 Add to cart" />
+    <button raw_id=67 sharedId="66eb6164-3947-4de3-bd41-b41eefc1eee6" name="delete" />
+    <img raw_id=68 sharedId="7de808c5-c8d9-423d-a9ad-1433a030c13a" name="iPhone XS" />
+    <paragraph raw_id=69 sharedId="b3f5bc19-98bd-48b1-be5d-cdf2939f82fb">
+      <text raw_id=70 name="iPhone XS" />
+    </paragraph>
+    <text raw_id=71 name="$549.00 or 4 x $ 137.25 Add to cart" />
+    <button raw_id=72 sharedId="808823de-7c1d-4035-a134-d2b833f6a41c" name="delete" />
+    <img raw_id=73 sharedId="5ea08b7b-9bc3-4c2d-acb3-a454b3e49fb1" name="iPhone XR" />
+    <paragraph raw_id=74 sharedId="d5e1ec32-f835-4cc5-becb-1abbd35e36a0">
+      <text raw_id=75 name="iPhone XR" />
+    </paragraph>
+    <text raw_id=76 name="$499.00 or 5 x $ 99.80 Add to cart" />
+    <button raw_id=77 sharedId="5e0fea91-de02-4d7c-bada-14f432f22303" name="delete" />
+    <img raw_id=78 sharedId="397be093-d298-469d-b0f9-786810495bed" name="iPhone XS Max" />
+    <paragraph raw_id=79 sharedId="5b65fcaa-92c1-40e7-a53e-9d4156d1da52">
+      <text raw_id=80 name="iPhone XS Max" />
+    </paragraph>
+    <text raw_id=81 name="$649.00 or 7 x $ 92.71 Add to cart" />
+    <button raw_id=82 sharedId="2a289be6-34a9-4d81-9917-c9d468661d15" name="delete" />
+    <img raw_id=83 sharedId="9f840b08-da02-4fd0-be03-8e6ec50f5c3b" name="Galaxy S20" />
+    <paragraph raw_id=84 sharedId="712c9c14-a61e-44fb-9d2f-d737fccf5c47">
+      <text raw_id=85 name="Galaxy S20" />
+    </paragraph>
+    <text raw_id=86 name="$999.00 or 9 x $ 111.00 Add to cart" />
+    <button raw_id=87 sharedId="afaf0d2a-4542-43b6-b38a-187845523ea6" name="delete" />
+    <img raw_id=88 sharedId="e313576c-8694-4e03-9df7-0f1c10cddd57" name="Galaxy S20+" />
+    <paragraph raw_id=89 sharedId="3dad702c-06f4-4294-bfd3-43ef25292e97">
+      <text raw_id=90 name="Galaxy S20+" />
+    </paragraph>
+    <text raw_id=91 name="$1199.00 or 9 x $ 133.22 Add to cart" />
+    <button raw_id=92 sharedId="9197b30d-7ac2-4f62-8c1d-2f6f39bb9e43" name="delete" />
+    <img raw_id=93 sharedId="014cf848-7ed0-4f61-8b8f-b6e191beb0cb" name="Galaxy S20 Ultra" />
+    <paragraph raw_id=94 sharedId="7e3e7565-df85-4883-8278-672a5e492d11">
+      <text raw_id=95 name="Galaxy S20 Ultra" />
+    </paragraph>
+    <text raw_id=96 name="$1399.00 or 12 x $ 116.58 Add to cart" />
+    <button raw_id=97 sharedId="b2f11635-75b5-461b-b66e-d378a36e2cae" name="delete" />
+    <img raw_id=98 sharedId="d874068f-8ee1-4e16-99a4-e5b3b3bb9874" name="Galaxy S10" />
+    <paragraph raw_id=99 sharedId="1ab591f0-f2d6-41a4-a4f9-e523c2289f36">
+      <text raw_id=100 name="Galaxy S10" />
+    </paragraph>
+    <text raw_id=101 name="$899.00 or 5 x $ 179.80 Add to cart" />
+    <button raw_id=102 sharedId="2853b3a4-cc72-4ed6-8dbc-ee5ddeb7789c" name="delete" />
+    <img raw_id=103 sharedId="4aef603e-7655-4c67-9b0e-6ee5c9f59247" name="Galaxy S9" />
+    <paragraph raw_id=104 sharedId="1251cb62-afec-49b6-99da-1aff627f079e">
+      <text raw_id=105 name="Galaxy S9" />
+    </paragraph>
+    <text raw_id=106 name="$699.00 or 5 x $ 139.80 Add to cart" />
+    <button raw_id=107 sharedId="51541c33-7ea3-4e75-8c42-80eefebf5db6" name="delete" />
+    <img raw_id=108 sharedId="f4642e3f-df62-44d2-8747-d04841b4cb67" name="Galaxy Note 20" />
+    <paragraph raw_id=109 sharedId="37e8ba1c-b08d-4236-a317-71c70b409f82">
+      <text raw_id=110 name="Galaxy Note 20" />
+    </paragraph>
+    <text raw_id=111 name="$999.00 or 7 x $ 142.71 Add to cart" />
+    <button raw_id=112 sharedId="2fd72a4f-4e79-4012-960b-98cd5a9a74c2" name="delete" />
+    <img raw_id=113 sharedId="17b6c027-3b68-4079-8bdd-3d6abe5147cc" name="Galaxy Note 20 Ultra" />
+    <paragraph raw_id=114 sharedId="1de0573e-f7fc-4d28-a8a7-726225aecbcd">
+      <text raw_id=115 name="Galaxy Note 20 Ultra" />
+    </paragraph>
+    <text raw_id=116 name="$1299.00 or 7 x $ 185.57 Add to cart" />
+    <button raw_id=117 sharedId="d35eb4bc-2776-46d4-9c1d-5701901a4632" name="delete" />
+    <img raw_id=118 sharedId="8e7dcddd-bc6a-464a-b6f8-4c85a77a70bb" name="Pixel 4" />
+    <paragraph raw_id=119 sharedId="ee260000-78f3-481f-b424-2290091f3f8f">
+      <text raw_id=120 name="Pixel 4" />
+    </paragraph>
+    <text raw_id=121 name="$899.00 or 5 x $ 179.80 Add to cart" />
+    <button raw_id=122 sharedId="fffcf44c-6495-4735-8b44-20cdc9cfe7d8" name="delete" />
+    <img raw_id=123 sharedId="4ea5a49f-55e3-459b-9f67-002c16100ec8" name="Pixel 3" />
+    <paragraph raw_id=124 sharedId="8b2fbb01-c8fa-4cff-90f0-9e6a78a89001">
+      <text raw_id=125 name="Pixel 3" />
+    </paragraph>
+    <text raw_id=126 name="$599.00 or 5 x $ 119.80 Add to cart" />
+    <button raw_id=127 sharedId="6716c374-965a-4db8-b3ac-9afc6a089325" name="delete" />
+    <img raw_id=128 sharedId="e5f891b6-9c88-4382-bbb6-66619e560a46" name="Pixel 2" />
+    <paragraph raw_id=129 sharedId="f296324b-cbb5-40df-8c7d-5f7f0c000180">
+      <text raw_id=130 name="Pixel 2" />
+    </paragraph>
+    <text raw_id=131 name="$399.00 or 3 x $ 133.00 Add to cart" />
+    <button raw_id=132 sharedId="c0b5775c-7ef8-4b14-a67f-4711620e83c0" name="delete" />
+    <img raw_id=133 sharedId="88e0ae11-eb6a-4d77-87d1-212d8e3adcaf" name="One Plus 8" />
+    <paragraph raw_id=134 sharedId="0de18b1c-e09a-422a-8b3c-64c670ed93cb">
+      <text raw_id=135 name="One Plus 8" />
+    </paragraph>
+    <text raw_id=136 name="$799.00 or 6 x $ 133.17 Add to cart" />
+    <button raw_id=137 sharedId="8c5d7c02-3241-46e9-be73-802393049e83" name="delete" />
+    <img raw_id=138 sharedId="82c35aa5-065e-4192-9fd0-49f64de53bf1" name="One Plus 8T" />
+    <paragraph raw_id=139 sharedId="618373bf-60b6-4749-8225-522f93ffb19b">
+      <text raw_id=140 name="One Plus 8T" />
+    </paragraph>
+    <text raw_id=141 name="$899.00 or 6 x $ 149.83 Add to cart" />
+    <button raw_id=142 sharedId="57ac3054-4ae9-4cda-978f-9d7ca10f72e3" name="delete" />
+    <img raw_id=143 sharedId="b78e6511-c7c1-4032-9dc5-e0fabdc0887b" name="One Plus 8 Pro" />
+    <paragraph raw_id=144 sharedId="c2d51b0f-25eb-4f4c-9b25-755e87b62021">
+      <text raw_id=145 name="One Plus 8 Pro" />
+    </paragraph>
+    <text raw_id=146 name="$899.00 or 6 x $ 149.83 Add to cart" />
+    <button raw_id=147 sharedId="44ca38f9-0f08-4c43-8e47-c9b0ce3257c8" name="delete" />
+    <img raw_id=148 sharedId="c880a8cc-bbf9-4d9b-9eba-3a0c2bc56da6" name="One Plus 7T" />
+    <paragraph raw_id=149 sharedId="2cd47971-ae03-47f0-8e35-48762a427d4b">
+      <text raw_id=150 name="One Plus 7T" />
+    </paragraph>
+    <text raw_id=151 name="$599.00 or 6 x $ 99.83 Add to cart" />
+    <button raw_id=152 sharedId="832fb0c0-c71d-4969-8ef6-a9a2e65f5b9d" name="delete" />
+    <img raw_id=153 sharedId="dd71314d-3142-4c66-a169-e4dd013f6ef7" name="One Plus 7" />
+    <paragraph raw_id=154 sharedId="cb1be556-6a0f-4f47-aff9-be98733c1e75">
+      <text raw_id=155 name="One Plus 7" />
+    </paragraph>
+    <text raw_id=156 name="$499.00 or 3 x $ 166.33 Add to cart" />
+    <button raw_id=157 sharedId="18553a0a-7015-4bfd-b9e3-101ec923f94b" name="delete" />
+    <img raw_id=158 sharedId="3c45533d-a13d-48b2-ac51-cd9b4a330d36" name="One Plus 6T" />
+    <paragraph raw_id=159 sharedId="f547a791-ec5e-4162-920f-ac485db74b8b">
+      <text raw_id=160 name="One Plus 6T" />
+    </paragraph>
+    <text raw_id=161 name="$429.00 or 3 x $ 143.00 Add to cart" />
+  </main>
+  <text raw_id=162 name="0 0 Bag" />
+  <paragraph raw_id=163 sharedId="d77166f0-c86b-445e-b453-b0d9b7f1dd8e">
+    <text raw_id=164 name="Add some products in the bag :)" />
+  </paragraph>
+  <text raw_id=165 name="SUBTOTAL" />
+  <paragraph raw_id=166 sharedId="0d95b717-9ced-4e90-959c-0c9a06d80e33">
+    <text raw_id=167 name="$ 0.00" />
+  </paragraph>
+  <text raw_id=168 name="Continue Shopping" />
+  <separator raw_id=169 sharedId="bf865147-f583-4243-939f-9ddfd834f21a" />
+  <img raw_id=170 sharedId="4082a4e2-3c94-42b6-9e1b-003fb6dce9ff" name="flowchart main" />
+  <text raw_id=171 name="Exclusive offers coming soon" />
+  <link raw_id=172 sharedId="39271545-aedb-4229-837b-32156c64f10d" name="Offers" url="/offers" />
+  <link raw_id=173 sharedId="6a6a21c6-beea-47dc-9eed-d3b0c811a437" name="Contact Us" url="/contact" />
+  <link raw_id=174 sharedId="cf67b997-5005-4c41-8a04-4a90b63506c5" name="Privacy Policy" url="/privacy" />
+  <link raw_id=175 sharedId="31f4f407-9e9e-4641-b282-9b3ad424a241" name="Careers" url="/careers" />
+  <list raw_id=176 sharedId="80ca7fc0-bfb9-4dc3-a511-99646b723952">
+    <listitem raw_id=177 sharedId="0cd94d00-b3f6-4206-9053-8a5019908b25">
+      <text raw_id=178 name="A single, simple list item." />
+    </listitem>
+  </list>
+  <paragraph raw_id=179 sharedId="4fcc2f5f-e8f1-45df-a248-3c2f6d5725c9">
+    <text raw_id=180 name="© 2026 BrowserStack Demo" />
+  </paragraph>
+  <text raw_id=181 name="Privacy Policy" />
+  <link raw_id=182 sharedId="5d5540fc-bf5b-4d6c-8a72-fd762602f60a" name="Read More" url="/" />
+  <textbox raw_id=183 sharedId="4d3da39a-75db-444a-90b3-715de4068df9" name="Email" />
+  <button raw_id=184 sharedId="8b752338-247d-42af-b8c1-2e3d92de298d" name="Subscribe to Newsletter" />
+</RootWebArea>

@@ -1,0 +1,29 @@
+<RootWebArea raw_id=1>
+  <complementary raw_id=2 sharedId="09e3b8bd-191f-479e-bd25-74e60a7424e7">
+    <heading raw_id=3 sharedId="a60da05d-f5f9-4500-90e4-6bad2174f776" name="Vue.js" level=3 />
+    <heading raw_id=4 sharedId="da367110-2b27-426c-8cc6-194c8c6d8a11" name="Example" level=5 />
+    <link raw_id=5 sharedId="9dfc82fa-f148-4791-90e7-9d780430753c" name="Source" url="https://github.com/tastejs/todomvc/tree/gh-pages/examples/vue" />
+    <separator raw_id=6 sharedId="2b3b0c42-edea-4b7a-a85d-7e97cc6a9017" />
+    <blockquote raw_id=7 sharedId="fd17bb3b-145c-48cf-9eb1-f65a26d7dead">
+      <paragraph raw_id=8 sharedId="e64353f7-5632-4323-a5e8-bfbe551a60c7">
+        <text raw_id=9 name="“ Vue is an approachable, progressive framework for building user interfaces. Components are authored as Single-File Components, with reactive state via the Composition API and ` ”" />
+      </paragraph>
+    </blockquote>
+  </complementary>
+  <link raw_id=10 sharedId="d34afe3c-df07-4cba-aa3c-e71ae8fac562" name="todos" url="#/">
+    <heading raw_id=11 sharedId="fc4a07a0-86be-4624-b475-8cb1e729eb3b" name="todos" level=1 />
+  </link>
+  <textbox raw_id=12 sharedId="3406ab81-080a-487d-b104-b2cc6426e957" name="What needs to be done?" />
+  <contentinfo raw_id=13 sharedId="49baf17c-3cff-4a0a-acb0-e51827c8d447">
+    <paragraph raw_id=14 sharedId="e841dbcf-4f93-4deb-8051-1d04956bfcf9">
+      <text raw_id=15 name="Double-click to edit a todo" />
+    </paragraph>
+    <paragraph raw_id=16 sharedId="fe6a09c0-179c-4300-b780-e94f071c1987">
+      <text raw_id=17 name="Created by the TodoMVC Team" />
+    </paragraph>
+    <paragraph raw_id=18 sharedId="108b108e-4f3f-4925-9195-7c2699be61ab">
+      <text raw_id=19 name="Part of" />
+      <link raw_id=20 sharedId="715a3d69-03ba-4fa7-a528-14fecd7b4e22" name="TodoMVC" url="http://todomvc.com" />
+    </paragraph>
+  </contentinfo>
+</RootWebArea>

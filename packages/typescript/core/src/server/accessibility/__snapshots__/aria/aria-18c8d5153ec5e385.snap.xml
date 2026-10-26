@@ -1,0 +1,10 @@
+<RootWebArea>
+  <heading name="Multiple File Upload Test" id=2 level=1 />
+  <heading name="📁 Upload Multiple Files" id=3 level=2 />
+  <paragraph id=4>Select multiple files to test the upload functionality</paragraph>
+  <button name="Multiple File Input" id=6 />
+  2 files selected
+  <heading name="Selected Files:" id=8 level=3 />
+  1. 782f4469-07db-4880-8dda-b0375b039bcc.txt 14 Bytes 2. 4f265216-6e83-42e4-9ab0-109d3f2d63a5.txt 14 Bytes
+  <button name="Upload Files" id=10 />
+</RootWebArea>

@@ -1,6 +1,7 @@
 export interface AccessibilityElement {
   id?: number | undefined;
   backendNodeId?: number | undefined;
+  sharedId?: string | undefined; // WebDriver BiDi node shared ID
   name?: string | undefined;
   label?: string | undefined;
   type?: string | undefined;
@@ -14,4 +15,5 @@ export interface AccessibilityElement {
   maestroBounds?: string | undefined;
   frame?: object | undefined;
   frameChain?: number[] | undefined; // For Selenium: chain of iframe backendNodeIds from root to element's frame
+  frameSharedIds?: string[] | undefined; // For WebDriver BiDi: chain of iframe shared IDs from root to element's frame
 }

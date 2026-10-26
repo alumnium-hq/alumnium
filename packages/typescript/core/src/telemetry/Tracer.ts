@@ -279,19 +279,19 @@ export namespace Tracer {
 
     "driver.tree.to_str": {
       Attrs: {
-        "driver.tree.platform": "chromium";
+        "driver.tree.platform": "chromium" | "aria";
       };
     };
 
     "driver.tree.element_by_id": {
       Attrs: {
-        "driver.tree.platform": "chromium";
+        "driver.tree.platform": "chromium" | "aria";
       };
     };
 
     "driver.tree.scope_to_area": {
       Attrs: {
-        "driver.tree.platform": "chromium";
+        "driver.tree.platform": "chromium" | "aria";
       };
     };
   }

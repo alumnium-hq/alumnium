@@ -1,0 +1,14 @@
+<RootWebArea>
+  Swag Labs
+  <main id=3>
+    <form id=4>
+      <textbox name="Username" id=5>standard_user</textbox>
+      <textbox name="Password" id=7>••••••••••••</textbox>
+      <button name="Login" id=9 />
+    </form>
+    <heading name="Accepted usernames are:" id=10 level=4 />
+    standard_user locked_out_user problem_user performance_glitch_user error_user visual_user
+    <heading name="Password for all users:" id=12 level=4 />
+    secret_sauce
+  </main>
+</RootWebArea>

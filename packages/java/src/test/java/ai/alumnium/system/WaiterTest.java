@@ -20,6 +20,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 
 class WaiterTest {
   private static final String PAGE =
@@ -93,8 +95,14 @@ class WaiterTest {
       playwright = Playwright.create();
       browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(true));
       driver = new PlaywrightDriver(browser.newPage());
+    } else if ("firefox".equals(System.getenv("ALUMNIUM_SELENIUM_BROWSER"))) {
+      FirefoxOptions options = new FirefoxOptions();
+      options.enableBiDi();
+      // Lets Selenium Manager provide a matching Firefox rather than the system one.
+      options.setBrowserVersion("stable");
+      driver = SeleniumDriver.of(new FirefoxDriver(options));
     } else {
-      driver = new SeleniumDriver(new ChromeDriver());
+      driver = SeleniumDriver.of(new ChromeDriver());
     }
   }
 

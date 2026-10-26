@@ -5,6 +5,7 @@ import {
   createMobileDriver,
   createPlaywrightDriver,
   createSeleniumDriver,
+  createFirefoxDriver,
   isDeviceIdentifier,
 } from "./mcpDrivers.ts";
 
@@ -44,6 +45,24 @@ const mocks = vi.hoisted(() => {
       this.capabilities.extensions = extensions;
       return this;
     }
+
+    bidi = false;
+    preferences: Record<string, unknown> = {};
+
+    enableBidi() {
+      this.bidi = true;
+      return this;
+    }
+
+    setBinary(path: string) {
+      this.binaryPath = path;
+      return this;
+    }
+
+    setPreference(key: string, value: unknown) {
+      this.preferences[key] = value;
+      return this;
+    }
   }
 
   class MockBuilder {
@@ -61,6 +80,13 @@ const mocks = vi.hoisted(() => {
       return this;
     }
 
+    firefoxOptions: MockOptions | undefined;
+
+    setFirefoxOptions(options: MockOptions) {
+      this.firefoxOptions = options;
+      return this;
+    }
+
     usingServer(serverUrl: string) {
       this.serverUrl = serverUrl;
       return this;
@@ -72,11 +98,14 @@ const mocks = vi.hoisted(() => {
   }
 
   const cdpSend = vi.fn(async () => null);
+  const bidiSend = vi.fn(async () => ({ result: {} }));
   const mockDriver = {
     createCDPConnection: vi.fn(async () => ({ send: cdpSend })),
+    getBidi: vi.fn(async () => ({ send: bidiSend })),
   };
 
   return {
+    bidiSend,
     builders: [] as MockBuilder[],
     cdpSend,
     driver: mockDriver,
@@ -125,6 +154,17 @@ vi.mock("selenium-webdriver", () => ({
     }
   },
 }));
+
+vi.mock("selenium-webdriver/firefox.js", () => {
+  class Options extends mocks.MockOptions {
+    constructor() {
+      super();
+      mocks.options.push(this);
+    }
+  }
+  class Driver {}
+  return { default: { Options, Driver }, Options, Driver };
+});
 
 vi.mock("selenium-webdriver/chrome.js", () => ({
   Options: class extends mocks.MockOptions {
@@ -795,5 +835,124 @@ describe("Xcode mobile sessions", () => {
       "Xcode requires app",
     );
     expect(mobileMocks.xcodeStart).not.toHaveBeenCalled();
+  });
+});
+
+describe("createSeleniumFirefoxDriver", () => {
+  beforeEach(() => {
+    mocks.builders.length = 0;
+    mocks.options.length = 0;
+    vi.clearAllMocks();
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    Env.reset();
+  });
+
+  it("launches Firefox with BiDi enabled", async () => {
+    const driver = await createFirefoxDriver({}, null, {});
+
+    expect(driver).toBe(mocks.driver as unknown as WebDriver);
+    expect(mocks.builders[0]?.browser).toBe("firefox");
+    expect(mocks.builders[0]?.firefoxOptions).toBe(mocks.options[0]);
+    expect(mocks.options[0]?.bidi).toBe(true);
+  });
+
+  it("passes headless, binary, profile, proxy and user agent options", async () => {
+    vi.stubEnv("ALUMNIUM_SELENIUM_BROWSER_VERSION", "stable");
+    Env.reset();
+
+    await createFirefoxDriver({}, "http://grid:4444", {
+      executablePath: "/opt/firefox/firefox",
+      headless: true,
+      profileDir: "/tmp/profile",
+      proxy: { server: "http://proxy.example:3128", bypass: "localhost" },
+      userAgent: "Alumnium Test Agent",
+    });
+
+    const options = mocks.options[0];
+    expect(options?.args).toEqual(["-profile", "/tmp/profile", "-headless"]);
+    expect(options?.binaryPath).toBe("/opt/firefox/firefox");
+    expect(options?.capabilities.browserVersion).toBe("stable");
+    expect(options?.preferences).toEqual({
+      "network.proxy.type": 1,
+      "network.proxy.http": "proxy.example",
+      "network.proxy.http_port": 3128,
+      "network.proxy.ssl": "proxy.example",
+      "network.proxy.ssl_port": 3128,
+      "network.proxy.no_proxies_on": "localhost",
+      "general.useragent.override": "Alumnium Test Agent",
+    });
+    expect(mocks.builders[0]?.serverUrl).toBe("http://grid:4444");
+  });
+
+  it("configures SOCKS proxies", async () => {
+    await createFirefoxDriver({}, null, {
+      proxy: { server: "socks5://proxy.example:1080" },
+    });
+
+    expect(mocks.options[0]?.preferences).toEqual({
+      "network.proxy.type": 1,
+      "network.proxy.socks": "proxy.example",
+      "network.proxy.socks_port": 1080,
+      "network.proxy.socks_version": 5,
+    });
+  });
+
+  it("sets cookies through BiDi", async () => {
+    await createFirefoxDriver({}, null, {
+      cookies: [
+        {
+          name: "session",
+          value: "abc123",
+          domain: ".example.com",
+          path: "/",
+          secure: true,
+          sameSite: "Lax",
+          expires: -1,
+        },
+      ],
+    });
+
+    expect(mocks.bidiSend).toHaveBeenCalledWith({
+      method: "storage.setCookie",
+      params: {
+        cookie: {
+          name: "session",
+          value: { type: "string", value: "abc123" },
+          domain: ".example.com",
+          path: "/",
+          secure: true,
+          sameSite: "lax",
+        },
+      },
+    });
+  });
+
+  it("sets extra HTTP headers through BiDi", async () => {
+    await createFirefoxDriver({}, null, {
+      headers: { Authorization: "Bearer token" },
+    });
+
+    expect(mocks.bidiSend).toHaveBeenCalledWith({
+      method: "network.setExtraHeaders",
+      params: {
+        headers: [
+          {
+            name: "Authorization",
+            value: { type: "string", value: "Bearer token" },
+          },
+        ],
+      },
+    });
+  });
+
+  it("rejects domain-scoped headers", async () => {
+    await expect(
+      createFirefoxDriver({}, null, {
+        headers: { ".example.com": { "X-Feature": "on" } },
+      }),
+    ).rejects.toThrow("Domain-scoped headers (.example.com)");
   });
 });

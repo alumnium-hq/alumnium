@@ -1,7 +1,8 @@
 import { describe } from "vitest";
 import {
+  type BiDiDriver,
+  type CdpDriver,
   type PlaywrightDriver,
-  type SeleniumDriver,
   SwitchToNextTabTool,
   SwitchToPreviousTabTool,
 } from "alumnium";
@@ -60,7 +61,7 @@ describe("Tabs", () => {
   }) => {
     const { al, $ } = await setup();
     const { url } = await $.serveSlowTabPage();
-    const driver = al.driver as PlaywrightDriver | SeleniumDriver;
+    const driver = al.driver as PlaywrightDriver | CdpDriver | BiDiDriver;
     driver.autoswitchToNewTab = false;
 
     await $.navigate(url);
