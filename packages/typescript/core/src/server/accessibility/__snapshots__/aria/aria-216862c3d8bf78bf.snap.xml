@@ -1,0 +1,6 @@
+<RootWebArea>
+  <heading name="Navigation Target Page" id=2 level=1 />
+  <paragraph id=3>Used to test the navigation domain policy's post-invoke hook.</paragraph>
+  <button name="Redirect Here" id=5 />
+  <button name="Open Tab Here" id=6 />
+</RootWebArea>

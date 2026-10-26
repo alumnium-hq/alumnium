@@ -1,0 +1,42 @@
+<RootWebArea raw_id=1>
+  <img raw_id=2 sharedId="9d63e077-d1e8-4c55-b659-340a1afb1e2b" />
+  <link raw_id=3 sharedId="e9849082-4018-4ccb-8e35-4ded6bffa53c" name="Brave Search Brave Search Brave logo" url="/">
+    <img raw_id=4 sharedId="b818d668-6439-4835-a1ae-e03ae066742f" name="Brave logo" />
+  </link>
+  <button raw_id=5 sharedId="fa503648-829c-442e-9abb-3345c20f534b" name="AI Features">
+    <img raw_id=6 sharedId="5234f08a-9b08-4459-b2d9-3a5385855d8c" />
+  </button>
+  <textbox raw_id=7 sharedId="0798ae2c-dee1-4b07-97fc-805e304f7cb0" name="Search" placeholder="Ask anything, find anything…" />
+  <button raw_id=8 sharedId="5a525f69-11f1-40aa-8c1c-7b7bd0228689" name="Start voice input">
+    <img raw_id=9 sharedId="8b7fd3c2-23d2-46e2-a7b3-aa57cfcc5ae0" />
+  </button>
+  <button raw_id=10 sharedId="dba750a8-5e84-4a93-8ec5-c649c35dce98" name="Ask">
+    <img raw_id=11 sharedId="fab83b9c-24c9-48e3-b5ad-8b3758eea5e8" />
+    <text raw_id=12 name="Ask" />
+  </button>
+  <img raw_id=13 sharedId="4d9fcfc7-200d-4d2b-8c81-0eafa8f11d81" name="Brave logo" />
+  <text raw_id=14 name="Brave Browser Enjoying private search? Try the browser that puts you first." />
+  <link raw_id=15 sharedId="d9bb7aa2-1205-4361-91bd-4e24f6103a16" name="Download" url="https://brave.com/download/now/?mtm_campaign=search-homepage-cta">
+    <text raw_id=16 name="Download" />
+    <img raw_id=17 sharedId="1b64547b-6b99-4872-ba74-02430de9f431" />
+  </link>
+  <button raw_id=18 sharedId="07ef0c4d-65a9-4ff3-9414-d9f4f6adb276" name="Quick settings">
+    <img raw_id=19 sharedId="2ebe4035-db10-431c-82ad-f3bfbb55e697" />
+  </button>
+  <contentinfo raw_id=20 sharedId="58376c08-d36d-4bb7-9e2d-56bf66ea1229">
+    <text raw_id=21 name="© Brave Software" />
+    <link raw_id=22 sharedId="edd100c8-6aa4-49c3-af80-0f3848116e9f" name="Advertise" url="https://ads.brave.com/register/search?mtm_source=brave-search&amp;mtm_medium=searchhome&amp;mtm_campaign=brave-search&amp;mtm_content=evergreen" />
+    <link raw_id=23 sharedId="469b3c23-98b3-43c9-932a-2a00ecd42ae6" name="API" url="https://brave.com/search/api/?mtm_source=brave-search&amp;mtm_medium=searchhome&amp;mtm_campaign=brave-search&amp;mtm_content=evergreen" />
+    <link raw_id=24 sharedId="dcbbc4e6-0b15-4eac-a1f7-64ad7ea010ec" name="News" url="https://brave.com/category/brave-search/?mtm_source=brave-search&amp;mtm_medium=searchhome&amp;mtm_campaign=brave-search&amp;mtm_content=evergreen" />
+    <link raw_id=25 sharedId="57ef6172-45fa-446b-8bb2-a44553046666" name="FAQ" url="https://brave.com/search/#search-faq?mtm_source=brave-search&amp;mtm_medium=searchhome&amp;mtm_campaign=brave-search&amp;mtm_content=evergreen" />
+    <link raw_id=26 sharedId="34795b55-c1f5-4446-ba1a-e97c5d24ec5e" name="Privacy Policy" url="/help/privacy-policy" />
+    <link raw_id=27 sharedId="03435a48-c392-418f-b746-dd0b9035959a" name="Report a security issue" url="https://hackerone.com/brave" />
+  </contentinfo>
+  <text raw_id=28 name="Brave Search uses private usage metrics to estimate overall activity and performance. You can turn off this option in" />
+  <link raw_id=29 sharedId="d881dfa5-bcf2-4d56-b064-38ee14b70302" name="Settings" url="/settings" />
+  <text raw_id=30 name="." />
+  <link raw_id=31 sharedId="b83305ef-d1ca-494b-8e2e-c4f040ef1498" name="Learn more." url="/help/usage-metrics" />
+  <button raw_id=32 sharedId="16d965cd-a5d9-47e1-a18a-60e98f9c8168" name="Close">
+    <img raw_id=33 sharedId="18bf2be1-9637-4ea4-bd92-cc4aae95ec6c" />
+  </button>
+</RootWebArea>

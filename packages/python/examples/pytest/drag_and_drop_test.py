@@ -10,6 +10,10 @@ from alumnium import Provider
     getenv("ALUMNIUM_DRIVER", "selenium") == "appium-ios",
     reason="Example doesn't support drag and drop in mobile browsers",
 )
+@mark.xfail(
+    getenv("ALUMNIUM_SELENIUM_BROWSER", "chrome") == "firefox",
+    reason="Drag and drop release is not picked up in Firefox",
+)
 def test_drag_and_drop(al, navigate):
     if al.model.provider == Provider.DEEPSEEK:
         pytest.xfail("No vision support yet")

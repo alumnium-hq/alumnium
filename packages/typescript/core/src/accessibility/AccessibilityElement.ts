@@ -1,6 +1,7 @@
 export interface AccessibilityElement {
   id?: number | undefined;
   backendNodeId?: number | undefined;
+  sharedId?: string | undefined; // WebDriver BiDi node shared ID
   name?: string | undefined;
   label?: string | undefined;
   type?: string | undefined;

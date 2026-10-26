@@ -20,6 +20,13 @@ ALUMNIUM_TEST_RETRY_DELAY_SECONDS="$(printf '%s.%03d' \
 ALUMNIUM_LOG_FILENAME_BASE="test-system-${ALUMNIUM_DRIVER}-$(sanitize_filename "$ALUMNIUM_MODEL")"
 TEST_ONLY=${TEST_ONLY:-behave,pytest}
 
+case "$ALUMNIUM_DRIVER" in
+selenium-firefox)
+	export ALUMNIUM_SELENIUM_BROWSER="firefox"
+	export ALUMNIUM_DRIVER="selenium"
+	;;
+esac
+
 normalize_test_name() {
 	printf '%s' "$1" | tr '[:upper:]' '[:lower:]' | tr -cd '[:lower:][:digit:]'
 }
@@ -81,6 +88,9 @@ else
 	ALUMNIUM_TEST_PYTEST_ARGS="${ALUMNIUM_TEST_PYTEST_ARGS:-} examples/pytest"
 fi
 
+if [ "$ALUMNIUM_DRIVER" = "selenium" ]; then
+	echo "🔵 ALUMNIUM_SELENIUM_BROWSER=\"${ALUMNIUM_SELENIUM_BROWSER:-chrome}\""
+fi
 echo "🔵 ALUMNIUM_TEST_PASS_THRESHOLD_PCT=$ALUMNIUM_TEST_PASS_THRESHOLD_PCT"
 echo "🔵 ALUMNIUM_TEST_RETRY_COUNT=$ALUMNIUM_TEST_RETRY_COUNT"
 echo "🔵 ALUMNIUM_TEST_RETRY_DELAY=$ALUMNIUM_TEST_RETRY_DELAY"

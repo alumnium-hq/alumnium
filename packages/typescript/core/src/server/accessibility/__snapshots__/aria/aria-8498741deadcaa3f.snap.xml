@@ -1,0 +1,152 @@
+<RootWebArea>
+  <heading name="Data Tables" id=2 level=3 />
+  <paragraph id=3>Often times when you see a table it contains data which is sortable -- sometimes with actions that can be taken within each row (e.g. edit, delete). And it can be challenging to automate interaction with sets of data in a table depending on how it is constructed.</paragraph>
+  <heading name="Example 1" id=5 level=4 />
+  <paragraph id=6>No Class or ID attributes to signify groupings of rows and columns</paragraph>
+  <table id=8>
+    <rowgroup id=9>
+      <row id=10>
+        <columnheader id=11>
+          <button name="Last Name" id=12 />
+        </columnheader>
+        <columnheader id=13>
+          <button name="First Name" id=14 />
+        </columnheader>
+        <columnheader id=15>
+          <button name="Email" id=16 />
+        </columnheader>
+        <columnheader id=17>
+          <button name="Due" id=18 />
+        </columnheader>
+        <columnheader id=19>
+          <button name="Web Site" id=20 />
+        </columnheader>
+        <columnheader id=21>
+          <button name="Action" id=22 />
+        </columnheader>
+      </row>
+    </rowgroup>
+    <rowgroup id=23>
+      <row id=24>
+        <cell name="Smith" id=25 />
+        <cell name="John" id=26 />
+        <cell name="jsmith@gmail.com" id=27 />
+        <cell name="$50.00" id=28 />
+        <cell name="http://www.jsmith.com" id=29 />
+        <cell id=30>
+          <link name="edit" id=31 url="#edit" />
+          <link name="delete" id=32 url="#delete" />
+        </cell>
+      </row>
+      <row id=33>
+        <cell name="Bach" id=34 />
+        <cell name="Frank" id=35 />
+        <cell name="fbach@yahoo.com" id=36 />
+        <cell name="$51.00" id=37 />
+        <cell name="http://www.frank.com" id=38 />
+        <cell id=39>
+          <link name="edit" id=40 url="#edit" />
+          <link name="delete" id=41 url="#delete" />
+        </cell>
+      </row>
+      <row id=42>
+        <cell name="Doe" id=43 />
+        <cell name="Jason" id=44 />
+        <cell name="jdoe@hotmail.com" id=45 />
+        <cell name="$100.00" id=46 />
+        <cell name="http://www.jdoe.com" id=47 />
+        <cell id=48>
+          <link name="edit" id=49 url="#edit" />
+          <link name="delete" id=50 url="#delete" />
+        </cell>
+      </row>
+      <row id=51>
+        <cell name="Conway" id=52 />
+        <cell name="Tim" id=53 />
+        <cell name="tconway@earthlink.net" id=54 />
+        <cell name="$50.00" id=55 />
+        <cell name="http://www.timconway.com" id=56 />
+        <cell id=57>
+          <link name="edit" id=58 url="#edit" />
+          <link name="delete" id=59 url="#delete" />
+        </cell>
+      </row>
+    </rowgroup>
+  </table>
+  <heading name="Example 2" id=60 level=4 />
+  <paragraph id=61>Class and ID attributes to signify groupings of rows and columns</paragraph>
+  <table id=63>
+    <rowgroup id=64>
+      <row id=65>
+        <columnheader id=66>
+          <button name="Last Name" id=67 />
+        </columnheader>
+        <columnheader id=68>
+          <button name="First Name" id=69 />
+        </columnheader>
+        <columnheader id=70>
+          <button name="Email" id=71 />
+        </columnheader>
+        <columnheader id=72>
+          <button name="Due" id=73 />
+        </columnheader>
+        <columnheader id=74>
+          <button name="Web Site" id=75 />
+        </columnheader>
+        <columnheader id=76>
+          <button name="Action" id=77 />
+        </columnheader>
+      </row>
+    </rowgroup>
+    <rowgroup id=78>
+      <row id=79>
+        <cell name="Smith" id=80 />
+        <cell name="John" id=81 />
+        <cell name="jsmith@gmail.com" id=82 />
+        <cell name="$50.00" id=83 />
+        <cell name="http://www.jsmith.com" id=84 />
+        <cell id=85>
+          <link name="edit" id=86 url="#edit" />
+          <link name="delete" id=87 url="#delete" />
+        </cell>
+      </row>
+      <row id=88>
+        <cell name="Bach" id=89 />
+        <cell name="Frank" id=90 />
+        <cell name="fbach@yahoo.com" id=91 />
+        <cell name="$51.00" id=92 />
+        <cell name="http://www.frank.com" id=93 />
+        <cell id=94>
+          <link name="edit" id=95 url="#edit" />
+          <link name="delete" id=96 url="#delete" />
+        </cell>
+      </row>
+      <row id=97>
+        <cell name="Doe" id=98 />
+        <cell name="Jason" id=99 />
+        <cell name="jdoe@hotmail.com" id=100 />
+        <cell name="$100.00" id=101 />
+        <cell name="http://www.jdoe.com" id=102 />
+        <cell id=103>
+          <link name="edit" id=104 url="#edit" />
+          <link name="delete" id=105 url="#delete" />
+        </cell>
+      </row>
+      <row id=106>
+        <cell name="Conway" id=107 />
+        <cell name="Tim" id=108 />
+        <cell name="tconway@earthlink.net" id=109 />
+        <cell name="$50.00" id=110 />
+        <cell name="http://www.timconway.com" id=111 />
+        <cell id=112>
+          <link name="edit" id=113 url="#edit" />
+          <link name="delete" id=114 url="#delete" />
+        </cell>
+      </row>
+    </rowgroup>
+  </table>
+  <contentinfo id=115>
+    <separator id=116 />
+    Powered by Elemental Selenium
+  </contentinfo>
+</RootWebArea>

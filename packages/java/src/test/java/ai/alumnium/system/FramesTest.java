@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 
 @DisabledIfEnvironmentVariable(named = "ALUMNIUM_DRIVER", matches = "appium.*")
+@DisabledIfEnvironmentVariable(named = "ALUMNIUM_SELENIUM_BROWSER", matches = "firefox")
 public class FramesTest extends BaseTest {
 
   private static final String CROSS_ORIGIN_IFRAME_URL = "cross_origin_iframe.html";

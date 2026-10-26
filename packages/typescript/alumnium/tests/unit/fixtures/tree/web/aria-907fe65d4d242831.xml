@@ -1,0 +1,28 @@
+<RootWebArea raw_id=1>
+  <text raw_id=2 name="Dark Mode" />
+  <link raw_id=3 sharedId="73db0a37-fd11-40fc-804a-2a4be618667b" name="Calculator" url="https://seleniumbase.io/apps/calculator" />
+  <link raw_id=4 sharedId="fa246123-97d1-4e1a-a098-f979a834e253" name="SB" url="https://seleniumbase.io" />
+  <textbox raw_id=5 sharedId="1a972004-af39-4314-a418-53f42143e938">
+    <text raw_id=6 name="8÷" />
+  </textbox>
+  <button raw_id=7 sharedId="1429d73f-94d6-4307-874b-14d1065fa325" name="C" />
+  <button raw_id=8 sharedId="17325eb8-2308-477d-9ed4-937e02515adf" name="(" />
+  <button raw_id=9 sharedId="58f50d80-dbe2-449d-a0b4-687ffdf6c5a1" name=")" />
+  <button raw_id=10 sharedId="a395866d-3572-44f8-bf1f-082576843632" name="÷" />
+  <button raw_id=11 sharedId="95d69511-2f1f-4d64-b2bb-ea54d409a462" name=7 />
+  <button raw_id=12 sharedId="697a6533-bfb1-4864-9860-425dc6d87ba1" name=8 />
+  <button raw_id=13 sharedId="a7f77609-2435-404b-b2df-80ff1dd8f4e3" name=9 />
+  <button raw_id=14 sharedId="360a6356-4b32-4471-85e4-a4db6f6a984f" name="×" />
+  <button raw_id=15 sharedId="e4f38819-adf2-4368-9914-1fc2647428fe" name=4 />
+  <button raw_id=16 sharedId="d828f083-4530-4659-acb8-ddf5944ee7d8" name=5 />
+  <button raw_id=17 sharedId="bc18b9af-68c9-48fa-ac3e-8b46e2428c64" name=6 />
+  <button raw_id=18 sharedId="399bd5e7-44ec-4818-abc0-a7d6e7da5de9" name="-" />
+  <button raw_id=19 sharedId="4e948465-6e4e-461d-bf02-386f4d764e2e" name=1 />
+  <button raw_id=20 sharedId="f3e9fb5a-7921-4ac1-b712-1e51820e8bae" name=2 />
+  <button raw_id=21 sharedId="dbf02a8f-e736-45ac-a873-9948953c12f8" name=3 />
+  <button raw_id=22 sharedId="5f07c890-a14f-45ab-a0f3-549bbdff475b" name="+" />
+  <button raw_id=23 sharedId="88e6902c-1d6c-41bd-b54c-3fb9d9b126d0" name="←" />
+  <button raw_id=24 sharedId="a084d03b-20ff-4c50-9281-83c419db3db7" name=0 />
+  <button raw_id=25 sharedId="602db9b8-9624-4a45-8a50-26d183cc5a5b" name="." />
+  <button raw_id=26 sharedId="6142b71a-82c0-425b-b32e-990adb175495" name="=" />
+</RootWebArea>

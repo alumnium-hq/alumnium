@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 
 @DisabledIfEnvironmentVariable(named = "ALUMNIUM_DRIVER", matches = "appium.*")
+@DisabledIfEnvironmentVariable(named = "ALUMNIUM_SELENIUM_BROWSER", matches = "firefox")
 public class ShadowDomTest extends BaseTest {
 
   private static final String SHADOW_DOM_URL = "shadow_dom.html";

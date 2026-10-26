@@ -1,0 +1,7 @@
+<RootWebArea>
+  <heading name="Forgot Password" id=2 level=2 />
+  E-mail
+  <textbox name="E-mail" id=4 />
+  <button name="Retrieve password" id=5 />
+  <status id=6 />
+</RootWebArea>

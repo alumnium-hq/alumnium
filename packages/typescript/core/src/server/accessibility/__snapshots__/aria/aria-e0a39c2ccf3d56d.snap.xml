@@ -1,0 +1,26 @@
+<RootWebArea>
+  Dark Mode
+  <link name="Calculator" id=3 url="https://seleniumbase.io/apps/calculator" />
+  <link name="SB" id=4 url="https://seleniumbase.io" />
+  <textbox id=5>3×</textbox>
+  <button name="C" id=7 />
+  <button name="(" id=8 />
+  <button name=")" id=9 />
+  <button name="÷" id=10 />
+  <button name=7 id=11 />
+  <button name=8 id=12 />
+  <button name=9 id=13 />
+  <button name="×" id=14 />
+  <button name=4 id=15 />
+  <button name=5 id=16 />
+  <button name=6 id=17 />
+  <button name="-" id=18 />
+  <button name=1 id=19 />
+  <button name=2 id=20 />
+  <button name=3 id=21 />
+  <button name="+" id=22 />
+  <button name="←" id=23 />
+  <button name=0 id=24 />
+  <button name="." id=25 />
+  <button name="=" id=26 />
+</RootWebArea>

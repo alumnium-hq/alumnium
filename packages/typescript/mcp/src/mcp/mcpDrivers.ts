@@ -7,7 +7,8 @@ import path from "node:path";
 import type { BrowserContext, Page } from "playwright-core";
 import { chromium, devices } from "playwright-core";
 import { Builder, type WebDriver } from "selenium-webdriver";
-import { Options } from "selenium-webdriver/chrome.js";
+import { Options as ChromeOptions } from "selenium-webdriver/chrome.js";
+import { Options as FirefoxOptions } from "selenium-webdriver/firefox.js";
 import {
   remote as remoteWebdriverio,
   type Browser as WebdriverIoBrowser,
@@ -303,7 +304,7 @@ export async function createSeleniumDriver(
 
   const proxy = explicitProxy ?? proxyFromEnv() ?? undefined;
 
-  const chromeOptions = new Options();
+  const chromeOptions = new ChromeOptions();
   // Disable verbose logging so it doesn't print to stdout and interfere with
   // MCP output parsing. Currently it only appears on Windows but may also
   // happen on other platforms.
@@ -407,6 +408,158 @@ export async function createSeleniumDriver(
   await Promise.all(cdpPromises);
 
   logger.debug("Selenium driver created successfully");
+  return driver;
+}
+
+/**
+ * Create Selenium Firefox driver from capabilities.
+ */
+export async function createFirefoxDriver(
+  capabilities: McpDriver.Capabilities,
+  serverUrl: string | null | undefined,
+  driverOptions: McpDriver.DriverOptions = {},
+): Promise<WebDriver> {
+  logger.info(
+    `Creating Selenium Firefox driver (serverUrl=${serverUrl || "local"}, profile=${driverOptions.profileDir ?? "none"})`,
+  );
+
+  const {
+    cookies,
+    executablePath,
+    headers = {},
+    headless = false,
+    profileDir,
+    proxy: explicitProxy,
+    userAgent,
+  } = driverOptions;
+
+  const { global: globalHeaders, scoped: scopedHeaders } =
+    splitHeaders(headers);
+  if (Object.keys(scopedHeaders).length) {
+    throw new Error(
+      `Domain-scoped headers (${Object.keys(scopedHeaders).join(", ")}) are only supported by the Playwright driver (ALUMNIUM_DRIVER=playwright)`,
+    );
+  }
+
+  const proxy = explicitProxy ?? proxyFromEnv() ?? undefined;
+
+  const firefoxOptions = new FirefoxOptions();
+  firefoxOptions.enableBidi();
+
+  if (executablePath) {
+    logger.debug("Using custom Firefox binary: {executablePath}", {
+      executablePath,
+    });
+    firefoxOptions.setBinary(executablePath);
+  }
+
+  if (profileDir) {
+    firefoxOptions.addArguments("-profile", profileDir);
+  }
+
+  if (headless) {
+    firefoxOptions.addArguments("-headless");
+  }
+
+  if (proxy) {
+    const { protocol, hostname, port } = new URL(
+      proxy.server.includes("://") ? proxy.server : `http://${proxy.server}`,
+    );
+    const proxyPort = Number(port) || (protocol.startsWith("https") ? 443 : 80);
+    firefoxOptions.setPreference("network.proxy.type", 1);
+    if (protocol.startsWith("socks")) {
+      firefoxOptions.setPreference("network.proxy.socks", hostname);
+      firefoxOptions.setPreference("network.proxy.socks_port", proxyPort);
+      firefoxOptions.setPreference(
+        "network.proxy.socks_version",
+        protocol.startsWith("socks4") ? 4 : 5,
+      );
+    } else {
+      for (const scheme of ["http", "ssl"]) {
+        firefoxOptions.setPreference(`network.proxy.${scheme}`, hostname);
+        firefoxOptions.setPreference(`network.proxy.${scheme}_port`, proxyPort);
+      }
+    }
+    if (proxy.bypass) {
+      firefoxOptions.setPreference("network.proxy.no_proxies_on", proxy.bypass);
+    }
+  }
+
+  if (userAgent) {
+    firefoxOptions.setPreference("general.useragent.override", userAgent);
+  }
+
+  const browserVersion = Env.ALUMNIUM_SELENIUM_BROWSER_VERSION;
+  if (browserVersion) {
+    logger.debug(`Using Firefox version: ${browserVersion}`);
+    firefoxOptions.setBrowserVersion(browserVersion);
+  }
+
+  for (const [key, value] of Object.entries(capabilities)) {
+    if (key === "platformName") continue;
+    firefoxOptions.set(key, value);
+  }
+
+  const builder = new Builder()
+    .forBrowser("firefox")
+    .setFirefoxOptions(firefoxOptions);
+  if (serverUrl) {
+    builder.usingServer(serverUrl);
+  }
+  const driver = await builder.build();
+  const bidi = await driver.getBidi();
+
+  if (Object.keys(globalHeaders).length) {
+    logger.debug("Setting extra HTTP headers: {headerNames}", {
+      headerNames: Object.keys(globalHeaders),
+    });
+    const response = (await bidi.send({
+      method: "network.setExtraHeaders",
+      params: {
+        headers: Object.entries(globalHeaders).map(([name, value]) => ({
+          name,
+          value: { type: "string", value },
+        })),
+      },
+    })) as { error?: string; message?: string };
+    if (response.error) {
+      throw new Error(
+        `Could not set extra HTTP headers: ${response.message ?? response.error}`,
+      );
+    }
+  }
+
+  if (cookies?.length) {
+    logger.debug(`Adding ${cookies.length} cookie(s)`);
+    await Promise.all(
+      cookies.map((cookie) =>
+        bidi.send({
+          method: "storage.setCookie",
+          params: {
+            cookie: {
+              name: cookie.name,
+              value: { type: "string", value: cookie.value },
+              domain:
+                cookie.domain ??
+                (cookie.url ? new URL(cookie.url).hostname : ""),
+              ...(cookie.path && { path: cookie.path }),
+              ...(cookie.httpOnly !== undefined && {
+                httpOnly: cookie.httpOnly,
+              }),
+              ...(cookie.secure !== undefined && { secure: cookie.secure }),
+              ...(cookie.sameSite && {
+                sameSite: cookie.sameSite.toLowerCase(),
+              }),
+              ...(cookie.expires !== undefined &&
+                cookie.expires > 0 && { expiry: Math.round(cookie.expires) }),
+            },
+          },
+        }),
+      ),
+    );
+  }
+
+  logger.debug("Selenium Firefox driver created successfully");
   return driver;
 }
 

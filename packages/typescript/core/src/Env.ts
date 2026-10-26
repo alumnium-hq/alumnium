@@ -285,6 +285,13 @@ export const Env = {
     return envVar("ALUMNIUM_PLAYWRIGHT_HEADLESS", z.stringbool().default(true));
   },
 
+  get ALUMNIUM_SELENIUM_BROWSER() {
+    return envVar(
+      "ALUMNIUM_SELENIUM_BROWSER",
+      z.enum(["chrome", "firefox"]).default("chrome"),
+    );
+  },
+
   get ALUMNIUM_SELENIUM_BROWSER_VERSION() {
     return envVar(
       "ALUMNIUM_SELENIUM_BROWSER_VERSION",

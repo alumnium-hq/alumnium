@@ -1,0 +1,47 @@
+<RootWebArea>
+  <complementary id=2>
+    <heading name="Vue.js" id=3 level=3 />
+    <heading name="Example" id=4 level=5 />
+    <link name="Source" id=5 url="https://github.com/tastejs/todomvc/tree/gh-pages/examples/vue" />
+    <separator id=6 />
+    <blockquote id=7>
+      <paragraph id=8>“ Vue is an approachable, progressive framework for building user interfaces. Components are authored as Single-File Components, with reactive state via the Composition API and ` ”</paragraph>
+    </blockquote>
+  </complementary>
+  <link id=10 url="#/">
+    <heading name="todos" id=11 level=1 />
+  </link>
+  <textbox name="What needs to be done?" id=12 />
+  <main id=13>
+    <checkbox name="❯ Toggle All Input" id=14 checked="false" />
+    ❯ Toggle All Input
+    <list id=16>
+      <listitem id=17>
+        <checkbox id=18 checked="false" />
+        Buy bread
+        <button name="×" id=20 />
+      </listitem>
+    </list>
+  </main>
+  <strong id=21>1</strong>
+  item left
+  <list id=24>
+    <listitem id=25>
+      <link name="All" id=26 url="#/" />
+    </listitem>
+    <listitem id=27>
+      <link name="Active" id=28 url="#/active" />
+    </listitem>
+    <listitem id=29>
+      <link name="Completed" id=30 url="#/completed" />
+    </listitem>
+  </list>
+  <contentinfo id=31>
+    <paragraph id=32>Double-click to edit a todo</paragraph>
+    <paragraph id=34>Created by the TodoMVC Team</paragraph>
+    <paragraph id=36>
+      Part of
+      <link name="TodoMVC" id=38 url="http://todomvc.com" />
+    </paragraph>
+  </contentinfo>
+</RootWebArea>

@@ -1,0 +1,9 @@
+<RootWebArea raw_id=1>
+  <heading raw_id=2 sharedId="88b527e7-8689-4b88-b7df-8b98a9fae94a" name="Multiple File Upload Test" level=1 />
+  <heading raw_id=3 sharedId="cc2c6677-3c5b-4c16-80bf-29323892dd70" name="📁 Upload Multiple Files" level=2 />
+  <paragraph raw_id=4 sharedId="c914cf74-1e7e-4bb4-8f3e-693d387e3103">
+    <text raw_id=5 name="Select multiple files to test the upload functionality" />
+  </paragraph>
+  <button raw_id=6 sharedId="238a70cf-0f70-4333-991c-4333476f2af9" name="Multiple File Input" />
+  <button raw_id=7 sharedId="341d7caa-9385-46ec-97f3-46cbbb9e86f2" name="Upload Files" disabled />
+</RootWebArea>

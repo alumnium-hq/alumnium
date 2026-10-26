@@ -5,15 +5,12 @@ describe("Drag and Drop", () => {
   const it = baseIt.override("setup", async ({ setup, skip }) => {
     return async (options) => {
       const result = await setup(options);
-      const { model, isMobile } = result;
+      const { model, isFirefox, isMobile } = result;
 
-      // Skip if using DeepSeek (no vision support yet)
       if (model.provider === "deepseek")
         skip("DeepSeek does not support vision yet");
 
-      // Skip if using Appium driver (no drag and drop support in mobile browsers)
-      if (isMobile)
-        skip("Example doesn't support drag and drop in mobile browsers");
+      if (isMobile || isFirefox) skip("Drag and drop release is not picked up");
 
       return result;
     };
