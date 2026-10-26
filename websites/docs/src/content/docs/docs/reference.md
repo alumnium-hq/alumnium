@@ -96,6 +96,18 @@ Sets the directory where the filesystem cache is stored. Default is `.alumnium/c
 
 Set to `true` to enable analysis of UI changes made by `do()`. When enabled, Alumnium captures the accessibility tree before and after each action and returns a description of what changed. Default is `false` when using Alumnium as a library and `true` when running Alumnium MCP server.
 
+### `ALUMNIUM_CLI_IDLE_TIMEOUT`
+
+Seconds without commands after which an [`alumnium cli`](/docs/cli/overview) session stops and closes its browser or app. `0` disables it. Default is `3600`, maximum is `2147483`.
+
+### `ALUMNIUM_CLI_SESSION`
+
+Default session name for [`alumnium cli`](/docs/cli/overview) commands when `-s, --session` is not passed. Default is `default`.
+
+### `ALUMNIUM_CLI_START_TIMEOUT`
+
+Seconds [`alumnium cli start`](/docs/cli/overview) waits for the session to start before giving up. Default is `600`, maximum is `2147483`.
+
 ### `ALUMNIUM_DELAY`
 
 Delay in seconds between retries when an action fails. Default is `0.5`.
