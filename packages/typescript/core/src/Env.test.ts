@@ -29,6 +29,15 @@ describe("Env", () => {
     expect(Env.ALUMNIUM_CACHE).toBe("filesystem");
   });
 
+  it.each([
+    [undefined, false],
+    ["true", true],
+    ["false", false],
+  ])("parses required MCP step labels %s as %s", (value, expected) => {
+    vi.stubEnv("ALUMNIUM_MCP_REQUIRE_STEP", value);
+    expect(Env.ALUMNIUM_MCP_REQUIRE_STEP).toBe(expected);
+  });
+
   it("uses driver and model defaults when their variables are empty", () => {
     vi.stubEnv("ALUMNIUM_DRIVER", "");
     vi.stubEnv("ALUMNIUM_MODEL", "");

@@ -7,6 +7,7 @@
 import { McpServer as Server } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
+import z from "zod";
 import {
   ALUMNIUM_VERSION,
   Logger,
@@ -48,6 +49,7 @@ export namespace McpServer {
     transport?: McpTransport;
     host?: string;
     port?: number;
+    requireStep?: boolean;
   }
 }
 
@@ -56,17 +58,20 @@ export class McpServer {
   #transport: McpTransport;
   #host: string;
   #port: number;
+  #requireStep: boolean;
 
   constructor({
     mode = "agentic",
     transport = "stdio",
     host = "127.0.0.1",
     port = 8014,
+    requireStep = false,
   }: McpServer.Props = {}) {
     this.#mode = mode;
     this.#transport = transport;
     this.#host = host;
     this.#port = port;
+    this.#requireStep = requireStep;
     logger.info("MCP server initialized");
   }
 
@@ -130,7 +135,19 @@ export class McpServer {
   #registerTools(server: Server, mode: McpMode) {
     const tools = mode === "direct" ? DIRECT_MCP_TOOLS : AGENTIC_MCP_TOOLS;
     tools.forEach((toolDef) => {
-      const { name, description, inputSchema, execute } = toolDef;
+      const { name, description, execute } = toolDef;
+      const inputSchema =
+        this.#requireStep && (name === "do" || name === "check")
+          ? toolDef.inputSchema.extend({
+              step: z
+                .number()
+                .int()
+                .nonnegative()
+                .describe(
+                  "Required test step number. Use 0 for setup before the first step; otherwise use the written test step number. Retry rejected calls with this parameter.",
+                ),
+            })
+          : toolDef.inputSchema;
       server.registerTool(
         toolDef.name,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
