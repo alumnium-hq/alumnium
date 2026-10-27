@@ -104,10 +104,11 @@ export class HttpClient extends Client {
     return this.spanAttrs();
   })
   async addExample(props: Client.AddExampleProps): Promise<void> {
-    const { goal, actions } = props;
+    const { goal, actions, app } = props;
     const body: AddExampleRequest = {
       goal,
       actions,
+      ...(app ? { app } : {}),
     };
     await this.#sessionFetch("POST", "/examples", body);
   }

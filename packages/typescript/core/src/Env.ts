@@ -49,6 +49,14 @@ export const Env = {
     return envVar("ALUMNIUM_CACHE_PATH", pathString().optional());
   },
 
+  get ALUMNIUM_KNOWLEDGE() {
+    return envVar("ALUMNIUM_KNOWLEDGE", z.stringbool().default(true));
+  },
+
+  get ALUMNIUM_KNOWLEDGE_PATH() {
+    return envVar("ALUMNIUM_KNOWLEDGE_PATH", pathString().optional());
+  },
+
   get ALUMNIUM_CHANGE_ANALYSIS() {
     return envVar("ALUMNIUM_CHANGE_ANALYSIS", z.stringbool().optional());
   },

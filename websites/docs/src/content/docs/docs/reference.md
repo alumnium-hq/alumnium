@@ -95,6 +95,14 @@ Sets the cache provider used by Alumnium. Supported values are:
 
 Sets the directory where the filesystem cache is stored. Default is `.alumnium/cache`.
 
+### `ALUMNIUM_KNOWLEDGE`
+
+Set to `false` to keep examples taught with `learn()` in the current session only. When enabled, examples are persisted for the app under test and apply to later sessions. Default is `true`.
+
+### `ALUMNIUM_KNOWLEDGE_PATH`
+
+Sets the directory where examples taught with `learn()` are persisted. Default is `.alumnium/knowledge`.
+
 ### `ALUMNIUM_CHANGE_ANALYSIS`
 
 Set to `true` to enable analysis of UI changes made by `do()`. When enabled, Alumnium captures the accessibility tree before and after each action and returns a description of what changed. Default is `false` when using Alumnium as a library and `true` when running Alumnium MCP server.

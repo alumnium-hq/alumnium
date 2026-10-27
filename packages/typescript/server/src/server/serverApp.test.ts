@@ -10,10 +10,11 @@ import {
 } from "@alumnium/core/agents";
 import {
   CreateSessionResponse,
+  GlobalFileStorePaths,
   type Http,
   Model,
 } from "@alumnium/core/internal";
-import { pushMock } from "../../../alumnium/tests/unit/mocks.ts";
+import { createMockDir, pushMock } from "../../../alumnium/tests/unit/mocks.ts";
 import { serverApp } from "./serverApp.ts";
 
 describe("serverApp", () => {
@@ -589,6 +590,27 @@ describe("serverApp", () => {
         success: true,
         message: "Example added successfully",
       });
+    });
+
+    it("persists examples for the app", async () => {
+      const storeDir = await createMockDir({ prefix: "server-knowledge" });
+      pushMock(
+        vi
+          .spyOn(GlobalFileStorePaths, "globalSubDir")
+          .mockReturnValue(storeDir.path),
+      );
+      const sessionId = await createSession();
+      const response = await serverApp.handle(
+        createRequest("POST", `/sessions/${sessionId}/examples`, {
+          goal: "login to the app",
+          actions: ["click submit"],
+          app: "https://example.com",
+        }),
+      );
+      expect(response.status).toBe(200);
+      expect(await storeDir.flatTree()).toEqual([
+        expect.stringMatching(/^example-com\/do\/[0-9a-f]+\.json$/),
+      ]);
     });
   });
 

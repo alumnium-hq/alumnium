@@ -267,16 +267,17 @@ class Alumni:
     def learn(self, goal: str, actions: list[str]) -> None:
         """
         Adds a new learning example on what steps should be take to achieve the goal.
+        The example is persisted for the current app and applies to later sessions.
 
         Args:
             goal: The goal to be achieved. Use same format as in `do`.
             actions: A list of actions to achieve the goal.
         """
-        self.client.add_example(goal, actions)
+        self.client.add_example(goal, actions, app=self.driver.app)
 
     def clear_learn_examples(self) -> None:
         """
-        Clears the learn examples.
+        Clears the learn examples, including the ones persisted for the current app.
         """
         self.client.clear_examples()
 

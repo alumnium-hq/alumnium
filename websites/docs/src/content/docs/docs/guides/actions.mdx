@@ -254,6 +254,8 @@ await al.learn({
 
 From now on, Alumnium knows what to do when told to delete a task.
 
+Examples are persisted for the app under test in the `.alumnium/knowledge` directory, so they also apply to later test runs. If you teach Alumnium before navigating to the app, the example is persisted for the app of the first action. Clearing learned examples also removes the ones persisted for the current app. See [`ALUMNIUM_KNOWLEDGE`][knowledge] to keep examples in the current session only.
+
 <video
   class="rounded-xl"
   alt="A screen recording of Alumnium deleting task after being taught"
@@ -466,3 +468,5 @@ Alumnium automatically waits for the following conditions before attempting to p
 4. XHR/fetch requests are finished.
 
 In addition, Alumnium automatically retries actions when errors occur during their execution. This is usually sufficient to handle common scenarios such as changes to page content during interaction or issues caused by an overzealous LLM.
+
+[knowledge]: /docs/reference#alumnium_knowledge

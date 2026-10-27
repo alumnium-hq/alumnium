@@ -336,7 +336,11 @@ export class Alumni<TDriver extends BaseDriver = BaseDriver> {
 
   @span("alumni.learn", spanAttrs)
   async learn(goal: string, actions: string[]): Promise<void> {
-    return this.client.addExample({ goal, actions });
+    return this.client.addExample({
+      goal,
+      actions,
+      app: await this.driver.app(),
+    });
   }
 
   @span("alumni.clear_learn_examples", spanAttrs)

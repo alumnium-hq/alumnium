@@ -163,6 +163,7 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                   }
 
                   session.updateContext({ app: ctx.body.app });
+                  await session.syncExamples();
 
                   const accessibilityTree = session.parseTree(
                     ctx.body.accessibility_tree,
@@ -235,9 +236,10 @@ export const serverApp = new Elysia({ prefix: "/v1" })
               "/examples",
               async (ctx) => {
                 const { session } = ctx;
-                session.plannerAgent.addExample(
+                await session.addExample(
                   ctx.body.goal,
                   ctx.body.actions,
+                  ctx.body.app,
                 );
                 return {
                   success: true,
@@ -256,9 +258,9 @@ export const serverApp = new Elysia({ prefix: "/v1" })
 
             .delete(
               "/examples",
-              (ctx) => {
+              async (ctx) => {
                 const { session } = ctx;
-                session.plannerAgent.clearExamples();
+                await session.clearExamples();
                 return {
                   success: true,
                   message: "All examples cleared successfully",

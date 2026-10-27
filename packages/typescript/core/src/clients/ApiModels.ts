@@ -107,6 +107,7 @@ export interface FindResponse {
 export interface AddExampleRequest {
   goal: string;
   actions: string[];
+  app?: AppId;
 }
 
 export interface ChangeState {

@@ -259,16 +259,17 @@ public final class Alumni implements AutoCloseable {
   }
 
   /**
-   * Adds a new learning example on what steps should be take to achieve the goal.
+   * Adds a new learning example on what steps should be take to achieve the goal. The example is
+   * persisted for the current app and applies to later sessions.
    *
    * @param goal The goal to be achieved. Use same format as in {@link #act(String)}.
    * @param actions A list of actions to achieve the goal.
    */
   public void learn(String goal, List<String> actions) {
-    client.addExample(goal, actions == null ? List.of() : List.copyOf(actions));
+    client.addExample(goal, actions == null ? List.of() : List.copyOf(actions), driver.app());
   }
 
-  /** Clear all learning examples from the server session. */
+  /** Clear all learning examples, including the ones persisted for the current app. */
   public void clearLearnExamples() {
     client.clearExamples();
   }
