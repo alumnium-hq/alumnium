@@ -97,6 +97,7 @@ export class NativeClient extends Client {
       return { explanation: goal, steps: [goal] };
     }
 
+    await session.syncExamples();
     const tree = session.parseTree(accessibilityTree);
     const [explanation, steps] = await session.plannerAgent.invoke(
       goal,
@@ -111,17 +112,17 @@ export class NativeClient extends Client {
   @span("client.add_example", spanAttrs)
   async addExample(props: Client.AddExampleProps): Promise<void> {
     const session = await this.session;
-    const { goal, actions } = props;
+    const { goal, actions, app } = props;
     logger.debug(
       `Adding example. Goal: ${goal}, Actions: ${JSON.stringify(actions)}`,
     );
-    session.plannerAgent.addExample(goal, actions);
+    await session.addExample(goal, actions, app);
   }
 
   @span("client.clear_examples", spanAttrs)
   async clearExamples(): Promise<void> {
     const session = await this.session;
-    session.plannerAgent.clearExamples();
+    await session.clearExamples();
   }
 
   @span("client.execute_action", spanAttrs)

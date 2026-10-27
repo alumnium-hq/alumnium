@@ -2,6 +2,7 @@ import type { LanguageModelV4 } from "@ai-sdk/provider";
 import z from "zod";
 import { AppId } from "../../AppId.ts";
 import { Driver } from "../../drivers/Driver.ts";
+import { Env } from "../../Env.ts";
 import type { LanguageModel } from "../../llm/LanguageModel.ts";
 import {
   createLlmUsage,
@@ -23,6 +24,8 @@ import { RetrieverAgent } from "../agents/RetrieverAgent.ts";
 import { createCacheMiddleware } from "../cache/CacheMiddleware.ts";
 import { ServerCache } from "../cache/ServerCache.ts";
 import { CacheFactory } from "../CacheFactory.ts";
+import { Knowledge } from "../knowledge/Knowledge.ts";
+import { KnowledgeStore } from "../knowledge/KnowledgeStore.ts";
 import { SessionContext } from "./SessionContext.ts";
 import { SessionId } from "./SessionId.ts";
 
@@ -63,6 +66,7 @@ export class Session {
   tools: ToolDefinition[];
   #llm: LanguageModel | undefined;
   cache: ServerCache;
+  knowledge: Knowledge;
   planner: boolean;
   excludeAttributes: Set<string>;
   #context: SessionContext;
@@ -85,6 +89,10 @@ export class Session {
     this.excludeAttributes = props.excludeAttributes ?? new Set();
     this.#context = new SessionContext({ app, sessionId });
     this.cache = CacheFactory.createCache(this.#context, model);
+    this.knowledge = new Knowledge(
+      this.#context,
+      Env.ALUMNIUM_KNOWLEDGE ? new KnowledgeStore() : null,
+    );
 
     logger.info(
       `Created session ${sessionId} with model ${model.provider}/${model.name} and platform ${platform}`,
@@ -137,6 +145,25 @@ export class Session {
       this.model,
       this.llm,
     ));
+  }
+
+  /**
+   * Learns actions to achieve the goal, persisting them for the app.
+   *
+   * @param app App the example was learned on, the session app by default.
+   */
+  addExample(goal: string, actions: string[], app?: AppId): Promise<void> {
+    return this.knowledge.learn(goal, actions, app);
+  }
+
+  /** Forgets examples learned in the session and persisted for the session app. */
+  clearExamples(): Promise<void> {
+    return this.knowledge.clear();
+  }
+
+  /** Provides the planner with examples for the session app. */
+  async syncExamples(): Promise<void> {
+    this.plannerAgent.setExamples(await this.knowledge.examples());
   }
 
   updateContext(props: SessionContext.UpdateProps): void {

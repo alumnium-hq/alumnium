@@ -115,10 +115,10 @@ class HttpClient:
         response_data = response.json()
         return (response_data["explanation"], response_data["steps"])
 
-    def add_example(self, goal: str, actions: list[str]):
+    def add_example(self, goal: str, actions: list[str], app: str = "unknown"):
         response = post(
             f"{self.base_url}/v1/sessions/{self.session_id}/examples",
-            json={"goal": goal, "actions": actions},
+            json={"goal": goal, "actions": actions, "app": app},
             timeout=30,
         )
         response.raise_for_status()

@@ -120,7 +120,7 @@ export const PlanStepActionsResponse = z.object({
 
 //#region Add example //////////////////////////////////////////////////////////
 
-export const AddExampleBody = z.object({
+export const AddExampleBody = CacheableRequestBody.extend({
   goal: z.string(),
   actions: z.array(z.string()),
 });

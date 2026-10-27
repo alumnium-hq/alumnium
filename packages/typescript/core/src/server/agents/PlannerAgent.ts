@@ -140,6 +140,12 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
     logger.info("Example added.");
   }
 
+  /** Replaces all learned examples. */
+  setExamples(examples: Iterable<[goal: string, actions: string[]]>): void {
+    this.learnedExamples = new Map(examples);
+    this.#renderExamples();
+  }
+
   /**
    * Renders learned examples sorted by goal, so the prompt (and the cache keys
    * derived from it) doesn't depend on the order examples were added in.

@@ -59,6 +59,7 @@ export namespace Client {
   export interface AddExampleProps {
     goal: string;
     actions: string[];
+    app?: AppId | undefined;
   }
 
   export interface ExecuteActionProps {

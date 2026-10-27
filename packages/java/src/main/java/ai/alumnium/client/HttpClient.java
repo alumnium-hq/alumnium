@@ -314,10 +314,14 @@ public final class HttpClient implements AutoCloseable {
   }
 
   public Map<String, Object> addExample(String goal, List<String> actions) {
+    return addExample(goal, actions, "unknown");
+  }
+
+  public Map<String, Object> addExample(String goal, List<String> actions, String app) {
     JsonNode data =
         postJson(
             "/v1/sessions/" + requireSession() + "/examples",
-            Map.of("goal", goal, "actions", actions),
+            Map.of("goal", goal, "actions", actions, "app", app),
             Duration.ofSeconds(30));
     return MAPPER.convertValue(data, MAP_OF_OBJECT);
   }
