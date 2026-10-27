@@ -169,4 +169,37 @@ describe("PlannerAgentElementsCache", () => {
       instruction: { goal: "login" },
     });
   });
+
+  it("updates elements of the latest plan for the goal regardless of its hash", () => {
+    const { plannerCache, app } = setup.cur;
+    const generation = AiSdkFactory.generateResult({ text: "step1" });
+    const plan = (memoryKey: string, cacheHash: string) => ({
+      generation,
+      memoryKey: memoryKey as ElementsCache.MemoryKey,
+      cacheHash: cacheHash as ElementsCache.CacheHash,
+      agentKind: "planner" as const,
+      elements: [],
+      instruction: { goal: "login" },
+    });
+
+    plannerCache.setRecord(plan("before-learn", "hash-without-examples"));
+    plannerCache.setRecord(plan("after-learn", "hash-with-examples"));
+
+    plannerCache.updateElements("login", [{ role: "button", name: "Login" }]);
+
+    expect(
+      plannerCache.getRecord("after-learn" as ElementsCache.MemoryKey),
+    ).toEqual({
+      cacheHash: "hash-with-examples",
+      generation,
+      elements: [{ role: "button", name: "Login" }],
+      agentKind: "planner",
+      app,
+      instruction: { goal: "login" },
+    });
+    expect(
+      plannerCache.getRecord("before-learn" as ElementsCache.MemoryKey)
+        ?.elements,
+    ).toEqual([]);
+  });
 });

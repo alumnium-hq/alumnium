@@ -1,12 +1,10 @@
 import type { LanguageModelV4GenerateResult } from "@ai-sdk/provider";
-import { xxh64Str } from "@js-fns/xxhash/str";
 import { Logger } from "../../../telemetry/Logger.ts";
 import { PlannerAgent } from "../../agents/PlannerAgent.ts";
 import { BaseAgentElementsCache } from "./BaseAgentElementsCache.ts";
 import { ElementsCacheMask } from "./ElementsCacheMask.ts";
 
 const logger = Logger.get(import.meta.url);
-const CACHE_VERSION = "ai-sdk-v1";
 
 export class PlannerAgentElementsCache extends BaseAgentElementsCache<PlannerAgent.Meta> {
   /** Empty plans are screen-specific and must not be reused for the same goal. */
@@ -74,12 +72,12 @@ export class PlannerAgentElementsCache extends BaseAgentElementsCache<PlannerAge
     newElements: Array<Record<string, string | number>>,
   ): void {
     try {
-      const goalHash = xxh64Str(CACHE_VERSION + goal);
-
-      for (const [memoryKey, entry] of this.getEntries()) {
-        const { cacheHash, agentKind, app } = entry;
+      // The hash also covers learned examples, which the actor doesn't know,
+      // so match by goal and prefer the most recent plan for it.
+      for (const [memoryKey, entry] of this.getEntries().reverse()) {
+        const { agentKind, app, instruction } = entry;
         if (
-          cacheHash !== goalHash ||
+          instruction.goal !== goal ||
           agentKind !== "planner" ||
           app !== this.app
         )

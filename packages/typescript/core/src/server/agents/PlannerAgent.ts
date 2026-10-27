@@ -1,3 +1,4 @@
+import { xxh64Str } from "@js-fns/xxhash/str";
 import type { ModelMessage } from "ai";
 import z from "zod";
 import type { LanguageModel } from "../../llm/LanguageModel.ts";
@@ -39,6 +40,7 @@ export class PlannerAgent extends BaseAgent {
     goal: BaseAgent.Goal,
     treeXml: z.string(),
     params: z.record(z.string(), z.string()).optional(),
+    examplesHash: z.string().optional(),
   });
 
   static readonly #NAVIGATE_TO_URL_EXAMPLE = `
@@ -88,6 +90,8 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
   // compatibility.
   private baseExamples = "";
   private extraExamples = "";
+  private learnedExamples = new Map<string, string[]>();
+  private learnedExamplesHash: string | undefined;
 
   constructor(model: Model, llm: LanguageModel, toolNames: string[]) {
     super(model, llm);
@@ -120,7 +124,8 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
   }
 
   clearExamples(): void {
-    this.extraExamples = this.baseExamples;
+    this.learnedExamples.clear();
+    this.#renderExamples();
     logger.info("Examples cleared.");
   }
 
@@ -129,9 +134,27 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
     logger.debug(`  -> Goal: ${goal}`);
     logger.debug(`  -> Actions: ${actions.join(", ")}`);
 
-    this.extraExamples += `\n\n${PlannerAgent.#formatExample(goal, actions)}`;
+    this.learnedExamples.set(goal, actions);
+    this.#renderExamples();
 
     logger.info("Example added.");
+  }
+
+  /**
+   * Renders learned examples sorted by goal, so the prompt (and the cache keys
+   * derived from it) doesn't depend on the order examples were added in.
+   * Re-learning a goal replaces its previous example.
+   */
+  #renderExamples(): void {
+    const learned = [...this.learnedExamples]
+      .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
+      .map(([goal, actions]) => PlannerAgent.#formatExample(goal, actions))
+      .join("\n\n");
+
+    this.extraExamples = learned
+      ? `${this.baseExamples}\n\n${learned}`
+      : this.baseExamples;
+    this.learnedExamplesHash = learned ? xxh64Str(learned) : undefined;
   }
 
   static #formatExample(goal: string, actions: string[]): string {
@@ -176,6 +199,9 @@ Actions: [${actionsStr}]`.trim();
       goal: goal as BaseAgent.Goal,
       treeXml,
       ...(params && Object.keys(params).length ? { params } : {}),
+      ...(this.learnedExamplesHash
+        ? { examplesHash: this.learnedExamplesHash }
+        : {}),
     };
 
     const prompt = pythonicFormat(this.prompts.user, {

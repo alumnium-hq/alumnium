@@ -49,6 +49,36 @@ describe(ElementsCache, () => {
       expect(await cache.lookup(request)).toEqual(result);
     });
 
+    it("resolves null for planner response cached with different examples", async () => {
+      const { cache } = await setup();
+      const treeXml = '<button id="1" name="Login" />';
+      const withExamples = (examplesHash?: string) =>
+        request({
+          kind: "planner",
+          goal: "click login" as BaseAgent.Goal,
+          treeXml,
+          ...(examplesHash ? { examplesHash } : {}),
+        });
+
+      await cache.update(
+        withExamples(),
+        AiSdkFactory.generateResult({ text: "step1" }),
+      );
+      await cache.update(
+        withExamples("first"),
+        AiSdkFactory.generateResult({ text: "step2" }),
+      );
+      await cache.save();
+
+      expect(await cache.lookup(withExamples())).toEqual(
+        AiSdkFactory.generateResult({ text: "step1" }),
+      );
+      expect(await cache.lookup(withExamples("first"))).toEqual(
+        AiSdkFactory.generateResult({ text: "step2" }),
+      );
+      expect(await cache.lookup(withExamples("second"))).toBeNull();
+    });
+
     it("resolves null for planner response if app does not match", async () => {
       const { cache, context } = await setup();
       const request = plannerRequest('<button id="1" name="Login" />');
