@@ -1,6 +1,7 @@
 from math import ceil
 from time import sleep
 from typing import Literal
+from urllib.parse import urlparse
 
 from appium.webdriver import Remote
 from appium.webdriver.common.appiumby import AppiumBy as By
@@ -19,6 +20,8 @@ from .base_driver import BaseDriver
 from .keys import Key
 
 logger = get_logger(__name__)
+
+BROWSER_APP_IDS = {"com.apple.mobilesafari", "com.android.chrome"}
 
 
 class AppiumDriver(BaseDriver):
@@ -138,14 +141,24 @@ class AppiumDriver(BaseDriver):
 
     @property
     def app(self) -> str:
+        """
+        Identifies the app under test. In mobile browsers, it's the website rather than the browser,
+        so different websites don't share the cache and learned lessons.
+        """
         caps = self.driver.capabilities
-        return (
+        app_id = (
             caps.get("appPackage")
             or caps.get("bundleId")
             or caps.get("appium:appPackage")
             or caps.get("appium:bundleId")
-            or "unknown"
         )
+
+        if caps.get("browserName") or app_id in BROWSER_APP_IDS:
+            url = self.url
+            if url:
+                return urlparse(url).hostname or "unknown"
+
+        return app_id or "unknown"
 
     def find_element(self, id: int) -> WebElement:
         element = self.accessibility_tree.element_by_id(id)

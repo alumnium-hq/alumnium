@@ -111,3 +111,35 @@ expect(await button.isDisplayed()).toBe(true);
 </LanguageContent>
 
 For simple interactions where you don't need the element reference, use `do()` instead.
+
+## Teach With Hints
+
+When Alumnium finds the wrong element, teach it how to locate the right one with a hint.
+
+<LanguageContent lang="java">
+
+```java
+al.learn().find("login button", "the button 'Sign in' in the page header");
+```
+
+</LanguageContent>
+
+<LanguageContent lang="python">
+
+```python
+al.learn.find("login button", "the button 'Sign in' in the page header")
+```
+
+</LanguageContent>
+
+<LanguageContent lang="typescript">
+
+```typescript
+await al.learn.find("login button", "the button 'Sign in' in the page header");
+```
+
+</LanguageContent>
+
+Like [examples][learn], hints are persisted for the app under test and apply to later test runs. Every hint learned with `learn.find()` is provided whenever Alumnium finds elements.
+
+[learn]: /docs/guides/actions#teach-with-examples

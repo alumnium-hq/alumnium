@@ -17,6 +17,7 @@ from .drivers.appium_driver import AppiumDriver
 from .drivers.playwright_async_driver import PlaywrightAsyncDriver
 from .drivers.playwright_driver import PlaywrightDriver
 from .drivers.selenium_driver import SeleniumDriver
+from .learn import Learn
 from .logutils import get_logger
 from .models import Model
 from .result import DoResult, DoStep
@@ -80,6 +81,9 @@ class Alumni:
         logger.info(f"Using model: {self.model.provider.value}/{self.model.name}")
 
         self.cache = Cache(self.client)
+        # Teaches how to handle instructions of `do`, `get`, `check`, `find` and `area`.
+        # Calling it directly is the same as `learn.do()`.
+        self.learn = Learn(self.client, self.driver)
 
     def quit(self) -> None:
         self.client.quit()
@@ -263,17 +267,6 @@ class Alumni:
             tools=self.tools,
             client=self.client,
         )
-
-    def learn(self, goal: str, actions: list[str]) -> None:
-        """
-        Adds a new learning example on what steps should be take to achieve the goal.
-        The example is persisted for the current app and applies to later sessions.
-
-        Args:
-            goal: The goal to be achieved. Use same format as in `do`.
-            actions: A list of actions to achieve the goal.
-        """
-        self.client.add_example(goal, actions, app=self.driver.app)
 
     def clear_learn_examples(self) -> None:
         """

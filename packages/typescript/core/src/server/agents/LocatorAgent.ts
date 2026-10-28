@@ -38,6 +38,8 @@ export class LocatorAgent extends BaseAgent {
     kind: z.literal("locator"),
     description: z.string(),
     treeXml: z.string(),
+    /** Fingerprint of hints learned for the app. */
+    examplesHash: z.string().optional(),
   });
 
   constructor(model: Model, llm: LanguageModel) {

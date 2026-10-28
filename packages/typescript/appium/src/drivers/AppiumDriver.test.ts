@@ -119,6 +119,75 @@ describe("AppiumDriver", () => {
       expect(error).toMatchObject({ stage: "probe", external: locator });
     });
   });
+
+  describe("app", () => {
+    function createDriver(
+      capabilities: Record<string, unknown>,
+      url = "https://www.bstackdemo.com/checkout",
+    ) {
+      const webdriver = {
+        capabilities,
+        getAppiumContexts: vi.fn(async () => ["NATIVE_APP", "WEBVIEW_1"]),
+        switchContext: vi.fn(async () => {}),
+        getUrl: vi.fn(async () => url),
+      };
+      const driver = new AppiumDriver(webdriver as unknown as Browser);
+      return { webdriver, driver };
+    }
+
+    it("identifies native apps by bundle ID", async () => {
+      const { driver, webdriver } = createDriver({
+        platformName: "iOS",
+        "appium:bundleId": "com.example.todo",
+      });
+
+      await expect(driver.app()).resolves.toBe("com-example-todo");
+      expect(webdriver.getUrl).not.toHaveBeenCalled();
+    });
+
+    it("identifies native apps by package", async () => {
+      const { driver } = createDriver({
+        platformName: "Android",
+        "appium:appPackage": "com.example.todo",
+      });
+
+      await expect(driver.app()).resolves.toBe("com-example-todo");
+    });
+
+    it.each([
+      [
+        "Safari",
+        { platformName: "iOS", "appium:bundleId": "com.apple.mobilesafari" },
+      ],
+      [
+        "Chrome",
+        { platformName: "Android", "appium:appPackage": "com.android.chrome" },
+      ],
+      ["browser name", { platformName: "iOS", browserName: "Safari" }],
+    ])("identifies websites in %s by host", async (_, capabilities) => {
+      const { driver } = createDriver(capabilities);
+
+      await expect(driver.app()).resolves.toBe("www-bstackdemo-com");
+    });
+
+    it("keeps blank pages as placeholders", async () => {
+      const { driver } = createDriver(
+        { platformName: "iOS", "appium:bundleId": "com.apple.mobilesafari" },
+        "about:blank",
+      );
+
+      await expect(driver.app()).resolves.toBe("about-blank");
+    });
+
+    it("falls back to bundle ID when URL is unavailable", async () => {
+      const { driver } = createDriver(
+        { platformName: "iOS", "appium:bundleId": "com.apple.mobilesafari" },
+        "",
+      );
+
+      await expect(driver.app()).resolves.toBe("com-apple-mobilesafari");
+    });
+  });
 });
 
 class TestAppiumDriver extends AppiumDriver {

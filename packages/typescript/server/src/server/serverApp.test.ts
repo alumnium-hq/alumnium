@@ -614,6 +614,46 @@ describe("serverApp", () => {
     });
   });
 
+  describe("POST /sessions/:session_id/hints", () => {
+    it("persists hints for the app", async () => {
+      const storeDir = await createMockDir({ prefix: "server-hints" });
+      pushMock(
+        vi
+          .spyOn(GlobalFileStorePaths, "globalSubDir")
+          .mockReturnValue(storeDir.path),
+      );
+      const sessionId = await createSession();
+      const response = await serverApp.handle(
+        createRequest("POST", `/sessions/${sessionId}/hints`, {
+          kind: "get",
+          instruction: "total amount",
+          hint: "use the 'Total' row",
+          app: "https://example.com",
+        }),
+      );
+      expect(response.status).toBe(200);
+      expect(await response.json()).toEqual({
+        success: true,
+        message: "Hint added successfully",
+      });
+      expect(await storeDir.flatTree()).toEqual([
+        expect.stringMatching(/^example-com\/get\/[0-9a-f]+\.json$/),
+      ]);
+    });
+
+    it("rejects unknown hint kinds", async () => {
+      const sessionId = await createSession();
+      const response = await serverApp.handle(
+        createRequest("POST", `/sessions/${sessionId}/hints`, {
+          kind: "do",
+          instruction: "log in",
+          hint: "click login",
+        }),
+      );
+      expect(response.status).toBe(500);
+    });
+  });
+
   describe("DELETE /sessions/:session_id/examples", () => {
     it("removes examples", async () => {
       const sessionId = await createSession();

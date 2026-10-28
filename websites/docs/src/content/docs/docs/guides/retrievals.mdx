@@ -193,6 +193,36 @@ await al.get("number of pending tasks", { vision: true });
 
 </LanguageContent>
 
+## Teach With Hints
+
+When Alumnium retrieves the wrong data, for example because the page shows several similar values, teach it where to look with a hint.
+
+<LanguageContent lang="java">
+
+```java
+al.learn().get("total amount", "use the 'Total' row, not 'Subtotal'");
+```
+
+</LanguageContent>
+
+<LanguageContent lang="python">
+
+```python
+al.learn.get("total amount", "use the 'Total' row, not 'Subtotal'")
+```
+
+</LanguageContent>
+
+<LanguageContent lang="typescript">
+
+```typescript
+await al.learn.get("total amount", "use the 'Total' row, not 'Subtotal'");
+```
+
+</LanguageContent>
+
+Like [examples][learn], hints are persisted for the app under test and apply to later test runs. Every hint learned with `learn.get()` and `learn.check()` is provided whenever Alumnium retrieves data, so a hint also helps with similar requests.
+
 ## Flakiness
 
 Alumnium automatically waits for the following conditions before attempting to extract any data:
@@ -205,3 +235,4 @@ Alumnium automatically waits for the following conditions before attempting to e
 [1]: /docs/guides/actions#specific-instructions
 [2]: /docs/guides/verifications#specific-verifications
 [3]: /docs/guides/verifications#vision
+[learn]: /docs/guides/actions#teach-with-examples

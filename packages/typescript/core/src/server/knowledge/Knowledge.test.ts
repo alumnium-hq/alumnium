@@ -27,25 +27,30 @@ describe(Knowledge, () => {
 
   it("applies persisted lessons to later sessions of the app", async () => {
     const first = session(app);
-    await first.knowledge.learn("log in", ["click 'Login'"], app);
+    await first.knowledge.learn("do", "log in", ["click 'Login'"], app);
 
     const second = session(app);
-    expect(await second.knowledge.examples()).toEqual(
+    expect(await second.knowledge.lessons("do")).toEqual(
       new Map([["log in", ["click 'Login'"]]]),
     );
   });
 
   it("doesn't apply persisted lessons to other apps", async () => {
-    await session(app).knowledge.learn("log in", ["click 'Login'"], app);
+    await session(app).knowledge.learn("do", "log in", ["click 'Login'"], app);
 
     const other = session(AppId.parse("other.com"));
-    expect(await other.knowledge.examples()).toEqual(new Map());
+    expect(await other.knowledge.lessons("do")).toEqual(new Map());
   });
 
   it("persists lessons under the session app when the learning app is a placeholder", async () => {
-    await session(app).knowledge.learn("log in", ["click 'Login'"], blank);
+    await session(app).knowledge.learn(
+      "do",
+      "log in",
+      ["click 'Login'"],
+      blank,
+    );
 
-    expect(await session(app).knowledge.examples()).toEqual(
+    expect(await session(app).knowledge.lessons("do")).toEqual(
       new Map([["log in", ["click 'Login'"]]]),
     );
   });
@@ -53,59 +58,69 @@ describe(Knowledge, () => {
   it("defers persisting lessons until the app is known", async () => {
     const { storeDir } = setup.cur;
     const first = session(blank);
-    await first.knowledge.learn("log in", ["click 'Login'"], blank);
+    await first.knowledge.learn("do", "log in", ["click 'Login'"], blank);
 
-    expect(await first.knowledge.examples()).toEqual(
+    expect(await first.knowledge.lessons("do")).toEqual(
       new Map([["log in", ["click 'Login'"]]]),
     );
     expect(await storeDir.flatTree()).toEqual([]);
 
     first.context.update({ app });
-    await first.knowledge.examples();
+    await first.knowledge.lessons("do");
 
-    expect(await session(app).knowledge.examples()).toEqual(
+    expect(await session(app).knowledge.lessons("do")).toEqual(
       new Map([["log in", ["click 'Login'"]]]),
     );
   });
 
   it("prefers lessons learned in the session over persisted ones", async () => {
-    await session(app).knowledge.learn("log in", ["click 'Sign in'"], app);
+    await session(app).knowledge.learn(
+      "do",
+      "log in",
+      ["click 'Sign in'"],
+      app,
+    );
 
     const second = session(app);
-    await second.knowledge.examples();
-    await second.knowledge.learn("log in", ["click 'Login'"], app);
+    await second.knowledge.lessons("do");
+    await second.knowledge.learn("do", "log in", ["click 'Login'"], app);
 
-    expect(await second.knowledge.examples()).toEqual(
+    expect(await second.knowledge.lessons("do")).toEqual(
       new Map([["log in", ["click 'Login'"]]]),
     );
-    expect(await session(app).knowledge.examples()).toEqual(
+    expect(await session(app).knowledge.lessons("do")).toEqual(
       new Map([["log in", ["click 'Login'"]]]),
     );
   });
 
   it("keeps lessons loaded for the app and adds the ones it persists", async () => {
     const current = session(app);
-    expect(await current.knowledge.examples()).toEqual(new Map());
+    expect(await current.knowledge.lessons("do")).toEqual(new Map());
 
-    await session(app).knowledge.learn("log in", ["click 'Login'"], app);
-    await current.knowledge.learn("add item", ["click 'Add'"], app);
+    await session(app).knowledge.learn("do", "log in", ["click 'Login'"], app);
+    await current.knowledge.learn("do", "add item", ["click 'Add'"], app);
 
-    expect(await current.knowledge.examples()).toEqual(
+    expect(await current.knowledge.lessons("do")).toEqual(
       new Map([["add item", ["click 'Add'"]]]),
     );
   });
 
   it("clears session and persisted lessons of the session app", async () => {
     const other = AppId.parse("other.com");
-    await session(other).knowledge.learn("log in", ["click 'Login'"], other);
+    await session(other).knowledge.learn(
+      "do",
+      "log in",
+      ["click 'Login'"],
+      other,
+    );
 
     const current = session(app);
-    await current.knowledge.learn("log in", ["click 'Login'"], app);
+    await current.knowledge.learn("do", "log in", ["click 'Login'"], app);
     await current.knowledge.clear();
 
-    expect(await current.knowledge.examples()).toEqual(new Map());
-    expect(await session(app).knowledge.examples()).toEqual(new Map());
-    expect(await session(other).knowledge.examples()).toEqual(
+    expect(await current.knowledge.lessons("do")).toEqual(new Map());
+    expect(await session(app).knowledge.lessons("do")).toEqual(new Map());
+    expect(await session(other).knowledge.lessons("do")).toEqual(
       new Map([["log in", ["click 'Login'"]]]),
     );
   });
@@ -113,20 +128,61 @@ describe(Knowledge, () => {
   it("drops deferred lessons on clear", async () => {
     const { storeDir } = setup.cur;
     const current = session(blank);
-    await current.knowledge.learn("log in", ["click 'Login'"], blank);
+    await current.knowledge.learn("do", "log in", ["click 'Login'"], blank);
     await current.knowledge.clear();
 
     current.context.update({ app });
-    expect(await current.knowledge.examples()).toEqual(new Map());
+    expect(await current.knowledge.lessons("do")).toEqual(new Map());
     expect(await storeDir.flatTree()).toEqual([]);
+  });
+
+  it("persists hints separately per kind", async () => {
+    const first = session(app);
+    await first.knowledge.learn("get", "total", "use the 'Total' row", app);
+    await first.knowledge.learn("find", "total", "cell 'Total'", app);
+
+    const second = session(app);
+    expect(await second.knowledge.lessons("get")).toEqual(
+      new Map([["total", "use the 'Total' row"]]),
+    );
+    expect(await second.knowledge.lessons("find")).toEqual(
+      new Map([["total", "cell 'Total'"]]),
+    );
+    expect(await second.knowledge.lessons("check")).toEqual(new Map());
+  });
+
+  it("defers persisting hints until the app is known", async () => {
+    const first = session(blank);
+    await first.knowledge.learn("check", "cart is empty", "no badge", blank);
+    await first.knowledge.learn("do", "log in", ["click 'Login'"], blank);
+
+    first.context.update({ app });
+    // Resolving lessons of any kind persists deferred lessons of all kinds.
+    await first.knowledge.lessons("do");
+
+    const second = session(app);
+    expect(await second.knowledge.lessons("check")).toEqual(
+      new Map([["cart is empty", "no badge"]]),
+    );
+  });
+
+  it("clears lessons of all kinds", async () => {
+    const current = session(app);
+    await current.knowledge.learn("do", "log in", ["click 'Login'"], app);
+    await current.knowledge.learn("area", "cart", "panel 'Bag'", app);
+    await current.knowledge.clear();
+
+    const later = session(app);
+    expect(await later.knowledge.lessons("do")).toEqual(new Map());
+    expect(await later.knowledge.lessons("area")).toEqual(new Map());
   });
 
   it("keeps lessons in the session only without a store", async () => {
     const { storeDir } = setup.cur;
     const current = session(app, null);
-    await current.knowledge.learn("log in", ["click 'Login'"], app);
+    await current.knowledge.learn("do", "log in", ["click 'Login'"], app);
 
-    expect(await current.knowledge.examples()).toEqual(
+    expect(await current.knowledge.lessons("do")).toEqual(
       new Map([["log in", ["click 'Login'"]]]),
     );
     expect(await storeDir.flatTree()).toEqual([]);

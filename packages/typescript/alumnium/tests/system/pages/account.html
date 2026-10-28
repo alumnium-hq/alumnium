@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Account</title>
+  </head>
+  <!-- Every element has a decoy that matches instructions more obviously, so
+       tests can tell whether learned hints are followed. -->
+  <body>
+    <h1>Account</h1>
+
+    <section aria-label="Overview">
+      <p>Status: Active</p>
+      <p>Billing status: Overdue</p>
+    </section>
+
+    <section aria-label="Actions">
+      <button type="button" onclick="document.title = 'Saved'">Save</button>
+      <button type="button" onclick="document.title = 'Kept for later'">
+        Keep for later
+      </button>
+    </section>
+
+    <h2>Recent orders</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Order number</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>ORD-1001</td>
+          <td>$25</td>
+        </tr>
+        <tr>
+          <td>ORD-1002</td>
+          <td>$40</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Archived orders</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Order number</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>ORD-9001</td>
+          <td>$10</td>
+        </tr>
+        <tr>
+          <td>ORD-9002</td>
+          <td>$15</td>
+        </tr>
+        <tr>
+          <td>ORD-9003</td>
+          <td>$20</td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>

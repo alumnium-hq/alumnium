@@ -62,6 +62,16 @@ export namespace Client {
     app?: AppId | undefined;
   }
 
+  export interface AddHintProps {
+    kind: HintKind;
+    instruction: string;
+    hint: string;
+    app?: AppId | undefined;
+  }
+
+  /** Kinds of instructions hints are learned for, named after `Alumni` methods. */
+  export type HintKind = "get" | "check" | "find" | "area";
+
   export interface ExecuteActionProps {
     goal: string;
     step: string;
@@ -125,6 +135,8 @@ export abstract class Client {
   ): Promise<Client.PlanActionsResult>;
 
   abstract addExample(props: Client.AddExampleProps): Promise<void>;
+
+  abstract addHint(props: Client.AddHintProps): Promise<void>;
 
   abstract clearExamples(): Promise<void>;
 

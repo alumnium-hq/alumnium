@@ -254,6 +254,31 @@ export const serverApp = new Elysia({ prefix: "/v1" })
 
             //#endregion
 
+            //#region Add hint /////////////////////////////////////////////////
+
+            .post(
+              "/hints",
+              async (ctx) => {
+                const { session } = ctx;
+                await session.addHint(
+                  ctx.body.kind,
+                  ctx.body.instruction,
+                  ctx.body.hint,
+                  ctx.body.app,
+                );
+                return {
+                  success: true,
+                  message: "Hint added successfully",
+                };
+              },
+              {
+                body: s.AddHintBody,
+                response: s.SuccessResponse,
+              },
+            )
+
+            //#endregion
+
             //#region Clear examples ///////////////////////////////////////////
 
             .delete(
@@ -280,6 +305,7 @@ export const serverApp = new Elysia({ prefix: "/v1" })
               async (ctx) => {
                 const { session } = ctx;
                 session.updateContext({ app: ctx.body.app });
+                await session.syncHints("retriever");
 
                 const accessibilityTree = session.parseTree(
                   ctx.body.accessibility_tree,
@@ -319,6 +345,7 @@ export const serverApp = new Elysia({ prefix: "/v1" })
               async (ctx) => {
                 const { session } = ctx;
                 session.updateContext({ app: ctx.body.app });
+                await session.syncHints("area");
 
                 const accessibilityTree = session.parseTree(
                   ctx.body.accessibility_tree,
@@ -349,6 +376,7 @@ export const serverApp = new Elysia({ prefix: "/v1" })
               async (ctx) => {
                 const { session } = ctx;
                 session.updateContext({ app: ctx.body.app });
+                await session.syncHints("locator");
 
                 const accessibilityTree = session.parseTree(
                   ctx.body.accessibility_tree,

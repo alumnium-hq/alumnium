@@ -1,4 +1,5 @@
 import { APICallError } from "@ai-sdk/provider";
+import { xxh64Str } from "@js-fns/xxhash/str";
 import type { LanguageModelUsage, ModelMessage, Output, ToolSet } from "ai";
 import { always } from "alwaysly";
 import z from "zod";
@@ -11,6 +12,7 @@ import { Logger } from "../../telemetry/Logger.ts";
 import type { LoggerSchema } from "../../telemetry/LoggerSchema.ts";
 import { Telemetry } from "../../telemetry/Telemetry.ts";
 import { retry } from "../../utils/retry.ts";
+import type { KnowledgeStore } from "../knowledge/KnowledgeStore.ts";
 import type { Agent } from "./Agent.ts";
 import { agentPrompts } from "./prompts/bundledPrompts.ts";
 import {
@@ -64,6 +66,13 @@ export namespace BaseAgent {
 
   export type Step = z.infer<typeof BaseAgent.Step>;
 
+  /** Learned hint on how to handle an instruction. */
+  export interface Hint {
+    kind: KnowledgeStore.HintKind;
+    instruction: string;
+    hint: string;
+  }
+
   export interface InvokeModelOptions {
     instructions: string;
     messages: ModelMessage[];
@@ -84,6 +93,10 @@ export class BaseAgent {
   protected model: Model;
   usage: LlmUsage = createLlmUsage();
   protected prompts: AgentPrompts.RolePrompts;
+  // NOTE: Not using private fields because of the Bun bug described in
+  // `PlannerAgent`.
+  private hints = "";
+  private hintsHash: string | undefined;
 
   constructor(model: Model, llm: LanguageModel) {
     this.model = model;
@@ -95,6 +108,32 @@ export class BaseAgent {
     const prompts = agentPromptsByDev[dev] ?? agentPromptsByDev.openai;
     always(prompts);
     this.prompts = prompts;
+  }
+
+  static readonly #HINT_VERBS: Record<KnowledgeStore.HintKind, string> = {
+    get: "retrieving",
+    check: "verifying",
+    find: "locating",
+    area: "identifying the area",
+  };
+
+  /**
+   * Replaces hints learned for the app, which are added to instructions of
+   * every request. Hints are sorted, so the instructions (and the cache keys
+   * derived from them) don't depend on the order hints were learned in.
+   */
+  setHints(hints: Iterable<BaseAgent.Hint>): void {
+    const lines = [...hints]
+      .map(
+        ({ kind, instruction, hint }) =>
+          `- When ${BaseAgent.#HINT_VERBS[kind]} "${instruction}": ${hint}`,
+      )
+      .sort();
+
+    this.hints = lines.length
+      ? `\n\nFollow these hints learned for the application:\n${lines.join("\n")}`
+      : "";
+    this.hintsHash = lines.length ? xxh64Str(this.hints) : undefined;
   }
 
   protected static shouldRetry(error: unknown): boolean {
@@ -137,13 +176,17 @@ export class BaseAgent {
     options: BaseAgent.InvokeModelOptions,
   ): Promise<BaseAgentResponse> {
     const agentKind = agentClassNameToPromptsAgentKind(this.constructor.name);
+    const instructions = options.instructions + this.hints;
+    const meta = this.hintsHash
+      ? ({ ...options.meta, examplesHash: this.hintsHash } as Agent.Meta)
+      : options.meta;
 
     logger.debug(`Sending ${agentKind} agent request: {messages}`, {
       messages: Logger.debugExtra("ai-sdk", options.messages),
     });
     logger.debug(`  -> Request args: {args}`, {
       args: Logger.debugExtra("ai-sdk", {
-        instructions: options.instructions,
+        instructions,
         tools: options.tools,
         output: options.output?.name,
       }),
@@ -167,7 +210,7 @@ export class BaseAgent {
           () =>
             generateText({
               model: this.llm,
-              instructions: options.instructions,
+              instructions,
               messages: options.messages,
               maxRetries: 0,
               timeout: { totalMs: Env.ALUMNIUM_MODEL_TIMEOUT * 1000 },
@@ -176,7 +219,7 @@ export class BaseAgent {
                 : {}),
               providerOptions: {
                 alumnium: {
-                  meta: options.meta,
+                  meta,
                   cache: options.cache ?? true,
                 },
               },

@@ -185,16 +185,32 @@ export class AppiumDriver extends BaseDriver<WebdriverIO.Element> {
     }
   }
 
+  /**
+   * Identifies the app under test. In mobile browsers, it's the website
+   * rather than the browser, so different websites don't share the cache and
+   * learned lessons.
+   */
   @span("driver.app", BaseDriver.spanAttrs)
   async app(): Promise<AppId> {
     const caps = this.driver.capabilities as Record<string, unknown>;
-    return AppId.parse(
+    const appId =
       caps["appPackage"] ||
-        caps["bundleId"] ||
-        caps["appium:appPackage"] ||
-        caps["appium:bundleId"],
-    );
+      caps["bundleId"] ||
+      caps["appium:appPackage"] ||
+      caps["appium:bundleId"];
+
+    if (caps["browserName"] || AppiumDriver.#BROWSER_APP_IDS.has(`${appId}`)) {
+      const url = await this.url();
+      if (url) return AppId.parse(url);
+    }
+
+    return AppId.parse(appId);
   }
+
+  static readonly #BROWSER_APP_IDS = new Set([
+    "com.apple.mobilesafari",
+    "com.android.chrome",
+  ]);
 
   @span("driver.find_element", BaseDriver.spanAttrs)
   async findElement(id: number): Promise<WebdriverIO.Element> {

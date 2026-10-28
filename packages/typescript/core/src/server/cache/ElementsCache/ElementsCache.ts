@@ -382,9 +382,9 @@ export class ElementsCache extends ServerCache {
     }
   }
 
-  /** Learned examples change plans, so plans made with different examples must not be reused. */
+  /** Learned lessons change responses, so responses made with different lessons must not be reused. */
   #cacheKeySuffix(meta: ElementsCache.AgentMeta): string {
-    return meta.kind === "planner" && meta.examplesHash
+    return "examplesHash" in meta && meta.examplesHash
       ? `|examples:${meta.examplesHash}`
       : "";
   }

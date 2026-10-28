@@ -97,11 +97,11 @@ Sets the directory where the filesystem cache is stored. Default is `.alumnium/c
 
 ### `ALUMNIUM_KNOWLEDGE`
 
-Set to `false` to keep examples taught with `learn()` in the current session only. When enabled, examples are persisted for the app under test and apply to later sessions. Default is `true`.
+Set to `false` to keep examples and hints taught with `learn` in the current session only. When enabled, they are persisted for the app under test and apply to later sessions. Default is `true`.
 
 ### `ALUMNIUM_KNOWLEDGE_PATH`
 
-Sets the directory where examples taught with `learn()` are persisted. Default is `.alumnium/knowledge`.
+Sets the directory where examples and hints taught with `learn` are persisted. Default is `.alumnium/knowledge`.
 
 ### `ALUMNIUM_CHANGE_ANALYSIS`
 

@@ -38,51 +38,94 @@ describe(KnowledgeStore, () => {
     expect(new KnowledgeStore().dir).toBe(dir.path);
   });
 
-  it("saves and loads lessons per app", async () => {
+  it("saves and loads do lessons per app", async () => {
     const { store, storeDir } = setup.cur;
-    const lesson = { goal: "log in", actions: ["click button 'Login'"] };
 
-    await store.save(app, lesson);
+    await store.save(app, "do", "log in", ["click button 'Login'"]);
 
-    expect(await store.lessons(app)).toEqual([lesson]);
-    expect(await store.lessons(AppId.parse("other.com"))).toEqual([]);
+    expect(await store.lessons(app, "do")).toEqual([
+      ["log in", ["click button 'Login'"]],
+    ]);
+    expect(await store.lessons(AppId.parse("other.com"), "do")).toEqual([]);
     expect(await storeDir.flatTree()).toEqual([
       expect.stringMatching(/^example-com\/do\/[0-9a-f]+\.json$/),
     ]);
   });
 
-  it("replaces the lesson for the same goal", async () => {
+  it("keeps the do lesson file format", async () => {
+    const { store, storeDir } = setup.cur;
+
+    await store.save(app, "do", "log in", ["click button 'Login'"]);
+
+    const [file] = await storeDir.flatTree();
+    expect(await storeDir.readJson(file!)).toEqual({
+      goal: "log in",
+      actions: ["click button 'Login'"],
+    });
+  });
+
+  it("saves and loads hints per kind", async () => {
+    const { store, storeDir } = setup.cur;
+
+    await store.save(app, "get", "total", "use the 'Total' row");
+    await store.save(app, "find", "total", "cell 'Total'");
+
+    expect(await store.lessons(app, "get")).toEqual([
+      ["total", "use the 'Total' row"],
+    ]);
+    expect(await store.lessons(app, "find")).toEqual([
+      ["total", "cell 'Total'"],
+    ]);
+    expect(await store.lessons(app, "check")).toEqual([]);
+
+    const files = await storeDir.flatTree();
+    const getFile = files.find((file) => file.startsWith("example-com/get/"));
+    expect(await storeDir.readJson(getFile!)).toEqual({
+      instruction: "total",
+      hint: "use the 'Total' row",
+    });
+  });
+
+  it("replaces the lesson for the same instruction", async () => {
     const { store } = setup.cur;
 
-    await store.save(app, { goal: "log in", actions: ["click 'Sign in'"] });
-    await store.save(app, { goal: "log in", actions: ["click 'Login'"] });
+    await store.save(app, "do", "log in", ["click 'Sign in'"]);
+    await store.save(app, "do", "log in", ["click 'Login'"]);
 
-    expect(await store.lessons(app)).toEqual([
-      { goal: "log in", actions: ["click 'Login'"] },
+    expect(await store.lessons(app, "do")).toEqual([
+      ["log in", ["click 'Login'"]],
     ]);
   });
 
   it("skips malformed lessons", async () => {
     const { store } = setup.cur;
-    const lesson = { goal: "log in", actions: ["click button 'Login'"] };
 
-    await store.save(app, lesson);
+    await store.save(app, "do", "log in", ["click button 'Login'"]);
     await store.writeFile("example-com/do/broken.json", "{");
     await store.writeJson("example-com/do/invalid.json", { goal: 1 });
+    await store.writeJson("example-com/do/hint.json", {
+      instruction: "log in",
+      hint: "wrong kind",
+    });
 
-    expect(await store.lessons(app)).toEqual([lesson]);
+    expect(await store.lessons(app, "do")).toEqual([
+      ["log in", ["click button 'Login'"]],
+    ]);
   });
 
-  it("clears lessons of a single app", async () => {
+  it("clears lessons of all kinds for a single app", async () => {
     const { store } = setup.cur;
     const other = AppId.parse("other.com");
-    const lesson = { goal: "log in", actions: ["click button 'Login'"] };
 
-    await store.save(app, lesson);
-    await store.save(other, lesson);
+    await store.save(app, "do", "log in", ["click button 'Login'"]);
+    await store.save(app, "get", "total", "use the 'Total' row");
+    await store.save(other, "do", "log in", ["click button 'Login'"]);
     await store.clearApp(app);
 
-    expect(await store.lessons(app)).toEqual([]);
-    expect(await store.lessons(other)).toEqual([lesson]);
+    expect(await store.lessons(app, "do")).toEqual([]);
+    expect(await store.lessons(app, "get")).toEqual([]);
+    expect(await store.lessons(other, "do")).toEqual([
+      ["log in", ["click button 'Login'"]],
+    ]);
   });
 });

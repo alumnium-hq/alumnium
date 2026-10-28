@@ -225,6 +225,39 @@ await al.check("'buy milk' title font style is strikethrough", {
   <source src="/videos/check-vision.webm" type="video/webm" />
 </video>
 
+## Teach With Hints
+
+When Alumnium can't tell whether a statement is true, teach it what to look at with a hint.
+
+<LanguageContent lang="java">
+
+```java
+al.learn().check("cart is empty", "the cart icon has no item count badge when empty");
+```
+
+</LanguageContent>
+
+<LanguageContent lang="python">
+
+```python
+al.learn.check("cart is empty", "the cart icon has no item count badge when empty")
+```
+
+</LanguageContent>
+
+<LanguageContent lang="typescript">
+
+```typescript
+await al.learn.check(
+  "cart is empty",
+  "the cart icon has no item count badge when empty",
+);
+```
+
+</LanguageContent>
+
+Like [examples][learn], hints are persisted for the app under test and apply to later test runs. Every hint learned with `learn.get()` and `learn.check()` is provided whenever Alumnium verifies statements, so a hint also helps with similar statements.
+
 ## Flakiness
 
 Alumnium automatically waits for the following conditions before attempting to check any verification:
@@ -236,3 +269,4 @@ Alumnium automatically waits for the following conditions before attempting to c
 
 [1]: /docs/guides/actions#specific-instructions
 [2]: https://github.com/boto/boto3/issues/4374
+[learn]: /docs/guides/actions#teach-with-examples
