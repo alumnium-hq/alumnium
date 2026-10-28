@@ -1,5 +1,5 @@
 import { MockLanguageModelV4 } from "ai/test";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   createMockDir,
   pushMock,
@@ -72,17 +72,86 @@ describe(Session, () => {
       expect(await storeDir.flatTree()).toEqual([]);
     });
   });
+
+  describe("hints", () => {
+    beforeEach(async () => {
+      vi.stubEnv("ALUMNIUM_CACHE", "false");
+      Env.reset();
+      const storeDir = await createMockDir({ prefix: "session-hints" });
+      pushMock(
+        vi
+          .spyOn(GlobalFileStorePaths, "globalSubDir")
+          .mockReturnValue(storeDir.path),
+      );
+    });
+
+    const app = AppId.parse("https://example.com");
+
+    it("provides agents with hints learned in previous sessions", async () => {
+      const first = createSession(app);
+      await first.session.addHint("get", "total", "use Total row", app);
+      await first.session.addHint("check", "cart is empty", "no badge", app);
+      await first.session.addHint("find", "login", "button Sign in", app);
+      await first.session.addHint("area", "cart", "panel Bag", app);
+
+      const second = createSession(app);
+      const { session, llm } = second;
+
+      await session.syncHints("retriever");
+      await session.retrieverAgent.invoke({
+        statement: "total",
+        treeXml: "<tree />",
+        title: "",
+        url: "",
+        screenshot: null,
+      });
+      const retrieverPrompt = lastPrompt(llm);
+      expect(retrieverPrompt).toContain("use Total row");
+      expect(retrieverPrompt).toContain("no badge");
+      expect(retrieverPrompt).not.toContain("button Sign in");
+
+      await session.syncHints("locator");
+      await session.locatorAgent.invoke("login", "<tree />");
+      const locatorPrompt = lastPrompt(llm);
+      expect(locatorPrompt).toContain("button Sign in");
+      expect(locatorPrompt).not.toContain("use Total row");
+
+      await session.syncHints("area");
+      await session.areaAgent.invoke("cart", "<tree />");
+      const areaPrompt = lastPrompt(llm);
+      expect(areaPrompt).toContain("panel Bag");
+      expect(areaPrompt).not.toContain("button Sign in");
+    });
+
+    it("forgets cleared hints in later sessions", async () => {
+      const first = createSession(app);
+      await first.session.addHint("find", "login", "button Sign in", app);
+      await first.session.clearExamples();
+
+      const { session, llm } = createSession(app);
+      await session.syncHints("locator");
+      await session.locatorAgent.invoke("login", "<tree />");
+
+      expect(lastPrompt(llm)).not.toContain("button Sign in");
+    });
+  });
 });
 
-interface PlannerSession {
+interface TestSession {
   session: Session;
   llm: MockLanguageModelV4;
 }
 
-function createSession(app?: AppId): PlannerSession {
+function createSession(app?: AppId): TestSession {
+  // Satisfies output schemas of all agents.
   const llm = new MockLanguageModelV4({
     doGenerate: AiSdkFactory.generateResult({
-      text: JSON.stringify({ explanation: "Plan", actions: ["click"] }),
+      text: JSON.stringify({
+        explanation: "Done",
+        actions: ["click"],
+        value: "42",
+        id: 1,
+      }),
     }),
   });
   const session = new Session({
@@ -95,9 +164,12 @@ function createSession(app?: AppId): PlannerSession {
   return { session, llm };
 }
 
-async function plan({ session, llm }: PlannerSession): Promise<string> {
+async function plan({ session, llm }: TestSession): Promise<string> {
   await session.syncExamples();
   await session.plannerAgent.invoke("do something", "<tree />");
-  const call = llm.doGenerateCalls.at(-1);
-  return JSON.stringify(call?.prompt);
+  return lastPrompt(llm);
+}
+
+function lastPrompt(llm: MockLanguageModelV4): string {
+  return JSON.stringify(llm.doGenerateCalls.at(-1)?.prompt);
 }

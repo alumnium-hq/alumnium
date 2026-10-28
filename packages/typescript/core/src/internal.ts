@@ -21,6 +21,7 @@ export * from "./bundle.ts";
 export * from "./cli/CliCommand.ts";
 export * from "./client/Alumni.ts";
 export * from "./client/Area.ts";
+export * from "./client/Learn.ts";
 export * from "./client/Cache.ts";
 export * from "./client/errors/AssertionError.ts";
 export * from "./client/result.ts";

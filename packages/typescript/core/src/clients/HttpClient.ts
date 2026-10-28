@@ -9,6 +9,7 @@ import type { Tracer } from "../telemetry/Tracer.ts";
 import { convertToolsToSchemas } from "../tools/index.ts";
 import type {
   AddExampleRequest,
+  AddHintRequest,
   AreaRequest,
   AreaResponse,
   ChangesRequest,
@@ -111,6 +112,20 @@ export class HttpClient extends Client {
       ...(app ? { app } : {}),
     };
     await this.#sessionFetch("POST", "/examples", body);
+  }
+
+  @span("client.add_hint", function () {
+    return this.spanAttrs();
+  })
+  async addHint(props: Client.AddHintProps): Promise<void> {
+    const { kind, instruction, hint, app } = props;
+    const body: AddHintRequest = {
+      kind,
+      instruction,
+      hint,
+      ...(app ? { app } : {}),
+    };
+    await this.#sessionFetch("POST", "/hints", body);
   }
 
   @span("client.clear_examples", function () {

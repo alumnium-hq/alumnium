@@ -125,6 +125,12 @@ export const AddExampleBody = CacheableRequestBody.extend({
   actions: z.array(z.string()),
 });
 
+export const AddHintBody = CacheableRequestBody.extend({
+  kind: z.enum(["get", "check", "find", "area"]),
+  instruction: z.string(),
+  hint: z.string(),
+});
+
 //#endregion
 
 //#region Execute statement ////////////////////////////////////////////////////

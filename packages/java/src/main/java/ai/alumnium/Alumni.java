@@ -45,6 +45,7 @@ public final class Alumni implements AutoCloseable {
   private final Model model;
   private final HttpClient client;
   private final Cache cache;
+  private final Learn learn;
   private final Map<String, Class<? extends BaseTool>> tools;
   private final boolean changeAnalysis;
 
@@ -90,6 +91,7 @@ public final class Alumni implements AutoCloseable {
     LOG.info("Using model: {}/{}", this.model.provider().value(), this.model.name());
 
     this.cache = new Cache(this.client);
+    this.learn = new Learn(this.client, this.driver);
     LOG.info("Using HTTP client with server: {}", this.client.baseUrl());
   }
 
@@ -266,7 +268,16 @@ public final class Alumni implements AutoCloseable {
    * @param actions A list of actions to achieve the goal.
    */
   public void learn(String goal, List<String> actions) {
-    client.addExample(goal, actions == null ? List.of() : List.copyOf(actions), driver.app());
+    learn.act(goal, actions);
+  }
+
+  /**
+   * Teaches Alumnium how to handle instructions of {@link #act(String)}, {@link #get(String)},
+   * {@link #check(String)}, {@link #find(String)} and {@link #area(String)}. Lessons are persisted
+   * for the current app and apply to later sessions.
+   */
+  public Learn learn() {
+    return learn;
   }
 
   /** Clear all learning examples, including the ones persisted for the current app. */

@@ -124,6 +124,15 @@ class HttpClient:
         response.raise_for_status()
         return response.json()
 
+    def add_hint(self, kind: str, instruction: str, hint: str, app: str = "unknown"):
+        response = post(
+            f"{self.base_url}/v1/sessions/{self.session_id}/hints",
+            json={"kind": kind, "instruction": instruction, "hint": hint, "app": app},
+            timeout=30,
+        )
+        response.raise_for_status()
+        return response.json()
+
     def clear_examples(self):
         response = delete(
             f"{self.base_url}/v1/sessions/{self.session_id}/examples",

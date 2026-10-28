@@ -17,6 +17,7 @@ import { TreeFactory } from "../../tree/TreeFactory.ts";
 import { BaseServerAccessibilityTree } from "../accessibility/BaseServerAccessibilityTree.ts";
 import { ActorAgent } from "../agents/ActorAgent.ts";
 import { AreaAgent } from "../agents/AreaAgent.ts";
+import type { BaseAgent } from "../agents/BaseAgent.ts";
 import { ChangesAnalyzerAgent } from "../agents/ChangesAnalyzerAgent.ts";
 import { LocatorAgent } from "../agents/LocatorAgent.ts";
 import { PlannerAgent } from "../agents/PlannerAgent.ts";
@@ -153,17 +154,66 @@ export class Session {
    * @param app App the example was learned on, the session app by default.
    */
   addExample(goal: string, actions: string[], app?: AppId): Promise<void> {
-    return this.knowledge.learn(goal, actions, app);
+    return this.knowledge.learn("do", goal, actions, app);
   }
 
-  /** Forgets examples learned in the session and persisted for the session app. */
+  /**
+   * Learns a hint on how to handle the instruction, persisting it for the app.
+   *
+   * @param app App the hint was learned on, the session app by default.
+   */
+  addHint(
+    kind: Knowledge.HintKind,
+    instruction: string,
+    hint: string,
+    app?: AppId,
+  ): Promise<void> {
+    return this.knowledge.learn(kind, instruction, hint, app);
+  }
+
+  /** Forgets lessons learned in the session and persisted for the session app. */
   clearExamples(): Promise<void> {
     return this.knowledge.clear();
   }
 
   /** Provides the planner with examples for the session app. */
   async syncExamples(): Promise<void> {
-    this.plannerAgent.setExamples(await this.knowledge.examples());
+    const examples = await this.knowledge.lessons("do");
+    this.plannerAgent.setExamples(examples);
+  }
+
+  /** Provides the agent with hints for the session app. */
+  async syncHints(agent: "retriever" | "locator" | "area"): Promise<void> {
+    switch (agent) {
+      case "retriever": {
+        const hints = await this.#hints("get", "check");
+        this.retrieverAgent.setHints(hints);
+        return;
+      }
+
+      case "locator": {
+        const hints = await this.#hints("find");
+        this.locatorAgent.setHints(hints);
+        return;
+      }
+
+      case "area": {
+        const hints = await this.#hints("area");
+        this.areaAgent.setHints(hints);
+        return;
+      }
+    }
+  }
+
+  async #hints(...kinds: Knowledge.HintKind[]): Promise<BaseAgent.Hint[]> {
+    const lessons = await Promise.all(
+      kinds.map(async (kind) =>
+        [...(await this.knowledge.lessons(kind))].map(
+          ([instruction, hint]) => ({ kind, instruction, hint }),
+        ),
+      ),
+    );
+    return lessons.flat();
   }
 
   updateContext(props: SessionContext.UpdateProps): void {

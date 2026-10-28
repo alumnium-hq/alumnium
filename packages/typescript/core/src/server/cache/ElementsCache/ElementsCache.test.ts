@@ -79,6 +79,25 @@ describe(ElementsCache, () => {
       expect(await cache.lookup(withExamples("second"))).toBeNull();
     });
 
+    it("resolves null for locator response cached with different hints", async () => {
+      const { cache } = await setup();
+      const treeXml = '<button id="1" name="Login" />';
+      const withHints = (examplesHash?: string) =>
+        request({
+          kind: "locator",
+          description: "login button",
+          treeXml,
+          ...(examplesHash ? { examplesHash } : {}),
+        });
+
+      await cache.update(withHints("first"), locatorResult(1));
+      await cache.save();
+
+      expect(await cache.lookup(withHints("first"))).toEqual(locatorResult(1));
+      expect(await cache.lookup(withHints())).toBeNull();
+      expect(await cache.lookup(withHints("second"))).toBeNull();
+    });
+
     it("resolves null for planner response if app does not match", async () => {
       const { cache, context } = await setup();
       const request = plannerRequest('<button id="1" name="Login" />');

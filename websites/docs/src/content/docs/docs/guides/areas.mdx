@@ -151,3 +151,35 @@ expect(await area.get("last names")).toEqual([
 ```
 
 </LanguageContent>
+
+## Teach With Hints
+
+When Alumnium picks the wrong area, teach it how to identify the right one with a hint.
+
+<LanguageContent lang="java">
+
+```java
+al.learn().area("shopping cart", "the side panel with the 'Bag' heading");
+```
+
+</LanguageContent>
+
+<LanguageContent lang="python">
+
+```python
+al.learn.area("shopping cart", "the side panel with the 'Bag' heading")
+```
+
+</LanguageContent>
+
+<LanguageContent lang="typescript">
+
+```typescript
+await al.learn.area("shopping cart", "the side panel with the 'Bag' heading");
+```
+
+</LanguageContent>
+
+Like [examples][learn], hints are persisted for the app under test and apply to later test runs. Every hint learned with `learn.area()` is provided whenever Alumnium identifies areas.
+
+[learn]: /docs/guides/actions#teach-with-examples

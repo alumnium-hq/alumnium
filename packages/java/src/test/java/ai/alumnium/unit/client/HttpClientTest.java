@@ -23,6 +23,7 @@ class HttpClientTest {
   private static final ObjectMapper MAPPER = new ObjectMapper();
 
   private final AtomicReference<JsonNode> elementsBody = new AtomicReference<>();
+  private final AtomicReference<JsonNode> hintsBody = new AtomicReference<>();
   private HttpServer server;
   private HttpClient client;
 
@@ -38,6 +39,9 @@ class HttpClientTest {
           } else if (path.equals("/v1/sessions/session/elements")) {
             elementsBody.set(MAPPER.readTree(exchange.getRequestBody()));
             respond(exchange, "{\"elements\":[{\"id\":1,\"explanation\":\"button\"}]}");
+          } else if (path.equals("/v1/sessions/session/hints")) {
+            hintsBody.set(MAPPER.readTree(exchange.getRequestBody()));
+            respond(exchange, "{\"success\":true}");
           } else {
             respond(exchange, "{}");
           }
@@ -75,6 +79,16 @@ class HttpClientTest {
     assertThat(result.id()).isEqualTo(1);
     assertThat(elementsBody.get().path("cache").isBoolean()).isTrue();
     assertThat(elementsBody.get().path("cache").asBoolean()).isFalse();
+  }
+
+  @Test
+  void addHintPostsHint() {
+    client.addHint("get", "total", "use the 'Total' row", "example-com");
+
+    assertThat(hintsBody.get().path("kind").asText()).isEqualTo("get");
+    assertThat(hintsBody.get().path("instruction").asText()).isEqualTo("total");
+    assertThat(hintsBody.get().path("hint").asText()).isEqualTo("use the 'Total' row");
+    assertThat(hintsBody.get().path("app").asText()).isEqualTo("example-com");
   }
 
   private static void respond(HttpExchange exchange, String body) throws IOException {

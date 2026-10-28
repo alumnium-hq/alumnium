@@ -216,7 +216,7 @@ You can either provide the exact steps manually each time (see the section above
 <LanguageContent lang="java">
 
 ```java
-al.learn(
+al.learn().act(
   "delete \"Test\" task",
   List.of(
     "hover \"Test\" task",
@@ -230,7 +230,7 @@ al.learn(
 <LanguageContent lang="python">
 
 ```python
-al.learn(
+al.learn.do(
   goal='delete "Test" task',
   actions=[
     'hover "Test" task',
@@ -244,17 +244,19 @@ al.learn(
 <LanguageContent lang="typescript">
 
 ```typescript
-await al.learn({
-  goal: 'delete "Test" task',
-  actions: ['hover "Test" task', 'click "x" button near "Test" task'],
-});
+await al.learn.do('delete "Test" task', [
+  'hover "Test" task',
+  'click "x" button near "Test" task',
+]);
 ```
 
 </LanguageContent>
 
 From now on, Alumnium knows what to do when told to delete a task.
 
-Examples are persisted for the app under test in the `.alumnium/knowledge` directory, so they also apply to later test runs. If you teach Alumnium before navigating to the app, the example is persisted for the app of the first action. Clearing learned examples also removes the ones persisted for the current app. See [`ALUMNIUM_KNOWLEDGE`][knowledge] to keep examples in the current session only.
+Calling `learn()` directly is the same as `learn.do()`. Alumnium can also learn hints for [retrievals][get], [verifications][check], [elements][find] and [areas][area].
+
+Examples are persisted for the app under test in the `.alumnium/knowledge` directory, so they also apply to later test runs. If you teach Alumnium before navigating to the app, the example is persisted for the app of the first action. Clearing learned examples also removes the examples and hints persisted for the current app. See [`ALUMNIUM_KNOWLEDGE`][knowledge] to keep examples in the current session only.
 
 <video
   class="rounded-xl"
@@ -470,3 +472,7 @@ Alumnium automatically waits for the following conditions before attempting to p
 In addition, Alumnium automatically retries actions when errors occur during their execution. This is usually sufficient to handle common scenarios such as changes to page content during interaction or issues caused by an overzealous LLM.
 
 [knowledge]: /docs/reference#alumnium_knowledge
+[get]: /docs/guides/retrievals#teach-with-hints
+[check]: /docs/guides/verifications#teach-with-hints
+[find]: /docs/guides/elements#teach-with-hints
+[area]: /docs/guides/areas#teach-with-hints

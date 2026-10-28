@@ -16,6 +16,7 @@ import { retry } from "../utils/retry.ts";
 import { Area } from "./Area.ts";
 import { Cache } from "./Cache.ts";
 import { AssertionError } from "./errors/AssertionError.ts";
+import { Learn } from "./Learn.ts";
 import type { DoResult, DoStep } from "./result.ts";
 
 const { tracer, logger } = Telemetry.get(import.meta.url);
@@ -72,6 +73,12 @@ export class Alumni<TDriver extends BaseDriver = BaseDriver> {
 
   private tools: Record<string, ToolClass> = {};
   public cache: Cache;
+  /**
+   * Teaches Alumnium how to handle instructions of `do()`, `get()`, `check()`,
+   * `find()` and `area()`. Lessons are persisted for the current app and
+   * apply to later sessions. Calling it directly is the same as `learn.do()`.
+   */
+  readonly learn: Learn.Callable;
   private changeAnalysis: boolean;
 
   constructor(driver: TDriver, options: Alumni.Options = {}) {
@@ -120,6 +127,7 @@ export class Alumni<TDriver extends BaseDriver = BaseDriver> {
     }
 
     this.cache = new Cache(this.client);
+    this.learn = Learn.callable(this.client, this.driver);
   }
 
   @span("alumni.model", spanAttrs)
@@ -332,15 +340,6 @@ export class Alumni<TDriver extends BaseDriver = BaseDriver> {
       this.tools,
       this.client,
     );
-  }
-
-  @span("alumni.learn", spanAttrs)
-  async learn(goal: string, actions: string[]): Promise<void> {
-    return this.client.addExample({
-      goal,
-      actions,
-      app: await this.driver.app(),
-    });
   }
 
   @span("alumni.clear_learn_examples", spanAttrs)

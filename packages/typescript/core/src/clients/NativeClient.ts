@@ -119,6 +119,16 @@ export class NativeClient extends Client {
     await session.addExample(goal, actions, app);
   }
 
+  @span("client.add_hint", spanAttrs)
+  async addHint(props: Client.AddHintProps): Promise<void> {
+    const session = await this.session;
+    const { kind, instruction, hint, app } = props;
+    logger.debug(
+      `Adding ${kind} hint. Instruction: ${instruction}, Hint: ${hint}`,
+    );
+    await session.addHint(kind, instruction, hint, app);
+  }
+
   @span("client.clear_examples", spanAttrs)
   async clearExamples(): Promise<void> {
     const session = await this.session;
@@ -169,6 +179,7 @@ export class NativeClient extends Client {
     } = props;
 
     session.updateContext({ app });
+    await session.syncHints("retriever");
 
     const tree = session.parseTree(accessibilityTree);
     const excludeAttrs = new Set([
@@ -191,6 +202,7 @@ export class NativeClient extends Client {
     const session = await this.session;
     const { description, accessibilityTree, app } = props;
     session.updateContext({ app });
+    await session.syncHints("area");
 
     const tree = session.parseTree(accessibilityTree);
     const area = await session.areaAgent.invoke(
@@ -207,6 +219,7 @@ export class NativeClient extends Client {
     const session = await this.session;
     const { description, accessibilityTree, app, cache } = props;
     session.updateContext({ app });
+    await session.syncHints("locator");
 
     const tree = session.parseTree(accessibilityTree);
     const element = (

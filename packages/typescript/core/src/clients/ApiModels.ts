@@ -110,6 +110,13 @@ export interface AddExampleRequest {
   app?: AppId;
 }
 
+export interface AddHintRequest {
+  kind: "get" | "check" | "find" | "area";
+  instruction: string;
+  hint: string;
+  app?: AppId;
+}
+
 export interface ChangeState {
   accessibility_tree: string;
   url: string;
