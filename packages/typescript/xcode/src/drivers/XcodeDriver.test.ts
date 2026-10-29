@@ -83,6 +83,56 @@ describe(XcodeDriver, () => {
     );
   });
 
+  it("types into the focused Search field when another field has the same label and context", async () => {
+    source =
+      "Application bundle identifier: com.ayodeji.TodoList\nApplication, label: 'App'\n  Window\n    ScrollView\n      SearchField, label: 'Search', value: Old, Keyboard Focused, hitPoint: {100, 200}\n      SearchField, label: 'Search', hitPoint: {100, 300}";
+    capture.mockImplementation(async (command) => {
+      if (command === "t 100 200")
+        source = source.replace("value: Old", "value: Existing");
+      return { tree: new XcodeAccessibilityTree(source), screenshotPath: "" };
+    });
+    await driver.type(4, "888 Brannan St");
+    expect(capture).toHaveBeenCalledWith("t 100 200", "com.ayodeji.TodoList");
+    expect(capture).toHaveBeenCalledWith(
+      "sender keyboard kbd " + encode("\b".repeat(8) + "888 Brannan St"),
+      undefined,
+    );
+  });
+
+  it("resolves the newly focused input when tapping creates an identical Search field", async () => {
+    source =
+      "Application bundle identifier: com.ayodeji.TodoList\nApplication, label: 'App'\n  Window\n    ScrollView\n      SearchField, label: 'Search', hitPoint: {100, 200}";
+    capture.mockImplementation(async (command) => {
+      if (command === "t 100 200")
+        source +=
+          ", Keyboard Focused\n      SearchField, label: 'Search', hitPoint: {100, 300}";
+      return { tree: new XcodeAccessibilityTree(source), screenshotPath: "" };
+    });
+    await driver.type(4, "888 Brannan St");
+    expect(capture).toHaveBeenCalledWith(
+      "sender keyboard kbd " + encode("888 Brannan St"),
+      undefined,
+    );
+  });
+
+  it("keeps ambiguous clicks ambiguous even when one input is focused", async () => {
+    source =
+      "Application, label: 'App'\n  SearchField, label: 'Search', Keyboard Focused, hitPoint: {100, 200}\n  SearchField, label: 'Search', hitPoint: {100, 300}";
+    await expect(driver.click(2)).rejects.toThrow("ambiguous");
+    expect(capture.mock.calls.every(([command]) => command === undefined)).toBe(
+      true,
+    );
+  });
+
+  it("does not type into a focused input when a different ambiguous input was selected", async () => {
+    source =
+      "Application, label: 'App'\n  SearchField, label: 'Search', Keyboard Focused, hitPoint: {100, 200}\n  SearchField, label: 'Search', hitPoint: {100, 300}";
+    await expect(driver.type(3, "888 Brannan St")).rejects.toThrow("ambiguous");
+    expect(capture.mock.calls.every(([command]) => command === undefined)).toBe(
+      true,
+    );
+  });
+
   it.each([
     ["Backspace", "\b"],
     ["Enter", "\n"],

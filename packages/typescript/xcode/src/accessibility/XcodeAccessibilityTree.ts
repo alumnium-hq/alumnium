@@ -17,6 +17,10 @@ export namespace XcodeAccessibilityTree {
     height: number;
   }
 
+  export interface ResolveOptions {
+    preferFocused?: boolean;
+  }
+
   export interface Node extends AccessibilityElement {
     id: number;
     type: string;
@@ -63,7 +67,10 @@ export class XcodeAccessibilityTree extends BaseAccessibilityTree<string> {
   }
 
   /** Resolve a previous target in a fresh capture, ignoring IDs, values, and coordinates. */
-  resolve(target: XcodeAccessibilityTree.Node): XcodeAccessibilityTree.Node {
+  resolve(
+    target: XcodeAccessibilityTree.Node,
+    options: XcodeAccessibilityTree.ResolveOptions = {},
+  ): XcodeAccessibilityTree.Node {
     let matches = this.#nodes.filter((candidate) =>
       sameIdentity(candidate, target),
     );
@@ -90,6 +97,19 @@ export class XcodeAccessibilityTree extends BaseAccessibilityTree<string> {
         matches = matches.filter(
           (candidate) => localContextIdentity(candidate) === context,
         );
+    }
+
+    if (
+      matches.length > 1 &&
+      ["TextField", "SearchField", "SecureTextField", "TextView"].includes(
+        target.type,
+      ) &&
+      options.preferFocused
+    ) {
+      const focused = matches.filter(
+        (candidate) => candidate.attributes["focused"] === "true",
+      );
+      if (focused.length === 1) matches = focused;
     }
 
     // XCTest can expose the same control twice through separate wrapper views.
