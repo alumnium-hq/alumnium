@@ -88,6 +88,72 @@ describe(XcodeAccessibilityTree, () => {
     expect(() => tree.resolve(element)).toThrow("ambiguous");
   });
 
+  it("uses labels when an accessibility identifier is reused", async () => {
+    const source =
+      "Application, label: 'App'\n  Button, identifier: 'Search', label: 'Search stays'\n  Button, identifier: 'Search', label: 'Search experiences'";
+    const tree = new XcodeAccessibilityTree(source);
+    const fresh = new XcodeAccessibilityTree(
+      source.replace(
+        "  Button,",
+        "  StaticText, label: 'New content'\n  Button,",
+      ),
+    );
+    expect(fresh.resolve(await tree.elementById(2))).toMatchObject({
+      id: 3,
+      label: "Search stays",
+    });
+  });
+
+  it("uses placeholders to distinguish fields with the same identifier and label", async () => {
+    const tree = new XcodeAccessibilityTree(
+      "Application, label: 'App'\n  TextField, identifier: 'Search', label: 'Search', placeholderValue: 'City'\n  TextField, identifier: 'Search', label: 'Search', placeholderValue: 'Address'",
+    );
+    expect(
+      tree.resolve(await tree.elementById(3)).attributes["placeholderValue"],
+    ).toBe("Address");
+  });
+
+  it("uses nearby text to distinguish Search controls in generic containers", async () => {
+    const source =
+      "Application, label: 'App'\n  Other\n    StaticText, label: 'Destination'\n    TextField, label: 'Search'\n  Other\n    StaticText, label: 'Guest'\n    TextField, label: 'Search'";
+    const tree = new XcodeAccessibilityTree(source);
+    const fresh = new XcodeAccessibilityTree(
+      source
+        .replaceAll("Destination", "TEMP")
+        .replaceAll("Guest", "Destination")
+        .replaceAll("TEMP", "Guest"),
+    );
+    expect(fresh.resolve(await tree.elementById(4)).id).toBe(7);
+  });
+
+  it("uses child text to distinguish repeated unlabelled controls", async () => {
+    const source =
+      "Application, label: 'App'\n  Button, identifier: 'Search'\n    StaticText, label: 'Stays'\n  Button, identifier: 'Search'\n    StaticText, label: 'Experiences'";
+    const tree = new XcodeAccessibilityTree(source);
+    const fresh = new XcodeAccessibilityTree(
+      source
+        .replaceAll("Stays", "TEMP")
+        .replaceAll("Experiences", "Stays")
+        .replaceAll("TEMP", "Experiences"),
+    );
+    expect(fresh.resolve(await tree.elementById(2)).id).toBe(4);
+  });
+
+  it("does not substitute a differently labelled control when a duplicate disappears", async () => {
+    const source =
+      "Application, label: 'App'\n  Button, identifier: 'Search', label: 'Search stays'\n  Button, identifier: 'Search', label: 'Search experiences'";
+    const tree = new XcodeAccessibilityTree(source);
+    const fresh = new XcodeAccessibilityTree(
+      source.replace(
+        "  Button, identifier: 'Search', label: 'Search stays'\n",
+        "",
+      ),
+    );
+    expect(() =>
+      fresh.resolve(tree.find((node) => node.label === "Search stays")!),
+    ).toThrow("no longer present");
+  });
+
   it("resolves duplicated remove icons by row text after rows move", async () => {
     const tree = await fixture("todo-ios27-editing");
     const source = await readFixture("todo-ios27-editing");

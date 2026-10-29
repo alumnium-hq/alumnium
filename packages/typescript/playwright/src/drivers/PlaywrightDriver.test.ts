@@ -333,6 +333,11 @@ describe("PlaywrightDriver", () => {
       element as unknown as Locator,
     );
 
+    await expect(driver.scrollInDirection(undefined, "up")).rejects.toThrow(
+      "A scrollable area ID is required for browser scrolling",
+    );
+    expect(driver.findElement).not.toHaveBeenCalled();
+
     await driver.scrollInDirection(1, "up");
 
     expect(mouse.move).toHaveBeenCalledWith(700, 300);

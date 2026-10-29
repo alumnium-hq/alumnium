@@ -210,9 +210,11 @@ export abstract class SeleniumDriver extends BaseDriver<WebElement> {
   @span("driver.scroll_in_direction", BaseDriver.spanAttrs)
   @stateful
   async scrollInDirection(
-    id: number,
+    id: number | undefined,
     direction: ScrollInDirectionTool.Direction,
   ): Promise<void> {
+    if (id === undefined)
+      throw new Error("A scrollable area ID is required for browser scrolling");
     const area = (await this.driver.executeScript(
       ScrollInDirectionTool.SCROLL_AREA_SCRIPT,
       await this.findElement(id),

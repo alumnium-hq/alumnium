@@ -281,6 +281,29 @@ export class MaestroAccessibilityTree extends BaseAccessibilityTree<MaestroSessi
     return element;
   }
 
+  async selectorFor(rawId: number): Promise<{ id?: string; text?: string }> {
+    await this.elementById(rawId);
+    const node = this.#findNode(this.#hierarchy.elements, rawId)!;
+    const attrs = this.#expand(node);
+    const resourceId = attrs["resource-id"];
+    const text =
+      attrs["accessibilityText"] ||
+      attrs["content-desc"] ||
+      attrs["text"] ||
+      attrs["hintText"];
+    if (!resourceId && !text)
+      throw new Error(
+        `Element with raw_id=${rawId} has no Maestro selector; use directional scrolling`,
+      );
+
+    const exact = (value: string) =>
+      value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    return {
+      ...(resourceId ? { id: exact(resourceId) } : {}),
+      ...(text ? { text: exact(text) } : {}),
+    };
+  }
+
   /** Scopes the tree to the subtree rooted at `rawId`. */
   async scopeToArea(rawId: number): Promise<MaestroAccessibilityTree> {
     const found = this.#findNode(this.#hierarchy.elements, rawId);
@@ -321,6 +344,19 @@ export class MaestroAccessibilityTree extends BaseAccessibilityTree<MaestroSessi
 
   /** Parses the centre point of a Maestro `[x1,y1][x2,y2]` bounds string. */
   static centreOf(bounds: string): { x: number; y: number } {
+    const frame = this.frameOf(bounds);
+    return {
+      x: Math.round(frame.x + frame.width / 2),
+      y: Math.round(frame.y + frame.height / 2),
+    };
+  }
+
+  static frameOf(bounds: string): {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  } {
     const match = /\[(-?\d+),(-?\d+)\]\[(-?\d+),(-?\d+)\]/.exec(bounds);
     if (!match) throw new Error(`Unparsable Maestro bounds: ${bounds}`);
     const [x1, y1, x2, y2] = match.slice(1).map(Number) as [
@@ -330,8 +366,10 @@ export class MaestroAccessibilityTree extends BaseAccessibilityTree<MaestroSessi
       number,
     ];
     return {
-      x: Math.round((x1 + x2) / 2),
-      y: Math.round((y1 + y2) / 2),
+      x: x1,
+      y: y1,
+      width: x2 - x1,
+      height: y2 - y1,
     };
   }
 }

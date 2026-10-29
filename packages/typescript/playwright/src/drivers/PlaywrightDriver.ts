@@ -462,9 +462,11 @@ export class PlaywrightDriver extends BaseDriver<Locator> {
   @span("driver.scroll_in_direction", BaseDriver.spanAttrs)
   @stateful
   async scrollInDirection(
-    id: number,
+    id: number | undefined,
     direction: ScrollInDirectionTool.Direction,
   ): Promise<void> {
+    if (id === undefined)
+      throw new Error("A scrollable area ID is required for browser scrolling");
     const element = await this.findElement(id);
     const script = (await element.evaluateHandle(
       ScrollInDirectionTool.SCROLL_AREA_EXPRESSION,

@@ -67,11 +67,29 @@ export class XcodeAccessibilityTree extends BaseAccessibilityTree<string> {
     let matches = this.#nodes.filter((candidate) =>
       sameIdentity(candidate, target),
     );
-    if (!target.identifier || matches.length > 1) {
+    let root = target;
+    while (root.parent) root = root.parent;
+    const reusedIdentifier =
+      target.identifier &&
+      flatten(root).some(
+        (candidate) => candidate !== target && sameIdentity(candidate, target),
+      );
+    if (!target.identifier || matches.length > 1 || reusedIdentifier) {
       const context = ancestorIdentity(target);
       matches = matches.filter(
         (candidate) => ancestorIdentity(candidate) === context,
       );
+    }
+
+    if (matches.length > 1 || reusedIdentifier) {
+      matches = matches.filter(
+        (candidate) => controlIdentity(candidate) === controlIdentity(target),
+      );
+      const context = localContextIdentity(target);
+      if (context)
+        matches = matches.filter(
+          (candidate) => localContextIdentity(candidate) === context,
+        );
     }
 
     // XCTest can expose the same control twice through separate wrapper views.
@@ -259,4 +277,42 @@ function ancestorIdentity(node: XcodeAccessibilityTree.Node): string {
 
 function actionIdentity(node: XcodeAccessibilityTree.Node): string {
   return JSON.stringify([node.attributes, node.frame, node.hitPoint]);
+}
+
+function controlIdentity(node: XcodeAccessibilityTree.Node): string {
+  return JSON.stringify([
+    node.label ?? "",
+    node.attributes["title"] ?? "",
+    node.attributes["placeholderValue"] ?? "",
+    flatten(node)
+      .filter((child) => child.type === "StaticText")
+      .map((child) => child.label ?? "")
+      .sort(),
+  ]);
+}
+
+function localContextIdentity(node: XcodeAccessibilityTree.Node): string {
+  for (
+    let parent = node.parent;
+    parent;
+    node = parent, parent = parent.parent
+  ) {
+    if (
+      [
+        "Application",
+        "Window",
+        "ScrollView",
+        "Table",
+        "CollectionView",
+      ].includes(parent.type)
+    )
+      break;
+    const labels = parent.children
+      .filter((child) => child !== node && child.type === "StaticText")
+      .map((child) => child.label ?? "")
+      .filter(Boolean)
+      .sort();
+    if (labels.length) return JSON.stringify(labels);
+  }
+  return "";
 }

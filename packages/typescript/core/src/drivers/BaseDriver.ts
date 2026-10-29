@@ -72,7 +72,7 @@ export abstract class BaseDriver<TElement = unknown> {
   abstract visit(url: string): Promise<void>;
   abstract scrollTo(id: number): Promise<void>;
   abstract scrollInDirection(
-    id: number,
+    id: number | undefined,
     direction: ScrollInDirectionTool.Direction,
   ): Promise<void>;
   abstract executeScript(script: string): Promise<void>;
