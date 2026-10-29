@@ -214,6 +214,15 @@ MCP execution mode:
 
 MCP server transport: `stdio` (default) or `http`. The Docker images set it to `http`.
 
+### `ALUMNIUM_MCP_REQUIRE_STEP`
+
+Set to `true` to require a nonnegative integer `step` on agentic `do` and `check`
+calls, plus a positive integer `attempt` on `do` calls. Use `step: 0` for setup,
+`attempt: 1` for a new action, and `2` and up for retries of that action. `check`
+does not require an attempt. Missing or invalid labels are rejected before
+execution. Default is `false`; labels remain optional unless enabled. Equivalent
+to `alumnium mcp --require-step`.
+
 ### `ALUMNIUM_MCP_ARTIFACTS_DIR`
 
 Sets the directory where the MCP server stores artifacts such as screenshots. Default is `.alumnium/artifacts`.

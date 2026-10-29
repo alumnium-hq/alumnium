@@ -201,6 +201,10 @@ export const Env = {
     return envVar("ALUMNIUM_MCP_MODE", McpMode.default("agentic"));
   },
 
+  get ALUMNIUM_MCP_REQUIRE_STEP() {
+    return envVar("ALUMNIUM_MCP_REQUIRE_STEP", z.stringbool().default(false));
+  },
+
   get ALUMNIUM_MCP_TRANSPORT() {
     return envVar("ALUMNIUM_MCP_TRANSPORT", McpTransport.default("stdio"));
   },

@@ -17,6 +17,16 @@ export const McpCommand = CliCommand.define({
   description: "Run MCP server",
 
   Args: z.object({
+    requireStep: z
+      .union([z.boolean(), z.stringbool()])
+      .default(Env.ALUMNIUM_MCP_REQUIRE_STEP)
+      .register(CliCommand.option, {
+        name: "require-step",
+        syntax: "--require-step",
+        description:
+          "Require step on do and check calls, and attempt on do calls",
+      }),
+
     transport: McpTransport.default(Env.ALUMNIUM_MCP_TRANSPORT).register(
       CliCommand.option,
       {
