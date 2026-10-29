@@ -13,14 +13,19 @@ afterEach(async () => {
   vi.restoreAllMocks();
 });
 
-describe("required step labels", () => {
-  it("advertises step as required only on do and check when enabled", async () => {
+describe("required step and action attempt labels", () => {
+  it("requires step on do and check, and attempt only on do when enabled", async () => {
     await connect({ requireStep: true });
     const { tools } = await client.listTools();
     for (const tool of tools) {
       expect(tool.inputSchema.required?.includes("step") ?? false).toBe(
         tool.name === "do" || tool.name === "check",
       );
+      expect(tool.inputSchema.required?.includes("attempt") ?? false).toBe(
+        tool.name === "do",
+      );
+      if (tool.name === "check")
+        expect(tool.inputSchema.properties).not.toHaveProperty("attempt");
     }
   });
 
@@ -30,7 +35,12 @@ describe("required step labels", () => {
       const tool = name === "do" ? doMcpTool : checkMcpTool;
       const execute = vi.spyOn(tool, "execute").mockResolvedValue([]);
       await connect({ requireStep: true });
-      const args = { id: "browser", goal: "Click", statement: "Visible" };
+      const args = {
+        id: "browser",
+        goal: "Click",
+        statement: "Visible",
+        ...(name === "do" && { attempt: 1 }),
+      };
       for (const step of [undefined, null, "1", -1, 1.5, true]) {
         const result = await client.callTool({
           name,
@@ -60,20 +70,56 @@ describe("required step labels", () => {
     },
   );
 
-  it("keeps labels optional by default", async () => {
+  it("rejects missing or invalid do attempts before execution and accepts retries", async () => {
     const execute = vi.spyOn(doMcpTool, "execute").mockResolvedValue([]);
-    await connect();
-    const { tools } = await client.listTools();
-    expect(
-      tools.find((tool) => tool.name === "do")?.inputSchema.required,
-    ).not.toContain("step");
-    const result = await client.callTool({
-      name: "do",
-      arguments: { id: "browser", goal: "Click" },
-    });
-    expect(result.isError).not.toBe(true);
-    expect(execute).toHaveBeenCalledTimes(1);
+    await connect({ requireStep: true });
+    const args = { id: "browser", goal: "Click", step: 1 };
+    for (const attempt of [undefined, null, "1", 0, -1, 1.5, true]) {
+      const result = await client.callTool({
+        name: "do",
+        arguments: { ...args, ...(attempt === undefined ? {} : { attempt }) },
+      });
+      expect(result).toMatchObject({
+        isError: true,
+        content: [
+          {
+            type: "text",
+            text: expect.stringContaining(
+              "Input validation error: Invalid arguments for tool do:",
+            ),
+          },
+        ],
+      });
+    }
+    expect(execute).not.toHaveBeenCalled();
+    for (const attempt of [1, 2, 3]) {
+      const result = await client.callTool({
+        name: "do",
+        arguments: { ...args, attempt },
+      });
+      expect(result.isError).not.toBe(true);
+    }
+    expect(execute).toHaveBeenCalledTimes(3);
   });
+
+  it.each(["do", "check"])(
+    "keeps %s labels optional by default",
+    async (name) => {
+      const tool = name === "do" ? doMcpTool : checkMcpTool;
+      const execute = vi.spyOn(tool, "execute").mockResolvedValue([]);
+      await connect();
+      const { tools } = await client.listTools();
+      const schema = tools.find((tool) => tool.name === name)?.inputSchema;
+      expect(schema?.required).not.toContain("step");
+      expect(schema?.required).not.toContain("attempt");
+      const result = await client.callTool({
+        name,
+        arguments: { id: "browser", goal: "Click", statement: "Visible" },
+      });
+      expect(result.isError).not.toBe(true);
+      expect(execute).toHaveBeenCalledTimes(1);
+    },
+  );
 });
 
 async function connect(options: McpServer.Props = {}) {

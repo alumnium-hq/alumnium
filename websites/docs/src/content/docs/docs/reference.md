@@ -217,9 +217,11 @@ MCP server transport: `stdio` (default) or `http`. The Docker images set it to `
 ### `ALUMNIUM_MCP_REQUIRE_STEP`
 
 Set to `true` to require a nonnegative integer `step` on agentic `do` and `check`
-calls. Use `0` for setup. Missing or invalid labels are rejected before execution.
-Default is `false`; `attempt` remains optional. Equivalent to `alumnium mcp
---require-step`.
+calls, plus a positive integer `attempt` on `do` calls. Use `step: 0` for setup,
+`attempt: 1` for a new action, and `2` and up for retries of that action. `check`
+does not require an attempt. Missing or invalid labels are rejected before
+execution. Default is `false`; labels remain optional unless enabled. Equivalent
+to `alumnium mcp --require-step`.
 
 ### `ALUMNIUM_MCP_ARTIFACTS_DIR`
 

@@ -23,7 +23,8 @@ export const McpCommand = CliCommand.define({
       .register(CliCommand.option, {
         name: "require-step",
         syntax: "--require-step",
-        description: "Require a nonnegative integer step on do and check calls",
+        description:
+          "Require step on do and check calls, and attempt on do calls",
       }),
 
     transport: McpTransport.default(Env.ALUMNIUM_MCP_TRANSPORT).register(

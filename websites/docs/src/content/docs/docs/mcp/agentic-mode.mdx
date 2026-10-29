@@ -11,7 +11,9 @@ Agentic mode is the default. Follow the [setup instructions](/docs/mcp/overview#
 
 Test runners can use `alumnium mcp --require-step` (or set
 `ALUMNIUM_MCP_REQUIRE_STEP=true`) to require a nonnegative integer `step` on every
-`do` and `check` call. Use `0` for setup before the first written step. Invalid or
+`do` and `check` call, plus a positive integer `attempt` on every `do` call.
+Use `attempt: 1` for a new action and `2` and up for retries of that action;
+`check` does not require an attempt. Use `step: 0` for setup before the first written step. Invalid or
 missing labels are rejected before any browser action or check runs, so the agent
 can retry with the correct parameter. Labels remain optional by default. This
 validates the label's presence and format, not whether it names the correct step.

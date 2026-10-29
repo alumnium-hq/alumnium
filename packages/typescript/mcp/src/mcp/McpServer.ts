@@ -146,6 +146,15 @@ export class McpServer {
                 .describe(
                   "Required test step number. Use 0 for setup before the first step; otherwise use the written test step number. Retry rejected calls with this parameter.",
                 ),
+              ...(name === "do" && {
+                attempt: z
+                  .number()
+                  .int()
+                  .positive()
+                  .describe(
+                    "Required attempt number: 1 for a new action, 2 and up when retrying the same action. Retry rejected calls with this parameter.",
+                  ),
+              }),
             })
           : toolDef.inputSchema;
       server.registerTool(
