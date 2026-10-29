@@ -61,11 +61,14 @@ export class XcodeDriver extends BaseDriver<never> {
   @span("driver.type", BaseDriver.spanAttrs)
   @stateful
   async type(id: number, text: string): Promise<void> {
-    const node = await this.#resolve(id);
+    const target = await (await this.#tree()).elementById(id);
+    const node = await this.#resolveNode(target, {
+      preferFocused: target.attributes["focused"] === "true",
+    });
     const point = this.#pointOf(node);
     await this.#perform(`t ${point.x} ${point.y}`, node.activationBundleId);
     // XCTest types into the focused control. Delete its current value before replacing it.
-    const focused = await this.#resolveNode(node);
+    const focused = await this.#resolveNode(node, { preferFocused: true });
     const value =
       focused.value === focused.attributes["placeholderValue"]
         ? ""
@@ -314,11 +317,12 @@ export class XcodeDriver extends BaseDriver<never> {
 
   async #resolveNode(
     target: XcodeAccessibilityTree.Node,
+    options?: XcodeAccessibilityTree.ResolveOptions,
   ): Promise<XcodeAccessibilityTree.Node> {
     // Activating another app can move its windows; resolve only after activation.
     return (
       await this.session.capture(undefined, target.activationBundleId)
-    ).tree.resolve(target);
+    ).tree.resolve(target, options);
   }
 
   async #perform(command: string, bundleId?: string): Promise<void> {

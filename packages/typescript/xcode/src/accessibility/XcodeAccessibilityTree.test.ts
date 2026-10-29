@@ -139,6 +139,61 @@ describe(XcodeAccessibilityTree, () => {
     expect(fresh.resolve(await tree.elementById(2)).id).toBe(4);
   });
 
+  it.each(["TextField", "SearchField", "SecureTextField", "TextView"])(
+    "resolves the focused %s when labels and context are identical",
+    async (type) => {
+      const source = `Application, label: 'App'\n  Window\n    ScrollView\n      ${type}, label: 'Search', Keyboard Focused, hitPoint: {100, 200}\n      ${type}, label: 'Search', hitPoint: {100, 300}`;
+      const tree = new XcodeAccessibilityTree(source);
+      const fresh = new XcodeAccessibilityTree(
+        source
+          .replace(
+            "      " + type,
+            "      Button, label: 'Clear'\n      " + type,
+          )
+          .replace("{100, 200}", "{120, 240}"),
+      );
+      expect(
+        fresh.resolve(await tree.elementById(4), { preferFocused: true }),
+      ).toMatchObject({
+        id: 5,
+        attributes: { focused: "true" },
+        hitPoint: { x: 120, y: 240 },
+      });
+    },
+  );
+
+  it("does not substitute the focused input for an unfocused ambiguous target", async () => {
+    const tree = new XcodeAccessibilityTree(
+      "Application, label: 'App'\n  SearchField, label: 'Search', Keyboard Focused, hitPoint: {100, 200}\n  SearchField, label: 'Search', hitPoint: {100, 300}",
+    );
+    expect(() => tree.resolve(tree.find((node) => node.id === 3)!)).toThrow(
+      "ambiguous",
+    );
+  });
+
+  it("rejects ambiguous inputs when focus is lost", async () => {
+    const source =
+      "Application, label: 'App'\n  SearchField, label: 'Search', Keyboard Focused, hitPoint: {100, 200}\n  SearchField, label: 'Search', hitPoint: {100, 300}";
+    const tree = new XcodeAccessibilityTree(source);
+    const target = await tree.elementById(2);
+    const fresh = new XcodeAccessibilityTree(
+      source.replace(", Keyboard Focused", ""),
+    );
+    expect(() => fresh.resolve(target, { preferFocused: true })).toThrow(
+      "ambiguous",
+    );
+  });
+
+  it("rejects inputs when multiple matches report keyboard focus", async () => {
+    const tree = new XcodeAccessibilityTree(
+      "Application, label: 'App'\n  SearchField, label: 'Search', Keyboard Focused, hitPoint: {100, 200}\n  SearchField, label: 'Search', Keyboard Focused, hitPoint: {100, 300}",
+    );
+    const target = await tree.elementById(2);
+    expect(() => tree.resolve(target, { preferFocused: true })).toThrow(
+      "ambiguous",
+    );
+  });
+
   it("does not substitute a differently labelled control when a duplicate disappears", async () => {
     const source =
       "Application, label: 'App'\n  Button, identifier: 'Search', label: 'Search stays'\n  Button, identifier: 'Search', label: 'Search experiences'";
