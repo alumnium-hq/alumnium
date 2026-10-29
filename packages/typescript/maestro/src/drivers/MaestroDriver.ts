@@ -8,6 +8,9 @@ import {
   type Driver,
   type Keys,
   PressKeyTool,
+  ScrollTool,
+  ScrollContainerTool,
+  scrollPoints,
   sleep,
   Telemetry,
   type ToolClass,
@@ -31,6 +34,8 @@ export class MaestroDriver extends BaseDriver<never> {
   public supportedTools: Set<ToolClass> = new Set([
     ClickTool,
     PressKeyTool,
+    ScrollTool,
+    ScrollContainerTool,
     TypeTool,
   ]);
 
@@ -99,6 +104,52 @@ export class MaestroDriver extends BaseDriver<never> {
     return this.session.screenshot();
   }
 
+  @span("driver.scroll_to", BaseDriver.spanAttrs)
+  @stateful
+  async scrollTo(id: number): Promise<void> {
+    const tree =
+      (await this.getAccessibilityTree()) as MaestroAccessibilityTree;
+    const selector = await tree.selectorFor(id);
+    const yaml = Object.entries(selector)
+      .map(([key, value]) => `      ${key}: ${JSON.stringify(value)}`)
+      .join("\n");
+    try {
+      await this.session.run(
+        `- scrollUntilVisible:\n    element:\n${yaml}\n    timeout: 20000`,
+      );
+    } finally {
+      this.resetAccessibilityTree();
+    }
+  }
+
+  @span("driver.scroll", BaseDriver.spanAttrs)
+  @stateful
+  override async scroll(
+    id: number | undefined,
+    direction: Driver.ScrollDirection,
+  ): Promise<void> {
+    let command: string;
+    if (id === undefined) {
+      const gestures: Record<Driver.ScrollDirection, string> = {
+        up: "DOWN",
+        down: "UP",
+        left: "RIGHT",
+        right: "LEFT",
+      };
+      command = `- swipe:\n    direction: ${gestures[direction]}`;
+    } else {
+      const { bounds } = await this.#elementOf(id);
+      const frame = MaestroAccessibilityTree.frameOf(bounds);
+      const { start, end } = scrollPoints(frame, direction);
+      command = `- swipe:\n    start: "${Math.round(start.x)},${Math.round(start.y)}"\n    end: "${Math.round(end.x)},${Math.round(end.y)}"`;
+    }
+    try {
+      await this.session.run(command);
+    } finally {
+      this.resetAccessibilityTree();
+    }
+  }
+
   @span("driver.app", BaseDriver.spanAttrs)
   async app(): Promise<AppId> {
     return AppId.parse(this.session.appId);
@@ -142,11 +193,6 @@ export class MaestroDriver extends BaseDriver<never> {
   @span("driver.drag_and_drop", BaseDriver.spanAttrs)
   dragAndDrop(): Promise<void> {
     throw new Error("Dragging and dropping is not supported on Maestro");
-  }
-
-  @span("driver.scroll_to", BaseDriver.spanAttrs)
-  scrollTo(): Promise<void> {
-    throw new Error("Scrolling to element is not supported on Maestro");
   }
 
   @span("driver.execute_script", BaseDriver.spanAttrs)

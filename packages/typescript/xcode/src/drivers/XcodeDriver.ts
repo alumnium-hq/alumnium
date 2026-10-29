@@ -4,10 +4,13 @@ import {
   ClickTool,
   DragAndDropTool,
   DragSliderTool,
+  type Driver,
   type Keys,
   NavigateBackTool,
   PressKeyTool,
   ScrollTool,
+  ScrollContainerTool,
+  scrollPoints,
   sleep,
   Telemetry,
   type ToolClass,
@@ -30,6 +33,7 @@ export class XcodeDriver extends BaseDriver<never> {
     NavigateBackTool,
     PressKeyTool,
     ScrollTool,
+    ScrollContainerTool,
     TypeTool,
   ]);
   delay = 0;
@@ -135,7 +139,9 @@ export class XcodeDriver extends BaseDriver<never> {
   async scrollTo(id: number): Promise<void> {
     const target = await (await this.#tree()).elementById(id);
     for (let attempt = 0; attempt < 10; attempt++) {
-      const tree = (await this.session.capture()).tree;
+      const tree = (
+        await this.session.capture(undefined, target.activationBundleId)
+      ).tree;
       const node = tree.resolve(target);
       if (node.hitPoint) return;
       let container = node.parent;
@@ -161,6 +167,50 @@ export class XcodeDriver extends BaseDriver<never> {
       );
     }
     throw new Error("Xcode element did not become hittable after scrolling");
+  }
+
+  @span("driver.scroll", BaseDriver.spanAttrs)
+  @stateful
+  override async scroll(
+    id: number | undefined,
+    direction: Driver.ScrollDirection,
+  ): Promise<void> {
+    const node =
+      id === undefined
+        ? (await this.session.capture(undefined, this.session.appId)).tree.find(
+            (candidate) =>
+              candidate.type === "Window" &&
+              candidate.activationBundleId === this.session.appId,
+          )
+        : await this.#resolve(id);
+    if (!node?.frame)
+      throw new Error(
+        "Xcode cannot determine a frame for the scroll container",
+      );
+
+    let frame = node.frame;
+    for (let parent = node.parent; parent; parent = parent.parent) {
+      if (parent.type !== "Window" || !parent.frame) continue;
+      const x = Math.max(frame.x, parent.frame.x);
+      const y = Math.max(frame.y, parent.frame.y);
+      frame = {
+        x,
+        y,
+        width:
+          Math.min(frame.x + frame.width, parent.frame.x + parent.frame.width) -
+          x,
+        height:
+          Math.min(
+            frame.y + frame.height,
+            parent.frame.y + parent.frame.height,
+          ) - y,
+      };
+    }
+    const { start, end } = scrollPoints(frame, direction);
+    await this.#perform(
+      `t ${start.x} ${start.y} f ${end.x} ${end.y} 0.3`,
+      node.activationBundleId,
+    );
   }
 
   @span("driver.back", BaseDriver.spanAttrs)

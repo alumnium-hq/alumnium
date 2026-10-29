@@ -10,9 +10,15 @@ export namespace Driver {
   export type Kind = z.infer<typeof Driver.Kind>;
 
   export type Id = z.infer<typeof Driver.Id>;
+
+  export type ScrollDirection = z.infer<typeof Driver.ScrollDirection>;
 }
 
 export abstract class Driver {
+  static scrollDirections = ["up", "down", "left", "right"] as const;
+
+  static ScrollDirection = z.enum(this.scrollDirections);
+
   static chromiumPlatform = "chromium" as const;
 
   static chromiumPlatformAliases = [this.chromiumPlatform, "chrome"] as const;

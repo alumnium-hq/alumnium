@@ -14,6 +14,7 @@ import {
   NavigateBackTool,
   PressKeyTool,
   ScrollTool,
+  ScrollContainerTool,
   TypeTool,
 } from "@alumnium/core";
 import { XcodeAccessibilityTree } from "../accessibility/XcodeAccessibilityTree.ts";
@@ -50,6 +51,7 @@ describe(XcodeDriver, () => {
         NavigateBackTool,
         PressKeyTool,
         ScrollTool,
+        ScrollContainerTool,
         TypeTool,
       ]),
     );
@@ -134,6 +136,70 @@ describe(XcodeDriver, () => {
     expect(capture).toHaveBeenCalledWith("t 51 80", "com.ayodeji.TodoList");
     await driver.wait(90);
     expect(capture).toHaveBeenCalledWith("w 30", undefined);
+  });
+
+  it.each([
+    ["down", "t 200 550 f 200 250 0.3"],
+    ["up", "t 200 250 f 200 550 0.3"],
+    ["right", "t 300 400 f 100 400 0.3"],
+    ["left", "t 100 400 f 300 400 0.3"],
+  ] as const)(
+    "scrolls a visible container %s even when the target is absent",
+    async (direction, gesture) => {
+      source =
+        "Application bundle identifier: com.ayodeji.TodoList\nApplication, label: 'Todo'\n  Window, {{0, 0}, {400, 800}}\n    ScrollView, {{0, 100}, {400, 600}}, hitPoint: {200, 400}";
+      const previous = await driver.getAccessibilityTree();
+      await driver.scroll(3, direction);
+      expect(capture).toHaveBeenCalledWith(gesture, "com.ayodeji.TodoList");
+      expect(await driver.getAccessibilityTree()).not.toBe(previous);
+    },
+  );
+
+  it("scrolls the app window without an element ID", async () => {
+    await driver.scroll(undefined, "down");
+    expect(capture).toHaveBeenCalledWith(
+      "t 196.5 639 f 196.5 213 0.3",
+      "com.ayodeji.TodoList",
+    );
+  });
+
+  it("keeps the gesture inside the visible part of a container", async () => {
+    source =
+      "Application bundle identifier: com.ayodeji.TodoList\nApplication, label: 'Todo'\n  Window, {{0, 0}, {400, 800}}\n    ScrollView, {{0, 100}, {400, 1200}}";
+    await driver.scroll(3, "down");
+    expect(capture).toHaveBeenCalledWith(
+      "t 200 625 f 200 275 0.3",
+      "com.ayodeji.TodoList",
+    );
+  });
+
+  it("rejects containers outside the window without sending a gesture", async () => {
+    source =
+      "Application bundle identifier: com.ayodeji.TodoList\nApplication, label: 'Todo'\n  Window, {{0, 0}, {400, 800}}\n    ScrollView, {{0, 1000}, {400, 600}}";
+    await expect(driver.scroll(3, "down")).rejects.toThrow("no visible area");
+    expect(capture.mock.calls.every(([command]) => command === undefined)).toBe(
+      true,
+    );
+  });
+
+  it("does not scroll another application's window when the app is missing", async () => {
+    source =
+      "Application bundle identifier: com.other\nApplication, label: 'Other'\n  Window, {{0, 0}, {400, 800}}";
+    await expect(driver.scroll(undefined, "down")).rejects.toThrow(
+      "cannot determine a frame",
+    );
+    expect(capture.mock.calls.every(([command]) => command === undefined)).toBe(
+      true,
+    );
+  });
+
+  it("uses labels to click the intended control when identifiers are reused", async () => {
+    source =
+      "Application bundle identifier: com.ayodeji.TodoList\nApplication, label: 'Todo'\n  Button, identifier: 'Search', label: 'Search stays', hitPoint: {100, 200}\n  Button, identifier: 'Search', label: 'Search experiences', hitPoint: {100, 300}";
+    await driver.getAccessibilityTree();
+    source = source.replace("{100, 200}", "{150, 250}");
+    await driver.click(2);
+    expect(capture).toHaveBeenCalledWith("t 150 250", "com.ayodeji.TodoList");
   });
 
   it("invalidates the tree even when an interaction fails", async () => {

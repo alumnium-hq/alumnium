@@ -27,6 +27,7 @@ export {
   PressKeyTool,
   PrintToPdfTool,
   ScrollTool,
+  ScrollContainerTool,
   SwitchToNextTabTool,
   SwitchToPreviousTabTool,
   type ToolCall,

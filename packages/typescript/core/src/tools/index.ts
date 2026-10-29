@@ -10,6 +10,7 @@ export * from "./NavigateToUrlTool.ts";
 export * from "./PressKeyTool.ts";
 export * from "./PrintToPdfTool.ts";
 export * from "./ScrollTool.ts";
+export * from "./ScrollContainerTool.ts";
 export * from "./SwitchToNextTabTool.ts";
 export * from "./SwitchToPreviousTabTool.ts";
 export * from "./toolToSchemaConverter.ts";
