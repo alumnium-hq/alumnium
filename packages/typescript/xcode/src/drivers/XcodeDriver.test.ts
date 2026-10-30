@@ -14,7 +14,6 @@ import {
   NavigateBackTool,
   PressKeyTool,
   ScrollTool,
-  ScrollContainerTool,
   TypeTool,
 } from "@alumnium/core";
 import { XcodeAccessibilityTree } from "../accessibility/XcodeAccessibilityTree.ts";
@@ -51,7 +50,6 @@ describe(XcodeDriver, () => {
         NavigateBackTool,
         PressKeyTool,
         ScrollTool,
-        ScrollContainerTool,
         TypeTool,
       ]),
     );

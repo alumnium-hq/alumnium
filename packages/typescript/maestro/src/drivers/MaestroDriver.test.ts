@@ -6,7 +6,7 @@ import {
   vi,
   type MockInstance,
 } from "vitest";
-import { ScrollContainerTool, ScrollTool } from "@alumnium/core";
+import { ScrollTool } from "@alumnium/core";
 import { MaestroDriver } from "./MaestroDriver.ts";
 import { MaestroSession } from "./MaestroSession.ts";
 
@@ -43,7 +43,6 @@ describe(MaestroDriver, () => {
 
   it("advertises scroll-to and directional scrolling", () => {
     expect(driver.supportedTools.has(ScrollTool)).toBe(true);
-    expect(driver.supportedTools.has(ScrollContainerTool)).toBe(true);
   });
 
   it.each([

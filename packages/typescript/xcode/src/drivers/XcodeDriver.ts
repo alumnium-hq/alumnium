@@ -9,7 +9,6 @@ import {
   NavigateBackTool,
   PressKeyTool,
   ScrollTool,
-  ScrollContainerTool,
   scrollPoints,
   sleep,
   Telemetry,
@@ -33,7 +32,6 @@ export class XcodeDriver extends BaseDriver<never> {
     NavigateBackTool,
     PressKeyTool,
     ScrollTool,
-    ScrollContainerTool,
     TypeTool,
   ]);
   delay = 0;

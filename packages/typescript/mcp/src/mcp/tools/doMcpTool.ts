@@ -10,7 +10,6 @@ import {
   PressKeyTool,
   PrintToPdfTool,
   ScrollTool,
-  ScrollContainerTool,
   TypeTool,
   UploadTool,
 } from "@alumnium/core";
@@ -33,7 +32,6 @@ const MCPS_DO_TOOLS = [
   PressKeyTool,
   PrintToPdfTool,
   ScrollTool,
-  ScrollContainerTool,
   TypeTool,
   UploadTool,
 ];
@@ -66,7 +64,7 @@ export const doMcpTool = McpTool.define("do", {
     `Supported actions: ${getDoToolActions()}. ` +
     "Set vision=true to use a screenshot alongside the accessibility tree when controls are distinguishable by appearance. " +
     "IMPORTANT: Each call operates on the CURRENT PAGE state only. For multi-page workflows, issue separate calls (e.g., first 'navigate to URL', then 'search for X' as a separate call after page loads). " +
-    "On web pages, Alumnium can interact with elements outside the viewport. On native apps, use scroll container to reveal controls missing from the current accessibility tree.",
+    "On web pages, Alumnium can interact with elements outside the viewport. On native apps, scroll in a direction to reveal controls missing from the current accessibility tree.",
 
   inputSchema: z.object({
     id: z.string().describe("Driver ID from start"),

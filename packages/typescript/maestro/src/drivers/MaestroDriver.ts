@@ -9,7 +9,6 @@ import {
   type Keys,
   PressKeyTool,
   ScrollTool,
-  ScrollContainerTool,
   scrollPoints,
   sleep,
   Telemetry,
@@ -35,7 +34,6 @@ export class MaestroDriver extends BaseDriver<never> {
     ClickTool,
     PressKeyTool,
     ScrollTool,
-    ScrollContainerTool,
     TypeTool,
   ]);
 
