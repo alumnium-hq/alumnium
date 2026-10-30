@@ -32,6 +32,7 @@ export * from "./drivers/Slider.ts";
 export * from "./drivers/keys.ts";
 export * from "./drivers/scripts/bundledScripts.ts";
 export * from "./drivers/scripts/scripts.ts";
+export * from "./drivers/scrollPoints.ts";
 export * from "./llm/AiSdk.ts";
 export * from "./llm/LanguageModel.ts";
 export * from "./llm/llmSchema.ts";
