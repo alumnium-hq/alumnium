@@ -126,21 +126,17 @@ export class MaestroDriver extends BaseDriver<never> {
     id: number | undefined,
     direction: Driver.ScrollDirection,
   ): Promise<void> {
-    let command: string;
-    if (id === undefined) {
-      const gestures: Record<Driver.ScrollDirection, string> = {
-        up: "DOWN",
-        down: "UP",
-        left: "RIGHT",
-        right: "LEFT",
-      };
-      command = `- swipe:\n    direction: ${gestures[direction]}`;
-    } else {
-      const { bounds } = await this.#elementOf(id);
-      const frame = MaestroAccessibilityTree.frameOf(bounds);
-      const { start, end } = scrollPoints(frame, direction);
-      command = `- swipe:\n    start: "${Math.round(start.x)},${Math.round(start.y)}"\n    end: "${Math.round(end.x)},${Math.round(end.y)}"`;
-    }
+    const tree =
+      (await this.getAccessibilityTree()) as MaestroAccessibilityTree;
+    const frame = await tree.scrollFrame(id);
+    const { start, end } = scrollPoints(frame, direction);
+    const command = `- swipe:\n    start: "${Math.round(start.x)},${Math.round(start.y)}"\n    end: "${Math.round(end.x)},${Math.round(end.y)}"`;
+    logger.info("Scrolling {direction} within {frame}: {start} to {end}", {
+      direction,
+      frame,
+      start,
+      end,
+    });
     try {
       await this.session.run(command);
     } finally {

@@ -36,6 +36,13 @@ const ATTR_ORDER = [
 ] as const;
 
 export namespace MaestroAccessibilityTree {
+  export interface Frame {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  }
+
   /** Role names inferred from the attributes Maestro provides. */
   export type Role = "TextField" | "CheckBox" | "Button" | "Text" | "View";
 }
@@ -304,6 +311,51 @@ export class MaestroAccessibilityTree extends BaseAccessibilityTree<MaestroSessi
     };
   }
 
+  async scrollFrame(rawId?: number): Promise<MaestroAccessibilityTree.Frame> {
+    if (rawId === undefined) {
+      const frames = this.#windowFrames(this.#hierarchy.elements);
+      const frame = frames.sort(
+        (a, b) => b.width * b.height - a.width * a.height,
+      )[0];
+      if (!frame) throw new Error("Maestro cannot determine the screen bounds");
+      return frame;
+    }
+
+    const element = await this.elementById(rawId);
+    if (!element.maestroBounds)
+      throw new Error(`Element with raw_id=${rawId} has no bounds to act on`);
+
+    let frame = MaestroAccessibilityTree.frameOf(element.maestroBounds);
+    const ancestors = this.#pathToNode(this.#hierarchy.elements, rawId)!;
+    for (const ancestor of ancestors.slice(0, -1)) {
+      const bounds = this.#expand(ancestor)["bounds"];
+      if (!bounds) continue;
+      const parent = MaestroAccessibilityTree.frameOf(bounds);
+      const x = Math.max(frame.x, parent.x);
+      const y = Math.max(frame.y, parent.y);
+      frame = {
+        x,
+        y,
+        width: Math.min(frame.x + frame.width, parent.x + parent.width) - x,
+        height: Math.min(frame.y + frame.height, parent.y + parent.height) - y,
+      };
+    }
+    return frame;
+  }
+
+  #windowFrames(
+    nodes: MaestroSession.Node[],
+  ): MaestroAccessibilityTree.Frame[] {
+    return nodes.flatMap((node) => {
+      const bounds = this.#expand(node)["bounds"];
+      if (bounds) {
+        const frame = MaestroAccessibilityTree.frameOf(bounds);
+        if (frame.width > 0 && frame.height > 0) return [frame];
+      }
+      return this.#windowFrames(this.#childrenOf(node));
+    });
+  }
+
   /** Scopes the tree to the subtree rooted at `rawId`. */
   async scopeToArea(rawId: number): Promise<MaestroAccessibilityTree> {
     const found = this.#findNode(this.#hierarchy.elements, rawId);
@@ -323,14 +375,21 @@ export class MaestroAccessibilityTree extends BaseAccessibilityTree<MaestroSessi
     nodes: MaestroSession.Node[],
     rawId: number,
   ): MaestroSession.Node | null {
+    return this.#pathToNode(nodes, rawId)?.at(-1) ?? null;
+  }
+
+  #pathToNode(
+    nodes: MaestroSession.Node[],
+    rawId: number,
+  ): MaestroSession.Node[] | null {
     let counter = 0;
 
-    const visit = (node: MaestroSession.Node): MaestroSession.Node | null => {
+    const visit = (node: MaestroSession.Node): MaestroSession.Node[] | null => {
       counter += 1;
-      if (counter === rawId) return node;
+      if (counter === rawId) return [node];
       for (const child of this.#childrenOf(node)) {
         const found = visit(child);
-        if (found) return found;
+        if (found) return [node, ...found];
       }
       return null;
     };
@@ -351,12 +410,7 @@ export class MaestroAccessibilityTree extends BaseAccessibilityTree<MaestroSessi
     };
   }
 
-  static frameOf(bounds: string): {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-  } {
+  static frameOf(bounds: string): MaestroAccessibilityTree.Frame {
     const match = /\[(-?\d+),(-?\d+)\]\[(-?\d+),(-?\d+)\]/.exec(bounds);
     if (!match) throw new Error(`Unparsable Maestro bounds: ${bounds}`);
     const [x1, y1, x2, y2] = match.slice(1).map(Number) as [

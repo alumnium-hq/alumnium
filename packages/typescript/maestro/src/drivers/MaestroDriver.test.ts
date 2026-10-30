@@ -63,18 +63,106 @@ describe(MaestroDriver, () => {
   );
 
   it.each([
-    ["down", "UP"],
-    ["up", "DOWN"],
-    ["right", "LEFT"],
-    ["left", "RIGHT"],
+    ["down", "200,600", "200,200"],
+    ["up", "200,200", "200,600"],
+    ["right", "300,400", "100,400"],
+    ["left", "100,400", "300,400"],
   ] as const)(
     "scrolls the screen %s without requiring an element ID",
-    async (direction, gesture) => {
+    async (direction, start, end) => {
       await driver.scroll(undefined, direction);
-      expect(run).toHaveBeenCalledWith(`- swipe:\n    direction: ${gesture}`);
-      expect(inspect).not.toHaveBeenCalled();
+      expect(run).toHaveBeenCalledWith(
+        `- swipe:\n    start: "${start}"\n    end: "${end}"`,
+      );
     },
   );
+
+  it.each([
+    [undefined, "201,656", "201,219"],
+    [3, "201,711", "201,384"],
+  ])(
+    "keeps the Profile swipe on screen and above its bottom controls (target %s)",
+    async (id, start, end) => {
+      inspect.mockResolvedValueOnce({
+        ui_schema: { abbreviations: {}, defaults: {} },
+        elements: [
+          {
+            b: "[0,0][402,874]",
+            c: [
+              {
+                b: "[0,0][402,874]",
+                c: [
+                  { b: "[0,221][402,1091]" },
+                  { a11y: "Switch to hosting", b: "[108,717][294,761]" },
+                  { a11y: "Tab bar", b: "[0,783][402,874]" },
+                ],
+              },
+            ],
+          },
+          { b: "[0,0][402,54]" },
+        ],
+      });
+
+      await driver.scroll(id, "down");
+
+      expect(run).toHaveBeenCalledWith(
+        `- swipe:\n    start: "${start}"\n    end: "${end}"`,
+      );
+    },
+  );
+
+  it.each([false, true])(
+    "finds the Android app viewport inside a boundless root (status bar first: %s)",
+    async (statusBarFirst) => {
+      const app = { b: "[0,0][1080,2400]" };
+      const statusBar = { b: "[0,0][1080,63]" };
+      inspect.mockResolvedValueOnce({
+        ui_schema: { platform: "android", abbreviations: {}, defaults: {} },
+        elements: [{ c: statusBarFirst ? [statusBar, app] : [app, statusBar] }],
+      });
+
+      await driver.scroll(undefined, "down");
+
+      expect(run).toHaveBeenCalledWith(
+        '- swipe:\n    start: "540,1800"\n    end: "540,600"',
+      );
+    },
+  );
+
+  it("clips a container to its nested viewport on both axes", async () => {
+    inspect.mockResolvedValueOnce({
+      ui_schema: { abbreviations: {}, defaults: {} },
+      elements: [
+        {
+          b: "[0,0][400,800]",
+          c: [{ b: "[20,150][380,650]", c: [{ b: "[-100,-200][600,1200]" }] }],
+        },
+      ],
+    });
+
+    await driver.scroll(3, "right");
+
+    expect(run).toHaveBeenCalledWith(
+      '- swipe:\n    start: "290,400"\n    end: "110,400"',
+    );
+  });
+
+  it("rejects a fully offscreen container without sending a gesture", async () => {
+    await expect(driver.scroll(3, "down")).rejects.toThrow("no visible area");
+    expect(run).not.toHaveBeenCalled();
+  });
+
+  it("rejects a screen without bounds without sending a gesture", async () => {
+    inspect.mockResolvedValueOnce({
+      ui_schema: { abbreviations: {}, defaults: {} },
+      elements: [{}],
+    });
+
+    await expect(driver.scroll(undefined, "down")).rejects.toThrow(
+      "cannot determine the screen bounds",
+    );
+    expect(run).not.toHaveBeenCalled();
+  });
 
   it("scrolls to an offscreen target with literal selector text", async () => {
     const previous = await driver.getAccessibilityTree();
