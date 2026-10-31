@@ -13,12 +13,19 @@ class ChromiumAccessibilityTree(BaseAccessibilityTree):
         self._frame_chain_map: dict[int, list[int]] = {}  # raw_id -> frame chain (list of iframe backendNodeIds)
 
     @classmethod
-    def _from_xml(cls, xml_string: str, frame_map: dict[int, object] | None = None) -> "ChromiumAccessibilityTree":
+    def _from_xml(
+        cls,
+        xml_string: str,
+        frame_map: dict[int, object] | None = None,
+        frame_chain_map: dict[int, list[int]] | None = None,
+    ) -> "ChromiumAccessibilityTree":
         """Create a ChromiumAccessibilityTree instance from pre-computed XML."""
         instance = cls(cdp_response={})
         instance._raw = xml_string
         if frame_map:
             instance._frame_map = frame_map
+        if frame_chain_map:
+            instance._frame_chain_map = frame_chain_map
         return instance
 
     def to_str(self) -> str:
@@ -204,4 +211,4 @@ class ChromiumAccessibilityTree(BaseAccessibilityTree):
         indent(target_elem)
         scoped_xml = tostring(target_elem, encoding="unicode")
 
-        return self._from_xml(scoped_xml, self._frame_map)
+        return self._from_xml(scoped_xml, self._frame_map, self._frame_chain_map)
