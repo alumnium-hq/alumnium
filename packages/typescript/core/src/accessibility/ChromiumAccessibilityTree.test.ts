@@ -78,5 +78,29 @@ describe("ChromiumAccessibilityTree", () => {
         'checked="false"',
       );
     });
+
+    it("preserves frame chain in a scoped tree", async () => {
+      const tree = new ChromiumAccessibilityTree({
+        nodes: [
+          {
+            nodeId: "1",
+            backendDOMNodeId: 1,
+            role: { value: "form" },
+            childIds: ["2"],
+            _frame_chain: [10],
+          },
+          {
+            nodeId: "2",
+            backendDOMNodeId: 2,
+            role: { value: "button" },
+            _frame_chain: [10],
+          },
+        ],
+      });
+
+      expect(
+        (await (await tree.scopeToArea(1)).elementById(2)).frameChain,
+      ).toEqual([10]);
+    });
   });
 });
