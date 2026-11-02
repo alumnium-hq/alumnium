@@ -32,7 +32,9 @@ import org.slf4j.LoggerFactory;
  * <ul>
  *   <li>{@link io.appium.java_client.AppiumDriver} &rarr; {@link AppiumDriver}
  *   <li>{@link com.microsoft.playwright.Page} &rarr; {@link PlaywrightDriver}
- *   <li>{@link org.openqa.selenium.WebDriver} &rarr; {@link SeleniumDriver}
+ *   <li>{@link org.openqa.selenium.WebDriver} &rarr; {@link SeleniumDriver} ({@link
+ *       ai.alumnium.driver.selenium.BiDiDriver} for Firefox, {@link
+ *       ai.alumnium.driver.selenium.CdpDriver} otherwise)
  * </ul>
  */
 public final class Alumni implements AutoCloseable {
@@ -377,7 +379,7 @@ public final class Alumni implements AutoCloseable {
       case BaseDriver wrapped -> wrapped;
       case io.appium.java_client.AppiumDriver appium -> new AppiumDriver(appium);
       case com.microsoft.playwright.Page page -> new PlaywrightDriver(page);
-      case org.openqa.selenium.WebDriver webDriver -> new SeleniumDriver(webDriver);
+      case org.openqa.selenium.WebDriver webDriver -> SeleniumDriver.of(webDriver);
       default -> throw new UnsupportedOperationException("Driver " + driver + " not implemented");
     };
   }

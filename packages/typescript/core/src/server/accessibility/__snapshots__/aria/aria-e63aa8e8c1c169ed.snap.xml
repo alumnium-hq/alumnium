@@ -1,0 +1,7 @@
+<RootWebArea>
+  <heading name="Multi-Tab Test Page" id=2 level=1 />
+  <paragraph id=3>This page is used to test tab management functionality.</paragraph>
+  <button name="Open New Tab" id=5 />
+  <button name="Open Popup (auto-closes)" id=6 />
+  <button name="Show Delayed Element" id=7 />
+</RootWebArea>

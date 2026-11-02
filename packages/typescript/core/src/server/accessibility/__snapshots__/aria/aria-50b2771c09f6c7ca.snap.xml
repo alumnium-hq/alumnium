@@ -1,0 +1,6 @@
+<RootWebArea>
+  Sticky Header
+  <button name="Click Me" id=3 />
+  <paragraph id=4>Status: nothing clicked</paragraph>
+  Sticky Footer
+</RootWebArea>

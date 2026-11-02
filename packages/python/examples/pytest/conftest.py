@@ -16,6 +16,8 @@ from playwright.sync_api import Page, sync_playwright
 from pytest import fixture, hookimpl
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.chrome.webdriver import WebDriver as ChromeDriver
+from selenium.webdriver.firefox.options import Options as FirefoxOptions
+from selenium.webdriver.firefox.webdriver import WebDriver as FirefoxDriver
 from selenium.webdriver.remote.webdriver import WebDriver as SeleniumWebDriver
 
 from alumnium import Alumni
@@ -26,6 +28,7 @@ load_dotenv()
 
 driver_type = getenv("ALUMNIUM_DRIVER", "selenium")
 headless = getenv("ALUMNIUM_PLAYWRIGHT_HEADLESS", "true")
+selenium_browser = getenv("ALUMNIUM_SELENIUM_BROWSER", "chrome")
 selenium_browser_version = getenv("ALUMNIUM_SELENIUM_BROWSER_VERSION")
 model_label = getenv("ALUMNIUM_MODEL")
 run_model_name = f"ALUMNIUM_MODEL={model_label}" if model_label else "server-set model"
@@ -44,6 +47,12 @@ def driver():
             page = context.new_page()
             yield page
             context.tracing.stop(path="reports/traces/pytest.zip")
+    elif driver_type == "selenium" and selenium_browser == "firefox":
+        options = FirefoxOptions()
+        options.enable_bidi = True
+        options.browser_version = selenium_browser_version or "stable"
+        driver = FirefoxDriver(options=options)
+        yield driver
     elif driver_type == "selenium":
         options = ChromeOptions()
         options.add_experimental_option(

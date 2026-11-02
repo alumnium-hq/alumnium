@@ -7,7 +7,7 @@ WORKDIR /app
 ADD https://github.com/krallin/tini/releases/download/v0.19.0/tini-${TARGETARCH} /tini
 RUN chmod +x /tini
 
-RUN groupadd -r -g 10001 alumnium && useradd --no-log-init -r -u 10001 -g alumnium alumnium
+RUN groupadd -r -g 10001 alumnium && useradd --no-log-init -r -m -u 10001 -g alumnium alumnium
 
 RUN mkdir -p /app/.alumnium/cache && chown -R alumnium:alumnium /app/.alumnium
 RUN --mount=type=bind,source=packages/typescript/dist/bin,target=/tmp/bins \
@@ -31,16 +31,19 @@ FROM cli AS web
 USER root
 ENV PLAYWRIGHT_BROWSERS_PATH=/opt/alumnium/playwright \
     SE_CACHE_PATH=/opt/alumnium/selenium \
-    SE_OFFLINE=true \
     CLOAKBROWSER_CACHE_DIR=/opt/alumnium/cloakbrowser
 
 ARG TARGETARCH
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends ca-certificates && \
+    # Firefox needs GTK 3 at runtime
+    apt-get install -y --no-install-recommends ca-certificates libgtk-3-0 libx11-xcb1 libasound2 && \
     /app/alumnium install --driver playwright && \
     /app/alumnium install --driver cloakbrowser && \
-    if [ "$TARGETARCH" = "amd64" ]; then /app/alumnium install --driver selenium; fi && \
+    if [ "$TARGETARCH" = "amd64" ]; then /app/alumnium install --driver selenium --browser chrome; fi && \
+    /app/alumnium install --driver selenium --browser firefox && \
     rm -rf /var/lib/apt/lists/* && \
     chmod -R a+rX /opt/alumnium
+
+ENV SE_OFFLINE=true
 
 USER 10001

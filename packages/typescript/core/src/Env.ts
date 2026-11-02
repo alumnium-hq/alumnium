@@ -201,6 +201,10 @@ export const Env = {
     return envVar("ALUMNIUM_MCP_MODE", McpMode.default("agentic"));
   },
 
+  get ALUMNIUM_MCP_REQUIRE_STEP() {
+    return envVar("ALUMNIUM_MCP_REQUIRE_STEP", z.stringbool().default(false));
+  },
+
   get ALUMNIUM_MCP_TRANSPORT() {
     return envVar("ALUMNIUM_MCP_TRANSPORT", McpTransport.default("stdio"));
   },
@@ -283,6 +287,13 @@ export const Env = {
 
   get ALUMNIUM_PLAYWRIGHT_HEADLESS() {
     return envVar("ALUMNIUM_PLAYWRIGHT_HEADLESS", z.stringbool().default(true));
+  },
+
+  get ALUMNIUM_SELENIUM_BROWSER() {
+    return envVar(
+      "ALUMNIUM_SELENIUM_BROWSER",
+      z.enum(["chrome", "firefox"]).default("chrome"),
+    );
   },
 
   get ALUMNIUM_SELENIUM_BROWSER_VERSION() {

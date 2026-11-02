@@ -23,12 +23,7 @@ name = "alumnium"
 version = "0.24.0a4"
 source = { editable = "." }
 dependencies = [
-    { name = "alumnium-cli", version = "0.24.0a4", source = { directory = "dist/pip-alumnium-cli-darwin-arm64" }, marker = "(platform_machine == 'ARM64' and sys_platform == 'darwin') or (platform_machine == 'aarch64' and sys_platform == 'darwin') or (platform_machine == 'arm64' and sys_platform == 'darwin')" },
-    { name = "alumnium-cli", version = "0.24.0a4", source = { directory = "dist/pip-alumnium-cli-darwin-x64" }, marker = "(platform_machine == 'AMD64' and sys_platform == 'darwin') or (platform_machine == 'amd64' and sys_platform == 'darwin') or (platform_machine == 'x86_64' and sys_platform == 'darwin')" },
-    { name = "alumnium-cli", version = "0.24.0a4", source = { directory = "dist/pip-alumnium-cli-linux-arm64" }, marker = "(platform_machine == 'ARM64' and sys_platform == 'linux') or (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'arm64' and sys_platform == 'linux')" },
-    { name = "alumnium-cli", version = "0.24.0a4", source = { directory = "dist/pip-alumnium-cli-linux-x64" }, marker = "(platform_machine == 'AMD64' and sys_platform == 'linux') or (platform_machine == 'amd64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')" },
-    { name = "alumnium-cli", version = "0.24.0a4", source = { directory = "dist/pip-alumnium-cli-windows-arm64" }, marker = "(platform_machine == 'ARM64' and sys_platform == 'win32') or (platform_machine == 'aarch64' and sys_platform == 'win32') or (platform_machine == 'arm64' and sys_platform == 'win32')" },
-    { name = "alumnium-cli", version = "0.24.0a4", source = { directory = "dist/pip-alumnium-cli-windows-x64" }, marker = "(platform_machine == 'AMD64' and sys_platform == 'win32') or (platform_machine == 'amd64' and sys_platform == 'win32') or (platform_machine == 'x86_64' and sys_platform == 'win32')" },
+    { name = "alumnium-cli", marker = "(platform_machine == 'AMD64' and sys_platform == 'darwin') or (platform_machine == 'ARM64' and sys_platform == 'darwin') or (platform_machine == 'aarch64' and sys_platform == 'darwin') or (platform_machine == 'amd64' and sys_platform == 'darwin') or (platform_machine == 'arm64' and sys_platform == 'darwin') or (platform_machine == 'x86_64' and sys_platform == 'darwin') or (platform_machine == 'AMD64' and sys_platform == 'linux') or (platform_machine == 'ARM64' and sys_platform == 'linux') or (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'amd64' and sys_platform == 'linux') or (platform_machine == 'arm64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') or (platform_machine == 'AMD64' and sys_platform == 'win32') or (platform_machine == 'ARM64' and sys_platform == 'win32') or (platform_machine == 'aarch64' and sys_platform == 'win32') or (platform_machine == 'amd64' and sys_platform == 'win32') or (platform_machine == 'arm64' and sys_platform == 'win32') or (platform_machine == 'x86_64' and sys_platform == 'win32')" },
     { name = "appium-python-client" },
     { name = "playwright" },
     { name = "portpicker" },
@@ -60,12 +55,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "alumnium-cli", marker = "(platform_machine == 'AMD64' and sys_platform == 'darwin') or (platform_machine == 'amd64' and sys_platform == 'darwin') or (platform_machine == 'x86_64' and sys_platform == 'darwin')", directory = "dist/pip-alumnium-cli-darwin-x64" },
-    { name = "alumnium-cli", marker = "(platform_machine == 'ARM64' and sys_platform == 'darwin') or (platform_machine == 'aarch64' and sys_platform == 'darwin') or (platform_machine == 'arm64' and sys_platform == 'darwin')", directory = "dist/pip-alumnium-cli-darwin-arm64" },
-    { name = "alumnium-cli", marker = "(platform_machine == 'AMD64' and sys_platform == 'linux') or (platform_machine == 'amd64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux')", directory = "dist/pip-alumnium-cli-linux-x64" },
-    { name = "alumnium-cli", marker = "(platform_machine == 'ARM64' and sys_platform == 'linux') or (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'arm64' and sys_platform == 'linux')", directory = "dist/pip-alumnium-cli-linux-arm64" },
-    { name = "alumnium-cli", marker = "(platform_machine == 'AMD64' and sys_platform == 'win32') or (platform_machine == 'amd64' and sys_platform == 'win32') or (platform_machine == 'x86_64' and sys_platform == 'win32')", directory = "dist/pip-alumnium-cli-windows-x64" },
-    { name = "alumnium-cli", marker = "(platform_machine == 'ARM64' and sys_platform == 'win32') or (platform_machine == 'aarch64' and sys_platform == 'win32') or (platform_machine == 'arm64' and sys_platform == 'win32')", directory = "dist/pip-alumnium-cli-windows-arm64" },
+    { name = "alumnium-cli", marker = "(platform_machine == 'AMD64' and sys_platform == 'darwin') or (platform_machine == 'ARM64' and sys_platform == 'darwin') or (platform_machine == 'aarch64' and sys_platform == 'darwin') or (platform_machine == 'amd64' and sys_platform == 'darwin') or (platform_machine == 'arm64' and sys_platform == 'darwin') or (platform_machine == 'x86_64' and sys_platform == 'darwin') or (platform_machine == 'AMD64' and sys_platform == 'linux') or (platform_machine == 'ARM64' and sys_platform == 'linux') or (platform_machine == 'aarch64' and sys_platform == 'linux') or (platform_machine == 'amd64' and sys_platform == 'linux') or (platform_machine == 'arm64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'linux') or (platform_machine == 'AMD64' and sys_platform == 'win32') or (platform_machine == 'ARM64' and sys_platform == 'win32') or (platform_machine == 'aarch64' and sys_platform == 'win32') or (platform_machine == 'amd64' and sys_platform == 'win32') or (platform_machine == 'arm64' and sys_platform == 'win32') or (platform_machine == 'x86_64' and sys_platform == 'win32')", specifier = "==0.24.0a4" },
     { name = "appium-python-client", specifier = ">=5.1.1,<6.0.0" },
     { name = "playwright", specifier = ">=1.49,<2.0" },
     { name = "portpicker", specifier = ">=1.6.0" },
@@ -98,55 +88,15 @@ dev = [
 [[package]]
 name = "alumnium-cli"
 version = "0.24.0a4"
-source = { directory = "dist/pip-alumnium-cli-darwin-arm64" }
-resolution-markers = [
-    "(python_full_version >= '3.11' and platform_machine == 'ARM64' and sys_platform == 'darwin') or (python_full_version >= '3.11' and platform_machine == 'aarch64' and sys_platform == 'darwin') or (python_full_version >= '3.11' and platform_machine == 'arm64' and sys_platform == 'darwin')",
-    "(python_full_version < '3.11' and platform_machine == 'ARM64' and sys_platform == 'darwin') or (python_full_version < '3.11' and platform_machine == 'aarch64' and sys_platform == 'darwin') or (python_full_version < '3.11' and platform_machine == 'arm64' and sys_platform == 'darwin')",
-]
-
-[[package]]
-name = "alumnium-cli"
-version = "0.24.0a4"
-source = { directory = "dist/pip-alumnium-cli-darwin-x64" }
-resolution-markers = [
-    "(python_full_version >= '3.11' and platform_machine == 'AMD64' and sys_platform == 'darwin') or (python_full_version >= '3.11' and platform_machine == 'amd64' and sys_platform == 'darwin') or (python_full_version >= '3.11' and platform_machine == 'x86_64' and sys_platform == 'darwin')",
-    "(python_full_version < '3.11' and platform_machine == 'AMD64' and sys_platform == 'darwin') or (python_full_version < '3.11' and platform_machine == 'amd64' and sys_platform == 'darwin') or (python_full_version < '3.11' and platform_machine == 'x86_64' and sys_platform == 'darwin')",
-]
-
-[[package]]
-name = "alumnium-cli"
-version = "0.24.0a4"
-source = { directory = "dist/pip-alumnium-cli-linux-arm64" }
-resolution-markers = [
-    "(python_full_version >= '3.11' and platform_machine == 'ARM64' and sys_platform == 'linux') or (python_full_version >= '3.11' and platform_machine == 'aarch64' and sys_platform == 'linux') or (python_full_version >= '3.11' and platform_machine == 'arm64' and sys_platform == 'linux')",
-    "(python_full_version < '3.11' and platform_machine == 'ARM64' and sys_platform == 'linux') or (python_full_version < '3.11' and platform_machine == 'aarch64' and sys_platform == 'linux') or (python_full_version < '3.11' and platform_machine == 'arm64' and sys_platform == 'linux')",
-]
-
-[[package]]
-name = "alumnium-cli"
-version = "0.24.0a4"
-source = { directory = "dist/pip-alumnium-cli-linux-x64" }
-resolution-markers = [
-    "(python_full_version >= '3.11' and platform_machine == 'AMD64' and sys_platform == 'linux') or (python_full_version >= '3.11' and platform_machine == 'amd64' and sys_platform == 'linux') or (python_full_version >= '3.11' and platform_machine == 'x86_64' and sys_platform == 'linux')",
-    "(python_full_version < '3.11' and platform_machine == 'AMD64' and sys_platform == 'linux') or (python_full_version < '3.11' and platform_machine == 'amd64' and sys_platform == 'linux') or (python_full_version < '3.11' and platform_machine == 'x86_64' and sys_platform == 'linux')",
-]
-
-[[package]]
-name = "alumnium-cli"
-version = "0.24.0a4"
-source = { directory = "dist/pip-alumnium-cli-windows-arm64" }
-resolution-markers = [
-    "(python_full_version >= '3.11' and platform_machine == 'ARM64' and sys_platform == 'win32') or (python_full_version >= '3.11' and platform_machine == 'aarch64' and sys_platform == 'win32') or (python_full_version >= '3.11' and platform_machine == 'arm64' and sys_platform == 'win32')",
-    "(python_full_version < '3.11' and platform_machine == 'ARM64' and sys_platform == 'win32') or (python_full_version < '3.11' and platform_machine == 'aarch64' and sys_platform == 'win32') or (python_full_version < '3.11' and platform_machine == 'arm64' and sys_platform == 'win32')",
-]
-
-[[package]]
-name = "alumnium-cli"
-version = "0.24.0a4"
-source = { directory = "dist/pip-alumnium-cli-windows-x64" }
-resolution-markers = [
-    "(python_full_version >= '3.11' and platform_machine == 'AMD64' and sys_platform == 'win32') or (python_full_version >= '3.11' and platform_machine == 'amd64' and sys_platform == 'win32') or (python_full_version >= '3.11' and platform_machine == 'x86_64' and sys_platform == 'win32')",
-    "(python_full_version < '3.11' and platform_machine == 'AMD64' and sys_platform == 'win32') or (python_full_version < '3.11' and platform_machine == 'amd64' and sys_platform == 'win32') or (python_full_version < '3.11' and platform_machine == 'x86_64' and sys_platform == 'win32')",
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/86/58/02031157a2f8b18d6af29c7200c7bc95a3938ab5b38ba0566cf79077a02b/alumnium_cli-0.24.0a4.tar.gz", hash = "sha256:d052ae2ba9b3ecbdc92c471781ef48565104a1e00f0b0851a342b5c3f9b39e63", size = 2837, upload-time = "2026-10-19T21:46:15.359Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/c4/75/970fc8976d0e6d057b990a4c53d2de3d537c86ccfa217237ee6877bd84c3/alumnium_cli-0.24.0a4-py3-none-macosx_10_9_x86_64.whl", hash = "sha256:4e597a132c434317194429efae7f91d20c095deddc9c8ab7481accf9193d6567", size = 41546070, upload-time = "2026-10-19T21:45:52.025Z" },
+    { url = "https://files.pythonhosted.org/packages/12/28/b40ba942020002f770a4851602b82b1cd3bb710e66ad2b16f99824380608/alumnium_cli-0.24.0a4-py3-none-macosx_11_0_arm64.whl", hash = "sha256:8175eff1176ea37052ca0880bb72cfb074c7c73a36c09a52e2909c1b12aab204", size = 39161347, upload-time = "2026-10-19T21:45:56.088Z" },
+    { url = "https://files.pythonhosted.org/packages/d4/ae/9193caf468887c121e37a4ff573e572dfb520d193306b618fe91991de294/alumnium_cli-0.24.0a4-py3-none-manylinux_2_28_aarch64.whl", hash = "sha256:236f6f084da20e576d74194897ee845c0ff425290dd5f57840448670263fc3e6", size = 49707069, upload-time = "2026-10-19T21:45:59.699Z" },
+    { url = "https://files.pythonhosted.org/packages/88/44/0b11c16e73e4eb03718e0d78614a7772a136b3bd86515ff17c6f9b626068/alumnium_cli-0.24.0a4-py3-none-manylinux_2_28_x86_64.whl", hash = "sha256:2ac9a9106dcbc002b74e0e258dbec853b5e0355c7fb83519ca4f8f365318a832", size = 49752163, upload-time = "2026-10-19T21:46:03.246Z" },
+    { url = "https://files.pythonhosted.org/packages/eb/5a/a43358aa418952d2607fe99c9f3a02838806729a30adec796a2dd03c466e/alumnium_cli-0.24.0a4-py3-none-win_amd64.whl", hash = "sha256:d98106213fdfcf83cf81ec03c4e3fce52fb48790f47c8a6062bcf0d73935e1e6", size = 52901958, upload-time = "2026-10-19T21:46:07.263Z" },
+    { url = "https://files.pythonhosted.org/packages/7d/0d/466288c88e54f9de67e931571787e78592923b2638393614448d8377c54e/alumnium_cli-0.24.0a4-py3-none-win_arm64.whl", hash = "sha256:3a0b9b81676781aeac0592a743e17682c65f6e923e7696eb79d6268aee9214af", size = 49424436, upload-time = "2026-10-19T21:46:11.198Z" },
 ]
 
 [[package]]
@@ -249,7 +199,7 @@ name = "cffi"
 version = "2.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "pycparser", marker = "(implementation_name != 'PyPy' and platform_machine != 'AMD64' and platform_machine != 'ARM64' and platform_machine != 'aarch64' and platform_machine != 'amd64' and platform_machine != 'arm64' and platform_machine != 'x86_64' and sys_platform == 'darwin') or (implementation_name != 'PyPy' and platform_machine != 'AMD64' and platform_machine != 'ARM64' and platform_machine != 'aarch64' and platform_machine != 'amd64' and platform_machine != 'arm64' and platform_machine != 'x86_64' and sys_platform == 'linux') or (implementation_name != 'PyPy' and sys_platform != 'darwin' and sys_platform != 'linux')" },
+    { name = "pycparser", marker = "implementation_name != 'PyPy'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/eb/56/b1ba7935a17738ae8453301356628e8147c79dbb825bcbc73dc7401f9846/cffi-2.0.0.tar.gz", hash = "sha256:44d1b5909021139fe36001ae048dbdde8214afa20200eda0f64c068cac5d5529", size = 523588, upload-time = "2025-09-08T23:24:04.541Z" }
 wheels = [
@@ -590,7 +540,7 @@ name = "exceptiongroup"
 version = "1.3.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "typing-extensions", marker = "python_full_version < '3.11'" },
+    { name = "typing-extensions" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/50/79/66800aadf48771f6b62f7eb014e352e5d06856655206165d775e675a02c9/exceptiongroup-1.3.1.tar.gz", hash = "sha256:8b412432c6055b0b7d14c310000ae93352ed6754f70fa8f7c34141f91c4e3219", size = 30371, upload-time = "2025-11-21T23:01:54.787Z" }
 wheels = [
@@ -1695,12 +1645,12 @@ resolution-markers = [
     "(python_full_version < '3.11' and platform_machine != 'AMD64' and platform_machine != 'ARM64' and platform_machine != 'aarch64' and platform_machine != 'amd64' and platform_machine != 'arm64' and platform_machine != 'x86_64' and sys_platform == 'darwin') or (python_full_version < '3.11' and platform_machine != 'AMD64' and platform_machine != 'ARM64' and platform_machine != 'aarch64' and platform_machine != 'amd64' and platform_machine != 'arm64' and platform_machine != 'x86_64' and sys_platform == 'linux') or (python_full_version < '3.11' and platform_machine != 'AMD64' and platform_machine != 'ARM64' and platform_machine != 'aarch64' and platform_machine != 'amd64' and platform_machine != 'arm64' and platform_machine != 'x86_64' and sys_platform == 'win32') or (python_full_version < '3.11' and sys_platform != 'darwin' and sys_platform != 'linux' and sys_platform != 'win32')",
 ]
 dependencies = [
-    { name = "distlib", version = "0.4.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
-    { name = "filelock", marker = "python_full_version < '3.11'" },
-    { name = "packaging", version = "26.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
-    { name = "platformdirs", marker = "python_full_version < '3.11'" },
-    { name = "python-discovery", marker = "python_full_version < '3.11'" },
-    { name = "typing-extensions", marker = "python_full_version < '3.11'" },
+    { name = "distlib", version = "0.4.0", source = { registry = "https://pypi.org/simple" } },
+    { name = "filelock" },
+    { name = "packaging", version = "26.0", source = { registry = "https://pypi.org/simple" } },
+    { name = "platformdirs" },
+    { name = "python-discovery" },
+    { name = "typing-extensions" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/c4/f9/f323b3b6058cff3853b31cf6a49c0425ed797bf9611572ec10d065e08bac/virtualenv-21.14.5.tar.gz", hash = "sha256:c4cb6c13e46b57225a999c7e22a09b163393878facc7ac4c059a57f46faa1647", size = 5467127, upload-time = "2026-10-02T17:42:25.613Z" }
 wheels = [
@@ -1721,11 +1671,11 @@ resolution-markers = [
     "(python_full_version >= '3.11' and platform_machine != 'AMD64' and platform_machine != 'ARM64' and platform_machine != 'aarch64' and platform_machine != 'amd64' and platform_machine != 'arm64' and platform_machine != 'x86_64' and sys_platform == 'darwin') or (python_full_version >= '3.11' and platform_machine != 'AMD64' and platform_machine != 'ARM64' and platform_machine != 'aarch64' and platform_machine != 'amd64' and platform_machine != 'arm64' and platform_machine != 'x86_64' and sys_platform == 'linux') or (python_full_version >= '3.11' and platform_machine != 'AMD64' and platform_machine != 'ARM64' and platform_machine != 'aarch64' and platform_machine != 'amd64' and platform_machine != 'arm64' and platform_machine != 'x86_64' and sys_platform == 'win32') or (python_full_version >= '3.11' and sys_platform != 'darwin' and sys_platform != 'linux' and sys_platform != 'win32')",
 ]
 dependencies = [
-    { name = "distlib", version = "0.4.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
-    { name = "filelock", marker = "python_full_version >= '3.11'" },
-    { name = "packaging", version = "26.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
-    { name = "platformdirs", marker = "python_full_version >= '3.11'" },
-    { name = "python-discovery", marker = "python_full_version >= '3.11'" },
+    { name = "distlib", version = "0.4.3", source = { registry = "https://pypi.org/simple" } },
+    { name = "filelock" },
+    { name = "packaging", version = "26.3", source = { registry = "https://pypi.org/simple" } },
+    { name = "platformdirs" },
+    { name = "python-discovery" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/92/f3/589727d02bc832750cfa00ced4315d127535a22a6d7cfcb369b2fe219a2e/virtualenv-21.14.6.tar.gz", hash = "sha256:c6b74616e64bffa9532cfa9dfd54ffbab0dc9b999df2bb8ec0d75e559b983661", size = 5467961, upload-time = "2026-10-08T14:49:57.376Z" }
 wheels = [

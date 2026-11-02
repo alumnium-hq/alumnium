@@ -1,0 +1,693 @@
+<RootWebArea raw_id=1>
+  <banner raw_id=2 sharedId="ee73aeac-737d-4e73-81cb-b14138663122">
+    <link raw_id=3 sharedId="e131e232-1b03-4f52-ad20-bcb61c019568" name="Brave logo" url="/">
+      <img raw_id=4 sharedId="8e9ca200-2bce-4ae8-a528-a3bd415e977f" name="Brave logo" />
+    </link>
+    <textbox raw_id=5 sharedId="62f5be6c-b3c4-47ab-b4e0-4fec6214de2c" name="Search" placeholder="Ask anything, find anything…">
+      <text raw_id=6 name="selenium" />
+    </textbox>
+    <button raw_id=7 sharedId="e0bada6c-4f5e-4f57-9ad4-7bfd668efc88" name="Clear">
+      <img raw_id=8 sharedId="adcf06a4-6401-46bd-86fb-a92cb2cb2496" />
+    </button>
+    <button raw_id=9 sharedId="a6a4b6be-0a83-45d1-9062-7422a589eb2f" name="Search">
+      <img raw_id=10 sharedId="e5d0da3c-477a-428c-a2b0-8467e3144f0c" />
+    </button>
+    <button raw_id=11 sharedId="080493d2-1712-4653-984a-128a9fafb7c7" name="Ask">
+      <img raw_id=12 sharedId="3e13558b-4289-4bb7-956a-145074888a3a" />
+    </button>
+    <button raw_id=13 sharedId="8ef8ebd9-a554-4182-bca5-bf0a12c4781a" name="Rerank">
+      <img raw_id=14 sharedId="8e25979b-8f80-4b65-b0c9-3ad7fb006259" />
+    </button>
+    <button raw_id=15 sharedId="6b2a16fb-4140-4c68-90d7-a53a6603dab3" name="Quick settings">
+      <img raw_id=16 sharedId="55ec06c0-1825-4541-a93f-f61c7e50359c" />
+    </button>
+  </banner>
+  <navigation raw_id=17 sharedId="c4acb40c-05ad-4d1d-a347-36ce3e384f64">
+    <list raw_id=18 sharedId="ea42a2ba-9fc0-4237-add6-2b7cbd5431c5">
+      <listitem raw_id=19 sharedId="86e13a43-4012-48e3-9deb-2aa7f67d085c">
+        <link raw_id=20 sharedId="b1e3d00d-3c77-4cdd-8acd-b007264d57b6" name="Ask" url="/ask?q=selenium&amp;source=web" />
+      </listitem>
+      <listitem raw_id=21 sharedId="d92df4b7-2d8d-412d-8d58-dca28f187fac">
+        <link raw_id=22 sharedId="dd4233c9-3bc4-4ddf-a3ff-002c96ec4e93" name="All" url="/search?q=selenium&amp;source=web" />
+      </listitem>
+      <listitem raw_id=23 sharedId="6e779eb6-8b2f-45f4-be79-762126f90174">
+        <link raw_id=24 sharedId="f3365349-223d-4b9d-8df7-704d6f9268dc" name="Images" url="/images?q=selenium&amp;source=web" />
+      </listitem>
+      <listitem raw_id=25 sharedId="2cee2219-00e2-498b-b464-b2307d1beceb">
+        <link raw_id=26 sharedId="b6e700ad-89fa-4b63-bf14-0348af35a0fb" name="News" url="/news?q=selenium&amp;source=web" />
+      </listitem>
+      <listitem raw_id=27 sharedId="8eb8d77f-75b9-4c76-ba61-ddae4615c3f0">
+        <link raw_id=28 sharedId="c8c015b3-3c0b-4e2f-ae0b-a6ee0296524a" name="Videos" url="/videos?q=selenium&amp;source=web" />
+      </listitem>
+      <listitem raw_id=29 sharedId="8ad59673-ceb0-4bc3-9a25-8b05a51e9675">
+        <link raw_id=30 sharedId="0c0af340-f79a-4e8e-8b63-7859def204a9" name="Maps" url="/maps/search?q=selenium&amp;source=web" />
+      </listitem>
+      <listitem raw_id=31 sharedId="ee3aa4d0-515f-4223-805a-0deb937623d8">
+        <link raw_id=32 sharedId="4a09e08a-0a40-4e1c-b37b-a71a60f5a08d" name="Goggles" url="/goggles?q=selenium&amp;source=web" />
+      </listitem>
+    </list>
+    <list raw_id=33 sharedId="c5c1ec81-13fb-4935-b863-1d24b02b975c">
+      <button raw_id=34 sharedId="350395b6-c9b9-4955-9f97-916d94c3ee0e" name="Filters">
+        <img raw_id=35 sharedId="878f3898-cb2d-41d8-a292-1d3f3bf8860b" />
+      </button>
+    </list>
+  </navigation>
+  <main raw_id=36 sharedId="b304a036-9ee7-41a3-be82-3cd99654066d">
+    <paragraph raw_id=37 sharedId="2f23a88e-8bb4-4cc4-9190-df531e8cb2f0">
+      <strong raw_id=38 sharedId="2488bc3f-6525-4ca3-8c0d-2f7df5d4648f">
+        <text raw_id=39 name="Selenium" />
+      </strong>
+      <text raw_id=40 name="is an essential trace mineral that functions as a cofactor for selenoproteins, playing a critical role in" />
+      <strong raw_id=41 sharedId="71267212-c384-4a67-88d8-84dbd0409058">
+        <text raw_id=42 name="thyroid hormone metabolism" />
+      </strong>
+      <text raw_id=43 name="," />
+      <strong raw_id=44 sharedId="385b9998-0159-4a85-a2be-53b08fb73072">
+        <text raw_id=45 name="immune system support" />
+      </strong>
+      <text raw_id=46 name=", and protection against" />
+      <strong raw_id=47 sharedId="705f477c-558d-4466-9d54-0b2517899f99">
+        <text raw_id=48 name="oxidative stress" />
+      </strong>
+      <text raw_id=49 name="via antioxidant enzymes like glutathione peroxidase." />
+      <button raw_id=50 sharedId="90be8166-ae5c-4149-ab41-e0d90320382e">
+        <img raw_id=51 sharedId="500bcca4-5971-43c0-b91c-834f32aa9824" />
+      </button>
+    </paragraph>
+    <paragraph raw_id=52 sharedId="864379c9-e12d-4f1a-a567-32dc8c600758">
+      <text raw_id=53 name="The" />
+      <strong raw_id=54 sharedId="1f8eda6e-cbea-46b3-88bc-8ddb8f50d700">
+        <text raw_id=55 name="Recommended Dietary Allowance (RDA)" />
+      </strong>
+      <text raw_id=56 name="for most adults is" />
+      <strong raw_id=57 sharedId="8d377fa8-3b53-44bb-aea5-84c05fd22cf7">
+        <text raw_id=58 name="55 micrograms (mcg)" />
+      </strong>
+      <text raw_id=59 name="daily, increasing to 60–70 mcg during pregnancy and lactation." />
+      <button raw_id=60 sharedId="7bd387d1-632f-4df2-9a39-026e2090eab3">
+        <img raw_id=61 sharedId="cc25adba-6624-4e90-886d-15b9de20d856" />
+      </button>
+      <text raw_id=62 name="The" />
+      <strong raw_id=63 sharedId="8e7a45b7-cdd6-457e-8878-05314d70d82c">
+        <text raw_id=64 name="Tolerable Upper Intake Level (UL)" />
+      </strong>
+      <text raw_id=65 name="is" />
+      <strong raw_id=66 sharedId="01392e5e-cc19-4246-b621-49d014431bf9">
+        <text raw_id=67 name="400 mcg per day" />
+      </strong>
+      <text raw_id=68 name="; exceeding this can cause toxicity, characterized by brittle hair, nail loss, and gastrointestinal distress." />
+      <button raw_id=69 sharedId="c07496a2-4fbd-45f0-9f62-862a2f6e28b6">
+        <img raw_id=70 sharedId="c20a933a-bd9d-4fed-8c75-71c4733459ca" />
+      </button>
+    </paragraph>
+    <paragraph raw_id=71 sharedId="8362a305-c6b3-4580-b201-419d1ea010e4">
+      <text raw_id=72 name="Key dietary sources include:" />
+    </paragraph>
+    <list raw_id=73 sharedId="f6dc53ef-4b44-43c2-8451-97ccd832f5b3">
+      <listitem raw_id=74 sharedId="7844ba35-1b89-463c-bd46-8a6c6d80c3c8">
+        <paragraph raw_id=75 sharedId="a6f8753a-1aaf-4379-aacf-5480c0e318f1">
+          <strong raw_id=76 sharedId="6edf2b8d-6157-47ac-91df-7e8960465c0c">
+            <text raw_id=77 name="Brazil nuts" />
+          </strong>
+          <text raw_id=78 name=": The most potent source, with a single nut containing ~95 mcg." />
+          <button raw_id=79 sharedId="9111070f-73d9-423e-81fd-cda963574b0c">
+            <img raw_id=80 sharedId="b8d431ad-b591-4b59-8dfc-a7e1fcedd553" />
+          </button>
+        </paragraph>
+      </listitem>
+      <listitem raw_id=81 sharedId="0e087fd8-6f0d-4ccd-a4ad-e0f96f74d750">
+        <paragraph raw_id=82 sharedId="c912ed4e-92ce-48b8-8325-b22c486e610d">
+          <strong raw_id=83 sharedId="e34f68da-7d1a-4f96-bae2-3108db72680d">
+            <text raw_id=84 name="Seafood" />
+          </strong>
+          <text raw_id=85 name=": Tuna, halibut, sardines, and oysters." />
+        </paragraph>
+      </listitem>
+      <listitem raw_id=86 sharedId="801a67fe-6c06-48d3-9fdf-e40b35e6627e">
+        <paragraph raw_id=87 sharedId="8d0e1e6f-47f3-4dc2-aa77-40dd1a6b7f4d">
+          <strong raw_id=88 sharedId="ae932700-9109-4ca0-be5f-4138e0a3109d">
+            <text raw_id=89 name="Animal proteins" />
+          </strong>
+          <text raw_id=90 name=": Organ meats, poultry, eggs, and red meat." />
+          <button raw_id=91 sharedId="74614d6c-a6af-4ed3-ad30-0f9a09ca6940">
+            <img raw_id=92 sharedId="f3f34d89-4ec7-4015-a304-dfd4106f219b" />
+          </button>
+        </paragraph>
+      </listitem>
+      <listitem raw_id=93 sharedId="b747db9a-c33c-43e8-991e-0c1987b1b27c">
+        <paragraph raw_id=94 sharedId="9fd81d96-8a7c-4eda-8fb1-7d6190a11bb2">
+          <strong raw_id=95 sharedId="da62f098-3997-43b4-9e04-5038ce61a7a7">
+            <text raw_id=96 name="Grains and vegetables" />
+          </strong>
+          <text raw_id=97 name=": Whole grains, mushrooms, and dairy products (content varies by soil quality)." />
+        </paragraph>
+      </listitem>
+    </list>
+    <text raw_id=98 name="AI-generated answer. Please verify critical facts." />
+    <link raw_id=99 sharedId="02c79e8d-a052-4978-945e-611623224884" name="Elaborate" url="/ask?q=elaborate&amp;source=chatllm-elaborate&amp;conversation=09b71d62211b89c73c1cb21675f8684993b1&amp;query_type=answer_with_ai_follow_up">
+      <img raw_id=100 sharedId="b14f19b5-95d8-49b9-b67c-5e909abd0dce" />
+      <text raw_id=101 name="Elaborate" />
+    </link>
+    <link raw_id=102 sharedId="5fa99e51-2b88-4bef-a894-b9d99e722228" name="What are signs of selenium deficiency?" url="/ask?q=What%20are%20signs%20of%20selenium%20deficiency%3F&amp;source=llmFollowup&amp;conversation=09b71d62211b89c73c1cb21675f8684993b1&amp;query_type=answer_with_ai_follow_up">
+      <img raw_id=103 sharedId="71f9afd2-3695-45ac-88e0-ab9e12f702d9" />
+      <text raw_id=104 name="What are signs of selenium deficiency?" />
+    </link>
+    <link raw_id=105 sharedId="2aa386ce-12f8-4abe-8da0-5aed8dea27c1" name="How does soil quality affect selenium levels?" url="/ask?q=How%20does%20soil%20quality%20affect%20selenium%20levels%3F&amp;source=llmFollowup&amp;conversation=09b71d62211b89c73c1cb21675f8684993b1&amp;query_type=answer_with_ai_follow_up">
+      <img raw_id=106 sharedId="9b485a1e-8973-469f-a5f5-c48351947e5a" />
+      <text raw_id=107 name="How does soil quality affect selenium levels?" />
+    </link>
+    <link raw_id=108 sharedId="874bb1fb-fba3-4ac3-83a9-faaf8cf92d40" name="Can selenium supplements cause interactions with medications?" url="/ask?q=Can%20selenium%20supplements%20cause%20interactions%20with%20medications%3F&amp;source=llmFollowup&amp;conversation=09b71d62211b89c73c1cb21675f8684993b1&amp;query_type=answer_with_ai_follow_up">
+      <img raw_id=109 sharedId="3be536e5-2711-4a82-acb5-23a3343fe083" />
+      <text raw_id=110 name="Can selenium supplements cause interactions with medications?" />
+    </link>
+    <button raw_id=111 sharedId="10317baa-3f9f-45f1-b2f8-64de533f7f3f" name="Copy">
+      <img raw_id=112 sharedId="2dd10516-d006-4827-9ccc-4f99b089d126" />
+      <text raw_id=113 name="Copy" />
+    </button>
+    <button raw_id=114 sharedId="d49fe7b4-3283-459d-a87b-9ab535c93673" name="Share">
+      <img raw_id=115 sharedId="de76f38b-8983-4cce-a13a-32fe5c43b7a0" />
+      <text raw_id=116 name="Share" />
+    </button>
+    <button raw_id=117 sharedId="f3fb805e-6096-456b-8a59-c768c5deb811" name="Good response">
+      <img raw_id=118 sharedId="05bb0887-511f-4649-93e9-f2199159fda6" />
+    </button>
+    <button raw_id=119 sharedId="340b61d2-c0bb-444b-861d-2b662a3d72ba" name="Bad response">
+      <img raw_id=120 sharedId="62fbde8c-ecca-4be3-aff8-6ca500928036" />
+    </button>
+    <button raw_id=121 sharedId="bf71144c-cfda-4fde-9191-db2ffb8d5452" name="View all">
+      <img raw_id=122 sharedId="9a69c33c-1ca1-43d7-bd0a-c4e63174cf7d" name="🌐" />
+      <img raw_id=123 sharedId="bd7ad229-d099-4fed-b8ba-eba7ec345df9" name="🌐" />
+      <img raw_id=124 sharedId="2c6155c7-990d-48fd-924f-2247795ff8b2" name="🌐" />
+      <img raw_id=125 sharedId="ed56e51e-4d46-4a88-82ca-9a005fbd5bf7" name="🌐" />
+      <text raw_id=126 name="+2" />
+    </button>
+    <textbox raw_id=127 sharedId="79f11da2-796a-4c98-8e13-0d3a8001d96f" name="Search" placeholder="Ask a follow-up question" />
+    <button raw_id=128 sharedId="61123224-6c2e-47e3-9eeb-42e47e171c69" disabled>
+      <img raw_id=129 sharedId="1dafdff6-bd25-43e2-9955-79baaa4c1c39" />
+    </button>
+    <button raw_id=130 sharedId="c9c1cd65-d2b8-4124-a64a-304098993060" name="More">
+      <text raw_id=131 name="More" />
+      <img raw_id=132 sharedId="f8d5782a-71f0-4734-a810-7f11e7eef732" />
+    </button>
+    <main raw_id=133 sharedId="c586033d-25c3-4e1f-886e-9ace78960498">
+      <link raw_id=134 sharedId="6bc9b564-4e11-491c-adb6-b38ceb9ff787" name="🌐 WebMD webmd.com › a to z guides › reference Selenium: Benefits, Uses, Side Effects, Dosage, and More" url="https://www.webmd.com/a-to-z-guides/supplement-guide-selenium">
+        <img raw_id=135 sharedId="9a21c849-a422-403b-bbb5-9254d729876c" name="🌐" />
+        <text raw_id=136 name="WebMD webmd.com › a to z guides › reference Selenium: Benefits, Uses, Side Effects, Dosage, and More" />
+      </link>
+      <text raw_id=137 name="August 4, 2025 - Selenium is" />
+      <strong raw_id=138 sharedId="8be6d3e3-5465-4a0a-97c8-10b806cd58e8">
+        <text raw_id=139 name="a trace mineral" />
+      </strong>
+      <text raw_id=140 name="essential for thyroid and immune health. Learn the benefits, food sources, deficiency, recommended intake, and risks of too much selenium." />
+      <link raw_id=141 sharedId="c8c56b4d-d0b3-4824-9fd9-b391808e4cff" name="🌐 Office of Dietary Supplements ods.od.nih.gov › factsheets › Selenium-HealthProfessional Selenium - Health Professional Fact Sheet" url="https://ods.od.nih.gov/factsheets/Selenium-HealthProfessional/">
+        <img raw_id=142 sharedId="96f42fa1-a831-401d-9d47-4f32b11c7c14" name="🌐" />
+        <text raw_id=143 name="Office of Dietary Supplements ods.od.nih.gov › factsheets › Selenium-HealthProfessional Selenium - Health Professional Fact Sheet" />
+      </link>
+      <text raw_id=144 name="3 hours ago - Selenium is" />
+      <strong raw_id=145 sharedId="4d05227c-fb12-4a3a-a264-d38b5fbbd7d4">
+        <text raw_id=146 name="a constituent of 25 selenoproteins, including thioredoxin reductases, glutathione peroxidases, and selenoprotein P" />
+      </strong>
+      <text raw_id=147 name="[1]. Selenoproteins play critical roles in thyroid hormone metabolism, DNA synthesis, reproduction, and protection from oxidative damage and infection [2-4]." />
+      <img raw_id=148 sharedId="7895ad4a-b69a-4465-a35f-84f07730bbe1" />
+      <text raw_id=149 name="Discussions" />
+      <separator raw_id=150 sharedId="9e0de9a2-56e1-4d65-88ab-14121430dabc" />
+      <group raw_id=151 sharedId="ee497559-d5e0-45ae-882f-dea41b37d688">
+        <text raw_id=152 name="Playwright vs Selenium pro's/con's" />
+        <button raw_id=153 sharedId="e283c229-4a8b-4048-bd62-a4f088e95b10">
+          <img raw_id=154 sharedId="e8b154e2-7824-4212-ae87-bc1339885c49" />
+        </button>
+      </group>
+      <img raw_id=155 sharedId="6c39e6eb-132d-496b-ac19-c82fbdca028f" name="🌐" />
+      <text raw_id=156 name="r/QualityAssurance" />
+      <img raw_id=157 sharedId="6568ffc4-ab90-4766-b113-50dd036e2268" />
+      <img raw_id=158 sharedId="d6fd23c1-2be2-4cd2-80b8-01e63f49749f" />
+      <text raw_id=159 name=11 />
+      <img raw_id=160 sharedId="aeabe1bb-a3f3-4fce-abbb-53c618df3688" />
+      <img raw_id=161 sharedId="2d2489e7-6b91-4f96-9990-5fc1f3d5d18f" />
+      <text raw_id=162 name=19 />
+      <img raw_id=163 sharedId="32878d81-f075-48df-bb47-9f8713bc2c97" />
+      <text raw_id=164 name="April 7, 2023" />
+      <group raw_id=165 sharedId="51e2d809-7bbe-45e9-a576-ca0892b6e0a2">
+        <text raw_id=166 name="What is the best way to learn Selenium?" />
+        <button raw_id=167 sharedId="dacb9c53-0fc4-4c6f-8d8a-c63c9ecfb0e7">
+          <img raw_id=168 sharedId="ff7de1e2-7778-4801-bd58-dc9f3efab10e" />
+        </button>
+      </group>
+      <img raw_id=169 sharedId="ac0f1780-1a35-498a-8447-b3f9daf70208" name="🌐" />
+      <text raw_id=170 name="r/learnprogramming" />
+      <img raw_id=171 sharedId="565b1319-7081-4e13-b6a7-d8c61b85d036" />
+      <img raw_id=172 sharedId="da3357c9-f2fc-4289-8677-5217cef7f96f" />
+      <text raw_id=173 name=7 />
+      <img raw_id=174 sharedId="df171472-0cb5-46d2-9aff-751b5d7b62e9" />
+      <img raw_id=175 sharedId="63b9e9de-d282-42c4-97a4-8292b7866624" />
+      <text raw_id=176 name=2 />
+      <img raw_id=177 sharedId="04ee6be7-b645-47e8-be0e-c0972b17a104" />
+      <text raw_id=178 name="April 23, 2022" />
+      <group raw_id=179 sharedId="c5382385-c2aa-4185-bebd-34e3fda7b3a0">
+        <text raw_id=180 name="Selenium WebDriver or Cypress for new project?" />
+        <button raw_id=181 sharedId="8203cf39-7793-441e-b1d2-5f42fd6ec77a">
+          <img raw_id=182 sharedId="480784be-297e-453b-b3ea-88e52f008760" />
+        </button>
+      </group>
+      <img raw_id=183 sharedId="a0d3ed97-8f93-4f1d-a657-84227f27da0e" name="🌐" />
+      <text raw_id=184 name="r/softwaretesting" />
+      <img raw_id=185 sharedId="4d6aeb51-6304-41ec-985e-5d8d195f2467" />
+      <img raw_id=186 sharedId="a41aa600-f4a1-4477-935f-78f11fcfee5f" />
+      <text raw_id=187 name=26 />
+      <img raw_id=188 sharedId="371ec1ed-cbfa-4107-9d4f-20d9caaa4f6d" />
+      <img raw_id=189 sharedId="703721f9-8f8d-4c91-ab6a-a0f3729b48ec" />
+      <text raw_id=190 name=16 />
+      <img raw_id=191 sharedId="5d1dac82-dee4-499c-86ba-fa2e96997cf1" />
+      <text raw_id=192 name="June 16, 2022" />
+      <group raw_id=193 sharedId="26de5606-388f-4639-ba86-3d28295e7572">
+        <text raw_id=194 name="What problems did you solve by migrating from Selenium to Playwright?" />
+        <button raw_id=195 sharedId="51f8e5a8-185b-417d-8e6b-5510f4471f9e">
+          <img raw_id=196 sharedId="61f2bb4c-2b7a-49a9-8929-97091e58da37" />
+        </button>
+      </group>
+      <img raw_id=197 sharedId="5ef807e6-c8d1-4852-9878-884a999bc98e" name="🌐" />
+      <text raw_id=198 name="r/QualityAssurance" />
+      <img raw_id=199 sharedId="0cdc8b5e-82a6-4a39-94fe-24bb2f3d56be" />
+      <img raw_id=200 sharedId="92fabb78-aa39-415e-807f-4fe14dda6834" />
+      <text raw_id=201 name=13 />
+      <img raw_id=202 sharedId="a05b269d-c0d7-4795-bd2e-5532202c069c" />
+      <img raw_id=203 sharedId="1960e7ba-df23-4e2e-8326-ebaa3d73ab03" />
+      <text raw_id=204 name=22 />
+      <img raw_id=205 sharedId="2a6863b9-a7b9-4e6d-89b3-f6e68f4c39ca" />
+      <text raw_id=206 name="February 15, 2023" />
+      <button raw_id=207 sharedId="efbb725a-c4b5-4bb1-a96a-554206f94e6e" name="Show more">
+        <text raw_id=208 name="Show more" />
+        <img raw_id=209 sharedId="cc36c8b8-786c-4481-b5db-c2399ed195f4" />
+      </button>
+      <link raw_id=210 sharedId="908f0d56-f524-4e2a-84b0-f70a3bd724a8" name="Learn more" url="/help/discussions">
+        <img raw_id=211 sharedId="0606f88c-89d3-4ad7-a5ad-33cc7f18e626" />
+      </link>
+      <img raw_id=212 sharedId="294007b9-cd4d-4207-bf46-a0f420b4336e" />
+      <button raw_id=213 sharedId="15060d23-273a-4b84-b6a6-7ef42bbd7d7e" name="Feedback">
+        <img raw_id=214 sharedId="f444c6c1-9db6-4e4a-bb21-a5b3a1e50940" />
+      </button>
+      <img raw_id=215 sharedId="70d70f95-c5b2-40f1-b072-2227de69cbf1" />
+      <text raw_id=216 name="People also ask" />
+      <separator raw_id=217 sharedId="b752008b-a3ad-4aef-9fa7-7edfe1df5841" />
+      <group raw_id=218 sharedId="866992fa-0477-40b1-bff0-1823de268b2b">
+        <text raw_id=219 name="What is selenium good for?" />
+        <button raw_id=220 sharedId="8edc6639-75ee-4d44-820d-6dd591e71e8f">
+          <img raw_id=221 sharedId="8faf8559-7855-44ea-bb05-1b46bf527a5d" />
+        </button>
+      </group>
+      <group raw_id=222 sharedId="18442e42-0eab-48fa-984d-e9424afd071d">
+        <text raw_id=223 name="Who should not take selenium?" />
+        <button raw_id=224 sharedId="8efd647d-41f6-42b8-ac10-a5393340cb42">
+          <img raw_id=225 sharedId="951a4aea-6e9c-4663-903d-1754cd785f70" />
+        </button>
+      </group>
+      <group raw_id=226 sharedId="983559fa-0faf-40bc-95c5-476f658a2704">
+        <text raw_id=227 name="What are the side effects of selenium?" />
+        <button raw_id=228 sharedId="db1c33e2-3d72-4af9-9f26-2c9f3828bf69">
+          <img raw_id=229 sharedId="186921a8-ff9f-4ad7-b5d1-4a0ef37305b0" />
+        </button>
+      </group>
+      <button raw_id=230 sharedId="fadb5a16-6d57-44f6-af9b-2380ba767deb" name="Feedback">
+        <img raw_id=231 sharedId="d24104cc-ce0c-4af4-b570-23bbd6667f1c" />
+      </button>
+      <img raw_id=232 sharedId="8768c25d-2a05-46c6-9333-d36affb49916" />
+      <text raw_id=233 name="Videos" />
+      <link raw_id=234 sharedId="1603815c-2816-48bb-aa90-daabad7c464d" name="08:02 🌐 YouTube Selenium - The True Nutrients - YouTube September 5, 2024" url="https://www.youtube.com/watch?v=HApjk2FKJL0">
+        <img raw_id=235 sharedId="ad338cc6-e49a-4206-ab4e-9b45f8485b1c" />
+        <text raw_id=236 name="08:02" />
+        <img raw_id=237 sharedId="0e463c7b-f490-48c4-8c2b-c7c1a9ce25c8" name="🌐" />
+        <text raw_id=238 name="YouTube Selenium - The True Nutrients - YouTube September 5, 2024" />
+      </link>
+      <link raw_id=239 sharedId="c3ddd4bb-c933-437b-bdcb-214280b7fd23" name="03:39 🌐 YouTube Selenium Supplements: How They Work and Why Your Body Needs Them ... September 9, 2025" url="https://www.youtube.com/watch?v=vS7OcVUi4fU">
+        <img raw_id=240 sharedId="a22ff552-688c-4419-8185-eab383657c8a" />
+        <text raw_id=241 name="03:39" />
+        <img raw_id=242 sharedId="1ea6bedb-d09e-49ad-9c15-3b2bb7796d67" name="🌐" />
+        <text raw_id=243 name="YouTube Selenium Supplements: How They Work and Why Your Body Needs Them ... September 9, 2025" />
+      </link>
+      <link raw_id=244 sharedId="a3e7359b-0184-4572-809e-88887e5b7fa0" name="10:21 🌐 YouTube Selenium is good for your heart &amp; joints (antioxidant) - YouTube June 4, 2023" url="https://www.youtube.com/watch?v=qVmLqZ3QnMg">
+        <img raw_id=245 sharedId="6afe812e-8d14-4ffb-9b7b-c35b96a97aba" />
+        <text raw_id=246 name="10:21" />
+        <img raw_id=247 sharedId="f6b5e08b-016d-48df-acb3-edb64116cd63" name="🌐" />
+        <text raw_id=248 name="YouTube Selenium is good for your heart &amp; joints (antioxidant) - YouTube June 4, 2023" />
+      </link>
+      <link raw_id=249 sharedId="ca45297e-8a29-43c3-8e35-4f7eeffeb102" name="🌐 youtube.com Selenium is good for your heart &amp; joints (antioxidant)" url="https://www.youtube.com/watch?v=qVmLqZ3QnMg&amp;xstg=CAMSEBUJ_b-oH-PhF0yjBgb_zzE%3D">
+        <img raw_id=250 sharedId="7d93f555-b657-42ad-a2a7-4f81be193b4c" />
+        <img raw_id=251 sharedId="140538e2-b117-4b9f-92be-200b4944d781" name="🌐" />
+        <text raw_id=252 name="youtube.com Selenium is good for your heart &amp; joints (antioxidant)" />
+      </link>
+      <link raw_id=253 sharedId="70f1ac36-1039-4227-882e-41b6080ab6f7" name="🌐 youtube.com Selenium Supplements: How They Work and Why Your Body ..." url="https://www.youtube.com/watch?v=vS7OcVUi4fU&amp;xstg=CAMSEBUJ_b-oH-PhF0yjBgb_zzE%3D">
+        <img raw_id=254 sharedId="e574a7c0-4c59-4915-baae-b7e358145eab" />
+        <img raw_id=255 sharedId="416ad1f1-8cbb-4396-8d73-da89839eb5bf" name="🌐" />
+        <text raw_id=256 name="youtube.com Selenium Supplements: How They Work and Why Your Body ..." />
+      </link>
+      <link raw_id=257 sharedId="0a0a93ac-1d52-400c-babc-3d12eec2fa34" name="08:03 🌐 YouTube Top Selenium Benefits You've Never Heard Before - YouTube February 9, 2023" url="https://www.youtube.com/watch?v=SpA5MJjvRt0">
+        <img raw_id=258 sharedId="b3b18e8e-d0b3-4a8c-aa73-29c39054c050" />
+        <text raw_id=259 name="08:03" />
+        <img raw_id=260 sharedId="31a174ba-f348-43d3-9344-1f71b19e6217" name="🌐" />
+        <text raw_id=261 name="YouTube Top Selenium Benefits You've Never Heard Before - YouTube February 9, 2023" />
+      </link>
+      <link raw_id=262 sharedId="81025018-6038-4ec1-8e16-2856defc5a6c" name="View all" url="/videos?q=selenium&amp;source=vcluster" />
+      <link raw_id=263 sharedId="e7f34682-8d8d-4666-800d-2bb360b9e2f3" name="🌐 Selenium selenium.dev Selenium" url="https://www.selenium.dev/">
+        <img raw_id=264 sharedId="eb9f6a30-47f4-4b4f-89cc-7562a7da4db0" name="🌐" />
+        <text raw_id=265 name="Selenium selenium.dev Selenium" />
+      </link>
+      <text raw_id=266 name="If you want to create robust, browser-based regression automation suites and tests, scale and distribute scripts across many environments, then you want to use Selenium WebDriver, a collection of language specific bindings to drive a browser - the way it is meant to be driven." />
+      <link raw_id=267 sharedId="f1ca567e-6d2c-48b5-85fb-6334900b0455" name="🌐 Wikipedia en.wikipedia.org › wiki › Selenium Selenium - Wikipedia" url="https://en.wikipedia.org/wiki/Selenium">
+        <img raw_id=268 sharedId="c95e9096-5db7-4309-b891-7bbcf1fc8775" name="🌐" />
+        <text raw_id=269 name="Wikipedia en.wikipedia.org › wiki › Selenium Selenium - Wikipedia" />
+      </link>
+      <text raw_id=270 name="1 week ago -" />
+      <strong raw_id=271 sharedId="b7c66746-b96b-4d6f-a289-927bfc0d0c0b">
+        <text raw_id=272 name="Selenium" />
+      </strong>
+      <text raw_id=273 name="is a chemical element; it has symbol Se and atomic number 34. It has various physical appearances, including a brick-red powder, a vitreous black solid, and a grey metallic-looking form. It seldom occurs in this elemental state or as pure ore compounds in Earth's crust." />
+      <link raw_id=274 sharedId="34f000db-4870-45a5-95c3-cce4b28db1f0" url="https://en.wikipedia.org/wiki/Selenium" />
+      <link raw_id=275 sharedId="237bdcbf-5191-436d-96f9-aa1270c128c5" name="Characteristics" url="https://en.wikipedia.org/wiki/Selenium#Characteristics" />
+      <link raw_id=276 sharedId="a63c01c9-1b55-48f0-8cbe-b5443e2fb99c" name="Chemical compounds" url="https://en.wikipedia.org/wiki/Selenium#Chemical_compounds" />
+      <link raw_id=277 sharedId="d76533ee-b78d-41d4-b056-22d0a2e1bf70" name="History" url="https://en.wikipedia.org/wiki/Selenium#History" />
+      <link raw_id=278 sharedId="1cb92a75-686b-4278-a1df-5c18acb04721" name="Occurrence" url="https://en.wikipedia.org/wiki/Selenium#Occurrence" />
+      <link raw_id=279 sharedId="8bcaf581-07b8-48fe-ad4c-294ecfc17e78" name="Production" url="https://en.wikipedia.org/wiki/Selenium#Production" />
+      <button raw_id=280 sharedId="5ef726af-7a1d-474f-bdab-09eff6b344fe" name="Show more">
+        <img raw_id=281 sharedId="e5e4cae1-1ca8-46d1-953a-2c8516e351b1" />
+      </button>
+      <link raw_id=282 sharedId="1faa9e19-9f85-4a36-bb70-7144403e9f11" name="🌐 The Nutrition Source nutritionsource.hsph.harvard.edu › selenium Selenium • The Nutrition Source" url="https://nutritionsource.hsph.harvard.edu/selenium/">
+        <img raw_id=283 sharedId="e9fc4e1b-e77f-4f6c-ac27-6049372bcc3a" name="🌐" />
+        <text raw_id=284 name="The Nutrition Source nutritionsource.hsph.harvard.edu › selenium Selenium • The Nutrition Source" />
+      </link>
+      <text raw_id=285 name="November 7, 2024 - Selenium is" />
+      <strong raw_id=286 sharedId="b9d01935-d28d-4392-9388-b6fd3e751b9c">
+        <text raw_id=287 name="an essential component of various enzymes and proteins, called selenoproteins, that help to make DNA and protect against cell damage and infections" />
+      </strong>
+      <text raw_id=288 name="; these proteins are also involved in reproduction and the metabolism of thyroid hormones." />
+      <link raw_id=289 sharedId="22714102-617d-418b-9ea7-0203aba61416" url="https://nutritionsource.hsph.harvard.edu/selenium/" />
+      <link raw_id=290 sharedId="bc532bde-56a5-4057-b30d-a1a59c5ec4ec" name="🌐 Codeage codeage.com › blogs › education › the-importance-of-selenium-understanding-the-benefits-of-selenium-supplements The Importance of Selenium: Understanding the Benefits of Selenium Supplements | Codeage" url="https://www.codeage.com/blogs/education/the-importance-of-selenium-understanding-the-benefits-of-selenium-supplements">
+        <img raw_id=291 sharedId="8170dcae-e5d3-4a34-9483-6d623167118d" name="🌐" />
+        <text raw_id=292 name="Codeage codeage.com › blogs › education › the-importance-of-selenium-understanding-the-benefits-of-selenium-supplements The Importance of Selenium: Understanding the Benefits of Selenium Supplements | Codeage" />
+      </link>
+      <text raw_id=293 name="January 9, 2023 - Selenium is" />
+      <strong raw_id=294 sharedId="6997ab97-44ed-4794-a487-ca09e6f43e03">
+        <text raw_id=295 name="a trace mineral that is essential for human health" />
+      </strong>
+      <text raw_id=296 name=". It is found in a wide range of foods, including nuts, grains, and seafood, and is also available in supplement form." />
+      <link raw_id=297 sharedId="85152b77-0c90-4fde-9fd8-9b2fcb2d3207" url="https://www.codeage.com/blogs/education/the-importance-of-selenium-understanding-the-benefits-of-selenium-supplements" />
+      <img raw_id=298 sharedId="eddd20ac-5148-4e02-af29-3d1d2fce9061" />
+      <text raw_id=299 name="Find elsewhere" />
+      <link raw_id=300 sharedId="33ec3a04-05ad-40f7-a855-77d70b096b55" name="Google" url="/search?q=selenium%20!g" />
+      <link raw_id=301 sharedId="321a67fa-8082-4c01-a69f-5577f1fec865" name="Bing" url="/search?q=selenium%20!b" />
+      <link raw_id=302 sharedId="2787e279-3ace-4ec1-8037-3408390850a1" name="Mojeek" url="/search?q=selenium%20!mojeek" />
+      <link raw_id=303 sharedId="a83d52b0-0d50-4d78-af64-03d1cd89282a" name="🌐 Linus Pauling Institute lpi.oregonstate.edu › mic › minerals › selenium Selenium | Linus Pauling Institute | Oregon State University" url="https://lpi.oregonstate.edu/mic/minerals/selenium">
+        <img raw_id=304 sharedId="268d8d46-1b5b-450c-ae34-369104651008" name="🌐" />
+        <text raw_id=305 name="Linus Pauling Institute lpi.oregonstate.edu › mic › minerals › selenium Selenium | Linus Pauling Institute | Oregon State University" />
+      </link>
+      <text raw_id=306 name="April 23, 2014 - The tolerable upper intake level (UL) for" />
+      <strong raw_id=307 sharedId="9220ed81-0240-4c76-aef1-2a417d757d4e">
+        <text raw_id=308 name="selenium" />
+      </strong>
+      <text raw_id=309 name="is 400 μg/day for adolescents and adults and includes both" />
+      <strong raw_id=310 sharedId="34a29cb1-0da8-40c1-8e87-9464c882f1c9">
+        <text raw_id=311 name="selenium" />
+      </strong>
+      <text raw_id=312 name="obtained from food, which averages about 100 μg/day for adults in the US, and" />
+      <strong raw_id=313 sharedId="da490ee3-2df7-4df1-84d3-5ece725dfc36">
+        <text raw_id=314 name="selenium" />
+      </strong>
+      <text raw_id=315 name="from supplements." />
+      <link raw_id=316 sharedId="f996dfed-65ea-4d46-94f5-4e3ec5f96d98" name="🌐 Arthritis UK arthritis-uk.org › information-and-support › understanding-arthritis › arthritis-treatments › complementary-and-alternative-treatments › types-of-complementary-treatments › selenium Selenium | Uses, side-effects | Arthritis UK" url="https://www.arthritis-uk.org/information-and-support/understanding-arthritis/arthritis-treatments/complementary-and-alternative-treatments/types-of-complementary-treatments/selenium/">
+        <img raw_id=317 sharedId="ab52a9bb-ef06-42fb-bb0a-8a3c430c4a62" name="🌐" />
+        <text raw_id=318 name="Arthritis UK arthritis-uk.org › information-and-support › understanding-arthritis › arthritis-treatments › complementary-and-alternative-treatments › types-of-complementary-treatments › selenium Selenium | Uses, side-effects | Arthritis UK" />
+      </link>
+      <text raw_id=319 name="Read about" />
+      <strong raw_id=320 sharedId="230dec3c-8b8e-4f48-b18d-b79c77e7a543">
+        <text raw_id=321 name="selenium" />
+      </strong>
+      <text raw_id=322 name="as an alternative treatment for arthritis, taken as a dietary supplement, including clinical trial results for rheumatoid arthritis." />
+      <link raw_id=323 sharedId="b8718fa7-a059-4b2e-82ed-103304bdba6d" url="https://www.arthritis-uk.org/information-and-support/understanding-arthritis/arthritis-treatments/complementary-and-alternative-treatments/types-of-complementary-treatments/selenium/" />
+      <link raw_id=324 sharedId="aafb77f8-0e69-40ae-a6c6-b1a768a73477" name="🌐 VitaminExpress vitaminexpress.org › home › knowledge hub: experts, interviews &amp; guides › counselor › what is selenium and why is it important for health? Selenium: Benefits, Signs of Deficiency, and Potential Overdose | VitaminExpress" url="https://www.vitaminexpress.org/uk/selenium-information">
+        <img raw_id=325 sharedId="a1b03f6d-bd23-4c6a-8869-9ff8df0df2b4" name="🌐" />
+        <text raw_id=326 name="VitaminExpress vitaminexpress.org › home › knowledge hub: experts, interviews &amp; guides › counselor › what is selenium and why is it important for health? Selenium: Benefits, Signs of Deficiency, and Potential Overdose | VitaminExpress" />
+      </link>
+      <text raw_id=327 name="April 28, 2026 - Selenium is a very important trace element for the human body, since it" />
+      <strong raw_id=328 sharedId="da9c51c1-85c3-47f5-b93b-bb3ba17d0034">
+        <text raw_id=329 name="increases the immune defense, is involved in the antioxidative activity against free radicals and inflammation and plays an important role in maintaining a healthy metabolism" />
+      </strong>
+      <text raw_id=330 name="." />
+      <link raw_id=331 sharedId="68e5d9b2-5d5f-4b82-b4ac-5486665c5a30" url="https://www.vitaminexpress.org/uk/selenium-information" />
+      <link raw_id=332 sharedId="0ac83231-6d9a-485d-b47d-30e8629a238a" name="🌐 Vita4You vita4you.gr › all articles › foods › health › supplements › selenium: properties and how to take it Selenium: Health Benefits and Where to Find It!" url="https://www.vita4you.gr/blog-vita4you/en/item/selenium-health-benefits-and-where-to-find-it.html">
+        <img raw_id=333 sharedId="aa3ecaad-ed8e-49b0-a346-a1342d22c47c" name="🌐" />
+        <text raw_id=334 name="Vita4You vita4you.gr › all articles › foods › health › supplements › selenium: properties and how to take it Selenium: Health Benefits and Where to Find It!" />
+      </link>
+      <text raw_id=335 name="October 7, 2024 - Selenium is" />
+      <strong raw_id=336 sharedId="d84a3ab5-8556-4f92-afc0-b78aa25017cb">
+        <text raw_id=337 name="an essential trace element for the normal functioning of the body with strong antioxidant properties" />
+      </strong>
+      <text raw_id=338 name="." />
+      <link raw_id=339 sharedId="f6cee196-bc16-4484-86c8-191b2ac450b2" url="https://www.vita4you.gr/blog-vita4you/en/item/selenium-health-benefits-and-where-to-find-it.html" />
+      <link raw_id=340 sharedId="cad293f1-5229-4ac3-a96e-6a680fb40bdc" name="🌐 PeaceHealth peacehealth.org › medical-topics › id › hn-2908005 Selenium – Health Information Library | PeaceHealth" url="https://www.peacehealth.org/medical-topics/id/hn-2908005">
+        <img raw_id=341 sharedId="67670e30-0bd7-40b3-bd3b-31206ef7e7e2" name="🌐" />
+        <text raw_id=342 name="PeaceHealth peacehealth.org › medical-topics › id › hn-2908005 Selenium – Health Information Library | PeaceHealth" />
+      </link>
+      <text raw_id=343 name="Selenium is" />
+      <strong raw_id=344 sharedId="4cd4c53f-19fe-46b1-86d5-4e7b2e2b9764">
+        <text raw_id=345 name="an essential trace mineral" />
+      </strong>
+      <text raw_id=346 name="." />
+      <link raw_id=347 sharedId="44950c73-28a6-4c01-b5a4-11ac53e94dec" name="🌐 OstroVit ostrovit.com › en › blog › what-is-selenium-good-for-properties-effects-and-importance-for-health-1748933771.html What is selenium good for? Properties, effects, and importance for health | OstroVit" url="https://ostrovit.com/en/blog/what-is-selenium-good-for-properties-effects-and-importance-for-health-1748933771.html">
+        <img raw_id=348 sharedId="ee2823dd-ea1b-4c5d-b95e-c3884b5acb98" name="🌐" />
+        <text raw_id=349 name="OstroVit ostrovit.com › en › blog › what-is-selenium-good-for-properties-effects-and-importance-for-health-1748933771.html What is selenium good for? Properties, effects, and importance for health | OstroVit" />
+      </link>
+      <text raw_id=350 name="June 3, 2025 - Even though it occurs in microscopic ... Selenium is" />
+      <strong raw_id=351 sharedId="d4d7ccb2-6f91-4111-9ef6-9ded996963da">
+        <text raw_id=352 name="an essential element that supports the immune system, protects against oxidative stress, and plays a significant role in preventing chronic diseases" />
+      </strong>
+      <text raw_id=353 name="...." />
+      <link raw_id=354 sharedId="0cf8b905-eaf9-4d9a-a120-2c34ecc9ad66" url="https://ostrovit.com/en/blog/what-is-selenium-good-for-properties-effects-and-importance-for-health-1748933771.html" />
+      <link raw_id=355 sharedId="3e1da49e-d364-4a78-a168-16aec91879ae" name="🌐 Medical News Today medicalnewstoday.com › articles › 287842 Selenium: Health benefits, sources, and potential risks" url="https://www.medicalnewstoday.com/articles/287842">
+        <img raw_id=356 sharedId="70d437a0-a48a-4222-ab2c-b4c2e4e278f8" name="🌐" />
+        <text raw_id=357 name="Medical News Today medicalnewstoday.com › articles › 287842 Selenium: Health benefits, sources, and potential risks" />
+      </link>
+      <text raw_id=358 name="January 2, 2024 - Selenium is" />
+      <strong raw_id=359 sharedId="53c7d387-097b-44f7-aa28-5d8c725c7091">
+        <text raw_id=360 name="a nutrient that plays a key role in maintaining thyroid hormone metabolism and DNA synthesis and protecting the body from oxidative damage and infection" />
+      </strong>
+      <text raw_id=361 name="." />
+      <link raw_id=362 sharedId="c5fd49af-44a5-485f-b429-1a184ac7dec5" url="https://www.medicalnewstoday.com/articles/287842" />
+      <link raw_id=363 sharedId="15ec19de-c228-479d-8b42-88185836e853" name="🌐 ProHealth Longevity prohealth.com › blogs › control-how-you-age › all-about-selenium-why-you-need-this-mineral-in-your-diet-for-healthy-aging The Benefits of Selenium: Why You Need This Mineral In Your Diet For H – ProHealth.com" url="https://www.prohealth.com/blogs/control-how-you-age/all-about-selenium-why-you-need-this-mineral-in-your-diet-for-healthy-aging">
+        <img raw_id=364 sharedId="aeccedec-2032-4f51-bcc1-dda7b693ca75" name="🌐" />
+        <text raw_id=365 name="ProHealth Longevity prohealth.com › blogs › control-how-you-age › all-about-selenium-why-you-need-this-mineral-in-your-diet-for-healthy-aging The Benefits of Selenium: Why You Need This Mineral In Your Diet For H – ProHealth.com" />
+      </link>
+      <text raw_id=366 name="October 23, 2020 - Selenium is" />
+      <strong raw_id=367 sharedId="ee8efa8c-3264-4759-97dc-9f1688457872">
+        <text raw_id=368 name="an essential mineral that is found in many foods and can be taken supplementally" />
+      </strong>
+      <text raw_id=369 name=". The benefits of selenium include support to the cardiovascular system, brain, thyroid, and immune system." />
+      <link raw_id=370 sharedId="11f8227b-d048-4e86-b725-aff20df0bde2" url="https://www.prohealth.com/blogs/control-how-you-age/all-about-selenium-why-you-need-this-mineral-in-your-diet-for-healthy-aging" />
+      <link raw_id=371 sharedId="5ccec6ff-a63d-41ad-8b7d-dbc3d5877973" name="🌐 PubMed Central pmc.ncbi.nlm.nih.gov › articles › PMC6241719 Selenium as a pleiotropic agent for medical discovery and drug delivery - PMC" url="https://pmc.ncbi.nlm.nih.gov/articles/PMC6241719/">
+        <img raw_id=372 sharedId="101169c7-b4d5-4597-9496-dd47dd0c7483" name="🌐" />
+        <text raw_id=373 name="PubMed Central pmc.ncbi.nlm.nih.gov › articles › PMC6241719 Selenium as a pleiotropic agent for medical discovery and drug delivery - PMC" />
+      </link>
+      <text raw_id=374 name="Organic" />
+      <strong raw_id=375 sharedId="714bf1bd-0bd3-48d0-ad63-85cb862b438a">
+        <text raw_id=376 name="selenium" />
+      </strong>
+      <text raw_id=377 name="(mainly selenomethionine) and ionic" />
+      <strong raw_id=378 sharedId="c093ee5c-4a9d-4ebf-80ed-96efc04b47c8">
+        <text raw_id=379 name="selenium" />
+      </strong>
+      <text raw_id=380 name="(eg, selenite and selenate) are highly bioavailable, but elemental" />
+      <strong raw_id=381 sharedId="e79eb453-f5c3-4a0a-a81e-c2eb91885a0d">
+        <text raw_id=382 name="selenium" />
+      </strong>
+      <text raw_id=383 name="is difficult to absorb by the gastrointestinal tract unless nanosized.3 Organic" />
+      <strong raw_id=384 sharedId="c30c6e9a-8b3a-4a2b-973a-1a3c310359df">
+        <text raw_id=385 name="selenium" />
+      </strong>
+      <text raw_id=386 name="from foods is relatively safe for the human body, whereas the inorganic one supplemented with chemicals exhibits a narrow window from therapeutic effect to toxic effect.4 Once being absorbed into the circulatory system," />
+      <strong raw_id=387 sharedId="b5ff6bed-7bf9-4cd2-9eaf-ed1d4b0ddaf0">
+        <text raw_id=388 name="selenium" />
+      </strong>
+      <text raw_id=389 name="will bind with various proteins in vivo to form Se/protein complexes, ie, selenoproteins, to exert the physiological actions." />
+      <link raw_id=390 sharedId="b92f526e-29ea-4902-bfb8-ded28eb2d14a" name="🌐 SHA Magazine shawellness.com › portada › the benefits of selenium for your health Selenium benefits and function | SHA Magazine" url="https://shawellness.com/shamagazine/en/selenium-benefits/">
+        <img raw_id=391 sharedId="5f28ee55-4f7a-4b0e-ae58-cbf7b232f1ef" name="🌐" />
+        <text raw_id=392 name="SHA Magazine shawellness.com › portada › the benefits of selenium for your health Selenium benefits and function | SHA Magazine" />
+      </link>
+      <text raw_id=393 name="March 6, 2023 - Selenium is a mineral perhaps not often enough mentioned, but its functions make it essential. Make sure to choose" />
+      <strong raw_id=394 sharedId="f34a6a7e-eb21-4c69-b304-20ff2f45f2f0">
+        <text raw_id=395 name="selenium" />
+      </strong>
+      <text raw_id=396 name="rich foods at least twice or three times per week to ensure good overall health thanks to this nutrient." />
+      <link raw_id=397 sharedId="39aa6a39-0238-4acf-a228-64b76cf84f0b" url="https://shawellness.com/shamagazine/en/selenium-benefits/" />
+      <link raw_id=398 sharedId="5549ee72-6d76-4ba0-bb12-b7e45b586394" name="🌐 Experience Life experiencelife.lifetime.life › home › articles › why your body needs selenium and how to maximize your intake Why Your Body Needs Selenium and How to Maximize Your Intake" url="https://experiencelife.lifetime.life/article/why-your-body-needs-selenium-and-how-to-maximize-your-intake/">
+        <img raw_id=399 sharedId="b535ed48-ac03-457d-bbf9-fc9bc56631bd" name="🌐" />
+        <text raw_id=400 name="Experience Life experiencelife.lifetime.life › home › articles › why your body needs selenium and how to maximize your intake Why Your Body Needs Selenium and How to Maximize Your Intake" />
+      </link>
+      <text raw_id=401 name="October 2, 2023 -" />
+      <strong raw_id=402 sharedId="146ae446-3bc5-4262-bca4-0198679edfd7">
+        <text raw_id=403 name="An essential trace mineral" />
+      </strong>
+      <text raw_id=404 name=", selenium has a hand in fertility, hormone balance (especially thyroid), and DNA synthesis." />
+      <link raw_id=405 sharedId="8a51bf36-80da-4594-b02f-dc1818e513f8" url="https://experiencelife.lifetime.life/article/why-your-body-needs-selenium-and-how-to-maximize-your-intake/" />
+      <link raw_id=406 sharedId="ad95f193-9d55-4995-95b3-a4b20a92c495" name="🌐 GoodRx goodrx.com › goodrx health › well-being › nutrition and healthy eating › 10 selenium-rich foods (plus the benefits) 10 Selenium-Rich Foods (Plus the Benefits) - GoodRx" url="https://www.goodrx.com/well-being/diet-nutrition/foods-high-in-selenium">
+        <img raw_id=407 sharedId="0dcb2999-ea53-4bc0-9410-4182bbab4ecf" name="🌐" />
+        <text raw_id=408 name="GoodRx goodrx.com › goodrx health › well-being › nutrition and healthy eating › 10 selenium-rich foods (plus the benefits) 10 Selenium-Rich Foods (Plus the Benefits) - GoodRx" />
+      </link>
+      <text raw_id=409 name="July 1, 2025 - Selenium is" />
+      <strong raw_id=410 sharedId="ad476e79-31f0-4ba8-9df8-7a5449981286">
+        <text raw_id=411 name="an essential trace mineral that supports thyroid function and immune health" />
+      </strong>
+      <text raw_id=412 name="." />
+      <link raw_id=413 sharedId="3427022e-d099-4a47-a882-83f1a79cada4" url="https://www.goodrx.com/well-being/diet-nutrition/foods-high-in-selenium" />
+      <link raw_id=414 sharedId="a1b7c954-0427-4327-9ce4-6669961fd39f" name="🌐 University of Waterloo uwaterloo.ca › earth-sciences-museum › educational-resources › articles › selenium Selenium | Earth Sciences Museum | University of Waterloo" url="https://uwaterloo.ca/earth-sciences-museum/educational-resources/articles/selenium">
+        <img raw_id=415 sharedId="e3908640-ddba-42ee-87c0-998f4f2b17af" name="🌐" />
+        <text raw_id=416 name="University of Waterloo uwaterloo.ca › earth-sciences-museum › educational-resources › articles › selenium Selenium | Earth Sciences Museum | University of Waterloo" />
+      </link>
+      <text raw_id=417 name="4 weeks ago - The word “selenium” was" />
+      <strong raw_id=418 sharedId="48faa1dd-20d2-412b-a2c0-bab924d7f883">
+        <text raw_id=419 name="derived from the Greek word “selene,” which means “moon”." />
+      </strong>
+      <text raw_id=420 name="In its pure form, selenium may produce metallic gray to black hexagonal crystals, however these crystals are rare and it is usually found as a massive specimen. When crystals do form they are often ..." />
+      <img raw_id=421 sharedId="3fc89408-ceb6-4315-89a4-3496dd269beb" />
+      <text raw_id=422 name="Related queries" />
+      <link raw_id=423 sharedId="49f6ba68-d513-4c93-a7fd-84002bc320c0" name="selenium vitamin" url="/search?q=selenium%20vitamin&amp;source=relatedQueries">
+        <img raw_id=424 sharedId="5c2975d3-36a5-496e-a3b9-0a45e3118e5d" />
+        <text raw_id=425 name="selenium" />
+        <strong raw_id=426 sharedId="0b2aec68-0a8f-4125-bee5-4f893bca0722">
+          <text raw_id=427 name="vitamin" />
+        </strong>
+      </link>
+      <link raw_id=428 sharedId="0df14c72-35fc-492e-b0b6-13e1bb9437c2" name="selenium medicine" url="/search?q=selenium%20medicine&amp;source=relatedQueries">
+        <img raw_id=429 sharedId="355bdd56-54bc-471d-bd3d-26b4ecf3b3cb" />
+        <text raw_id=430 name="selenium" />
+        <strong raw_id=431 sharedId="46544829-58a4-440a-be3e-cbf3b502f528">
+          <text raw_id=432 name="medicine" />
+        </strong>
+      </link>
+      <link raw_id=433 sharedId="5e366dc9-9efe-4036-ba84-bd4816373aa4" name="selenium foods" url="/search?q=selenium%20foods&amp;source=relatedQueries">
+        <img raw_id=434 sharedId="be1aa1cd-4115-4002-b876-ffe0989bef45" />
+        <text raw_id=435 name="selenium" />
+        <strong raw_id=436 sharedId="e72209b6-33aa-4b48-a0b2-7f82b75a2646">
+          <text raw_id=437 name="foods" />
+        </strong>
+      </link>
+      <link raw_id=438 sharedId="45c8b38e-b69f-4202-9b98-652db43b2127" name="selenium nutrient" url="/search?q=selenium%20nutrient&amp;source=relatedQueries">
+        <img raw_id=439 sharedId="6d406c7c-b439-4675-a791-82b52251c2b5" />
+        <text raw_id=440 name="selenium" />
+        <strong raw_id=441 sharedId="6e26a6ad-3463-4058-a56a-babac4db3d84">
+          <text raw_id=442 name="nutrient" />
+        </strong>
+      </link>
+      <link raw_id=443 sharedId="cb33a65c-d38b-4f44-83db-868c763dd88c" name="selenium tablets" url="/search?q=selenium%20tablets&amp;source=relatedQueries">
+        <img raw_id=444 sharedId="163648b5-edcc-4007-b2ee-f2ab399aee4a" />
+        <text raw_id=445 name="selenium" />
+        <strong raw_id=446 sharedId="99ea6b30-1a06-41d8-8453-40939cab695d">
+          <text raw_id=447 name="tablets" />
+        </strong>
+      </link>
+      <link raw_id=448 sharedId="9272a29e-7330-40f3-8d90-702233af45b6" name="selenium supplement" url="/search?q=selenium%20supplement&amp;source=relatedQueries">
+        <img raw_id=449 sharedId="7ac2194d-66cc-4b58-80f7-aa43565096f5" />
+        <text raw_id=450 name="selenium" />
+        <strong raw_id=451 sharedId="556d2555-8cb1-4fb9-9869-f97b3472d1ae">
+          <text raw_id=452 name="supplement" />
+        </strong>
+      </link>
+      <link raw_id=453 sharedId="7f000ed4-d97b-43a5-b6d7-e02424243e08" name="selenium mineral" url="/search?q=selenium%20mineral&amp;source=relatedQueries">
+        <img raw_id=454 sharedId="06e6a642-9a78-4448-bea9-9bc01ebf3c08" />
+        <text raw_id=455 name="selenium" />
+        <strong raw_id=456 sharedId="48fbd94a-2d83-4e23-a75f-302970ba6479">
+          <text raw_id=457 name="mineral" />
+        </strong>
+      </link>
+      <link raw_id=458 sharedId="7e24f526-dcd8-4479-b62f-154772cb3e90" name="selenium python" url="/search?q=selenium%20python&amp;source=relatedQueries">
+        <img raw_id=459 sharedId="0f5b502d-7f03-416b-b04f-f15491395f21" />
+        <text raw_id=460 name="selenium" />
+        <strong raw_id=461 sharedId="15530eb4-0409-4d52-ad59-55fb21b4a759">
+          <text raw_id=462 name="python" />
+        </strong>
+      </link>
+      <link raw_id=463 sharedId="7c43eb52-3662-419a-867b-523566324fd0" name="Next" url="/search?q=selenium&amp;offset=1&amp;spellcheck=0">
+        <text raw_id=464 name="Next" />
+        <img raw_id=465 sharedId="13de656b-0aed-46dc-8bfe-6e8a26d09ea0" />
+      </link>
+    </main>
+    <link raw_id=466 sharedId="4af0d23e-5e3a-48f4-b6b5-1722a7525e5f" name="Selenium" url="https://en.wikipedia.org/wiki/Selenium_(software)" />
+    <text raw_id=467 name="testing framework for web applications" />
+    <img raw_id=468 sharedId="abf75cfa-d3c2-4971-843c-aadb2c99f11c" />
+    <link raw_id=469 sharedId="91fac70c-bc7d-453e-9f87-a187c3ba87f5" name="selenium.dev" url="https://selenium.dev/" />
+    <img raw_id=470 sharedId="3ceb8b4a-4979-4a8c-999f-8029baa59d19" />
+    <text raw_id=471 name="Selenium is an open source umbrella project for a range of tools and libraries aimed at supporting browser automation. It provides a playback tool for authoring functional tests across most modern web …" />
+    <link raw_id=472 sharedId="c186df02-ecb0-48dd-ad91-d18b7dfaaaaa" name="Wikipedia" url="https://en.wikipedia.org/wiki/Selenium_(software)" />
+    <text raw_id=473 name="Release 2004; 22 years ago Stable release 4.51.0 / 9 October 2026; 11 days ago Written in Selenium Server:" />
+    <link raw_id=474 sharedId="4a90a953-94bb-4ecf-b2e8-609386ea810a" name="Java" url="https://en.wikipedia.org/wiki/Java_(programming_language)" />
+    <text raw_id=475 name="; Selenium WebDriver (works without Selenium Server), official support:" />
+    <link raw_id=476 sharedId="20324b51-6d72-4072-b5ec-f4c99bffc62d" name="JavaScript" url="https://en.wikipedia.org/wiki/JavaScript" />
+    <text raw_id=477 name="(" />
+    <link raw_id=478 sharedId="35120280-5a1a-4fda-b28c-cab2c1a31054" name="Node.js" url="https://en.wikipedia.org/wiki/Node.js" />
+    <text raw_id=479 name=")," />
+    <link raw_id=480 sharedId="1e512f07-09ca-4ccc-8fcc-894966b32432" name="Python" url="https://en.wikipedia.org/wiki/Python_(programming_language)" />
+    <text raw_id=481 name="," />
+    <link raw_id=482 sharedId="7229c40d-8db4-41cc-bfae-fd84c7075387" name="Ruby" url="https://en.wikipedia.org/wiki/Ruby_(programming_language)" />
+    <text raw_id=483 name=", Java or" />
+    <link raw_id=484 sharedId="27424529-d807-4305-8b1b-fecf4f57e378" name="C#" url="https://en.wikipedia.org/wiki/C_Sharp_(programming_language)" />
+    <button raw_id=485 sharedId="c472e7bc-0fad-4cbf-920b-2956ef21d058" name="More about Selenium">
+      <text raw_id=486 name="More about Selenium" />
+      <img raw_id=487 sharedId="7638935b-667a-4e22-90ed-99518da6b6a5" />
+    </button>
+    <link raw_id=488 sharedId="4999e457-606c-4a04-aa5e-cffbe13be2c2" name="Wikipedia" url="https://en.wikipedia.org/wiki/Selenium_(software)">
+      <img raw_id=489 sharedId="6e80b940-ef93-4283-96ae-01c77168873e" name="🌐" />
+    </link>
+    <link raw_id=490 sharedId="894a1ba6-d11e-40c5-82a1-1c2cb4608912" name="Reddit" url="https://www.reddit.com/r/selenium/">
+      <img raw_id=491 sharedId="5e82d159-b910-49a2-aee3-428cab61d839" name="🌐" />
+    </link>
+    <link raw_id=492 sharedId="bf38ce5b-6d42-4a85-9409-fe75fcf53f0e" name="GitHub" url="https://github.com/topics/selenium">
+      <img raw_id=493 sharedId="eb999642-9d81-4fe3-be5d-24d5f760f4c6" name="🌐" />
+    </link>
+    <link raw_id=494 sharedId="d8dee1ae-3dc7-4b79-8efd-807c24a9d382" name="Quora" url="https://www.quora.com/topic/Selenium-testing-framework">
+      <img raw_id=495 sharedId="7347dc7a-369b-48c5-bedd-7aac2ca96fd8" name="🌐" />
+    </link>
+    <link raw_id=496 sharedId="4e09bdfa-ffcb-48a9-94b8-8b306dc7c703" name="Wikidata" url="http://www.wikidata.org/entity/Q752522">
+      <img raw_id=497 sharedId="cfeaced3-8677-4c08-b26c-fdf7f7c7a242" name="🌐" />
+    </link>
+    <link raw_id=498 sharedId="31d92fdd-a459-4c56-a275-4b792779a622" name="X" url="https://x.com/SeleniumHQ">
+      <img raw_id=499 sharedId="0c86446a-1880-4379-93c6-807fc58b2a44" name="🌐" />
+    </link>
+    <link raw_id=500 sharedId="09b536bf-d789-445f-957c-61e8a1608f3b" name="Open Hub" url="https://openhub.net/p/selenium">
+      <img raw_id=501 sharedId="e0af281a-7c31-4220-a63b-99077f224dbb" name="🌐" />
+    </link>
+    <link raw_id=502 sharedId="551a76d4-9dbc-4eaf-9230-33a18e7fabb9" name="DNB" url="https://d-nb.info/gnd/7712939-8">
+      <img raw_id=503 sharedId="1f37162f-7391-413d-8fb3-84687548d680" name="🌐" />
+    </link>
+    <link raw_id=504 sharedId="3a630a6f-4d97-44a1-a7e2-87884a3f676a" name="Freshports" url="https://www.freshports.org/www/selenium">
+      <img raw_id=505 sharedId="d2f2c19f-8326-4a28-bf06-9278f6197293" name="🌐" />
+    </link>
+    <link raw_id=506 sharedId="f463ffe5-06a0-4aef-a733-d70376190b01" name="Code" url="https://code.gouv.fr/sill/fr/software?id=129">
+      <img raw_id=507 sharedId="7994837b-5353-4d9a-8975-7a689efa58aa" name="🌐" />
+    </link>
+    <text raw_id=508 name="Data from" />
+    <link raw_id=509 sharedId="5ab2eb6c-3daf-463d-81aa-3b6e60068f9d" name="Wikipedia" url="https://en.wikipedia.org/wiki/Selenium_(software)" />
+    <button raw_id=510 sharedId="84ee81f1-8a30-461f-a5dd-1c5a44ada9c7" name="Feedback">
+      <img raw_id=511 sharedId="2010ccad-70fb-4b4e-bdff-9d5df05b4cff" />
+    </button>
+  </main>
+  <contentinfo raw_id=512 sharedId="343a4a0d-1f4c-475b-8de4-22cbe261d584">
+    <heading raw_id=513 sharedId="805046c2-1dd8-4c87-9bd0-19056f91b293" name="Resources" level=6 />
+    <link raw_id=514 sharedId="a0d3be01-d50b-4497-9a6d-c5ed593107b2" name="Brave Search Premium" url="https://account.brave.com/?intent=checkout&amp;product=search" />
+    <link raw_id=515 sharedId="ceb14acb-ccf3-4ebc-af9c-9c28a533fa4f" name="Brave Search Help" url="/help" />
+    <link raw_id=516 sharedId="97d42a48-d06a-4db0-adfa-9b5d57ac677b" name="Transparency Report" url="https://brave.com/transparency/" />
+    <link raw_id=517 sharedId="3f2528b9-5ebf-44ef-be46-0e80d435c165" name="Report a security issue" url="https://hackerone.com/brave" />
+    <link raw_id=518 sharedId="f6be5786-2e18-44a1-bc94-a2c4722ea7b0" name="Status" url="https://status.brave.app/" />
+    <heading raw_id=519 sharedId="21747e04-ca47-428d-8a86-9234a1299d8a" name="Products" level=6 />
+    <link raw_id=520 sharedId="751a7010-aec7-43b2-8d9a-8ab04d33adf3" name="Brave Browser" url="https://brave.com/download/?mtm_source=brave-search&amp;mtm_medium=searchfooter&amp;mtm_campaign=brave-search&amp;mtm_content=evergreen" />
+    <link raw_id=521 sharedId="c58da9fe-1290-44e6-b50d-0e6b2e7a6a8c" name="Brave Search" url="https://search.brave.com" />
+    <link raw_id=522 sharedId="345139b3-b959-4b1e-967d-e827df11da51" name="Brave Wallet" url="https://brave.com/wallet/?mtm_source=brave-search&amp;mtm_medium=searchfooter&amp;mtm_campaign=brave-search&amp;mtm_content=evergreen" />
+    <link raw_id=523 sharedId="d1fab3a4-3d4f-42a0-b58b-c2d33941e2a5" name="Brave Talk" url="https://talk.brave.com/?mtm_source=brave-search&amp;mtm_medium=searchfooter&amp;mtm_campaign=brave-search&amp;mtm_content=evergreen" />
+    <link raw_id=524 sharedId="fa473042-3d51-41b5-9245-20e28a7bfc19" name="Brave Firewall + VPN" url="https://brave.com/firewall-vpn/?mtm_source=brave-search&amp;mtm_medium=searchfooter&amp;mtm_campaign=brave-search&amp;mtm_content=evergreen" />
+    <link raw_id=525 sharedId="a5b0ed3a-b624-449c-8526-abc2e7bb159a" name="Brave Playlist" url="https://brave.com/playlist/?mtm_source=brave-search&amp;mtm_medium=searchfooter&amp;mtm_campaign=brave-search&amp;mtm_content=evergreen" />
+    <link raw_id=526 sharedId="dcd4c045-40c1-4eb4-9bd5-a765c74eaaa5" name="Brave News" url="https://brave.com/brave-news/?mtm_source=brave-search&amp;mtm_medium=searchfooter&amp;mtm_campaign=brave-search&amp;mtm_content=evergreen" />
+    <link raw_id=527 sharedId="fd5f838e-f9c6-40b5-a58e-3ef8ac4281e2" name="Brave Rewards" url="https://brave.com/brave-rewards/?mtm_source=brave-search&amp;mtm_medium=searchfooter&amp;mtm_campaign=brave-search&amp;mtm_content=evergreen" />
+    <link raw_id=528 sharedId="b61d2a1b-876d-4208-a4b7-167a152669e6" name="Brave Search API" url="https://brave.com/search/api/?mtm_source=brave-search&amp;mtm_medium=searchfooter&amp;mtm_campaign=brave-search&amp;mtm_content=evergreen" />
+    <link raw_id=529 sharedId="0d78dd49-5602-4913-aa32-1dbf76baf51e" name="Brave Ads" url="https://brave.com/brave-ads/?mtm_source=brave-search&amp;mtm_medium=searchfooter&amp;mtm_campaign=brave-search&amp;mtm_content=evergreen" />
+    <heading raw_id=530 sharedId="c6cc30cc-d0ef-4bfa-b07a-aa4e21802b25" name="Policies" level=6 />
+    <link raw_id=531 sharedId="e463fa89-8689-4fc5-bff1-a5b1595f8d74" name="Privacy Policy" url="/help/privacy-policy" />
+    <link raw_id=532 sharedId="e2f3f85b-58ee-4a5a-a7eb-4128bd47927d" name="Terms of Use" url="https://brave.com/terms-of-use/" />
+  </contentinfo>
+  <text raw_id=533 name="selenium - Brave Search" />
+</RootWebArea>

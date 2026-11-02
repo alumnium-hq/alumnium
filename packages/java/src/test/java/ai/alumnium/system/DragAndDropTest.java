@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 
 @DisabledIfEnvironmentVariable(named = "ALUMNIUM_DRIVER", matches = "appium.*")
+@DisabledIfEnvironmentVariable(named = "ALUMNIUM_SELENIUM_BROWSER", matches = "firefox")
 public class DragAndDropTest extends BaseTest {
 
   private static final String DRAG_AND_DROP_URL = "the-internet/drag-and-drop.html";

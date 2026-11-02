@@ -6,7 +6,7 @@ from os import getenv
 from appium.webdriver.webdriver import WebDriver as Appium
 from behave import *
 from playwright.sync_api import Page
-from selenium.webdriver import Chrome
+from selenium.webdriver import Chrome, Firefox
 
 driver_type = getenv("ALUMNIUM_DRIVER", "selenium")
 
@@ -14,7 +14,7 @@ driver_type = getenv("ALUMNIUM_DRIVER", "selenium")
 @given("I open application")
 def step_impl(context):
     # Also passes on react, preact, and jquery!
-    if isinstance(context.driver, Chrome):
+    if isinstance(context.driver, Chrome) or isinstance(context.driver, Firefox):
         context.driver.get("https://todomvc.com/examples/vue/dist/")
     elif isinstance(context.driver, Page):
         context.driver.goto("https://todomvc.com/examples/vue/dist/")

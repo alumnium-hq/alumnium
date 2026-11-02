@@ -18,6 +18,15 @@ export const InstallCommand = CliCommand.define({
       description:
         "Driver to install browsers for (defaults to ALUMNIUM_DRIVER or selenium)",
     }),
+    browser: z
+      .enum(["chrome", "firefox"])
+      .default(Env.ALUMNIUM_SELENIUM_BROWSER)
+      .register(CliCommand.option, {
+        name: "browser",
+        syntax: "--browser <browser>",
+        description:
+          "Browser to install for Selenium: chrome or firefox (defaults to ALUMNIUM_SELENIUM_BROWSER or chrome)",
+      }),
   }),
 
   action: async ({ args }) => {
@@ -28,7 +37,7 @@ export const InstallCommand = CliCommand.define({
         await ensurePlaywrightChromiumInstalled();
         break;
       case "selenium":
-        await installSeleniumChrome();
+        await installSeleniumBrowser(args.browser);
         break;
       case "cloakbrowser": {
         const { ensureBinary } = await import("cloakbrowser");
@@ -45,8 +54,12 @@ export const InstallCommand = CliCommand.define({
   },
 });
 
-async function installSeleniumChrome() {
-  if (os.platform() === "linux" && os.arch() === "arm64") {
+async function installSeleniumBrowser(browser: "chrome" | "firefox") {
+  if (
+    browser === "chrome" &&
+    os.platform() === "linux" &&
+    os.arch() === "arm64"
+  ) {
     throw new Error(
       "Chrome for Testing provides no Linux ARM64 builds, so Selenium Manager cannot install Chrome on this platform",
     );
@@ -62,7 +75,7 @@ async function installSeleniumChrome() {
   } = await import("selenium-webdriver/common/seleniumManager");
   const args = [
     "--browser",
-    "chrome",
+    browser,
     "--language-binding",
     "javascript",
     "--output",
@@ -71,6 +84,14 @@ async function installSeleniumChrome() {
   const browserVersion = Env.ALUMNIUM_SELENIUM_BROWSER_VERSION;
   if (browserVersion) args.push("--browser-version", browserVersion);
   const { browserPath, driverPath } = binaryPaths(args);
-  logger.info(`Chrome installed at ${browserPath}`);
-  logger.info(`Chromedriver installed at ${driverPath}`);
+  if (!browserPath || !driverPath) {
+    throw new Error(
+      `Selenium Manager could not install ${browser} (browser: ${browserPath || "none"}, driver: ${driverPath || "none"})`,
+    );
+  }
+  const driverName = browser === "chrome" ? "Chromedriver" : "Geckodriver";
+  logger.info(
+    `${browser === "chrome" ? "Chrome" : "Firefox"} installed at ${browserPath}`,
+  );
+  logger.info(`${driverName} installed at ${driverPath}`);
 }
