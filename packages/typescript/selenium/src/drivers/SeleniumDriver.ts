@@ -375,10 +375,9 @@ export class SeleniumDriver extends BaseDriver<WebElement> {
     const backendNodeId = accessibilityElement.backendNodeId!;
     const frameChain = accessibilityElement.frameChain;
 
-    // Switch through the frame chain if element is inside nested iframes
-    if (frameChain && frameChain.length > 0) {
-      await this.switchToFrameChain(frameChain);
-    }
+    // Switch through the frame chain if element is inside nested iframes,
+    // or back to the main document if a previous action left us in a frame
+    await this.switchToFrameChain(frameChain ?? []);
 
     // Use CDP to find element by backend node ID
     await this.executeCdpCommand("DOM.enable", {});

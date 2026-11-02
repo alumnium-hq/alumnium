@@ -290,10 +290,10 @@ public final class SeleniumDriver extends BaseDriver {
       throw new IllegalStateException("Element " + id + " has no backendNodeId");
     }
 
+    // Switch through the frame chain if element is inside nested iframes,
+    // or back to the main document if a previous action left us in a frame
     List<Integer> chain = element.frameChain();
-    if (chain != null && !chain.isEmpty()) {
-      switchToFrameChain(chain);
-    }
+    switchToFrameChain(chain != null ? chain : List.of());
 
     executeCdp("DOM.enable", Map.of());
     executeCdp("DOM.getFlattenedDocument", Map.of());

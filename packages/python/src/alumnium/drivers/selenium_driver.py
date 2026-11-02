@@ -262,9 +262,9 @@ class SeleniumDriver(BaseDriver):
         backend_node_id = accessibility_element.backend_node_id
         frame_chain = accessibility_element.frame_chain
 
-        # Switch through the frame chain if element is inside nested iframes
-        if frame_chain:
-            self._switch_to_frame_chain(frame_chain)
+        # Switch through the frame chain if element is inside nested iframes,
+        # or back to the main document if a previous action left us in a frame
+        self._switch_to_frame_chain(frame_chain or [])
 
         # Beware!
         self.driver.execute_cdp_cmd("DOM.enable", {})  # type: ignore[attr-defined]
