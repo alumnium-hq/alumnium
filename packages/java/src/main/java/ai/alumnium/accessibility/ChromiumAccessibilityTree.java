@@ -34,11 +34,15 @@ public final class ChromiumAccessibilityTree extends BaseAccessibilityTree {
   }
 
   /** Factory that skips building by reusing a pre-computed XML string. */
-  static ChromiumAccessibilityTree fromXml(String xml, Map<Integer, Object> frameMap) {
+  static ChromiumAccessibilityTree fromXml(
+      String xml, Map<Integer, Object> frameMap, Map<Integer, List<Integer>> frameChainMap) {
     ChromiumAccessibilityTree t = new ChromiumAccessibilityTree(Map.of());
     t.raw = xml == null ? "" : xml;
     if (frameMap != null) {
       t.frameMap.putAll(frameMap);
+    }
+    if (frameChainMap != null) {
+      t.frameChainMap.putAll(frameChainMap);
     }
     return t;
   }
@@ -208,7 +212,7 @@ public final class ChromiumAccessibilityTree extends BaseAccessibilityTree {
     if (match == null) {
       return this;
     }
-    return fromXml(serialize(match), frameMap);
+    return fromXml(serialize(match), frameMap, frameChainMap);
   }
 
   // region helpers
