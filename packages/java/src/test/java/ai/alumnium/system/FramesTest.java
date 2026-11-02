@@ -1,5 +1,6 @@
 package ai.alumnium.system;
 
+import ai.alumnium.Area;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -25,6 +26,18 @@ public class FramesTest extends BaseTest {
 
     al.act("click Increment button");
     al.check("count is 1");
+  }
+
+  @Test
+  void testAreasInAndOutOfIframe() {
+    navigate("iframe_area.html");
+
+    Area frameCounter = al.area("Frame counter section");
+    Area mainCounter = al.area("Main counter section");
+    frameCounter.act("click Increment button");
+    mainCounter.act("click Increment button");
+    al.check("frame count is 1");
+    al.check("main count is 1");
   }
 
   @DisabledIfEnvironmentVariable(named = "ALUMNIUM_DRIVER", matches = "selenium")

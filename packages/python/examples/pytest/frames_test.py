@@ -38,3 +38,18 @@ def test_iframe_sharing_page_url(al, navigate):
 
     al.do("click Increment button")
     al.check("count is 1")
+
+
+@mark.xfail(
+    "appium" in getenv("ALUMNIUM_DRIVER", "selenium"),
+    reason="Frames support is only implemented for Playwright and Selenium currently",
+)
+def test_areas_in_and_out_of_iframe(al, navigate):
+    navigate("iframe_area.html")
+
+    frame_counter = al.area("Frame counter section")
+    main_counter = al.area("Main counter section")
+    frame_counter.do("click Increment button")
+    main_counter.do("click Increment button")
+    al.check("frame count is 1")
+    al.check("main count is 1")

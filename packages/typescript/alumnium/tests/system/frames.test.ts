@@ -35,6 +35,20 @@ describe("Frames", () => {
     await al.check("count is 1", { assert });
   });
 
+  it("areas in and out of iframe", async ({ expect, setup }) => {
+    const { al, $ } = await setup();
+    const assert = expect.assert;
+
+    await $.navigate("iframe_area.html");
+
+    const frameCounter = await al.area("Frame counter section");
+    const mainCounter = await al.area("Main counter section");
+    await frameCounter.do("click Increment button");
+    await mainCounter.do("click Increment button");
+    await al.check("frame count is 1", { assert });
+    await al.check("main count is 1", { assert });
+  });
+
   it("cross origin iframe", async ({ expect, setup, skip }) => {
     const { al, $, driverId } = await setup();
     const assert = expect.assert;
