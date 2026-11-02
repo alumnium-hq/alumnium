@@ -1,33 +1,54 @@
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import { McpServer as Server } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { Env } from "@alumnium/core/internal";
 import { McpServer } from "./McpServer.ts";
 import { checkMcpTool } from "./tools/checkMcpTool.ts";
 import { doMcpTool } from "./tools/doMcpTool.ts";
 
 let client: Client;
 
+beforeEach(() => {
+  vi.stubEnv("ALUMNIUM_MCP_REQUIRE_STEP", undefined);
+  Env.reset();
+});
+
 afterEach(async () => {
   await client?.close();
   vi.restoreAllMocks();
+  vi.unstubAllEnvs();
+  Env.reset();
 });
 
 describe("required step and action attempt labels", () => {
-  it("requires step on do and check, and attempt only on do when enabled", async () => {
-    await connect({ requireStep: true });
-    const { tools } = await client.listTools();
-    for (const tool of tools) {
-      expect(tool.inputSchema.required?.includes("step") ?? false).toBe(
-        tool.name === "do" || tool.name === "check",
-      );
-      expect(tool.inputSchema.required?.includes("attempt") ?? false).toBe(
-        tool.name === "do",
-      );
-      if (tool.name === "check")
-        expect(tool.inputSchema.properties).not.toHaveProperty("attempt");
-    }
-  });
+  it.each([undefined, "false", "true"])(
+    "uses ALUMNIUM_MCP_REQUIRE_STEP=%s for advertised and enforced labels",
+    async (value) => {
+      vi.stubEnv("ALUMNIUM_MCP_REQUIRE_STEP", value);
+      const execute = vi.spyOn(doMcpTool, "execute").mockResolvedValue([]);
+      await connect();
+      const enabled = value === "true";
+      const { tools } = await client.listTools();
+      for (const tool of tools) {
+        expect(tool.inputSchema.required?.includes("step") ?? false).toBe(
+          enabled && (tool.name === "do" || tool.name === "check"),
+        );
+        expect(tool.inputSchema.required?.includes("attempt") ?? false).toBe(
+          enabled && tool.name === "do",
+        );
+        if (tool.name === "check")
+          expect(tool.inputSchema.properties).not.toHaveProperty("attempt");
+      }
+
+      const result = await client.callTool({
+        name: "do",
+        arguments: { id: "browser", goal: "Click" },
+      });
+      expect(result.isError ?? false).toBe(enabled);
+      expect(execute).toHaveBeenCalledTimes(enabled ? 0 : 1);
+    },
+  );
 
   it.each(["do", "check"])(
     "rejects invalid %s labels before execution and accepts corrected calls",

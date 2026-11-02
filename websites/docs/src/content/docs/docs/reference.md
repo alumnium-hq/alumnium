@@ -220,8 +220,7 @@ Set to `true` to require a nonnegative integer `step` on agentic `do` and `check
 calls, plus a positive integer `attempt` on `do` calls. Use `step: 0` for setup,
 `attempt: 1` for a new action, and `2` and up for retries of that action. `check`
 does not require an attempt. Missing or invalid labels are rejected before
-execution. Default is `false`; labels remain optional unless enabled. Equivalent
-to `alumnium mcp --require-step`.
+execution. Default is `false`; labels remain optional unless enabled.
 
 ### `ALUMNIUM_MCP_ARTIFACTS_DIR`
 

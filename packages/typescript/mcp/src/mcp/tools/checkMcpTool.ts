@@ -27,7 +27,7 @@ export const checkMcpTool = McpTool.define("check", {
       .nonnegative()
       .optional()
       .describe(
-        "Optional number of the test step this check belongs to, or 0 for setup before the first step. Not used by Alumnium; recorded in the tool call so callers can attribute it.",
+        "Number of the test step this check belongs to, or 0 for setup before the first step. Not used by Alumnium; recorded in the tool call so callers can attribute it.",
       ),
   }),
 
@@ -58,3 +58,9 @@ export const checkMcpTool = McpTool.define("check", {
     return [{ type: "text", text: JSON.stringify({ result, explanation }) }];
   },
 });
+
+export function getCheckMcpInputSchema(requireStep: boolean) {
+  return requireStep
+    ? checkMcpTool.inputSchema.required({ step: true })
+    : checkMcpTool.inputSchema;
+}

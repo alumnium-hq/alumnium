@@ -7,16 +7,16 @@
 import { McpServer as Server } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
-import z from "zod";
 import {
   ALUMNIUM_VERSION,
+  Env,
   Logger,
   McpMode,
   McpTransport,
 } from "@alumnium/core/internal";
-import { checkMcpTool } from "./tools/checkMcpTool.ts";
+import { checkMcpTool, getCheckMcpInputSchema } from "./tools/checkMcpTool.ts";
 import { directMcpTools } from "./tools/directMcpTools.ts";
-import { doMcpTool } from "./tools/doMcpTool.ts";
+import { doMcpTool, getDoMcpInputSchema } from "./tools/doMcpTool.ts";
 import { fetchAccessibilityTreeMcpTool } from "./tools/fetchAccessibilityTreeMcpTool.ts";
 import { getMcpTool } from "./tools/getMcpTool.ts";
 import type { McpTool } from "./tools/McpTool.ts";
@@ -65,7 +65,7 @@ export class McpServer {
     transport = "stdio",
     host = "127.0.0.1",
     port = 8014,
-    requireStep = false,
+    requireStep = Env.ALUMNIUM_MCP_REQUIRE_STEP,
   }: McpServer.Props = {}) {
     this.#mode = mode;
     this.#transport = transport;
@@ -137,26 +137,11 @@ export class McpServer {
     tools.forEach((toolDef) => {
       const { name, description, execute } = toolDef;
       const inputSchema =
-        this.#requireStep && (name === "do" || name === "check")
-          ? toolDef.inputSchema.extend({
-              step: z
-                .number()
-                .int()
-                .nonnegative()
-                .describe(
-                  "Required test step number. Use 0 for setup before the first step; otherwise use the written test step number. Retry rejected calls with this parameter.",
-                ),
-              ...(name === "do" && {
-                attempt: z
-                  .number()
-                  .int()
-                  .positive()
-                  .describe(
-                    "Required attempt number: 1 for a new action, 2 and up when retrying the same action. Retry rejected calls with this parameter.",
-                  ),
-              }),
-            })
-          : toolDef.inputSchema;
+        name === "do"
+          ? getDoMcpInputSchema(this.#requireStep)
+          : name === "check"
+            ? getCheckMcpInputSchema(this.#requireStep)
+            : toolDef.inputSchema;
       server.registerTool(
         toolDef.name,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

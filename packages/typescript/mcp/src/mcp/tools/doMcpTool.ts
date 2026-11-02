@@ -86,7 +86,7 @@ export const doMcpTool = McpTool.define("do", {
       .nonnegative()
       .optional()
       .describe(
-        "Optional number of the test step this action belongs to, or 0 for setup before the first step. Not used by Alumnium; recorded in the tool call so callers can attribute it.",
+        "Number of the test step this action belongs to, or 0 for setup before the first step. Not used by Alumnium; recorded in the tool call so callers can attribute it.",
       ),
 
     attempt: z
@@ -95,7 +95,7 @@ export const doMcpTool = McpTool.define("do", {
       .positive()
       .optional()
       .describe(
-        "Optional attempt number: 1 for a new action, 2 and up when retrying the same action. Not used by Alumnium; recorded in the tool call so callers can group retries.",
+        "Attempt number: 1 for a new action, 2 and up when retrying the same action. Not used by Alumnium; recorded in the tool call so callers can group retries.",
       ),
   }),
 
@@ -125,3 +125,9 @@ export const doMcpTool = McpTool.define("do", {
     return [{ type: "text", text: JSON.stringify(response, null, 2) }];
   },
 });
+
+export function getDoMcpInputSchema(requireStep: boolean) {
+  return requireStep
+    ? doMcpTool.inputSchema.required({ step: true, attempt: true })
+    : doMcpTool.inputSchema;
+}
