@@ -9,13 +9,14 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
 import {
   ALUMNIUM_VERSION,
+  Env,
   Logger,
   McpMode,
   McpTransport,
 } from "@alumnium/core/internal";
-import { checkMcpTool } from "./tools/checkMcpTool.ts";
+import { checkMcpTool, getCheckMcpInputSchema } from "./tools/checkMcpTool.ts";
 import { directMcpTools } from "./tools/directMcpTools.ts";
-import { doMcpTool } from "./tools/doMcpTool.ts";
+import { doMcpTool, getDoMcpInputSchema } from "./tools/doMcpTool.ts";
 import { fetchAccessibilityTreeMcpTool } from "./tools/fetchAccessibilityTreeMcpTool.ts";
 import { getMcpTool } from "./tools/getMcpTool.ts";
 import type { McpTool } from "./tools/McpTool.ts";
@@ -48,6 +49,7 @@ export namespace McpServer {
     transport?: McpTransport;
     host?: string;
     port?: number;
+    requireStep?: boolean;
   }
 }
 
@@ -56,17 +58,20 @@ export class McpServer {
   #transport: McpTransport;
   #host: string;
   #port: number;
+  #requireStep: boolean;
 
   constructor({
     mode = "agentic",
     transport = "stdio",
     host = "127.0.0.1",
     port = 8014,
+    requireStep = Env.ALUMNIUM_MCP_REQUIRE_STEP,
   }: McpServer.Props = {}) {
     this.#mode = mode;
     this.#transport = transport;
     this.#host = host;
     this.#port = port;
+    this.#requireStep = requireStep;
     logger.info("MCP server initialized");
   }
 
@@ -130,7 +135,13 @@ export class McpServer {
   #registerTools(server: Server, mode: McpMode) {
     const tools = mode === "direct" ? DIRECT_MCP_TOOLS : AGENTIC_MCP_TOOLS;
     tools.forEach((toolDef) => {
-      const { name, description, inputSchema, execute } = toolDef;
+      const { name, description, execute } = toolDef;
+      const inputSchema =
+        name === "do"
+          ? getDoMcpInputSchema(this.#requireStep)
+          : name === "check"
+            ? getCheckMcpInputSchema(this.#requireStep)
+            : toolDef.inputSchema;
       server.registerTool(
         toolDef.name,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
