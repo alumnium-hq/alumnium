@@ -159,6 +159,10 @@ export default defineConfig({
           ],
         },
         {
+          label: "CLI",
+          slug: "docs/cli/overview",
+        },
+        {
           label: "Reference",
           slug: "docs/reference",
         },

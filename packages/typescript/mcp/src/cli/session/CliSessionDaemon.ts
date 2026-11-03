@@ -1,0 +1,321 @@
+import fsSync from "node:fs";
+import fs from "node:fs/promises";
+import net from "node:net";
+import z from "zod";
+import { ALUMNIUM_VERSION, Telemetry } from "@alumnium/core/internal";
+import type { McpTool } from "../../mcp/tools/McpTool.ts";
+import { CliProtocol } from "./CliProtocol.ts";
+import { cliCommandLine } from "./CliSessionClient.ts";
+import type { CliSessionRegistry } from "./CliSessionRegistry.ts";
+import { SocketConnection } from "./SocketConnection.ts";
+
+const { logger, tracer } = Telemetry.get(import.meta.url);
+
+const StartOutput = z.object({ id: z.string(), platform_name: z.string() });
+
+export namespace CliSessionDaemon {
+  export type Tool = (
+    input: Record<string, unknown>,
+  ) => Promise<McpTool.Output>;
+
+  export interface Props {
+    session: string;
+    registry: CliSessionRegistry;
+    start: Tool;
+    startInput: Record<string, unknown>;
+    stop: Tool;
+    tools: Record<string, Tool>;
+    /** Milliseconds without requests before stopping; 0 disables. */
+    idleTimeoutMs: number;
+    onExit: (code: number) => void | Promise<void>;
+  }
+}
+
+/**
+ * Owns a started driver and serves session requests over a local socket.
+ */
+export class CliSessionDaemon {
+  #props: CliSessionDaemon.Props;
+  #server = net.createServer((socket) => this.#onConnection(socket));
+  #driverId = "";
+  #queue: Promise<unknown> = Promise.resolve();
+  #idleTimer: ReturnType<typeof setTimeout> | undefined;
+  #watchTimer: ReturnType<typeof setInterval> | undefined;
+  #socketIno: number | undefined;
+  #inFlight = 0;
+  #closed = false;
+  #terminating = false;
+  #exited = false;
+
+  constructor(props: CliSessionDaemon.Props) {
+    this.#props = props;
+  }
+
+  get driverId(): string {
+    return this.#driverId;
+  }
+
+  async start(): Promise<string> {
+    const { session, registry, start, startInput, stop } = this.#props;
+
+    const startOutput = outputText(await start(startInput));
+    let parsed: z.infer<typeof StartOutput>;
+    try {
+      parsed = StartOutput.parse(JSON.parse(startOutput));
+    } catch (error) {
+      // NOTE: Without a driver id there is nothing to stop.
+      logger.debug("Unparsable start output: {error}", { error });
+      throw error;
+    }
+    const { id, platform_name: platform } = parsed;
+    this.#driverId = id;
+
+    const socketPath = registry.socketPath(session);
+    try {
+      if (process.platform !== "win32")
+        await fs.rm(socketPath, { force: true });
+      await new Promise<void>((resolve, reject) => {
+        const onListenError = (error: Error) => reject(error);
+        this.#server.once("error", onListenError);
+        this.#server.listen(socketPath, () => {
+          this.#server.removeListener("error", onListenError);
+          resolve();
+        });
+      });
+      if (process.platform !== "win32") await fs.chmod(socketPath, 0o600);
+      this.#server.on("error", (error) =>
+        logger.error("Session server error: {error}", { error }),
+      );
+      await registry.writeEntry({
+        name: session,
+        version: ALUMNIUM_VERSION,
+        pid: process.pid,
+        socketPath,
+        driverId: id,
+        platform,
+        startedAt: Date.now(),
+        startOutput,
+      });
+    } catch (error) {
+      // NOTE: Closing a listening server also unlinks its socket file.
+      this.#server.close();
+      await stop({ id }).catch(() => {});
+      throw error;
+    }
+
+    this.#pokeIdleTimer();
+    this.#watchSocket(socketPath);
+    logger.info(`Session ${session} listening on ${socketPath}`);
+
+    return startOutput;
+  }
+
+  async terminate(stopDriver: boolean): Promise<void> {
+    if (this.#closed || this.#terminating) return;
+    this.#terminating = true;
+
+    try {
+      await this.#enqueue(async () => {
+        if (this.#closed) return;
+        if (stopDriver) await this.#stop(false);
+        else await this.#close();
+      });
+    } catch (error) {
+      logger.error("Failed to stop session: {error}", { error });
+    } finally {
+      await this.#exit(0);
+    }
+  }
+
+  /**
+   * Synchronous `process.on("exit")` cleanup. A successor daemon may have taken
+   * over the session, so remove only what this daemon still owns. Does nothing
+   * if `start` never listened on the socket.
+   *
+   * NOTE: An unknown socket inode counts as not owned here, unlike in
+   * `#ownsSocket`. This hook can't tell whether a successor daemon replaced
+   * the file, and `start` may have failed because one already holds it.
+   */
+  removeOwnedFilesSync() {
+    const { registry, session } = this.#props;
+    const socketPath = registry.socketPath(session);
+    if (
+      this.#socketIno !== undefined &&
+      fsSync.statSync(socketPath, { throwIfNoEntry: false })?.ino ===
+        this.#socketIno
+    )
+      fsSync.rmSync(socketPath, { force: true });
+    registry.removeEntryFileSyncIfOwned(session, process.pid);
+  }
+
+  #onConnection(socket: net.Socket) {
+    const connection = new SocketConnection(socket);
+    connection.onmessage = (message) =>
+      void this.#onMessage(connection, message).catch((error) =>
+        logger.error("Failed to handle request: {error}", { error }),
+      );
+    connection.onerror = (kind, error) =>
+      kind === "malformed"
+        ? logger.debug("Malformed message, closing connection: {error}", {
+            error,
+          })
+        : logger.error("Message handler failed, closing connection: {error}", {
+            error,
+          });
+  }
+
+  async #onMessage(connection: SocketConnection, message: unknown) {
+    const parsed = CliProtocol.Request.safeParse(message);
+    if (!parsed.success) {
+      connection.close();
+      return;
+    }
+
+    const request = parsed.data;
+    let exitCode = 0;
+    let notRunning = false;
+    this.#inFlight++;
+    this.#pokeIdleTimer();
+
+    try {
+      const text = await this.#enqueue(async () => {
+        // NOTE: Checked before the span, a late request isn't an errored span.
+        if (this.#closed) {
+          notRunning = true;
+          throw new Error(
+            `Session '${this.#props.session}' is not running. Run \`${cliCommandLine(this.#props.session, "start")}\` first.`,
+          );
+        }
+        return tracer.span(
+          "cli.session.request",
+          {
+            "cli.session.name": this.#props.session,
+            "cli.session.method": request.method,
+          },
+          async () =>
+            request.method === "stop"
+              ? this.#stop(request.params.saveCache)
+              : this.#run(request.params.tool, request.params.input),
+        );
+      });
+      await connection
+        .send({ id: request.id, result: { text } })
+        .catch(() => {});
+    } catch (error) {
+      exitCode = 1;
+      await connection
+        .send({
+          id: request.id,
+          error: error instanceof Error ? error.message : String(error),
+        })
+        .catch(() => {});
+    } finally {
+      this.#inFlight--;
+      this.#pokeIdleTimer();
+    }
+
+    // NOTE: A stop that found the session already closed leaves the exit to
+    // the shutdown that closed it.
+    if (request.method === "stop" && !notRunning) await this.#exit(exitCode);
+  }
+
+  async #exit(code: number) {
+    if (this.#exited) return;
+    this.#exited = true;
+    await this.#props.onExit(code);
+  }
+
+  async #run(
+    toolName: string,
+    input: Record<string, unknown>,
+  ): Promise<string> {
+    const tool = Object.hasOwn(this.#props.tools, toolName)
+      ? this.#props.tools[toolName]
+      : undefined;
+    if (!tool) throw new Error(`Unknown tool: ${toolName}`);
+    return outputText(await tool({ ...input, id: this.#driverId }));
+  }
+
+  async #stop(saveCache: boolean): Promise<string> {
+    await this.#close();
+    try {
+      return outputText(
+        await this.#props.stop({ id: this.#driverId, save_cache: saveCache }),
+      );
+    } catch (error) {
+      // NOTE: A failed cache save must not orphan the browser.
+      if (saveCache)
+        await this.#props
+          .stop({ id: this.#driverId, save_cache: false })
+          .catch((retryError) =>
+            logger.error("Failed to stop without cache: {error}", {
+              error: retryError,
+            }),
+          );
+      throw error;
+    }
+  }
+
+  async #close() {
+    this.#closed = true;
+    clearTimeout(this.#idleTimer);
+    clearInterval(this.#watchTimer);
+
+    // NOTE: A successor daemon may have taken over the session, so remove
+    // only what this daemon still owns.
+    const { registry, session } = this.#props;
+    if (await this.#ownsSocket()) {
+      // NOTE: Closing the server also unlinks its socket file.
+      this.#server.close();
+    } else {
+      this.#server.unref();
+    }
+    const entry = await registry.readEntry(session);
+    if (entry?.pid === process.pid) await registry.removeEntryFile(session);
+  }
+
+  async #ownsSocket(): Promise<boolean> {
+    // NOTE: An unknown inode counts as owned here, unlike in
+    // `removeOwnedFilesSync`. `#watchSocket` hasn't run yet, so nothing could
+    // have replaced the socket, and this daemon must close its own server.
+    if (this.#socketIno === undefined) return true;
+    const socketPath = this.#props.registry.socketPath(this.#props.session);
+    const stat = await fs.stat(socketPath).catch(() => undefined);
+    return stat?.ino === this.#socketIno;
+  }
+
+  #enqueue<Type>(fn: () => Promise<Type>): Promise<Type> {
+    const result = this.#queue.then(fn);
+    this.#queue = result.catch(() => {});
+    return result;
+  }
+
+  #pokeIdleTimer() {
+    clearTimeout(this.#idleTimer);
+    if (this.#closed || this.#inFlight > 0 || !this.#props.idleTimeoutMs)
+      return;
+
+    this.#idleTimer = setTimeout(() => {
+      logger.info(`Session ${this.#props.session} is idle, stopping`);
+      void this.terminate(true);
+    }, this.#props.idleTimeoutMs);
+  }
+
+  #watchSocket(socketPath: string) {
+    // NOTE: Windows removes named pipes together with the owning process.
+    if (process.platform === "win32") return;
+
+    const { ino } = fsSync.statSync(socketPath);
+    this.#socketIno = ino;
+    this.#watchTimer = setInterval(() => {
+      if (fsSync.statSync(socketPath, { throwIfNoEntry: false })?.ino === ino)
+        return;
+      logger.info(`Socket ${socketPath} was removed, stopping`);
+      void this.terminate(true);
+    }, 1000);
+  }
+}
+
+function outputText(output: McpTool.Output): string {
+  return output.map((content) => content.text).join("\n");
+}
