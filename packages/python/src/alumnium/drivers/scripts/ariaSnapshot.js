@@ -53,13 +53,12 @@
     references.map(
       (/** @type {{ element: Element }} */ reference) => reference.element,
     ),
-    references.map(
-      (/** @type {{ element: Element }} */ { element }) =>
-        (element instanceof HTMLIFrameElement ||
-          element instanceof HTMLFrameElement) &&
-        element.contentWindow
-          ? element.contentWindow
-          : null,
+    references.map((/** @type {{ element: Element }} */ { element }) =>
+      (element instanceof HTMLIFrameElement ||
+        element instanceof HTMLFrameElement) &&
+      element.contentWindow
+        ? element.contentWindow
+        : null,
     ),
   ];
 }

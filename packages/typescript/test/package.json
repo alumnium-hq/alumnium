@@ -1,6 +1,6 @@
 {
   "name": "@alumnium/test",
-  "version": "0.24.0-alpha.4",
+  "version": "0.24.0",
   "description": "Alumnium test record and replay: agent-agnostic recordings, masking and the test cache",
   "license": "MIT",
   "type": "module",

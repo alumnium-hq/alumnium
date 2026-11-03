@@ -37,7 +37,7 @@ const sections = {
   hero: langs({
     en: {
       headline: txt`
-        End-to-End Testing with AI
+        End-to-End Testing Harness
         <br/>
         <small>for *Agents* and *Engineers*</small>
       `,
@@ -1988,10 +1988,10 @@ const sections = {
 export const ttLandings = {
   banners: {
     sota: {
-      href: "/blog/release-0230/",
+      href: "/blog/release-0240/",
 
       headline: langs({
-        en: "v0.23 with direct MCP mode, 10x faster, Maestro",
+        en: "v0.24 with Firefox and Xcode",
       }),
     },
   },

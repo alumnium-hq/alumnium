@@ -1,6 +1,6 @@
 {
   "name": "@alumnium/maestro",
-  "version": "0.24.0-alpha.4",
+  "version": "0.24.0",
   "description": "Alumnium Maestro driver",
   "license": "MIT",
   "type": "module",

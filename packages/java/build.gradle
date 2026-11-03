@@ -16,7 +16,7 @@ plugins {
 }
 
 group   = 'ai.alumnium'
-version = '0.24.0-alpha.4'
+version = '0.24.0'
 
 java {
     toolchain {
@@ -198,7 +198,7 @@ mavenPublishing {
 
     pom {
         name = 'Alumnium'
-        description = 'End-to-end testing with AI.'
+        description = 'End-to-end Testing Harness'
         url = 'https://alumnium.ai'
         licenses {
             license {

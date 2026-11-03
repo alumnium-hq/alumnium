@@ -1,6 +1,6 @@
 {
   "name": "@alumnium/openrouter",
-  "version": "0.24.0-alpha.4",
+  "version": "0.24.0",
   "description": "Alumnium OpenRouter LLM provider",
   "license": "MIT",
   "type": "module",

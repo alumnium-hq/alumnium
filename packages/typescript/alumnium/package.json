@@ -1,7 +1,7 @@
 {
   "name": "alumnium",
-  "version": "0.24.0-alpha.4",
-  "description": "End-to-End Testing with AI for Agents and Engineers",
+  "version": "0.24.0",
+  "description": "End-to-End Testing Harness",
   "keywords": [
     "ai",
     "alumnium",

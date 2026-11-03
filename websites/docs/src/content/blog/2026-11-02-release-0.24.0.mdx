@@ -1,0 +1,89 @@
+---
+title: Alumnium v0.24 - Firefox and Xcode support
+pubDate: 2026-11-03
+description: Alumnium v0.24 released with Firefox support, an Xcode driver for iOS, modular npm packages, and more
+author:
+  name: Alex Rodionov
+  image: alex_rodionov.jpeg
+tags: ["release notes"]
+---
+
+Alumnium [v0.24][1] adds Firefox support and an Xcode driver for iOS, and splits the TypeScript implementation into modular npm packages. It's available through [Maven Central][2], [npm][3], [PyPI][4], and [Docker][5].
+
+## Firefox
+
+Alumnium now runs tests in Firefox with Selenium in Java, Python, TypeScript, and the MCP server. Accessibility snapshots are built from the DOM by the [Acquiescence][6] library over WebDriver BiDi, so Firefox works on par with Chromium.
+
+<video
+  class="rounded-lg"
+  alt="A screen recording of Alumnium running a test in Firefox"
+  controls
+  width="100%"
+>
+  <source src="/videos/firefox.mp4" type="video/mp4" />
+  <source src="/videos/firefox.webm" type="video/webm" />
+</video>
+
+Enable BiDi when creating the driver and use Alumnium as usual:
+
+```python
+from selenium.webdriver import Firefox, FirefoxOptions
+from alumnium import Alumni
+
+options = FirefoxOptions()
+options.enable_bidi = True
+al = Alumni(Firefox(options=options))
+```
+
+In MCP, start a session with `platformName` set to `firefox`.
+
+Huge thanks to Jim Evans for his work on Acquiescence!
+
+## Xcode
+
+The MCP server gets a new driver built on top of [Xcode 27+][7] to test iOS apps in simulators. Apps can be launched from an installed bundle ID, an `.app` bundle, or straight from an `.xcodeproj`/`.xcworkspace`. Native Xcode driver means you are no longer required to use Appium or Maestro for iOS testing.
+
+<video
+  class="rounded-lg"
+  alt="A screen recording of Alumnium testing an iOS app with Xcode"
+  controls
+  width="100%"
+>
+  <source src="/videos/xcode.mp4" type="video/mp4" />
+  <source src="/videos/xcode.webm" type="video/webm" />
+</video>
+
+To start using it, set up [Alumnium MCP][8] and run your coding assistant with the Xcode driver:
+
+```bash
+export ALUMNIUM_DRIVER=xcode
+claude  # replace with your coding assistant command
+```
+
+## Modular npm Packages
+
+The TypeScript implementation is now split into packages: `@alumnium/core`, one package per driver (e.g. `@alumnium/playwright`), and one per LLM provider (e.g. `@alumnium/openai`). The `alumnium` package still includes everything. See the [reference][9] for the full list.
+
+## Other Changes
+
+- Added placeholders and per-call cache control to `do`, `check`, and `get`.
+- Added elements caching to `find`.
+- Added basic vision support in `do`.
+- Added an option to disable individual tools via `alumnium:options`.
+- Added support for space and arrow keys, and dragging ARIA sliders.
+- Added a CloakBrowser driver, streamable HTTP transport, and step/attempt labels to the MCP server.
+- Added `alumnium install` command which downloads and installs browsers.
+- Added Docker image `alumnium:0-24.0-web` that includes both the CLI and browsers preinstalled.
+- Added a Helm chart for the server.
+
+Happy testing!
+
+[1]: https://github.com/alumnium-hq/alumnium/releases/tag/0.24.0
+[2]: https://central.sonatype.com/artifact/ai.alumnium/alumnium
+[3]: https://www.npmjs.com/package/alumnium
+[4]: https://pypi.org/project/alumnium/
+[5]: https://hub.docker.com/r/alumnium/alumnium
+[6]: https://github.com/jimevans/acquiescence
+[7]: https://developer.apple.com/xcode/
+[8]: /docs/mcp/overview/
+[9]: /docs/reference/#npm-packages

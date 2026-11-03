@@ -6,7 +6,7 @@
     </p>
 </h1>
 <p align="center">
-    End-to-end testing with AI
+    End-to-end Testing Harness
     <br />
     <a href="#installation">Installation</a>
     ·
@@ -39,8 +39,8 @@ See [MCP documentation][10] for configuration, different MCP modes, and running 
 
 ```groovy
 dependencies {
-  testImplementation 'ai.alumnium:alumnium:0.23.1'
-  testRuntimeOnly    'ai.alumnium:alumnium-cli-darwin-arm64:0.23.1'
+  testImplementation 'ai.alumnium:alumnium:0.24.0'
+  testRuntimeOnly    'ai.alumnium:alumnium-cli-darwin-arm64:0.24.0'
   // Add other platforms as needed
 }
 ```

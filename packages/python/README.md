@@ -6,7 +6,7 @@
     </p>
 </h1>
 <p align="center">
-    End-to-End Testing with AI for Agents and Engineers
+    End-to-End Testing Harness
     <br />
     <a href="#installation">Installation</a>
     ·

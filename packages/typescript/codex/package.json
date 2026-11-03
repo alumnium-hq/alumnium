@@ -1,6 +1,6 @@
 {
   "name": "@alumnium/codex",
-  "version": "0.24.0-alpha.4",
+  "version": "0.24.0",
   "description": "Alumnium Codex LLM provider",
   "license": "MIT",
   "type": "module",
