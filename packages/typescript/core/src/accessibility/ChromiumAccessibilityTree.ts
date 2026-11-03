@@ -46,6 +46,7 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree<
   constructor(
     cdpResponseOrXml: Record<string, unknown> | string,
     frameMap?: Record<number, object>,
+    frameChainMap?: Record<number, number[]>,
   ) {
     super(cdpResponseOrXml);
 
@@ -57,6 +58,7 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree<
     this.#cdpResponse = {};
     this.xml = cdpResponseOrXml;
     if (frameMap) this.#frameMap = frameMap;
+    if (frameChainMap) this.#frameChainMap = frameChainMap;
   }
 
   /** Convert CDP response to raw XML format preserving all data. */
@@ -322,6 +324,10 @@ export class ChromiumAccessibilityTree extends BaseAccessibilityTree<
       preserveFalseAttrs: PRESERVE_FALSE_ATTRS,
     });
 
-    return new ChromiumAccessibilityTree(scopedXml, this.#frameMap);
+    return new ChromiumAccessibilityTree(
+      scopedXml,
+      this.#frameMap,
+      this.#frameChainMap,
+    );
   }
 }

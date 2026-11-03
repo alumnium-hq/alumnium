@@ -39,4 +39,29 @@ class ChromiumAccessibilityTreeTest {
     assertThat(tree.toStr()).contains("checked=\"false\"");
     assertThat(tree.scopeToArea(1).toStr()).contains("checked=\"false\"");
   }
+
+  @Test
+  void scopeToAreaPreservesFrameChain() {
+    Map<String, Object> form =
+        Map.of(
+            "nodeId", "1",
+            "backendDOMNodeId", 1,
+            "role", Map.of("value", "form"),
+            "childIds", List.of("2"),
+            "_frame_chain", List.of(10));
+    Map<String, Object> button =
+        Map.of(
+            "nodeId",
+            "2",
+            "backendDOMNodeId",
+            2,
+            "role",
+            Map.of("value", "button"),
+            "_frame_chain",
+            List.of(10));
+    ChromiumAccessibilityTree tree =
+        new ChromiumAccessibilityTree(Map.of("nodes", List.of(form, button)));
+
+    assertThat(tree.scopeToArea(1).elementById(2).frameChain()).containsExactly(10);
+  }
 }

@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Iframe Area</title>
+  </head>
+  <body>
+    <script>
+      const counter = window === window.top ? "Main" : "Frame";
+      document.write(`
+        <section aria-label="${counter} counter">
+          <h2>${counter} counter</h2>
+          <button onclick="increment()">Increment</button>
+          <p id="count">${counter} count: 0</p>
+        </section>
+      `);
+
+      function increment() {
+        const count = document.getElementById("count");
+        count.textContent = `${counter} count: ${Number(count.textContent.split(": ")[1]) + 1}`;
+      }
+
+      if (window === window.top) {
+        const frame = document.createElement("iframe");
+        frame.src = location.href;
+        document.body.appendChild(frame);
+      }
+    </script>
+  </body>
+</html>

@@ -63,3 +63,27 @@ def test_preserves_unchecked_state():
 
     assert 'checked="false"' in tree.to_str()
     assert 'checked="false"' in tree.scope_to_area(1).to_str()
+
+
+def test_scope_to_area_preserves_frame_chain():
+    tree = ChromiumAccessibilityTree(
+        {
+            "nodes": [
+                {
+                    "nodeId": "1",
+                    "backendDOMNodeId": 1,
+                    "role": {"value": "form"},
+                    "childIds": ["2"],
+                    "_frame_chain": [10],
+                },
+                {
+                    "nodeId": "2",
+                    "backendDOMNodeId": 2,
+                    "role": {"value": "button"},
+                    "_frame_chain": [10],
+                },
+            ]
+        }
+    )
+
+    assert tree.scope_to_area(1).element_by_id(2).frame_chain == [10]
