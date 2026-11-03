@@ -25,16 +25,16 @@ publish_pkg() {
 	[[ -f "$pkg" ]] || return 0
 
 	# Skip versions already on the registry, so a failed release can be re-run.
-	local name
-	name="$(tar -xOzf "$pkg" package/package.json | node -p 'JSON.parse(require("fs").readFileSync(0, "utf-8")).name')"
-	if npm view "$name@$VERSION" version >/dev/null 2>&1; then
-		echo -e "⏭️ $name@$VERSION is already published, skipping\n"
+	local name version
+	read -r name version < <(tar -xOzf "$pkg" package/package.json | node -p 'const { name, version } = JSON.parse(require("fs").readFileSync(0, "utf-8")); `${name} ${version}`')
+	if npm view "$name@$version" version >/dev/null 2>&1; then
+		echo -e "⏭️ $name@$version is already published, skipping\n"
 		return 0
 	fi
 
 	echo -e "🌀️ Publishing $pkg...\n"
 	PUBLISH_ARGS=("--provenance" "--access=public")
-	if [[ "$VERSION" == *alpha* ]]; then
+	if [[ "$version" == *alpha* ]]; then
 		PUBLISH_ARGS+=("--tag=next")
 	fi
 	npm publish "$pkg" "${PUBLISH_ARGS[@]}"

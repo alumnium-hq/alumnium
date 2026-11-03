@@ -566,7 +566,7 @@ exports.binPath = function binPath() {
       NPM_PUBLISH_ORDER_PATH,
       PUBLISHED_PKGS.map(({ packageJson }) => packageJson.name)
         .filter((name) => name !== MAIN_NPM_PKG_NAME)
-        .map((name) => `${npmTarBaseName(name)}-${ALUMNIUM_VERSION}.tgz\n`)
+        .map((name) => `${npmTarBaseName(name)}-${npmPkgVersion(name)}.tgz\n`)
         .join(""),
     );
   }
@@ -851,7 +851,16 @@ async function buildNpmTar(name: string, dir: string) {
   await $`bun pm pack --destination ${DIST_NPM_DIR}`.cwd(dir).quiet();
   return path.resolve(
     DIST_NPM_DIR,
-    `${npmTarBaseName(name)}-${ALUMNIUM_VERSION}.tgz`,
+    `${npmTarBaseName(name)}-${npmPkgVersion(name)}.tgz`,
+  );
+}
+
+// Workspace packages are released together at ALUMNIUM_VERSION, but one can
+// be bumped on its own.
+function npmPkgVersion(name: string): string {
+  return (
+    PUBLISHED_PKGS.find(({ packageJson }) => packageJson.name === name)
+      ?.packageJson.version ?? ALUMNIUM_VERSION
   );
 }
 
@@ -862,7 +871,7 @@ function pinWorkspaceVersions(
   return Object.fromEntries(
     Object.entries(deps).map(([dep, version]) => [
       dep,
-      version.startsWith("workspace:") ? ALUMNIUM_VERSION : version,
+      version.startsWith("workspace:") ? npmPkgVersion(dep) : version,
     ]),
   );
 }
@@ -947,7 +956,7 @@ ${pkg.packageJson.description}. See [the main \`alumnium\` package page](https:/
     contributors: mainPackageJson?.contributors,
     repository: mainPackageJson?.repository,
     ...packageJson,
-    version: ALUMNIUM_VERSION,
+    version: npmPkgVersion(name),
     files: ["src", "README.md", "LICENSE.md"],
     exports: Object.fromEntries(
       entries.map(([subpath, entryPath]) => {
