@@ -47,7 +47,7 @@ const defaultModels: Record<Model.Provider, string> = {
   cursor: "composer-2.5",
   deepseek: "deepseek-flash",
   google: "gemini-3.5-flash-lite",
-  mistralai: "mistral-medium-3-5",
+  mistralai: "mistral-large-4",
   ollama: "qwen3.6",
   openai: "gpt-6-luna",
   openrouter: "openai/gpt-6-luna",

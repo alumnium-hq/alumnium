@@ -30,7 +30,7 @@ class Name:
         Provider.CURSOR: "composer-2.5",
         Provider.DEEPSEEK: "deepseek-flash",
         Provider.GOOGLE: "gemini-3.5-flash-lite",
-        Provider.MISTRALAI: "mistral-medium-3-5",
+        Provider.MISTRALAI: "mistral-large-4",
         Provider.OLLAMA: "qwen3.6",
         Provider.OPENAI: "gpt-6-luna",
         Provider.OPENROUTER: "openai/gpt-6-luna",

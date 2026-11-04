@@ -92,7 +92,7 @@ public final class Model {
             Map.entry(Provider.CURSOR, "composer-2.5"),
             Map.entry(Provider.DEEPSEEK, "deepseek-flash"),
             Map.entry(Provider.GOOGLE, "gemini-3.5-flash-lite"),
-            Map.entry(Provider.MISTRALAI, "mistral-medium-3-5"),
+            Map.entry(Provider.MISTRALAI, "mistral-large-4"),
             Map.entry(Provider.OLLAMA, "qwen3.6"),
             Map.entry(Provider.OPENAI, "gpt-6-luna"),
             Map.entry(Provider.OPENROUTER, "openai/gpt-6-luna"),

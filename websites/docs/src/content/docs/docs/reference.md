@@ -187,12 +187,12 @@ Select AI provider and model to use.
 | cursor        | composer-2.5              | Cursor models via Cursor Agents SDK (local runtime).         |
 | deepseek      | deepseek-flash            | DeepSeek Platform.                                           |
 | google        | gemini-3.5-flash-lite     | Google AI Studio API.                                        |
-| mistralai     | mistral-medium-3-5        | Mistral AI Studio API.                                       |
 | ollama        | qwen3.6:35b               | Local model inference with Ollama.                           |
 | xai           | grok-4.3                  | xAI API.                                                     |
 | anthropic  | claude-haiku-5-5           | Anthropic API.                                               |
 | azure      | gpt-6-luna                 | Azure OpenAI / AI Foundry Responses API.                     |
 | codex      | gpt-6-luna                 | OpenAI models via ChatGPT Plus/Pro OAuth.                    |
+| mistralai  | mistral-large-4            | Mistral AI Studio API.                                       |
 | openai     | gpt-6-luna                 | OpenAI API.                                                  |
 | openrouter | openai/gpt-6-luna          | Models routed through OpenRouter.                            |
 
