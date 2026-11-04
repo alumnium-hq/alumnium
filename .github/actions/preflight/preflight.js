@@ -16,10 +16,9 @@ class Preflight {
     "selenium",
   ];
   static SUPPORTED_PROVIDERS = [
-    "azure_foundry",
-    "azure_openai",
     "anthropic",
     "aws",
+    "azure",
     "codex",
     "cursor",
     "deepseek",

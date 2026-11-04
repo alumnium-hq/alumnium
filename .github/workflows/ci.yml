@@ -59,8 +59,8 @@ on:
         description: Test on Amazon Bedrock provider
         type: boolean
         default: true
-      azure_openai:
-        description: Test on Azure OpenAI provider
+      azure:
+        description: Test on Azure provider
         type: boolean
         default: false
       anthropic:

@@ -417,27 +417,19 @@ export const Env = {
     return secretEnvVar("AWS_SECRET_KEY", z.string().optional());
   },
 
-  get AZURE_FOUNDRY_API_KEY() {
-    return secretEnvVar("AZURE_FOUNDRY_API_KEY", z.string().optional());
+  get AZURE_API_KEY() {
+    return secretEnvVar("AZURE_API_KEY", z.string().optional());
   },
 
-  get AZURE_FOUNDRY_TARGET_URI() {
-    return secretEnvVar("AZURE_FOUNDRY_TARGET_URI", z.string().optional());
-  },
-
-  get AZURE_OPENAI_API_KEY() {
-    return secretEnvVar("AZURE_OPENAI_API_KEY", z.string().optional());
-  },
-
-  get AZURE_OPENAI_DEFAULT_HEADERS() {
+  get AZURE_DEFAULT_HEADERS() {
     return envVar(
-      "AZURE_OPENAI_DEFAULT_HEADERS",
+      "AZURE_DEFAULT_HEADERS",
       jsonString(z.record(z.string(), z.string())).optional(),
     );
   },
 
-  get AZURE_OPENAI_ENDPOINT() {
-    return secretEnvVar("AZURE_OPENAI_ENDPOINT", z.string().optional());
+  get AZURE_ENDPOINT() {
+    return secretEnvVar("AZURE_ENDPOINT", z.string().optional());
   },
 
   get CURSOR_API_KEY() {

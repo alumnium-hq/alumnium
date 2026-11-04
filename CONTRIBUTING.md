@@ -182,7 +182,7 @@ For local development, you may need to configure the following environment varia
 
 Every pull request runs build, formatting, lint, type and unit checks. System tests and agent
 evaluations also run automatically for pull requests opened from branches in this repository,
-using the `azure_openai` provider only. Pull requests from forks do not receive API keys, so
+using the `aws` provider only. Pull requests from forks do not receive API keys, so
 their system tests are skipped until a maintainer runs them explicitly (see below).
 
 Maintainers can run the full suite manually from the _Actions_ tab or with the GitHub CLI:
@@ -196,7 +196,7 @@ gh workflow run ci.yml -f google=true -f anthropic=true -f typescript=false -f j
 ```
 
 Only `aws` is checked by default. Every provider from `packages/typescript/core/src/Model.ts` is
-available, but only some have credentials configured in CI (aws, azure_openai, anthropic,
+available, but only some have credentials configured in CI (aws, azure, anthropic,
 deepseek, google, mistralai, openai); the others will fail until secrets are added.
 
 ## AI-First Testing Philosophy

@@ -8,13 +8,12 @@ Using third-party AI providers such as Anthropic, Google AI Studio, and OpenAI i
 Alumnium provides several options for using self-hosted LLMs:
 
 1. Serverless models on [Amazon Bedrock][1].
-2. OpenAI service on [Azure][4].
-3. Models via [Azure AI Foundry][7].
-4. Local model inference with [Ollama][6].
+2. OpenAI models on [Azure][4].
+3. Local model inference with [Ollama][6].
 
 ## Amazon Bedrock
 
-Alumnium can use any model available on Amazon Bedrock by passing its model or inference profile ID after `aws/`. By default, it uses [GPT-5.6 Luna][5]. Alumnium picks prompts and request settings tuned for the model vendor (e.g. [Claude][2], [Llama][3], GPT) and falls back to generic prompts for other vendors.
+Alumnium can use any model available on Amazon Bedrock by passing its model or inference profile ID after `aws/`. By default, it uses [GPT-6 Luna][5]. Alumnium picks prompts and request settings tuned for the model vendor (e.g. [Claude][2], GPT) and falls back to generic prompts for other vendors.
 
 Please follow the respective documentation on how to enable access to the model on Bedrock. Once enabled, configure Alumnium to use it by exporting the following environment variables:
 
@@ -28,30 +27,17 @@ export AWS_SECRET_KEY="..."
 export AWS_REGION_NAME="us-west-1"  # default: us-east-1
 ```
 
-## Azure Foundry
+## Azure
 
-Alumnium supports GPT-5.6 Luna model on Azure AI Foundry.
-
-Please follow the respective documentation on how to deploy the model to Azure AI Foundry. Once deployed, configure Alumnium to use it by exporting the following environment variables:
-
-```bash
-export ALUMNIUM_MODEL="azure_foundry"
-export AZURE_FOUNDRY_API_KEY="..."
-# Change as needed
-export AZURE_FOUNDRY_TARGET_URI="https://my-project.openai.azure.com"
-```
-
-## Azure OpenAI
-
-Alumnium supports GPT-5.6 Luna model on Azure OpenAI service.
+Alumnium supports GPT-6 Luna model on Azure via the Responses API. It works with both Azure OpenAI and Azure AI Foundry resources.
 
 Please follow the respective documentation on how to deploy the model to Azure. Once deployed, configure Alumnium to use it by exporting the following environment variables:
 
 ```bash
-export ALUMNIUM_MODEL="azure_openai"
-export AZURE_OPENAI_API_KEY="..."
+export ALUMNIUM_MODEL="azure"  # or "azure/<deployment-name>"
+export AZURE_API_KEY="..."
 # Change as needed
-export AZURE_OPENAI_ENDPOINT="https://my-project.openai.azure.com"
+export AZURE_ENDPOINT="https://my-project.openai.azure.com"
 ```
 
 ## Ollama
@@ -72,4 +58,3 @@ export ALUMNIUM_OLLAMA_URL="..."  # if you host Ollama on a server
 [4]: https://azure.microsoft.com/en-us/products/ai-services/openai-service
 [5]: https://aws.amazon.com/bedrock/openai/
 [6]: https://ollama.com
-[7]: https://azure.microsoft.com/en-us/products/ai-foundry
