@@ -31,6 +31,7 @@ const providers = [
   "cursor",
   "deepseek",
   "google",
+  "meta",
   "mistralai",
   "ollama",
   "openai",
@@ -46,6 +47,7 @@ const defaultModels: Record<Model.Provider, string> = {
   cursor: "composer-2.5",
   deepseek: "deepseek-flash",
   google: "gemini-3.5-flash-lite",
+  meta: "muse-spark-1.3-contributor",
   mistralai: "mistral-large-4",
   ollama: "qwen3.6",
   openai: "gpt-6-luna",
@@ -54,15 +56,6 @@ const defaultModels: Record<Model.Provider, string> = {
 };
 
 const ModelProvider = z.enum(providers);
-
-const legacyProviders = {
-  aws_meta: ["aws", "us.meta.llama4-maverick-17b-instruct-v1:0"],
-} as const satisfies Record<string, [Model.Provider, string]>;
-
-const ModelProviderInput = z.enum([
-  ...providers,
-  ...(Object.keys(legacyProviders) as (keyof typeof legacyProviders)[]),
-]);
 
 const bedrockRegionPrefix = /^(us|us-gov|eu|apac|jp|au|ca|global)\./;
 
@@ -75,6 +68,7 @@ const providerBuilders: Record<Model.Provider, [pkg: string, builder: string]> =
     cursor: ["@alumnium/cursor", "cursor"],
     deepseek: ["@alumnium/deepseek", "deepseek"],
     google: ["@alumnium/google", "google"],
+    meta: ["@alumnium/meta", "meta"],
     mistralai: ["@alumnium/mistral", "mistral"],
     ollama: ["@alumnium/ollama", "ollama"],
     openai: ["@alumnium/openai", "openai"],
@@ -86,7 +80,6 @@ const devs = [
   "anthropic",
   "google",
   "deepseek",
-  "meta",
   "mistralai",
   "ollama",
   "xai",
@@ -100,19 +93,10 @@ export const defaultModelProvider: Model.Provider = "openai";
 export const Model = {
   Provider: ModelProvider,
 
-  /** Providers accepted in model strings, including deprecated ones. */
-  ProviderInput: ModelProviderInput,
-
   Dev: ModelDev,
 
   new(providerStr: string, nameStr: string | undefined): Model {
-    const input = Model.ProviderInput.parse(providerStr, { reportInput: true });
-    if (input in legacyProviders) {
-      const [provider, name] =
-        legacyProviders[input as keyof typeof legacyProviders];
-      return { provider, name: nameStr || name };
-    }
-    const provider = input as Model.Provider;
+    const provider = Model.Provider.parse(providerStr, { reportInput: true });
     const name = nameStr || Model.defaultProviderModel(provider);
     return { provider, name };
   },

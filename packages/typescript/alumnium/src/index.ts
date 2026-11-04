@@ -5,6 +5,7 @@ export { codex } from "@alumnium/codex";
 export { cursor } from "@alumnium/cursor";
 export { deepseek } from "@alumnium/deepseek";
 export { google } from "@alumnium/google";
+export { meta } from "@alumnium/meta";
 export { mistral } from "@alumnium/mistral";
 export { ollama } from "@alumnium/ollama";
 export { openai } from "@alumnium/openai";

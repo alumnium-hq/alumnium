@@ -1,6 +1,5 @@
 from os import getenv
 
-import pytest
 from pytest import fixture, mark
 
 from alumnium import Provider
@@ -23,9 +22,6 @@ def learn(al):
     reason="Area is not properly extracted from Appium source code.",
 )
 def test_table_extraction(al, navigate):
-    if "meta.llama" in al.model.name:
-        pytest.xfail("Table area instructions need more work")
-
     navigate("the-internet/tables.html")
 
     area = al.area("first table")
@@ -40,9 +36,6 @@ def test_table_extraction(al, navigate):
     reason="Area is not properly extracted from Appium source code.",
 )
 def test_table_sorting(al, navigate):
-    if "meta.llama" in al.model.name:
-        pytest.xfail("Table area instructions need more work")
-
     navigate("the-internet/tables.html")
 
     table1 = al.area("first table")

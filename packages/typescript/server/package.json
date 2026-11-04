@@ -17,6 +17,7 @@
     "@alumnium/cursor": "workspace:*",
     "@alumnium/deepseek": "workspace:*",
     "@alumnium/google": "workspace:*",
+    "@alumnium/meta": "workspace:*",
     "@alumnium/mistral": "workspace:*",
     "@alumnium/ollama": "workspace:*",
     "@alumnium/openai": "workspace:*",

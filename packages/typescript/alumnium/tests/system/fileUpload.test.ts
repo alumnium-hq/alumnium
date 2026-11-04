@@ -48,11 +48,8 @@ describe("File Upload", () => {
     expect(heading).toBe("File Uploaded!");
   });
 
-  it("should upload multiple files", async ({ expect, setup, skip }) => {
-    const { al, $, model } = await setup();
-
-    if (model.name.includes("meta.llama"))
-      skip("Prefers to click on the upload button manually");
+  it("should upload multiple files", async ({ expect, setup }) => {
+    const { al, $ } = await setup();
 
     await $.navigate("multiple_file_upload.html");
     await al.do(`upload files '${testFile1}', '${testFile2}'`);
@@ -69,13 +66,10 @@ describe("File Upload", () => {
   });
 
   it("should upload a hidden file", async ({ expect, setup, skip }) => {
-    const { al, $, driverId: driverKind, model } = await setup();
+    const { al, $, driverId: driverKind } = await setup();
 
     if (driverKind === "selenium")
       skip("Hidden file upload inputs are not supported in Selenium");
-
-    if (model.name.includes("meta.llama"))
-      skip("Prefers to click on the upload button manually");
 
     await $.navigate("hidden_file_upload.html");
     await al.do(`upload '${testFile1}' to 'Choose Files' button`);

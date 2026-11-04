@@ -38,6 +38,7 @@ export const PROVIDER_TO_PROMPTS_DEV: AgentPrompts.ProviderToDev = {
   aws: "openai",
   google: "google",
   deepseek: "deepseek",
+  meta: "openai",
   mistralai: "mistralai",
   ollama: "openai",
   xai: "xai",
@@ -51,7 +52,6 @@ export const PROVIDER_TO_PROMPTS_DEV: AgentPrompts.ProviderToDev = {
 const BEDROCK_VENDOR_TO_PROMPTS_DEV: Partial<Record<string, Model.Dev>> = {
   anthropic: "anthropic",
   deepseek: "deepseek",
-  meta: "meta",
   mistral: "mistralai",
   openai: "openai",
 };

@@ -23,6 +23,7 @@ class Preflight {
     "cursor",
     "deepseek",
     "google",
+    "meta",
     "mistralai",
     "ollama",
     "openai",

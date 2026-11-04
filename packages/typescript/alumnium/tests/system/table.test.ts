@@ -11,9 +11,6 @@ describe("Table", () => {
       if (model.provider === "mistralai")
         await al.learn("sort by web site", ["click 'Web Site' header"]);
 
-      if (model.name.includes("meta.llama"))
-        skip("Table area instructions need more work");
-
       if (isMobile)
         skip("Area is not properly extracted from Appium source code.");
 

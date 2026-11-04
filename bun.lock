@@ -40,6 +40,7 @@
         "@alumnium/google": "workspace:*",
         "@alumnium/maestro": "workspace:*",
         "@alumnium/mcp": "workspace:*",
+        "@alumnium/meta": "workspace:*",
         "@alumnium/mistral": "workspace:*",
         "@alumnium/ollama": "workspace:*",
         "@alumnium/openai": "workspace:*",
@@ -121,6 +122,7 @@
         "@alumnium/deepseek": "workspace:*",
         "@alumnium/google": "workspace:*",
         "@alumnium/maestro": "workspace:*",
+        "@alumnium/meta": "workspace:*",
         "@alumnium/mistral": "workspace:*",
         "@alumnium/ollama": "workspace:*",
         "@alumnium/openai": "workspace:*",
@@ -304,6 +306,16 @@
         "zod": "^4.4.1",
       },
     },
+    "packages/typescript/meta": {
+      "name": "@alumnium/meta",
+      "version": "0.24.0",
+      "dependencies": {
+        "@ai-sdk/openai": "^4.0.46",
+        "@ai-sdk/provider": "^4.0.7",
+        "@alumnium/core": "workspace:*",
+        "ai": "^7.0.78",
+      },
+    },
     "packages/typescript/mistral": {
       "name": "@alumnium/mistral",
       "version": "0.24.0",
@@ -377,6 +389,7 @@
         "@alumnium/cursor": "workspace:*",
         "@alumnium/deepseek": "workspace:*",
         "@alumnium/google": "workspace:*",
+        "@alumnium/meta": "workspace:*",
         "@alumnium/mistral": "workspace:*",
         "@alumnium/ollama": "workspace:*",
         "@alumnium/openai": "workspace:*",
@@ -406,7 +419,7 @@
     },
     "packages/typescript/test": {
       "name": "@alumnium/test",
-      "version": "0.24.0",
+      "version": "0.24.1",
       "dependencies": {
         "@alumnium/core": "workspace:*",
         "@js-fns/xxhash": "^0.1.0",
@@ -485,9 +498,6 @@
       },
     },
   },
-  "patchedDependencies": {
-    "@ai-sdk/amazon-bedrock@5.0.61": "patches/@ai-sdk%2Famazon-bedrock@5.0.61.patch",
-  },
   "overrides": {
     "ajv": ">=8.18.0",
     "lodash": ">=4.18.1",
@@ -542,6 +552,8 @@
     "@alumnium/maestro": ["@alumnium/maestro@workspace:packages/typescript/maestro"],
 
     "@alumnium/mcp": ["@alumnium/mcp@workspace:packages/typescript/mcp"],
+
+    "@alumnium/meta": ["@alumnium/meta@workspace:packages/typescript/meta"],
 
     "@alumnium/mistral": ["@alumnium/mistral@workspace:packages/typescript/mistral"],
 

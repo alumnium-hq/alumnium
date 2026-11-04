@@ -11,20 +11,9 @@ public final class Model {
   private final Provider provider;
   private final String name;
 
-  @SuppressWarnings("deprecation")
   public Model(Provider provider, String name) {
-    Provider resolved = Objects.requireNonNullElse(provider, Provider.OPENAI);
-    boolean blank = name == null || name.isEmpty();
-    String legacyName = Names.LEGACY_AWS.get(resolved);
-    if (legacyName != null) {
-      resolved = Provider.AWS;
-      if (blank) {
-        name = legacyName;
-        blank = false;
-      }
-    }
-    this.provider = resolved;
-    this.name = blank ? Names.defaultFor(this.provider) : name;
+    this.provider = Objects.requireNonNullElse(provider, Provider.OPENAI);
+    this.name = name == null || name.isEmpty() ? Names.defaultFor(this.provider) : name;
   }
 
   public Model() {
@@ -92,17 +81,12 @@ public final class Model {
             Map.entry(Provider.CURSOR, "composer-2.5"),
             Map.entry(Provider.DEEPSEEK, "deepseek-flash"),
             Map.entry(Provider.GOOGLE, "gemini-3.5-flash-lite"),
+            Map.entry(Provider.META, "muse-spark-1.3-contributor"),
             Map.entry(Provider.MISTRALAI, "mistral-large-4"),
             Map.entry(Provider.OLLAMA, "qwen3.6"),
             Map.entry(Provider.OPENAI, "gpt-6-luna"),
             Map.entry(Provider.OPENROUTER, "openai/gpt-6-luna"),
             Map.entry(Provider.XAI, "grok-4.3"));
-
-    /** Deprecated providers now served by {@link Provider#AWS}, with their default models. */
-    @SuppressWarnings("deprecation")
-    static final Map<Provider, String> LEGACY_AWS =
-        Map.of(
-            Provider.AWS_META, "us.meta.llama4-maverick-17b-instruct-v1:0");
 
     public static String defaultFor(Provider provider) {
       return DEFAULT.getOrDefault(provider, "");

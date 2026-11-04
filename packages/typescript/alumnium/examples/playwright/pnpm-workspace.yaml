@@ -13,6 +13,7 @@ overrides:
   "@alumnium/cursor": "file:../../../dist/npm-cursor"
   "@alumnium/deepseek": "file:../../../dist/npm-deepseek"
   "@alumnium/google": "file:../../../dist/npm-google"
+  "@alumnium/meta": "file:../../../dist/npm-meta"
   "@alumnium/maestro": "file:../../../dist/npm-maestro"
   "@alumnium/mistral": "file:../../../dist/npm-mistral"
   "@alumnium/ollama": "file:../../../dist/npm-ollama"

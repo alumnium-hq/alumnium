@@ -62,6 +62,7 @@
     "@alumnium/deepseek": "workspace:*",
     "@alumnium/google": "workspace:*",
     "@alumnium/maestro": "workspace:*",
+    "@alumnium/meta": "workspace:*",
     "@alumnium/mistral": "workspace:*",
     "@alumnium/ollama": "workspace:*",
     "@alumnium/openai": "workspace:*",

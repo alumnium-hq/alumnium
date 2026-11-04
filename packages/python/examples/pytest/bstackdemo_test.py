@@ -19,7 +19,7 @@ def learn(al, execute_script, navigate):
 
 @mark.xfail(driver_type == "appium-ios", reason="https://github.com/alumnium-hq/alumnium/issues/132")
 def test_checkout(al):
-    if "meta.llama" in al.model.name or al.model.provider == Provider.MISTRALAI:
+    if al.model.provider == Provider.MISTRALAI:
         pytest.xfail("Needs more tuning.")
 
     # Add products to the cart

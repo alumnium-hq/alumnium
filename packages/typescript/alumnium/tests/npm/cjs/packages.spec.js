@@ -17,6 +17,7 @@ const BUILDERS = {
   cursor: ["cursor"],
   deepseek: ["deepseek"],
   google: ["google"],
+  meta: ["meta"],
   mistral: ["mistral"],
   ollama: ["ollama"],
   openai: ["openai"],

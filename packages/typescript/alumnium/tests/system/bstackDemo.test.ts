@@ -13,11 +13,7 @@ describe("BrowserStack Demo", () => {
 
       if (result.driverId === "appium-ios")
         skip("https://github.com/alumnium-hq/alumnium/issues/132");
-      if (
-        result.model.name.includes("meta.llama") ||
-        result.model.provider === "mistralai"
-      )
-        skip("Needs more tuning");
+      if (result.model.provider === "mistralai") skip("Needs more tuning");
 
       return result;
     };
