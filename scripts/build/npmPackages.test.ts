@@ -30,8 +30,11 @@ describe("workspace packages", () => {
     );
   });
 
-  it("share the same version", () => {
-    const versions = new Set(report.map(({ version }) => version));
+  it("share the same major.minor version", () => {
+    // Packages may be released separately with different patch versions.
+    const versions = new Set(
+      report.map(({ version }) => version.split(".").slice(0, 2).join(".")),
+    );
     expect([...versions]).toHaveLength(1);
   });
 
