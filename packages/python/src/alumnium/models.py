@@ -23,18 +23,17 @@ class Provider(Enum):
 
 class Name:
     DEFAULT = {
-        Provider.AZURE_FOUNDRY: "gpt-5.6-luna",
-        Provider.AZURE_OPENAI: "gpt-5.6-luna",
         Provider.ANTHROPIC: "claude-haiku-4-5-20251001",
-        Provider.AWS: "us.openai.gpt-5.6-luna",
-        Provider.CODEX: "gpt-5.6-luna",
+        Provider.AWS: "us.openai.gpt-6-luna",
+        Provider.AZURE: "gpt-6-luna",
+        Provider.CODEX: "gpt-6-luna",
         Provider.CURSOR: "composer-2.5",
         Provider.DEEPSEEK: "deepseek-flash",
         Provider.GOOGLE: "gemini-3.5-flash-lite",
         Provider.MISTRALAI: "mistral-medium-3-5",
         Provider.OLLAMA: "qwen3.6",
-        Provider.OPENAI: "gpt-5.6-luna",
-        Provider.OPENROUTER: "openai/gpt-5.6-luna",
+        Provider.OPENAI: "gpt-6-luna",
+        Provider.OPENROUTER: "openai/gpt-6-luna",
         Provider.XAI: "grok-4.3",
     }
 

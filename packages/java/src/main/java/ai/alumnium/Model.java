@@ -85,18 +85,17 @@ public final class Model {
 
     public static final Map<Provider, String> DEFAULT =
         Map.ofEntries(
-            Map.entry(Provider.AZURE_FOUNDRY, "gpt-5.6-luna"),
-            Map.entry(Provider.AZURE_OPENAI, "gpt-5.6-luna"),
             Map.entry(Provider.ANTHROPIC, "claude-haiku-4-5-20251001"),
-            Map.entry(Provider.AWS, "us.openai.gpt-5.6-luna"),
-            Map.entry(Provider.CODEX, "gpt-5.6-luna"),
+            Map.entry(Provider.AWS, "us.openai.gpt-6-luna"),
+            Map.entry(Provider.AZURE, "gpt-6-luna"),
+            Map.entry(Provider.CODEX, "gpt-6-luna"),
             Map.entry(Provider.CURSOR, "composer-2.5"),
             Map.entry(Provider.DEEPSEEK, "deepseek-flash"),
             Map.entry(Provider.GOOGLE, "gemini-3.5-flash-lite"),
             Map.entry(Provider.MISTRALAI, "mistral-medium-3-5"),
             Map.entry(Provider.OLLAMA, "qwen3.6"),
-            Map.entry(Provider.OPENAI, "gpt-5.6-luna"),
-            Map.entry(Provider.OPENROUTER, "openai/gpt-5.6-luna"),
+            Map.entry(Provider.OPENAI, "gpt-6-luna"),
+            Map.entry(Provider.OPENROUTER, "openai/gpt-6-luna"),
             Map.entry(Provider.XAI, "grok-4.3"));
 
     /** Deprecated providers now served by {@link Provider#AWS}, with their default models. */

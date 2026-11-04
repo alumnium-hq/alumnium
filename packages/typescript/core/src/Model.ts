@@ -40,18 +40,17 @@ const providers = [
 ] as const;
 
 const defaultModels: Record<Model.Provider, string> = {
-  azure_foundry: "gpt-5.6-luna",
-  azure_openai: "gpt-5.6-luna",
   anthropic: "claude-haiku-4-5-20251001",
-  aws: "us.openai.gpt-5.6-luna",
-  codex: "gpt-5.6-luna",
+  aws: "us.openai.gpt-6-luna",
+  azure: "gpt-6-luna",
+  codex: "gpt-6-luna",
   cursor: "composer-2.5",
   deepseek: "deepseek-flash",
   google: "gemini-3.5-flash-lite",
   mistralai: "mistral-medium-3-5",
   ollama: "qwen3.6",
-  openai: "gpt-5.6-luna",
-  openrouter: "openai/gpt-5.6-luna",
+  openai: "gpt-6-luna",
+  openrouter: "openai/gpt-6-luna",
   xai: "grok-4.3",
 };
 
