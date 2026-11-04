@@ -157,6 +157,7 @@ run = [
   { task = "test/system:playwright", env = { ALUMNIUM_MODEL = "azure" } },
   { task = "test/system:playwright", env = { ALUMNIUM_MODEL = "deepseek" } },
   { task = "test/system:playwright", env = { ALUMNIUM_MODEL = "google" } },
+  { task = "test/system:playwright", env = { ALUMNIUM_MODEL = "meta" } },
   { task = "test/system:playwright", env = { ALUMNIUM_MODEL = "mistralai" } },
   { task = "test/system:playwright", env = { ALUMNIUM_MODEL = "ollama" } },
   { task = "test/system:playwright", env = { ALUMNIUM_MODEL = "openai" } },
@@ -288,6 +289,7 @@ run = [
   { task = "test/cache:cursor" },
   { task = "test/cache:deepseek" },
   { task = "test/cache:google" },
+  { task = "test/cache:meta" },
   { task = "test/cache:mistralai" },
   { task = "test/cache:ollama" },
   { task = "test/cache:openai" },
@@ -317,6 +319,10 @@ run = { task = "test/cache", args = ["deepseek"] }
 [tasks."test/cache:google"]
 description = "Run cache tests for `google` model. See `test/cache` task for details."
 run = { task = "test/cache", args = ["google"] }
+
+[tasks."test/cache:meta"]
+description = "Run cache tests for `meta` model. See `test/cache` task for details."
+run = { task = "test/cache", args = ["meta"] }
 
 [tasks."test/cache:mistralai"]
 description = "Run cache tests for `mistralai` model. See `test/cache` task for details."

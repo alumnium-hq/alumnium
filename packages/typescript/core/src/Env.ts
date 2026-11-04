@@ -185,8 +185,8 @@ export const Env = {
       "ALUMNIUM_MODEL",
       z
         .union([
-          Model.ProviderInput,
-          z.templateLiteral([Model.ProviderInput, "/", z.string()]),
+          Model.Provider,
+          z.templateLiteral([Model.Provider, "/", z.string()]),
         ])
         .optional()
         .transform((val, _ctx): Model => {
@@ -442,6 +442,10 @@ export const Env = {
 
   get GOOGLE_API_KEY() {
     return secretEnvVar("GOOGLE_API_KEY", z.string().optional());
+  },
+
+  get META_API_KEY() {
+    return secretEnvVar("META_API_KEY", z.string().optional());
   },
 
   get MISTRAL_API_KEY() {

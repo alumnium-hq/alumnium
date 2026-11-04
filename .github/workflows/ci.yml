@@ -79,6 +79,10 @@ on:
         description: Test on Google provider
         type: boolean
         default: false
+      meta:
+        description: Test on Meta provider
+        type: boolean
+        default: false
       mistralai:
         description: Test on MistralAI provider
         type: boolean

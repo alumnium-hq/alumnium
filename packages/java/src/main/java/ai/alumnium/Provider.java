@@ -6,21 +6,12 @@ import java.util.Optional;
 public enum Provider {
   ANTHROPIC("anthropic"),
   AWS("aws"),
-  /**
-   * @deprecated Use {@link #AWS} with a model name instead.
-   */
-  @Deprecated
-  AWS_ANTHROPIC("aws_anthropic"),
-  /**
-   * @deprecated Use {@link #AWS} with a model name instead.
-   */
-  @Deprecated
-  AWS_META("aws_meta"),
   AZURE("azure"),
   CODEX("codex"),
   CURSOR("cursor"),
   DEEPSEEK("deepseek"),
   GOOGLE("google"),
+  META("meta"),
   MISTRALAI("mistralai"),
   OLLAMA("ollama"),
   OPENAI("openai"),

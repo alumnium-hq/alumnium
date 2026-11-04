@@ -65,15 +65,15 @@ body:
     attributes:
       label: Which LLM are you using?
       options:
-        - Claude 4.5 Haiku (Anthropic)
-        - DeepSeek V3 (DeepSeek)
-        - GPT-4.0 Mini (Open AI)
-        - Gemini 2.0 Flash (Google)
-        - Llama 4.0 Maverick (Meta)
-        - Mistral Medium 3 (MistralAI)
-        - Mistral Small 3.1 24B (Ollama)
+        - Claude 5.5 Haiku (Anthropic)
+        - DeepSeek Flash (DeepSeek)
+        - GPT-6 Luna (OpenAI)
+        - Gemini 3.5 Flash Lite (Google)
+        - Muse Spark 1.3 (Meta)
+        - Mistral Large 4 (MistralAI)
+        - Qwen 3.6 (Ollama)
         - Other
-      default: 3
+      default: 2
 
   - type: textarea
     attributes:

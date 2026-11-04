@@ -13,7 +13,7 @@ Alumnium needs access to an AI model to work. The following models are supported
 | [OpenRouter][27]        | GPT-6 Luna              |
 | [Codex][22]             | GPT-6 Luna              |
 | [DeepSeek][12]          | DeepSeek Flash          |
-| [Meta][8]               | Llama 4 Maverick 17B    |
+| [Meta][8]               | Muse Spark 1.3          |
 | [MistralAI][16]         | Mistral Large 4         |
 | [Ollama][15]            | Qwen 3.6                |
 | [xAI][18]               | Grok 4.3                |
@@ -115,21 +115,18 @@ export DEEPSEEK_API_KEY="sk-..."
 
 ## Meta
 
-:::caution
-Llama support is experimental. Its performance also highly depends on how you run it. The current implementation works via Amazon Bedrock, but we're looking forward to extending it with Ollama, llama.cpp, etc.
+:::note
+By default, Alumnium uses the `muse-spark-1.3-contributor` model, which is offered at a discounted price in exchange for allowing Meta to train on your prompts and completions. Use `meta/muse-spark-1.3` to opt out.
 :::
 
-To use Meta Llama as an AI provider in Alumnium:
+To use Meta as an AI provider in Alumnium:
 
-1. Set up an [Amazon Bedrock][9] account.
-2. Enable access to [Llama 4 Maverick][10] models.
-3. Get the [access key and secret][11].
-4. Export the following environment variables before running tests:
+1. Get the [API key][9] in the Meta Model API dashboard.
+2. Export the following environment variables before running tests:
 
 ```bash
-export ALUMNIUM_MODEL="aws/us.meta.llama4-maverick-17b-instruct-v1:0"
-export AWS_ACCESS_KEY="..."
-export AWS_SECRET_KEY="..."
+export ALUMNIUM_MODEL="meta"
+export META_API_KEY="..."
 ```
 
 ## MistralAI
@@ -199,10 +196,8 @@ Read next to learn how to write tests!
 [5]: https://aistudio.google.com/app/apikey
 [6]: https://help.openai.com/en/articles/4936850-where-do-i-find-my-openai-api-key
 [7]: https://ai.google.dev/gemini-api/docs/billing
-[8]: https://www.llama.com
-[9]: https://aws.amazon.com/bedrock/
-[10]: https://aws.amazon.com/bedrock/llama/
-[11]: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html
+[8]: https://dev.meta.ai
+[9]: https://dev.meta.ai/resources/blog/build-with-muse-spark/
 [12]: https://www.deepseek.com
 [13]: https://platform.deepseek.com
 [14]: https://platform.deepseek.com/api_keys

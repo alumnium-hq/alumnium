@@ -78,6 +78,7 @@ const OWN_PROVIDER_IMPORTS: Record<string, string[]> = {
   "@alumnium/cursor": ["@cursor/sdk"],
   "@alumnium/deepseek": ["@ai-sdk/deepseek"],
   "@alumnium/google": ["@ai-sdk/google"],
+  "@alumnium/meta": ["@ai-sdk/openai"],
   "@alumnium/mistral": ["@ai-sdk/mistral"],
   "@alumnium/ollama": ["ollama-ai-provider-v2"],
   "@alumnium/openai": ["@ai-sdk/openai"],

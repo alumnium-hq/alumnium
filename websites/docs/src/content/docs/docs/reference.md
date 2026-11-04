@@ -47,6 +47,7 @@ LLM provider packages and the model builders they export, by `ALUMNIUM_MODEL` pr
 | `cursor`     | `@alumnium/cursor`     | `cursor()`     |
 | `deepseek`   | `@alumnium/deepseek`   | `deepseek()`   |
 | `google`     | `@alumnium/google`     | `google()`     |
+| `meta`       | `@alumnium/meta`       | `meta()`       |
 | `mistralai`  | `@alumnium/mistral`    | `mistral()`    |
 | `ollama`     | `@alumnium/ollama`     | `ollama()`     |
 | `openai`     | `@alumnium/openai`     | `openai()`     |
@@ -191,6 +192,7 @@ Select AI provider and model to use.
 | cursor     | composer-2.5               | Cursor models via Cursor Agents SDK (local runtime).         |
 | deepseek   | deepseek-flash             | DeepSeek Platform.                                           |
 | google     | gemini-3.5-flash-lite      | Google AI Studio API.                                        |
+| meta       | muse-spark-1.3-contributor | Meta Model API.                                              |
 | mistralai  | mistral-large-4            | Mistral AI Studio API.                                       |
 | ollama     | qwen3.6:35b                | Local model inference with Ollama.                           |
 | openai     | gpt-6-luna                 | OpenAI API.                                                  |
@@ -317,6 +319,10 @@ API key used when `ALUMNIUM_MODEL` is set to `google`.
 ### `LANGCHAIN_CODEX_LITTERBOX_UPLOAD`
 
 Set to `true` to enable vision support for the `codex` provider by temporarily uploading screenshots to a third-party image host ([litterbox.catbox.moe][4]) before sending them to the model. Codex models only accept image URLs, so this is required for vision checks. Default is `false`.
+
+### `META_API_KEY`
+
+API key used when `ALUMNIUM_MODEL` is set to `meta`.
 
 ### `MISTRAL_API_KEY`
 

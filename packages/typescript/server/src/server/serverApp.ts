@@ -21,6 +21,7 @@ import * as s from "@alumnium/core/internal";
 import * as cursor from "@alumnium/cursor";
 import * as deepseek from "@alumnium/deepseek";
 import * as google from "@alumnium/google";
+import * as meta from "@alumnium/meta";
 import * as mistral from "@alumnium/mistral";
 import * as ollama from "@alumnium/ollama";
 import * as openai from "@alumnium/openai";
@@ -36,6 +37,7 @@ const resolveModel = Model.resolver(
   cursor,
   deepseek,
   google,
+  meta,
   mistral,
   ollama,
   openai,

@@ -13,6 +13,13 @@ describe("Model.parse", () => {
     });
   });
 
+  it("uses the meta provider's default model", () => {
+    expect(Model.parse("meta")).toEqual({
+      provider: "meta",
+      name: "muse-spark-1.3-contributor",
+    });
+  });
+
   it("uses the cursor provider's default model", () => {
     expect(Model.parse("cursor")).toEqual({
       provider: "cursor",
@@ -83,31 +90,11 @@ describe("Model.builder", () => {
   });
 });
 
-describe("Model.parse legacy providers", () => {
-  it("maps deprecated AWS providers to aws with their default model", () => {
-    expect(Model.parse("aws_anthropic")).toEqual({
-      provider: "aws",
-      name: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-    });
-    expect(Model.parse("aws_meta")).toEqual({
-      provider: "aws",
-      name: "us.meta.llama4-maverick-17b-instruct-v1:0",
-    });
-  });
-
-  it("keeps explicit model names of deprecated AWS providers", () => {
-    expect(Model.parse("aws_meta/us.meta.llama4-scout")).toEqual({
-      provider: "aws",
-      name: "us.meta.llama4-scout",
-    });
-  });
-});
-
 describe("Model.bedrockVendor", () => {
   it.each([
-    ["us-gov.meta.llama4-maverick-17b-instruct-v1:0", "meta"],
     ["us.anthropic.claude-haiku-5-5", "anthropic"],
     ["global.openai.gpt-6-luna", "openai"],
+    ["us-gov.mistral.mistral-large-3", "mistral"],
     ["openai.gpt-6-luna", "openai"],
     ["zai.glm-5", "zai"],
   ])("returns vendor of %s", (name, vendor) => {
@@ -136,7 +123,11 @@ describe("Model.resolver", () => {
 
   it("binds models to the builders of the given modules", () => {
     const resolve = Model.resolver(openaiModule, awsModule);
-    for (const model of ["openai/gpt-5.6-mini", "aws", "aws_meta"]) {
+    for (const model of [
+      "openai/gpt-5.6-mini",
+      "aws",
+      "aws/us.anthropic.claude-haiku-5-5",
+    ]) {
       const resolved = resolve(Model.parse(model));
       expect(resolved).toMatchObject(Model.parse(model));
       expect(resolved.createLlm()).toBe(llm);

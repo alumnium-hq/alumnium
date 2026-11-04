@@ -9,6 +9,7 @@ import "@alumnium/codex";
 import "@alumnium/cursor";
 import "@alumnium/deepseek";
 import "@alumnium/google";
+import "@alumnium/meta";
 import "@alumnium/mistral";
 import "@alumnium/ollama";
 import "@alumnium/openai";

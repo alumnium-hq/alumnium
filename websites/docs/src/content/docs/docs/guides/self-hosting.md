@@ -18,9 +18,8 @@ Alumnium can use any model available on Amazon Bedrock by passing its model or i
 Please follow the respective documentation on how to enable access to the model on Bedrock. Once enabled, configure Alumnium to use it by exporting the following environment variables:
 
 ```bash
-export ALUMNIUM_MODEL="aws/us.anthropic.claude-haiku-4-5-20251001-v1:0"     # for Claude
-export ALUMNIUM_MODEL="aws/us.meta.llama4-maverick-17b-instruct-v1:0"       # for Llama
 export ALUMNIUM_MODEL="aws"                                # for GPT-6 Luna
+export ALUMNIUM_MODEL="aws/us.anthropic.claude-haiku-5-5"  # for Claude
 
 export AWS_ACCESS_KEY="..."
 export AWS_SECRET_KEY="..."
@@ -54,7 +53,6 @@ export ALUMNIUM_OLLAMA_URL="..."  # if you host Ollama on a server
 
 [1]: https://aws.amazon.com/bedrock
 [2]: https://aws.amazon.com/bedrock/claude/
-[3]: https://aws.amazon.com/bedrock/llama/
 [4]: https://azure.microsoft.com/en-us/products/ai-services/openai-service
 [5]: https://aws.amazon.com/bedrock/openai/
 [6]: https://ollama.com

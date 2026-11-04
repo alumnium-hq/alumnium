@@ -27,6 +27,7 @@
     "@alumnium/google": "workspace:*",
     "@alumnium/maestro": "workspace:*",
     "@alumnium/mcp": "workspace:*",
+    "@alumnium/meta": "workspace:*",
     "@alumnium/mistral": "workspace:*",
     "@alumnium/ollama": "workspace:*",
     "@alumnium/openai": "workspace:*",

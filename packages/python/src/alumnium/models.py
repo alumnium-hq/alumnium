@@ -5,14 +5,12 @@ from os import getenv
 class Provider(Enum):
     ANTHROPIC = "anthropic"
     AWS = "aws"
-    # Deprecated: use AWS with a model name instead.
-    AWS_ANTHROPIC = "aws_anthropic"
-    AWS_META = "aws_meta"
     AZURE = "azure"
     CODEX = "codex"
     CURSOR = "cursor"
     DEEPSEEK = "deepseek"
     GOOGLE = "google"
+    META = "meta"
     MISTRALAI = "mistralai"
     OLLAMA = "ollama"
     OPENAI = "openai"
@@ -29,6 +27,7 @@ class Name:
         Provider.CURSOR: "composer-2.5",
         Provider.DEEPSEEK: "deepseek-flash",
         Provider.GOOGLE: "gemini-3.5-flash-lite",
+        Provider.META: "muse-spark-1.3-contributor",
         Provider.MISTRALAI: "mistral-large-4",
         Provider.OLLAMA: "qwen3.6",
         Provider.OPENAI: "gpt-6-luna",
@@ -36,19 +35,10 @@ class Name:
         Provider.XAI: "grok-4.3",
     }
 
-    # Deprecated providers now served by Provider.AWS, with their default models.
-    LEGACY_AWS = {
-        Provider.AWS_META: "us.meta.llama4-maverick-17b-instruct-v1:0",
-    }
-
 
 class Model:
     def __init__(self, provider=None, name=None):
-        provider = Provider(provider or Provider.OPENAI)
-        if provider in Name.LEGACY_AWS:
-            name = name or Name.LEGACY_AWS[provider]
-            provider = Provider.AWS
-        self.provider = provider
+        self.provider = Provider(provider or Provider.OPENAI)
         self.name = name or Name.DEFAULT.get(self.provider, "")
 
     @staticmethod
