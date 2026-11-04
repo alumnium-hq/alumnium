@@ -7,7 +7,16 @@ public enum Provider {
   AZURE_OPENAI("azure_openai"),
   AZURE_FOUNDRY("azure_foundry"),
   ANTHROPIC("anthropic"),
+  AWS("aws"),
+  /**
+   * @deprecated Use {@link #AWS} with a model name instead.
+   */
+  @Deprecated
   AWS_ANTHROPIC("aws_anthropic"),
+  /**
+   * @deprecated Use {@link #AWS} with a model name instead.
+   */
+  @Deprecated
   AWS_META("aws_meta"),
   CODEX("codex"),
   CURSOR("cursor"),

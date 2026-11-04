@@ -11,9 +11,20 @@ public final class Model {
   private final Provider provider;
   private final String name;
 
+  @SuppressWarnings("deprecation")
   public Model(Provider provider, String name) {
-    this.provider = Objects.requireNonNullElse(provider, Provider.OPENAI);
-    this.name = (name == null || name.isEmpty()) ? Names.defaultFor(this.provider) : name;
+    Provider resolved = Objects.requireNonNullElse(provider, Provider.OPENAI);
+    boolean blank = name == null || name.isEmpty();
+    String legacyName = Names.LEGACY_AWS.get(resolved);
+    if (legacyName != null) {
+      resolved = Provider.AWS;
+      if (blank) {
+        name = legacyName;
+        blank = false;
+      }
+    }
+    this.provider = resolved;
+    this.name = blank ? Names.defaultFor(this.provider) : name;
   }
 
   public Model() {
@@ -77,8 +88,7 @@ public final class Model {
             Map.entry(Provider.AZURE_FOUNDRY, "gpt-5.6-luna"),
             Map.entry(Provider.AZURE_OPENAI, "gpt-5.6-luna"),
             Map.entry(Provider.ANTHROPIC, "claude-haiku-4-5-20251001"),
-            Map.entry(Provider.AWS_ANTHROPIC, "us.anthropic.claude-haiku-4-5-20251001-v1:0"),
-            Map.entry(Provider.AWS_META, "us.meta.llama4-maverick-17b-instruct-v1:0"),
+            Map.entry(Provider.AWS, "us.openai.gpt-5.6-luna"),
             Map.entry(Provider.CODEX, "gpt-5.6-luna"),
             Map.entry(Provider.CURSOR, "composer-2.5"),
             Map.entry(Provider.DEEPSEEK, "deepseek-flash"),
@@ -88,6 +98,13 @@ public final class Model {
             Map.entry(Provider.OPENAI, "gpt-5.6-luna"),
             Map.entry(Provider.OPENROUTER, "openai/gpt-5.6-luna"),
             Map.entry(Provider.XAI, "grok-4.3"));
+
+    /** Deprecated providers now served by {@link Provider#AWS}, with their default models. */
+    @SuppressWarnings("deprecation")
+    static final Map<Provider, String> LEGACY_AWS =
+        Map.of(
+            Provider.AWS_ANTHROPIC, "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+            Provider.AWS_META, "us.meta.llama4-maverick-17b-instruct-v1:0");
 
     public static String defaultFor(Provider provider) {
       return DEFAULT.getOrDefault(provider, "");

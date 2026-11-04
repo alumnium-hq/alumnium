@@ -127,7 +127,7 @@ To use Meta Llama as an AI provider in Alumnium:
 4. Export the following environment variables before running tests:
 
 ```bash
-export ALUMNIUM_MODEL="aws_meta"
+export ALUMNIUM_MODEL="aws/us.meta.llama4-maverick-17b-instruct-v1:0"
 export AWS_ACCESS_KEY="..."
 export AWS_SECRET_KEY="..."
 ```

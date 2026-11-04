@@ -16,7 +16,7 @@ public class TableTest extends BaseTest {
   @BeforeAll
   static void configure() {
     Assumptions.assumeFalse(
-        al.model().provider() == Provider.AWS_META, "Table area instructions need more work");
+        al.model().name().contains("meta.llama"), "Table area instructions need more work");
     Assumptions.assumeFalse(
         al.driver() instanceof AppiumDriver,
         "Area is not properly extracted from Appium source code.");

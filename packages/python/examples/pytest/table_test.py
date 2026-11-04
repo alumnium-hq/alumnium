@@ -23,7 +23,7 @@ def learn(al):
     reason="Area is not properly extracted from Appium source code.",
 )
 def test_table_extraction(al, navigate):
-    if al.model.provider == Provider.AWS_META:
+    if "meta.llama" in al.model.name:
         pytest.xfail("Table area instructions need more work")
 
     navigate("the-internet/tables.html")
@@ -40,7 +40,7 @@ def test_table_extraction(al, navigate):
     reason="Area is not properly extracted from Appium source code.",
 )
 def test_table_sorting(al, navigate):
-    if al.model.provider == Provider.AWS_META:
+    if "meta.llama" in al.model.name:
         pytest.xfail("Table area instructions need more work")
 
     navigate("the-internet/tables.html")

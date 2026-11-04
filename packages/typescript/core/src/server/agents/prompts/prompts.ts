@@ -2,7 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { always } from "alwaysly";
-import type { Model } from "../../../Model.ts";
+import { Model } from "../../../Model.ts";
 import { safePathJoin } from "../../../utils/fs.ts";
 import type { Agent } from "../Agent.ts";
 
@@ -34,10 +34,10 @@ export namespace AgentPrompts {
 
 export const PROVIDER_TO_PROMPTS_DEV: AgentPrompts.ProviderToDev = {
   anthropic: "anthropic",
-  aws_anthropic: "anthropic",
+  // Resolved from the model vendor, see `promptsDev`.
+  aws: "openai",
   google: "google",
   deepseek: "deepseek",
-  aws_meta: "meta",
   mistralai: "mistralai",
   ollama: "openai",
   xai: "xai",
@@ -48,6 +48,27 @@ export const PROVIDER_TO_PROMPTS_DEV: AgentPrompts.ProviderToDev = {
   openai: "openai",
   openrouter: "openai",
 };
+
+const BEDROCK_VENDOR_TO_PROMPTS_DEV: Partial<Record<string, Model.Dev>> = {
+  anthropic: "anthropic",
+  deepseek: "deepseek",
+  meta: "meta",
+  mistral: "mistralai",
+  openai: "openai",
+};
+
+//#endregion
+
+//#region promptsDev
+
+export function promptsDev(model: Model): Model.Dev {
+  if (model.provider === "aws") {
+    return (
+      BEDROCK_VENDOR_TO_PROMPTS_DEV[Model.bedrockVendor(model.name)] ?? "openai"
+    );
+  }
+  return PROVIDER_TO_PROMPTS_DEV[model.provider];
+}
 
 //#endregion
 

@@ -155,8 +155,7 @@ run = [
   { task = "test/system:playwright", env = { ALUMNIUM_MODEL = "azure_foundry" } },
   { task = "test/system:playwright", env = { ALUMNIUM_MODEL = "azure_openai" } },
   { task = "test/system:playwright", env = { ALUMNIUM_MODEL = "anthropic" } },
-  { task = "test/system:playwright", env = { ALUMNIUM_MODEL = "aws_anthropic" } },
-  { task = "test/system:playwright", env = { ALUMNIUM_MODEL = "aws_meta" } },
+  { task = "test/system:playwright", env = { ALUMNIUM_MODEL = "aws" } },
   { task = "test/system:playwright", env = { ALUMNIUM_MODEL = "deepseek" } },
   { task = "test/system:playwright", env = { ALUMNIUM_MODEL = "google" } },
   { task = "test/system:playwright", env = { ALUMNIUM_MODEL = "mistralai" } },
@@ -270,7 +269,7 @@ run = [{ task = "test/waiter playwright" }]
 description = "Run cache tests checking if Alumnium cache is correctly generated for a given model."
 usage = '''
 arg "<model>" help="Model to use for cache tests" {
-  default "azure_openai"
+  default "aws"
 }
 '''
 run = '''
@@ -287,8 +286,7 @@ run = [
   { task = "test/cache:azure_foundry" },
   { task = "test/cache:azure_openai" },
   { task = "test/cache:anthropic" },
-  { task = "test/cache:aws_anthropic" },
-  { task = "test/cache:aws_meta" },
+  { task = "test/cache:aws" },
   { task = "test/cache:cursor" },
   { task = "test/cache:deepseek" },
   { task = "test/cache:google" },
@@ -310,13 +308,9 @@ run = { task = "test/cache", args = ["azure_openai"] }
 description = "Run cache tests for `anthropic` model. See `test/cache` task for details."
 run = { task = "test/cache", args = ["anthropic"] }
 
-[tasks."test/cache:aws_anthropic"]
-description = "Run cache tests for `aws_anthropic` model. See `test/cache` task for details."
-run = { task = "test/cache", args = ["aws_anthropic"] }
-
-[tasks."test/cache:aws_meta"]
-description = "Run cache tests for `aws_meta` model. See `test/cache` task for details."
-run = { task = "test/cache", args = ["aws_meta"] }
+[tasks."test/cache:aws"]
+description = "Run cache tests for `aws` model. See `test/cache` task for details."
+run = { task = "test/cache", args = ["aws"] }
 
 [tasks."test/cache:cursor"]
 description = "Run cache tests for `cursor` model. See `test/cache` task for details."

@@ -1,5 +1,5 @@
 export { anthropic } from "@alumnium/anthropic";
-export { awsAnthropic, awsMeta } from "@alumnium/aws";
+export { aws, awsAnthropic, awsMeta } from "@alumnium/aws";
 export { azureFoundry, azureOpenai } from "@alumnium/azure";
 export { codex } from "@alumnium/codex";
 export { cursor } from "@alumnium/cursor";

@@ -83,12 +83,42 @@ describe("Model.builder", () => {
   });
 });
 
+describe("Model.parse legacy providers", () => {
+  it("maps deprecated AWS providers to aws with their default model", () => {
+    expect(Model.parse("aws_anthropic")).toEqual({
+      provider: "aws",
+      name: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    });
+    expect(Model.parse("aws_meta")).toEqual({
+      provider: "aws",
+      name: "us.meta.llama4-maverick-17b-instruct-v1:0",
+    });
+  });
+
+  it("keeps explicit model names of deprecated AWS providers", () => {
+    expect(Model.parse("aws_meta/us.meta.llama4-scout")).toEqual({
+      provider: "aws",
+      name: "us.meta.llama4-scout",
+    });
+  });
+});
+
+describe("Model.bedrockVendor", () => {
+  it.each([
+    ["us.anthropic.claude-haiku-4-5-20251001-v1:0", "anthropic"],
+    ["global.openai.gpt-5.6-luna", "openai"],
+    ["us-gov.meta.llama4-maverick-17b-instruct-v1:0", "meta"],
+    ["openai.gpt-5.6-luna", "openai"],
+    ["zai.glm-5", "zai"],
+  ])("returns vendor of %s", (name, vendor) => {
+    expect(Model.bedrockVendor(name)).toBe(vendor);
+  });
+});
+
 describe("Model.missingProviderError", () => {
   it("points to the provider package builder", () => {
-    expect(
-      Model.missingProviderError(Model.parse("aws_meta")).message,
-    ).toContain(
-      '`model: awsMeta("us.meta.llama4-maverick-17b-instruct-v1:0")` from "@alumnium/aws"',
+    expect(Model.missingProviderError(Model.parse("aws")).message).toContain(
+      '`model: aws("us.openai.gpt-5.6-luna")` from "@alumnium/aws"',
     );
   });
 });
@@ -101,13 +131,12 @@ describe("Model.resolver", () => {
     OPENAI_VERSION: "1",
   };
   const awsModule = {
-    awsAnthropic: Model.builder("aws_anthropic", () => llm),
-    awsMeta: Model.builder("aws_meta", () => llm),
+    aws: Model.builder("aws", () => llm),
   };
 
   it("binds models to the builders of the given modules", () => {
     const resolve = Model.resolver(openaiModule, awsModule);
-    for (const model of ["openai/gpt-5.6-mini", "aws_anthropic", "aws_meta"]) {
+    for (const model of ["openai/gpt-5.6-mini", "aws", "aws_meta"]) {
       const resolved = resolve(Model.parse(model));
       expect(resolved).toMatchObject(Model.parse(model));
       expect(resolved.createLlm()).toBe(llm);

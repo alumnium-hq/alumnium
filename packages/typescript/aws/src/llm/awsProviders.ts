@@ -1,5 +1,5 @@
 import { createAmazonBedrock } from "@ai-sdk/amazon-bedrock";
-import type { LanguageModelV4 } from "@ai-sdk/provider";
+import type { JSONObject, LanguageModelV4 } from "@ai-sdk/provider";
 import {
   usesAdaptiveThinking,
   withCallDefaults,
@@ -19,15 +19,35 @@ export function createAwsLlm(model: Model): LanguageModelV4 {
     ...(accessKeyId && secretAccessKey ? { accessKeyId, secretAccessKey } : {}),
   });
   const llm = provider(model.name);
-  if (model.provider !== "aws_anthropic") return llm;
+  const additionalModelRequestFields = vendorRequestFields(model.name);
+  if (!additionalModelRequestFields) return llm;
 
-  const additionalModelRequestFields = usesAdaptiveThinking(model.name)
-    ? { thinking: { type: "adaptive" }, output_config: { effort: "low" } }
-    : { thinking: { type: "enabled", budget_tokens: 1024 } };
   return withCallDefaults(llm, {
     providerOptions: { bedrock: { additionalModelRequestFields } },
   });
 }
 
-export const awsAnthropic = Model.builder("aws_anthropic", createAwsLlm);
-export const awsMeta = Model.builder("aws_meta", createAwsLlm);
+function vendorRequestFields(name: string): JSONObject | null {
+  switch (Model.bedrockVendor(name)) {
+    case "anthropic":
+      return usesAdaptiveThinking(name)
+        ? { thinking: { type: "adaptive" }, output_config: { effort: "low" } }
+        : { thinking: { type: "enabled", budget_tokens: 1024 } };
+    case "openai":
+      // Bedrock SDK maps reasoning to the `reasoning_effort` field that GPT-5.6+
+      // models reject, so pass the effort in the format they accept.
+      return { reasoning: { effort: "low" } };
+    default:
+      return null;
+  }
+}
+
+export const aws = Model.builder("aws", createAwsLlm);
+
+/** @deprecated Use `aws("us.anthropic.<model>")` instead. */
+export const awsAnthropic = (name?: string): Model.WithProvider =>
+  aws(name || Model.new("aws_anthropic", undefined).name);
+
+/** @deprecated Use `aws("us.meta.<model>")` instead. */
+export const awsMeta = (name?: string): Model.WithProvider =>
+  aws(name || Model.new("aws_meta", undefined).name);

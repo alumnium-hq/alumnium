@@ -6,6 +6,8 @@ class Provider(Enum):
     AZURE_OPENAI = "azure_openai"
     AZURE_FOUNDRY = "azure_foundry"
     ANTHROPIC = "anthropic"
+    AWS = "aws"
+    # Deprecated: use AWS with a model name instead.
     AWS_ANTHROPIC = "aws_anthropic"
     AWS_META = "aws_meta"
     CODEX = "codex"
@@ -24,8 +26,7 @@ class Name:
         Provider.AZURE_FOUNDRY: "gpt-5.6-luna",
         Provider.AZURE_OPENAI: "gpt-5.6-luna",
         Provider.ANTHROPIC: "claude-haiku-4-5-20251001",
-        Provider.AWS_ANTHROPIC: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-        Provider.AWS_META: "us.meta.llama4-maverick-17b-instruct-v1:0",
+        Provider.AWS: "us.openai.gpt-5.6-luna",
         Provider.CODEX: "gpt-5.6-luna",
         Provider.CURSOR: "composer-2.5",
         Provider.DEEPSEEK: "deepseek-flash",
@@ -37,10 +38,20 @@ class Name:
         Provider.XAI: "grok-4.3",
     }
 
+    # Deprecated providers now served by Provider.AWS, with their default models.
+    LEGACY_AWS = {
+        Provider.AWS_ANTHROPIC: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+        Provider.AWS_META: "us.meta.llama4-maverick-17b-instruct-v1:0",
+    }
+
 
 class Model:
     def __init__(self, provider=None, name=None):
-        self.provider = Provider(provider or Provider.OPENAI)
+        provider = Provider(provider or Provider.OPENAI)
+        if provider in Name.LEGACY_AWS:
+            name = name or Name.LEGACY_AWS[provider]
+            provider = Provider.AWS
+        self.provider = provider
         self.name = name or Name.DEFAULT.get(self.provider, "")
 
     @staticmethod

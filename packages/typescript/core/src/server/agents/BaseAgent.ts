@@ -15,7 +15,7 @@ import type { Agent } from "./Agent.ts";
 import { agentPrompts } from "./prompts/bundledPrompts.ts";
 import {
   agentClassNameToPromptsAgentKind,
-  PROVIDER_TO_PROMPTS_DEV,
+  promptsDev,
   type AgentPrompts,
 } from "./prompts/prompts.ts";
 
@@ -89,7 +89,7 @@ export class BaseAgent {
     this.model = model;
     this.llm = llm;
 
-    const dev = PROVIDER_TO_PROMPTS_DEV[model.provider];
+    const dev = promptsDev(model);
     const agentPromptsByDev =
       agentPrompts[agentClassNameToPromptsAgentKind(this.constructor.name)];
     const prompts = agentPromptsByDev[dev] ?? agentPromptsByDev.openai;

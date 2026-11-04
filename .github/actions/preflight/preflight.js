@@ -19,8 +19,7 @@ class Preflight {
     "azure_foundry",
     "azure_openai",
     "anthropic",
-    "aws_anthropic",
-    "aws_meta",
+    "aws",
     "codex",
     "cursor",
     "deepseek",
@@ -38,7 +37,7 @@ class Preflight {
     "playwright",
     "selenium",
   ];
-  static DEFAULT_PROVIDERS = ["azure_openai"];
+  static DEFAULT_PROVIDERS = ["aws"];
 
   #context;
   #github;

@@ -14,7 +14,7 @@ on:
         description: JSON array of model providers to test with.
         required: false
         type: string
-        default: '["azure_openai"]'
+        default: '["aws"]'
 
 env:
   ALUMNIUM_LOG_LEVEL: debug
@@ -97,7 +97,7 @@ jobs:
     name: Package Tests
     runs-on: ubuntu-latest
     env:
-      ALUMNIUM_MODEL: azure_openai
+      ALUMNIUM_MODEL: aws
 
     steps:
       - name: Git Checkout
