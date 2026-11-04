@@ -5,11 +5,11 @@ describe("Model.parse", () => {
   it("uses the provider's default model when only a provider is given", () => {
     expect(Model.parse("openai")).toEqual({
       provider: "openai",
-      name: "gpt-5.6-luna",
+      name: "gpt-6-luna",
     });
     expect(Model.parse("openrouter")).toEqual({
       provider: "openrouter",
-      name: "openai/gpt-5.6-luna",
+      name: "openai/gpt-6-luna",
     });
   });
 
@@ -60,13 +60,13 @@ describe("Model.builder", () => {
     const createLlm = vi.fn(() => llm);
     const model = Model.builder("openai", createLlm)();
 
-    expect(model).toMatchObject({ provider: "openai", name: "gpt-5.6-luna" });
+    expect(model).toMatchObject({ provider: "openai", name: "gpt-6-luna" });
     expect(Model.hasProvider(model)).toBe(true);
     expect(createLlm).not.toHaveBeenCalled();
     expect(model.createLlm()).toBe(llm);
     expect(createLlm).toHaveBeenCalledWith({
       provider: "openai",
-      name: "gpt-5.6-luna",
+      name: "gpt-6-luna",
     });
   });
 
@@ -106,9 +106,9 @@ describe("Model.parse legacy providers", () => {
 describe("Model.bedrockVendor", () => {
   it.each([
     ["us.anthropic.claude-haiku-4-5-20251001-v1:0", "anthropic"],
-    ["global.openai.gpt-5.6-luna", "openai"],
     ["us-gov.meta.llama4-maverick-17b-instruct-v1:0", "meta"],
-    ["openai.gpt-5.6-luna", "openai"],
+    ["global.openai.gpt-6-luna", "openai"],
+    ["openai.gpt-6-luna", "openai"],
     ["zai.glm-5", "zai"],
   ])("returns vendor of %s", (name, vendor) => {
     expect(Model.bedrockVendor(name)).toBe(vendor);
@@ -118,7 +118,7 @@ describe("Model.bedrockVendor", () => {
 describe("Model.missingProviderError", () => {
   it("points to the provider package builder", () => {
     expect(Model.missingProviderError(Model.parse("aws")).message).toContain(
-      '`model: aws("us.openai.gpt-5.6-luna")` from "@alumnium/aws"',
+      '`model: aws("us.openai.gpt-6-luna")` from "@alumnium/aws"',
     );
   });
 });

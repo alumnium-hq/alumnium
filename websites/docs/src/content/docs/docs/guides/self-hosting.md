@@ -19,9 +19,9 @@ Alumnium can use any model available on Amazon Bedrock by passing its model or i
 Please follow the respective documentation on how to enable access to the model on Bedrock. Once enabled, configure Alumnium to use it by exporting the following environment variables:
 
 ```bash
-export ALUMNIUM_MODEL="aws"                                                 # for GPT-5.6 Luna
 export ALUMNIUM_MODEL="aws/us.anthropic.claude-haiku-4-5-20251001-v1:0"     # for Claude
 export ALUMNIUM_MODEL="aws/us.meta.llama4-maverick-17b-instruct-v1:0"       # for Llama
+export ALUMNIUM_MODEL="aws"                                # for GPT-6 Luna
 
 export AWS_ACCESS_KEY="..."
 export AWS_SECRET_KEY="..."
