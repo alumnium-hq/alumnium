@@ -27,8 +27,7 @@ const providers = [
   "azure_foundry",
   "azure_openai",
   "anthropic",
-  "aws_anthropic",
-  "aws_meta",
+  "aws",
   "codex",
   "cursor",
   "deepseek",
@@ -44,8 +43,7 @@ const defaultModels: Record<Model.Provider, string> = {
   azure_foundry: "gpt-5.6-luna",
   azure_openai: "gpt-5.6-luna",
   anthropic: "claude-haiku-4-5-20251001",
-  aws_anthropic: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-  aws_meta: "us.meta.llama4-maverick-17b-instruct-v1:0",
+  aws: "us.openai.gpt-5.6-luna",
   codex: "gpt-5.6-luna",
   cursor: "composer-2.5",
   deepseek: "deepseek-flash",
@@ -59,11 +57,22 @@ const defaultModels: Record<Model.Provider, string> = {
 
 const ModelProvider = z.enum(providers);
 
+const legacyProviders = {
+  aws_anthropic: ["aws", "us.anthropic.claude-haiku-4-5-20251001-v1:0"],
+  aws_meta: ["aws", "us.meta.llama4-maverick-17b-instruct-v1:0"],
+} as const satisfies Record<string, [Model.Provider, string]>;
+
+const ModelProviderInput = z.enum([
+  ...providers,
+  ...(Object.keys(legacyProviders) as (keyof typeof legacyProviders)[]),
+]);
+
+const bedrockRegionPrefix = /^(us|us-gov|eu|apac|jp|au|ca|global)\./;
+
 const providerBuilders: Record<Model.Provider, [pkg: string, builder: string]> =
   {
     anthropic: ["@alumnium/anthropic", "anthropic"],
-    aws_anthropic: ["@alumnium/aws", "awsAnthropic"],
-    aws_meta: ["@alumnium/aws", "awsMeta"],
+    aws: ["@alumnium/aws", "aws"],
     azure_foundry: ["@alumnium/azure", "azureFoundry"],
     azure_openai: ["@alumnium/azure", "azureOpenai"],
     codex: ["@alumnium/codex", "codex"],
@@ -95,10 +104,19 @@ export const defaultModelProvider: Model.Provider = "openai";
 export const Model = {
   Provider: ModelProvider,
 
+  /** Providers accepted in model strings, including deprecated ones. */
+  ProviderInput: ModelProviderInput,
+
   Dev: ModelDev,
 
   new(providerStr: string, nameStr: string | undefined): Model {
-    const provider = Model.Provider.parse(providerStr, { reportInput: true });
+    const input = Model.ProviderInput.parse(providerStr, { reportInput: true });
+    if (input in legacyProviders) {
+      const [provider, name] =
+        legacyProviders[input as keyof typeof legacyProviders];
+      return { provider, name: nameStr || name };
+    }
+    const provider = input as Model.Provider;
     const name = nameStr || Model.defaultProviderModel(provider);
     return { provider, name };
   },
@@ -122,6 +140,15 @@ export const Model = {
 
   defaultProviderModel(provider: Model.Provider): string {
     return defaultModels[provider];
+  },
+
+  /**
+   * Returns the vendor of an Amazon Bedrock model id, e.g. "anthropic" for
+   * "us.anthropic.claude-haiku-4-5-20251001-v1:0" or "openai" for
+   * "openai.gpt-5.6-luna".
+   */
+  bedrockVendor(name: string): string {
+    return name.replace(bedrockRegionPrefix, "").split(".")[0] ?? "";
   },
 
   builder(

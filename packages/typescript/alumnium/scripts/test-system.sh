@@ -13,7 +13,7 @@ sanitize_filename() {
   printf '%s' "$1" | sed 's/[^[:alnum:]._-][^[:alnum:]._-]*/_/g'
 }
 
-ALUMNIUM_MODEL="${ALUMNIUM_MODEL:-azure_openai}"
+ALUMNIUM_MODEL="${ALUMNIUM_MODEL:-aws}"
 ALUMNIUM_CACHE_PATH="${ALUMNIUM_CACHE_PATH:-}"
 ALUMNIUM_TEST_ARG="${ALUMNIUM_TEST_ARG:-}"
 ALUMNIUM_TEST_VITEST_ARGS="${ALUMNIUM_TEST_VITEST_ARGS:-}"

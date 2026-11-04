@@ -96,6 +96,14 @@ describe("Env", () => {
       expect(() => Env.ALUMNIUM_MODEL).toThrow(/Invalid/);
     });
 
+    it("maps deprecated AWS providers to aws", () => {
+      vi.stubEnv("ALUMNIUM_MODEL", "aws_meta");
+      expect(Env.ALUMNIUM_MODEL).toEqual({
+        provider: "aws",
+        name: "us.meta.llama4-maverick-17b-instruct-v1:0",
+      });
+    });
+
     it.each([
       [undefined, 8],
       ["", 8],

@@ -185,8 +185,8 @@ export const Env = {
       "ALUMNIUM_MODEL",
       z
         .union([
-          Model.Provider,
-          z.templateLiteral([Model.Provider, "/", z.string()]),
+          Model.ProviderInput,
+          z.templateLiteral([Model.ProviderInput, "/", z.string()]),
         ])
         .optional()
         .transform((val, _ctx): Model => {

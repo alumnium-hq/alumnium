@@ -12,7 +12,7 @@ inputs:
 
   model:
     required: true
-    description: "Model to use in system tests (e.g., azure_openai, google)."
+    description: "Model to use in system tests (e.g., aws, google)."
 
   sha:
     required: true

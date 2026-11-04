@@ -195,9 +195,9 @@ gh workflow run ci.yml -f pr=123
 gh workflow run ci.yml -f google=true -f anthropic=true -f typescript=false -f java=false -f selenium=false -f eval=false
 ```
 
-Only `azure_openai` is checked by default. Every provider from `packages/typescript/core/src/Model.ts` is
-available, but only some have credentials configured in CI (azure_openai, anthropic, aws_anthropic,
-aws_meta, deepseek, google, mistralai, openai); the others will fail until secrets are added.
+Only `aws` is checked by default. Every provider from `packages/typescript/core/src/Model.ts` is
+available, but only some have credentials configured in CI (aws, azure_openai, anthropic,
+deepseek, google, mistralai, openai); the others will fail until secrets are added.
 
 ## AI-First Testing Philosophy
 

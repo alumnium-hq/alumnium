@@ -51,7 +51,7 @@ describe("File Upload", () => {
   it("should upload multiple files", async ({ expect, setup, skip }) => {
     const { al, $, model } = await setup();
 
-    if (model.provider === "aws_meta")
+    if (model.name.includes("meta.llama"))
       skip("Prefers to click on the upload button manually");
 
     await $.navigate("multiple_file_upload.html");
@@ -74,7 +74,7 @@ describe("File Upload", () => {
     if (driverKind === "selenium")
       skip("Hidden file upload inputs are not supported in Selenium");
 
-    if (model.provider === "aws_meta")
+    if (model.name.includes("meta.llama"))
       skip("Prefers to click on the upload button manually");
 
     await $.navigate("hidden_file_upload.html");

@@ -41,7 +41,7 @@ LLM provider packages and the model builders they export, by `ALUMNIUM_MODEL` pr
 | Provider                        | Package                | Builders                          |
 | ------------------------------- | ---------------------- | --------------------------------- |
 | `anthropic`                     | `@alumnium/anthropic`  | `anthropic()`                     |
-| `aws_anthropic`, `aws_meta`     | `@alumnium/aws`        | `awsAnthropic()`, `awsMeta()`     |
+| `aws`                           | `@alumnium/aws`        | `aws()`                           |
 | `azure_openai`, `azure_foundry` | `@alumnium/azure`      | `azureOpenai()`, `azureFoundry()` |
 | `codex`                         | `@alumnium/codex`      | `codex()`                         |
 | `cursor`                        | `@alumnium/cursor`     | `cursor()`                        |
@@ -182,22 +182,21 @@ The Alumnium CLI and the `alumnium` npm package include the exporters. When usin
 
 Select AI provider and model to use.
 
-| Value         | LLM                                         | Notes                                                |
-| ------------- | ------------------------------------------- | ---------------------------------------------------- |
-| anthropic     | claude-haiku-4-5-20251001                   | Anthropic API.                                       |
-| azure_foundry | gpt-5.6-luna                                | Azure AI Foundry API.                                |
-| azure_openai  | gpt-5.6-luna                                | Self-hosted Azure OpenAI API.                        |
-| aws_anthropic | us.anthropic.claude-haiku-4-5-20251001-v1:0 | Serverless Amazon Bedrock API.                       |
-| aws_meta      | us.meta.llama4-maverick-17b-instruct-v1:0   | Serverless Amazon Bedrock API.                       |
-| codex         | gpt-5.6-luna                                | OpenAI models via ChatGPT Plus/Pro OAuth.            |
-| cursor        | composer-2.5                                | Cursor models via Cursor Agents SDK (local runtime). |
-| deepseek      | deepseek-flash                              | DeepSeek Platform.                                   |
-| google        | gemini-3.5-flash-lite                       | Google AI Studio API.                                |
-| mistralai     | mistral-medium-3-5                          | Mistral AI Studio API.                               |
-| ollama        | qwen3.6:35b                                 | Local model inference with Ollama.                   |
-| openai        | gpt-5.6-luna                                | OpenAI API.                                          |
-| openrouter    | openai/gpt-5.6-luna                         | Models routed through OpenRouter.                    |
-| xai           | grok-4.3                                    | xAI API.                                             |
+| Value         | LLM                       | Notes                                                        |
+| ------------- | ------------------------- | ------------------------------------------------------------ |
+| anthropic     | claude-haiku-4-5-20251001 | Anthropic API.                                               |
+| azure_foundry | gpt-5.6-luna              | Azure AI Foundry API.                                        |
+| azure_openai  | gpt-5.6-luna              | Self-hosted Azure OpenAI API.                                |
+| aws           | us.openai.gpt-5.6-luna    | Serverless Amazon Bedrock API. Accepts any Bedrock model ID. |
+| codex         | gpt-5.6-luna              | OpenAI models via ChatGPT Plus/Pro OAuth.                    |
+| cursor        | composer-2.5              | Cursor models via Cursor Agents SDK (local runtime).         |
+| deepseek      | deepseek-flash            | DeepSeek Platform.                                           |
+| google        | gemini-3.5-flash-lite     | Google AI Studio API.                                        |
+| mistralai     | mistral-medium-3-5        | Mistral AI Studio API.                                       |
+| ollama        | qwen3.6:35b               | Local model inference with Ollama.                           |
+| openai        | gpt-5.6-luna              | OpenAI API.                                                  |
+| openrouter    | openai/gpt-5.6-luna       | Models routed through OpenRouter.                            |
+| xai           | grok-4.3                  | xAI API.                                                     |
 
 You can also override the LLM for each provider by passing it after `/`.
 
@@ -282,15 +281,15 @@ API key used when `ALUMNIUM_MODEL` is set to `anthropic`.
 
 ### `AWS_ACCESS_KEY`
 
-AWS access key used when `ALUMNIUM_MODEL` is set to `aws_anthropic` or `aws_meta`.
+AWS access key used when `ALUMNIUM_MODEL` is set to `aws`.
 
 ### `AWS_REGION_NAME`
 
-AWS region used when `ALUMNIUM_MODEL` is set to `aws_anthropic` or `aws_meta`. Default is `us-east-1`.
+AWS region used when `ALUMNIUM_MODEL` is set to `aws`. Default is `us-east-1`.
 
 ### `AWS_SECRET_KEY`
 
-AWS secret key used when `ALUMNIUM_MODEL` is set to `aws_anthropic` or `aws_meta`.
+AWS secret key used when `ALUMNIUM_MODEL` is set to `aws`.
 
 ### `AZURE_FOUNDRY_API_KEY`
 

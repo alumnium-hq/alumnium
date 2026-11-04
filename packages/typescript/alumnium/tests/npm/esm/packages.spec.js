@@ -12,7 +12,7 @@ import * as xcode from "@alumnium/xcode";
 // Model builders each LLM provider package exports.
 const BUILDERS = {
   anthropic: ["anthropic"],
-  aws: ["awsAnthropic", "awsMeta"],
+  aws: ["aws", "awsAnthropic", "awsMeta"],
   azure: ["azureFoundry", "azureOpenai"],
   codex: ["codex"],
   cursor: ["cursor"],

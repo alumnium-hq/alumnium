@@ -61,7 +61,7 @@ export const CreateSessionBody = z.object({
   platform: Driver.Platform,
   // Optional since Java/Python only support Appium.
   driver: Driver.Kind.optional(),
-  provider: Model.Provider.optional(),
+  provider: Model.ProviderInput.optional(),
   name: z.string().optional(),
   tools: z.array(z.custom<ToolDefinition>()),
   planner: z.boolean().default(true),

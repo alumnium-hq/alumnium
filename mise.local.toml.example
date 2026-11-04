@@ -1,5 +1,5 @@
 [env]
-ALUMNIUM_MODEL = "azure_openai"
+ALUMNIUM_MODEL = "aws"
 ALUMNIUM_TRACE = true
 ALUMNIUM_LOG_LEVEL = "debug"
 ALUMNIUM_LOG_DEBUG_EXTRA = "all"

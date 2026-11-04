@@ -55,10 +55,14 @@ on:
         description: Run Selenium driver tests
         type: boolean
         default: true
+      aws:
+        description: Test on Amazon Bedrock provider
+        type: boolean
+        default: true
       azure_openai:
         description: Test on Azure OpenAI provider
         type: boolean
-        default: true
+        default: false
       anthropic:
         description: Test on Anthropic provider
         type: boolean
