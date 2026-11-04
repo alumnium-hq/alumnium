@@ -85,7 +85,7 @@ public final class Model {
 
     public static final Map<Provider, String> DEFAULT =
         Map.ofEntries(
-            Map.entry(Provider.ANTHROPIC, "claude-haiku-4-5-20251001"),
+            Map.entry(Provider.ANTHROPIC, "claude-haiku-5-5"),
             Map.entry(Provider.AWS, "us.openai.gpt-6-luna"),
             Map.entry(Provider.AZURE, "gpt-6-luna"),
             Map.entry(Provider.CODEX, "gpt-6-luna"),
@@ -102,7 +102,6 @@ public final class Model {
     @SuppressWarnings("deprecation")
     static final Map<Provider, String> LEGACY_AWS =
         Map.of(
-            Provider.AWS_ANTHROPIC, "us.anthropic.claude-haiku-4-5-20251001-v1:0",
             Provider.AWS_META, "us.meta.llama4-maverick-17b-instruct-v1:0");
 
     public static String defaultFor(Provider provider) {

@@ -44,10 +44,6 @@ function vendorRequestFields(name: string): JSONObject | null {
 
 export const aws = Model.builder("aws", createAwsLlm);
 
-/** @deprecated Use `aws("us.anthropic.<model>")` instead. */
-export const awsAnthropic = (name?: string): Model.WithProvider =>
-  aws(name || Model.new("aws_anthropic", undefined).name);
-
 /** @deprecated Use `aws("us.meta.<model>")` instead. */
 export const awsMeta = (name?: string): Model.WithProvider =>
   aws(name || Model.new("aws_meta", undefined).name);

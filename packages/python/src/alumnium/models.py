@@ -23,7 +23,7 @@ class Provider(Enum):
 
 class Name:
     DEFAULT = {
-        Provider.ANTHROPIC: "claude-haiku-4-5-20251001",
+        Provider.ANTHROPIC: "claude-haiku-5-5",
         Provider.AWS: "us.openai.gpt-6-luna",
         Provider.AZURE: "gpt-6-luna",
         Provider.CODEX: "gpt-6-luna",
@@ -39,7 +39,6 @@ class Name:
 
     # Deprecated providers now served by Provider.AWS, with their default models.
     LEGACY_AWS = {
-        Provider.AWS_ANTHROPIC: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
         Provider.AWS_META: "us.meta.llama4-maverick-17b-instruct-v1:0",
     }
 
