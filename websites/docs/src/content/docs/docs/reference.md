@@ -184,13 +184,13 @@ Select AI provider and model to use.
 
 | Value         | LLM                       | Notes                                                        |
 | ------------- | ------------------------- | ------------------------------------------------------------ |
-| anthropic     | claude-haiku-4-5-20251001 | Anthropic API.                                               |
 | cursor        | composer-2.5              | Cursor models via Cursor Agents SDK (local runtime).         |
 | deepseek      | deepseek-flash            | DeepSeek Platform.                                           |
 | google        | gemini-3.5-flash-lite     | Google AI Studio API.                                        |
 | mistralai     | mistral-medium-3-5        | Mistral AI Studio API.                                       |
 | ollama        | qwen3.6:35b               | Local model inference with Ollama.                           |
 | xai           | grok-4.3                  | xAI API.                                                     |
+| anthropic  | claude-haiku-5-5           | Anthropic API.                                               |
 | azure      | gpt-6-luna                 | Azure OpenAI / AI Foundry Responses API.                     |
 | codex      | gpt-6-luna                 | OpenAI models via ChatGPT Plus/Pro OAuth.                    |
 | openai     | gpt-6-luna                 | OpenAI API.                                                  |

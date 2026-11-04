@@ -105,8 +105,8 @@ describe("Model.parse legacy providers", () => {
 
 describe("Model.bedrockVendor", () => {
   it.each([
-    ["us.anthropic.claude-haiku-4-5-20251001-v1:0", "anthropic"],
     ["us-gov.meta.llama4-maverick-17b-instruct-v1:0", "meta"],
+    ["us.anthropic.claude-haiku-5-5", "anthropic"],
     ["global.openai.gpt-6-luna", "openai"],
     ["openai.gpt-6-luna", "openai"],
     ["zai.glm-5", "zai"],

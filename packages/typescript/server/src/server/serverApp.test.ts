@@ -91,9 +91,9 @@ describe("serverApp", () => {
     it("binds the requested model to its provider", async () => {
       const { model, session } = await postSession({
         provider: "anthropic",
-        name: "claude-haiku-4-5-20251001",
+        name: "claude-haiku-5-5",
       });
-      expect(model).toBe("anthropic/claude-haiku-4-5-20251001");
+      expect(model).toBe("anthropic/claude-haiku-5-5");
       expect(Model.hasProvider(session.model)).toBe(true);
     });
 
@@ -611,7 +611,7 @@ async function createSession(excludeAttributes: string[] = []) {
   const response = await serverApp.handle(
     createRequest("POST", "/sessions", {
       provider: "anthropic",
-      name: "claude-haiku-4-5-20251001",
+      name: "claude-haiku-5-5",
       platform: "chromium",
       tools: getSampleToolSchemas(),
       exclude_attributes: excludeAttributes,

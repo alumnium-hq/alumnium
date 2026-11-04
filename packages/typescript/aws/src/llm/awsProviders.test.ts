@@ -112,7 +112,7 @@ describe("AWS Anthropic requests", () => {
 
     const model = createAwsLlm({
       provider: "aws",
-      name: "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+      name: "us.anthropic.claude-haiku-5-5",
     });
     await expect(
       generateText({ model, prompt: "hello", maxRetries: 0 }),
@@ -121,7 +121,8 @@ describe("AWS Anthropic requests", () => {
     const [, init] = vi.mocked(fetch).mock.calls[0] ?? [];
     const body = JSON.parse(String(init?.body));
     expect(body.additionalModelRequestFields).toMatchObject({
-      thinking: { type: "enabled", budget_tokens: 1024 },
+      thinking: { type: "adaptive" },
+      output_config: { effort: "low" },
     });
   });
 });

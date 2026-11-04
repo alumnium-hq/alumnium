@@ -40,7 +40,7 @@ const providers = [
 ] as const;
 
 const defaultModels: Record<Model.Provider, string> = {
-  anthropic: "claude-haiku-4-5-20251001",
+  anthropic: "claude-haiku-5-5",
   aws: "us.openai.gpt-6-luna",
   azure: "gpt-6-luna",
   codex: "gpt-6-luna",
@@ -57,7 +57,6 @@ const defaultModels: Record<Model.Provider, string> = {
 const ModelProvider = z.enum(providers);
 
 const legacyProviders = {
-  aws_anthropic: ["aws", "us.anthropic.claude-haiku-4-5-20251001-v1:0"],
   aws_meta: ["aws", "us.meta.llama4-maverick-17b-instruct-v1:0"],
 } as const satisfies Record<string, [Model.Provider, string]>;
 
@@ -143,8 +142,7 @@ export const Model = {
 
   /**
    * Returns the vendor of an Amazon Bedrock model id, e.g. "anthropic" for
-   * "us.anthropic.claude-haiku-4-5-20251001-v1:0" or "openai" for
-   * "openai.gpt-5.6-luna".
+   * "us.anthropic.claude-haiku-5-5" or "openai" for "openai.gpt-6-luna".
    */
   bedrockVendor(name: string): string {
     return name.replace(bedrockRegionPrefix, "").split(".")[0] ?? "";
