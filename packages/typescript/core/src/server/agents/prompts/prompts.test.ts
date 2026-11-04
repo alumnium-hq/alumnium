@@ -21,9 +21,9 @@ describe("agentClassNameToPromptsAgentKind", () => {
 
 describe("promptsDev", () => {
   it.each([
-    ["us.anthropic.claude-haiku-4-5-20251001-v1:0", "anthropic"],
     ["us.meta.llama4-maverick-17b-instruct-v1:0", "meta"],
-    ["us.openai.gpt-5.6-luna", "openai"],
+    ["us.anthropic.claude-haiku-5-5", "anthropic"],
+    ["us.openai.gpt-6-luna", "openai"],
     ["mistral.mistral-large-3", "mistralai"],
     ["zai.glm-5", "openai"],
   ] as const)("resolves AWS model %s to %s prompts", (name, dev) => {

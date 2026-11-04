@@ -11,8 +11,8 @@ const { Alumni } = require("alumnium");
 // Model builders each LLM provider package exports.
 const BUILDERS = {
   anthropic: ["anthropic"],
-  aws: ["aws", "awsAnthropic", "awsMeta"],
-  azure: ["azureFoundry", "azureOpenai"],
+  aws: ["aws"],
+  azure: ["azure"],
   codex: ["codex"],
   cursor: ["cursor"],
   deepseek: ["deepseek"],

@@ -22,47 +22,45 @@ afterEach(() => {
   Env.reset();
 });
 
-describe("Azure Azure requests", () => {
-  it("constructs a Foundry request with version, target query, auth, and model", async () => {
-    vi.stubEnv("AZURE_FOUNDRY_API_KEY", "foundry-key");
-    vi.stubEnv(
-      "AZURE_FOUNDRY_TARGET_URI",
-      "https://example.services.ai.azure.com",
-    );
-    Env.reset();
-
-    const model = createAzureLlm({
-      provider: "azure_foundry",
-      name: "foundry-model",
-    });
-    await expect(model.doGenerate(OPTIONS)).rejects.toThrow("request captured");
-
-    const [input, init] = vi.mocked(fetch).mock.calls[0] ?? [];
-    const url = new URL(String(input));
-    expect(`${url.origin}${url.pathname}`).toBe(
-      "https://example.services.ai.azure.com/openai/responses",
-    );
-    expect(new Headers(init?.headers).get("api-key")).toBe("foundry-key");
-    expect(JSON.parse(String(init?.body))).toEqual(
-      expect.objectContaining({ model: "foundry-model" }),
-    );
-  });
-
-  it("keeps Azure OpenAI deployment request construction separate", async () => {
-    vi.stubEnv("AZURE_OPENAI_API_KEY", "openai-key");
-    vi.stubEnv("AZURE_OPENAI_ENDPOINT", "https://resource.openai.azure.com");
-    Env.reset();
-
-    const model = createAzureLlm({
-      provider: "azure_openai",
-      name: "openai-model",
-    });
-    await expect(model.doGenerate(OPTIONS)).rejects.toThrow("request captured");
-
-    const [input, init] = vi.mocked(fetch).mock.calls[0] ?? [];
-    expect(String(input)).toBe(
+describe("Azure requests", () => {
+  it.each([
+    [
+      "https://resource.openai.azure.com",
       "https://resource.openai.azure.com/openai/v1/responses?api-version=v1",
+    ],
+    [
+      "https://example.services.ai.azure.com/",
+      "https://example.services.ai.azure.com/openai/v1/responses",
+    ],
+  ])(
+    "constructs a Responses API request for endpoint %s",
+    async (endpoint, url) => {
+      vi.stubEnv("AZURE_API_KEY", "azure-key");
+      vi.stubEnv("AZURE_ENDPOINT", endpoint);
+      Env.reset();
+
+      const model = createAzureLlm({ provider: "azure", name: "gpt-6-luna" });
+      await expect(model.doGenerate(OPTIONS)).rejects.toThrow(
+        "request captured",
+      );
+
+      const [input, init] = vi.mocked(fetch).mock.calls[0] ?? [];
+      expect(String(input)).toBe(url);
+      expect(new Headers(init?.headers).get("api-key")).toBe("azure-key");
+      expect(JSON.parse(String(init?.body))).toEqual(
+        expect.objectContaining({
+          model: "gpt-6-luna",
+          reasoning: expect.objectContaining({ effort: "low" }),
+        }),
+      );
+    },
+  );
+
+  it("requires the API key and endpoint", () => {
+    expect(() =>
+      createAzureLlm({ provider: "azure", name: "gpt-6-luna" }),
+    ).toThrow(
+      "AZURE_API_KEY environment variable is required for Azure models",
     );
-    expect(new Headers(init?.headers).get("api-key")).toBe("openai-key");
   });
 });

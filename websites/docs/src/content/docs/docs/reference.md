@@ -38,20 +38,20 @@ The TypeScript implementation is published as several npm packages, released tog
 
 LLM provider packages and the model builders they export, by `ALUMNIUM_MODEL` provider:
 
-| Provider                        | Package                | Builders                          |
-| ------------------------------- | ---------------------- | --------------------------------- |
-| `anthropic`                     | `@alumnium/anthropic`  | `anthropic()`                     |
-| `aws`                           | `@alumnium/aws`        | `aws()`                           |
-| `azure_openai`, `azure_foundry` | `@alumnium/azure`      | `azureOpenai()`, `azureFoundry()` |
-| `codex`                         | `@alumnium/codex`      | `codex()`                         |
-| `cursor`                        | `@alumnium/cursor`     | `cursor()`                        |
-| `deepseek`                      | `@alumnium/deepseek`   | `deepseek()`                      |
-| `google`                        | `@alumnium/google`     | `google()`                        |
-| `mistralai`                     | `@alumnium/mistral`    | `mistral()`                       |
-| `ollama`                        | `@alumnium/ollama`     | `ollama()`                        |
-| `openai`                        | `@alumnium/openai`     | `openai()`                        |
-| `openrouter`                    | `@alumnium/openrouter` | `openrouter()`                    |
-| `xai`                           | `@alumnium/xai`        | `xai()`                           |
+| Provider     | Package                | Builders       |
+| ------------ | ---------------------- | -------------- |
+| `anthropic`  | `@alumnium/anthropic`  | `anthropic()`  |
+| `aws`        | `@alumnium/aws`        | `aws()`        |
+| `azure`      | `@alumnium/azure`      | `azure()`      |
+| `codex`      | `@alumnium/codex`      | `codex()`      |
+| `cursor`     | `@alumnium/cursor`     | `cursor()`     |
+| `deepseek`   | `@alumnium/deepseek`   | `deepseek()`   |
+| `google`     | `@alumnium/google`     | `google()`     |
+| `mistralai`  | `@alumnium/mistral`    | `mistral()`    |
+| `ollama`     | `@alumnium/ollama`     | `ollama()`     |
+| `openai`     | `@alumnium/openai`     | `openai()`     |
+| `openrouter` | `@alumnium/openrouter` | `openrouter()` |
+| `xai`        | `@alumnium/xai`        | `xai()`        |
 
 Use `alumnium` to write tests: it includes all providers and uses `ALUMNIUM_MODEL`. To install only what you use, pick a driver package and an LLM provider package, and pass the model built by the provider package:
 
@@ -182,19 +182,20 @@ The Alumnium CLI and the `alumnium` npm package include the exporters. When usin
 
 Select AI provider and model to use.
 
-| Value         | LLM                       | Notes                                                        |
-| ------------- | ------------------------- | ------------------------------------------------------------ |
-| cursor        | composer-2.5              | Cursor models via Cursor Agents SDK (local runtime).         |
-| deepseek      | deepseek-flash            | DeepSeek Platform.                                           |
-| google        | gemini-3.5-flash-lite     | Google AI Studio API.                                        |
-| ollama        | qwen3.6:35b               | Local model inference with Ollama.                           |
-| xai           | grok-4.3                  | xAI API.                                                     |
+| Value      | LLM                        | Notes                                                        |
+| ---------- | -------------------------- | ------------------------------------------------------------ |
 | anthropic  | claude-haiku-5-5           | Anthropic API.                                               |
+| aws        | us.openai.gpt-6-luna       | Serverless Amazon Bedrock API. Accepts any Bedrock model ID. |
 | azure      | gpt-6-luna                 | Azure OpenAI / AI Foundry Responses API.                     |
 | codex      | gpt-6-luna                 | OpenAI models via ChatGPT Plus/Pro OAuth.                    |
+| cursor     | composer-2.5               | Cursor models via Cursor Agents SDK (local runtime).         |
+| deepseek   | deepseek-flash             | DeepSeek Platform.                                           |
+| google     | gemini-3.5-flash-lite      | Google AI Studio API.                                        |
 | mistralai  | mistral-large-4            | Mistral AI Studio API.                                       |
+| ollama     | qwen3.6:35b                | Local model inference with Ollama.                           |
 | openai     | gpt-6-luna                 | OpenAI API.                                                  |
 | openrouter | openai/gpt-6-luna          | Models routed through OpenRouter.                            |
+| xai        | grok-4.3                   | xAI API.                                                     |
 
 You can also override the LLM for each provider by passing it after `/`.
 
@@ -289,25 +290,17 @@ AWS region used when `ALUMNIUM_MODEL` is set to `aws`. Default is `us-east-1`.
 
 AWS secret key used when `ALUMNIUM_MODEL` is set to `aws`.
 
-### `AZURE_FOUNDRY_API_KEY`
+### `AZURE_API_KEY`
 
-API key used when `ALUMNIUM_MODEL` is set to `azure_foundry`.
+API key used when `ALUMNIUM_MODEL` is set to `azure`.
 
-### `AZURE_FOUNDRY_TARGET_URI`
+### `AZURE_DEFAULT_HEADERS`
 
-Endpoint URL used when `ALUMNIUM_MODEL` is set to `azure_foundry`.
+JSON string of additional headers to send with Azure requests (e.g. `{"x-custom-header": "value"}`).
 
-### `AZURE_OPENAI_API_KEY`
+### `AZURE_ENDPOINT`
 
-API key used when `ALUMNIUM_MODEL` is set to `azure_openai`.
-
-### `AZURE_OPENAI_DEFAULT_HEADERS`
-
-JSON string of additional headers to send with Azure OpenAI requests (e.g. `{"x-custom-header": "value"}`).
-
-### `AZURE_OPENAI_ENDPOINT`
-
-Endpoint URL used when `ALUMNIUM_MODEL` is set to `azure_openai`.
+Endpoint URL of the Azure OpenAI or AI Foundry resource used when `ALUMNIUM_MODEL` is set to `azure`.
 
 ### `CURSOR_API_KEY`
 

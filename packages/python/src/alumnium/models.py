@@ -3,13 +3,12 @@ from os import getenv
 
 
 class Provider(Enum):
-    AZURE_OPENAI = "azure_openai"
-    AZURE_FOUNDRY = "azure_foundry"
     ANTHROPIC = "anthropic"
     AWS = "aws"
     # Deprecated: use AWS with a model name instead.
     AWS_ANTHROPIC = "aws_anthropic"
     AWS_META = "aws_meta"
+    AZURE = "azure"
     CODEX = "codex"
     CURSOR = "cursor"
     DEEPSEEK = "deepseek"

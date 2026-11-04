@@ -24,10 +24,9 @@ export interface Model {
 }
 
 const providers = [
-  "azure_foundry",
-  "azure_openai",
   "anthropic",
   "aws",
+  "azure",
   "codex",
   "cursor",
   "deepseek",
@@ -71,8 +70,7 @@ const providerBuilders: Record<Model.Provider, [pkg: string, builder: string]> =
   {
     anthropic: ["@alumnium/anthropic", "anthropic"],
     aws: ["@alumnium/aws", "aws"],
-    azure_foundry: ["@alumnium/azure", "azureFoundry"],
-    azure_openai: ["@alumnium/azure", "azureOpenai"],
+    azure: ["@alumnium/azure", "azure"],
     codex: ["@alumnium/codex", "codex"],
     cursor: ["@alumnium/cursor", "cursor"],
     deepseek: ["@alumnium/deepseek", "deepseek"],

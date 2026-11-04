@@ -86,14 +86,14 @@ describe("AWS OpenAI requests", () => {
 
     const model = createAwsLlm({
       provider: "aws",
-      name: "us.openai.gpt-5.6-luna",
+      name: "us.openai.gpt-6-luna",
     });
     await expect(
       generateText({ model, prompt: "hello", maxRetries: 0 }),
     ).rejects.toThrow();
 
     const [url, init] = vi.mocked(fetch).mock.calls[0] ?? [];
-    expect(String(url)).toContain("us.openai.gpt-5.6-luna");
+    expect(String(url)).toContain("us.openai.gpt-6-luna");
     const body = JSON.parse(String(init?.body));
     expect(body.additionalModelRequestFields).toMatchObject({
       reasoning: { effort: "low" },

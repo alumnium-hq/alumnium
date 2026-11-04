@@ -4,8 +4,6 @@ import java.util.Optional;
 
 /** Model provider identifiers. */
 public enum Provider {
-  AZURE_OPENAI("azure_openai"),
-  AZURE_FOUNDRY("azure_foundry"),
   ANTHROPIC("anthropic"),
   AWS("aws"),
   /**
@@ -18,6 +16,7 @@ public enum Provider {
    */
   @Deprecated
   AWS_META("aws_meta"),
+  AZURE("azure"),
   CODEX("codex"),
   CURSOR("cursor"),
   DEEPSEEK("deepseek"),
