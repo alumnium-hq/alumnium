@@ -64,7 +64,7 @@ export const doMcpTool = McpTool.define("do", {
     `Supported actions: ${getDoToolActions()}. ` +
     "Set vision=true to use a screenshot alongside the accessibility tree when controls are distinguishable by appearance. " +
     "IMPORTANT: Each call operates on the CURRENT PAGE state only. For multi-page workflows, issue separate calls (e.g., first 'navigate to URL', then 'search for X' as a separate call after page loads). " +
-    "Note that you don't need to scroll the page to interact with elements, Alumnium can locate and work with elements outside the viewport.",
+    "On web pages, Alumnium can interact with elements outside the viewport. On native apps, scroll in a direction to reveal controls missing from the current accessibility tree.",
 
   inputSchema: z.object({
     id: z.string().describe("Driver ID from start"),

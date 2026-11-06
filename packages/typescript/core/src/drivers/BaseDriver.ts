@@ -70,6 +70,14 @@ export abstract class BaseDriver<TElement = unknown> {
   abstract findElement(id: number): Promise<TElement>;
   abstract visit(url: string): Promise<void>;
   abstract scrollTo(id: number): Promise<void>;
+
+  scroll(
+    _id: number | undefined,
+    _direction: Driver.ScrollDirection,
+  ): Promise<void> {
+    throw new Error(`Directional scrolling is not supported on ${this.kind}`);
+  }
+
   abstract executeScript(script: string): Promise<void>;
   abstract switchToNextTab(): Promise<void>;
   abstract switchToPreviousTab(): Promise<void>;
