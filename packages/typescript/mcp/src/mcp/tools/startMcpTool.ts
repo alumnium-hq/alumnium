@@ -49,6 +49,22 @@ function parseDeviceOption(
 }
 
 /**
+ * Resolves whether a session analyzes UI changes: the `alumnium.ai/change-analysis` request meta
+ * first, so a caller can turn it off whatever the capabilities say (e.g. a replay of a recording,
+ * which never reads it), then `alumnium:options.changeAnalysis`, then `ALUMNIUM_CHANGE_ANALYSIS`
+ * when it is set, and `true` otherwise.
+ */
+export function parseChangeAnalysisOption(
+  metaValue: unknown,
+  optionValue: unknown,
+  envValue: boolean | undefined,
+): boolean {
+  if (typeof metaValue === "boolean") return metaValue;
+  if (typeof optionValue === "boolean") return optionValue;
+  return envValue ?? true;
+}
+
+/**
  * Parses `alumnium:options.navigationPolicy` into `NavigationPolicy.Options`, keeping only the
  * domain fields without `allowedFilePaths`.
  */
@@ -125,7 +141,7 @@ export const startMcpTool = McpTool.define("start", {
       .optional(),
   }),
 
-  async execute(input, { logger }) {
+  async execute(input, { logger, meta }) {
     // Resolve capabilities: file path or inline JSON string
     let rawCapabilities: string;
     const filePath = path.resolve(input.capabilities);
@@ -186,10 +202,11 @@ export const startMcpTool = McpTool.define("start", {
       typeof alumniumOptions["planner"] === "boolean"
         ? alumniumOptions["planner"]
         : undefined;
-    const changeAnalysis =
-      typeof alumniumOptions["changeAnalysis"] === "boolean"
-        ? alumniumOptions["changeAnalysis"]
-        : true;
+    const changeAnalysis = parseChangeAnalysisOption(
+      meta[McpTool.CHANGE_ANALYSIS_META_KEY],
+      alumniumOptions["changeAnalysis"],
+      Env.ALUMNIUM_CHANGE_ANALYSIS,
+    );
     const excludeAttributes = Array.isArray(
       alumniumOptions["excludeAttributes"],
     )

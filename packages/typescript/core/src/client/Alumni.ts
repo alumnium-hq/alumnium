@@ -80,7 +80,7 @@ export class Alumni<TDriver extends BaseDriver = BaseDriver> {
     const { url, model } = options;
 
     this.changeAnalysis =
-      options.changeAnalysis ?? Env.ALUMNIUM_CHANGE_ANALYSIS;
+      options.changeAnalysis ?? Env.ALUMNIUM_CHANGE_ANALYSIS ?? false;
 
     this.driver = driver;
 

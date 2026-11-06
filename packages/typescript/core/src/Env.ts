@@ -50,7 +50,14 @@ export const Env = {
   },
 
   get ALUMNIUM_CHANGE_ANALYSIS() {
-    return envVar("ALUMNIUM_CHANGE_ANALYSIS", z.stringbool().default(false));
+    return envVar("ALUMNIUM_CHANGE_ANALYSIS", z.stringbool().optional());
+  },
+
+  get ALUMNIUM_CHECK_CONFIRMATIONS() {
+    return envVar(
+      "ALUMNIUM_CHECK_CONFIRMATIONS",
+      z.coerce.number().int().nonnegative().default(2),
+    );
   },
 
   /**

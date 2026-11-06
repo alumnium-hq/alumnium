@@ -62,7 +62,11 @@ export namespace ToolCallMasker {
   }
 
   export interface RegisterOptions {
-    /** Registers only the leaves at `maskResponsePaths`, e.g. of a failed call. */
+    /**
+     * Registers only the leaves at `maskResponsePaths`, for a failed call. An
+     * output that is not JSON is then its error message rather than the
+     * payload the paths describe, so it is not reported as unread either.
+     */
     secretsOnly?: boolean | undefined;
   }
 
@@ -216,6 +220,13 @@ export class ToolCallMasker {
     }
 
     const json = parseJsonStructure(text);
+    if (!json && options.secretsOnly) {
+      logger.debug(
+        `Failed tool call ${callId} output is not JSON, ignoring it`,
+      );
+      return [];
+    }
+
     if (!json) {
       logger.info(
         `Tool call ${callId} output is not a JSON object or array, ignoring it for masking. ` +

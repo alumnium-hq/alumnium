@@ -99,6 +99,10 @@ Sets the directory where the filesystem cache is stored. Default is `.alumnium/c
 
 Set to `true` to enable analysis of UI changes made by `do()`. When enabled, Alumnium captures the accessibility tree before and after each action and returns a description of what changed. Default is `false` when using Alumnium as a library and `true` when running Alumnium MCP server.
 
+### `ALUMNIUM_CHECK_CONFIRMATIONS`
+
+Number of times a test replay re-asks a `check()` whose verdict disagrees with its recording, bypassing the cache, before the replay diverges. Default is `2`.
+
 ### `ALUMNIUM_DELAY`
 
 Delay in seconds between retries when an action fails. Default is `0.5`.

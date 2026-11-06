@@ -208,7 +208,7 @@
     },
     "packages/typescript/core": {
       "name": "@alumnium/core",
-      "version": "0.24.0",
+      "version": "0.24.1",
       "dependencies": {
         "@ai-sdk/provider": "^4.0.7",
         "@js-fns/canon": "^0.2.0",
@@ -419,10 +419,11 @@
     },
     "packages/typescript/test": {
       "name": "@alumnium/test",
-      "version": "0.24.1",
+      "version": "0.24.2",
       "dependencies": {
         "@alumnium/core": "workspace:*",
         "@js-fns/xxhash": "^0.1.0",
+        "@modelcontextprotocol/sdk": "^1.29.0",
         "zod": "^4.4.1",
       },
     },
