@@ -10,13 +10,13 @@
   "dependencies": {
     "@logtape/logtape": "^2.0.2",
     "@logtape/otel": "^2.0.5",
-    "@opentelemetry/exporter-logs-otlp-grpc": "^0.208.0",
-    "@opentelemetry/exporter-logs-otlp-http": "^0.208.0",
-    "@opentelemetry/exporter-logs-otlp-proto": "^0.208.0",
-    "@opentelemetry/exporter-trace-otlp-http": "^0.215.0",
-    "@opentelemetry/resources": "^2.7.0",
-    "@opentelemetry/sdk-logs": "^0.208.0",
-    "@opentelemetry/sdk-trace-base": "^2.7.0",
-    "@opentelemetry/sdk-trace-node": "^2.7.0"
+    "@opentelemetry/exporter-logs-otlp-grpc": "^0.223.0",
+    "@opentelemetry/exporter-logs-otlp-http": "^0.223.0",
+    "@opentelemetry/exporter-logs-otlp-proto": "^0.223.0",
+    "@opentelemetry/exporter-trace-otlp-http": "^0.223.0",
+    "@opentelemetry/resources": "^2.12.0",
+    "@opentelemetry/sdk-logs": "^0.223.0",
+    "@opentelemetry/sdk-trace-base": "^2.12.0",
+    "@opentelemetry/sdk-trace-node": "^2.12.0"
   }
 }
