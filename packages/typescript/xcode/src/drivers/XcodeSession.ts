@@ -6,7 +6,7 @@ import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { z } from "zod";
 import {
-  ALUMNIUM_VERSION,
+  ALUMNIUM_CORE_VERSION,
   Env,
   exec,
   Logger,
@@ -86,7 +86,7 @@ export class XcodeSession {
 
   readonly #client = new Client({
     name: "alumnium",
-    version: ALUMNIUM_VERSION,
+    version: ALUMNIUM_CORE_VERSION,
   });
   readonly #props: XcodeSession.Props;
   #key: string | undefined;

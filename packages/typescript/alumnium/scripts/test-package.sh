@@ -64,8 +64,8 @@ while read -r tarball_name; do
 		echo "🔴 Missing $tarball — run the full build first." >&2
 		exit 1
 	fi
-	name="@alumnium/${tarball_name#alumnium-}"
-	name="${name%-"$VERSION".tgz}"
+	name="$(tar -xOzf "$tarball" package/package.json | bun -e \
+		'console.log(JSON.parse(await Bun.stdin.text()).name)')"
 	WORKSPACE_DEPS+="    \"$name\": \"file:$tarball\",
 "
 	WORKSPACE_OVERRIDES+="  \"$name\": \"file:$tarball\"

@@ -10,7 +10,8 @@ ALUMNIUM_TEST_RETRY_COUNT="${ALUMNIUM_TEST_RETRY_COUNT:-0}"
 ALUMNIUM_TEST_RETRY_DELAY="${ALUMNIUM_TEST_RETRY_DELAY:-1000}"
 
 ALUMNIUM_VERSION="$(grep "^version" "$PKG_DIR/build.gradle" | sed "s/.*= '//;s/'//")"
-PLAYWRIGHT_VERSION="$("$PKG_DIR/gradlew" -q printPlaywrightVersion)"
+PLAYWRIGHT_VERSION="$("$PKG_DIR/gradlew" -q --console=plain printPlaywrightVersion |
+	grep -Eo '^[0-9]+\.[0-9]+\.[0-9]+[^[:space:][:cntrl:]]*' | head -n 1)"
 
 echo -e "🚧 Running Maven package tests...\n"
 

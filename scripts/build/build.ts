@@ -10,7 +10,7 @@ import { $, type BunPlugin } from "bun";
 import { snakeCase } from "case-anything";
 import { stringify as tomlStringify } from "smol-toml";
 import { z } from "zod";
-import { ALUMNIUM_VERSION } from "../../packages/typescript/core/src/package.ts";
+import { ALUMNIUM_VERSION } from "../../packages/typescript/alumnium/scripts/alumniumVersion.ts";
 import {
   PLAYWRIGHT_CORE_BROWSERS_JSON_ASSET_NAME,
   PLAYWRIGHT_CORE_OOP_DOWNLOAD_ASSET_NAME,
@@ -472,6 +472,7 @@ async function main() {
           ],
           define: {
             BUILD_COMMIT_SHA: JSON.stringify(commitSha),
+            BUILD_VERSION: JSON.stringify(ALUMNIUM_VERSION),
             SINGLE_FILE_EXECUTABLE: "true",
           },
         });
@@ -855,8 +856,8 @@ async function buildNpmTar(name: string, dir: string) {
   );
 }
 
-// Workspace packages are released together at ALUMNIUM_VERSION, but one can
-// be bumped on its own.
+// Workspace packages are released together at ALUMNIUM_VERSION (the
+// `alumnium` package version), but one can be bumped on its own.
 function npmPkgVersion(name: string): string {
   return (
     PUBLISHED_PKGS.find(({ packageJson }) => packageJson.name === name)

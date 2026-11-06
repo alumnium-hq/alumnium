@@ -4,7 +4,14 @@ declare const BUILD_COMMIT_SHA: string | undefined;
 const COMMIT_SHA =
   typeof BUILD_COMMIT_SHA === "undefined" ? undefined : BUILD_COMMIT_SHA;
 
-export const ALUMNIUM_VERSION = packageJson.version;
+declare const ALUMNIUM_VERSION: string | undefined;
+export const ALUMNIUM_CORE_VERSION = packageJson.version;
+
+const BIN_VERSION =
+  typeof ALUMNIUM_VERSION === "undefined"
+    ? ALUMNIUM_CORE_VERSION
+    : ALUMNIUM_VERSION;
+
 export const ALUMNIUM_BIN_VERSION = COMMIT_SHA
-  ? `${ALUMNIUM_VERSION}+${COMMIT_SHA}`
-  : ALUMNIUM_VERSION;
+  ? `${BIN_VERSION}+${COMMIT_SHA}`
+  : BIN_VERSION;

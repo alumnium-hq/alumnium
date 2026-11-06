@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { ALUMNIUM_VERSION } from "@alumnium/core/internal";
+import { ALUMNIUM_CORE_VERSION } from "@alumnium/core/internal";
 import { Masker } from "./masker/Masker.ts";
 import { Recorder } from "./Recorder.ts";
 import { Recording } from "./Recording.ts";
@@ -36,7 +36,7 @@ describe("Recorder", () => {
       version: 1,
       text: TEXT,
       agent: "test-agent",
-      alumnium: { version: ALUMNIUM_VERSION },
+      alumnium: { version: ALUMNIUM_CORE_VERSION },
       hostVars: [],
       verdict: PASSED,
     });

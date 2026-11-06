@@ -2,7 +2,7 @@ import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
-import { ALUMNIUM_VERSION, Telemetry } from "@alumnium/core/internal";
+import { ALUMNIUM_CORE_VERSION, Telemetry } from "@alumnium/core/internal";
 import { Recording } from "../Recording.ts";
 import type { ToolExecutor } from "./ToolExecutor.ts";
 
@@ -145,7 +145,7 @@ export class McpExecutor implements ToolExecutor {
 
     const client = new Client({
       name: "alumnium-test-player",
-      version: ALUMNIUM_VERSION,
+      version: ALUMNIUM_CORE_VERSION,
     });
     await client.connect(transport);
     return client;

@@ -5,7 +5,7 @@
 
 import fs from "node:fs/promises";
 import path from "node:path";
-import { ALUMNIUM_VERSION } from "../../core/src/package.ts";
+import { ALUMNIUM_VERSION } from "./alumniumVersion.ts";
 
 const [command, version] = process.argv.slice(2);
 

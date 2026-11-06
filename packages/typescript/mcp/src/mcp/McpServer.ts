@@ -8,7 +8,7 @@ import { McpServer as Server } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
 import {
-  ALUMNIUM_VERSION,
+  ALUMNIUM_CORE_VERSION,
   Env,
   Logger,
   McpMode,
@@ -124,7 +124,10 @@ export class McpServer {
   }
 
   #createServer(mode: McpMode): Server {
-    const server = new Server({ name: "alumnium", version: ALUMNIUM_VERSION });
+    const server = new Server({
+      name: "alumnium",
+      version: ALUMNIUM_CORE_VERSION,
+    });
     this.#registerTools(server, mode);
     return server;
   }

@@ -1,4 +1,4 @@
-import { ALUMNIUM_VERSION, Telemetry } from "@alumnium/core/internal";
+import { ALUMNIUM_CORE_VERSION, Telemetry } from "@alumnium/core/internal";
 import { alumniumMaskerProps } from "./masker/alumniumMaskerProps.ts";
 import { Masker } from "./masker/Masker.ts";
 import { Recording } from "./Recording.ts";
@@ -177,7 +177,7 @@ export class Recorder {
       version: this.#version,
       text: this.#text,
       agent: this.#agent,
-      alumnium: { version: ALUMNIUM_VERSION },
+      alumnium: { version: ALUMNIUM_CORE_VERSION },
       hostVars: [],
       steps: this.#steps.map((step) => this.#maskStep(step)),
       verdict: {

@@ -5,6 +5,7 @@
     "./*/src/**/*.ts",
     "./alumnium/scripts/**/*.ts",
     "./alumnium/tests/**/*.ts",
+    "./alumnium/package.json",
     "./core/package.json"
   ],
   "compilerOptions": {

@@ -5,7 +5,7 @@ import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js"
 import { lit } from "smollit";
 import z from "zod";
 import {
-  ALUMNIUM_VERSION,
+  ALUMNIUM_CORE_VERSION,
   Logger,
   SimulatorWindow,
   sleep,
@@ -143,7 +143,7 @@ export class MaestroSession {
 
     const client = new Client({
       name: "alumnium",
-      version: ALUMNIUM_VERSION,
+      version: ALUMNIUM_CORE_VERSION,
     });
 
     // Keep the tail of what Maestro printed, so an early exit can say why instead of the SDK's
