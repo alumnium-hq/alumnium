@@ -46,7 +46,9 @@ export function getLogSink(serviceName: string): Sink {
     resource: defaultResource().merge(
       resourceFromAttributes({ "service.name": serviceName }),
     ),
-    processors: [new SimpleLogRecordProcessor({ exporter: createLogExporter() })],
+    processors: [
+      new SimpleLogRecordProcessor({ exporter: createLogExporter() }),
+    ],
   });
   return getOpenTelemetrySink({ loggerProvider });
 }
