@@ -1,6 +1,6 @@
 {
   "name": "@alumnium/meta",
-  "version": "0.24.0",
+  "version": "0.25.0-alpha.1",
   "description": "Alumnium Meta LLM provider",
   "license": "MIT",
   "type": "module",

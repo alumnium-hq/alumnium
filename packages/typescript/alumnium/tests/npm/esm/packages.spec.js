@@ -41,7 +41,7 @@ test("all packages import", () => {
   expect(core.Area).toBeInstanceOf(Function);
   // The public entry shares module instances with the internal one.
   expect(core.Alumni).toBe(coreInternal.Alumni);
-  expect(coreInternal.ALUMNIUM_VERSION).toMatch(/^\d+\.\d+\.\d+/);
+  expect(coreInternal.ALUMNIUM_CORE_VERSION).toMatch(/^\d+\.\d+\.\d+/);
   expect(coreInternal.Logger.get).toBeInstanceOf(Function);
   for (const driver of [playwright, selenium, appium, maestro, xcode]) {
     expect(driver.Alumni.prototype).toBeInstanceOf(core.Alumni);

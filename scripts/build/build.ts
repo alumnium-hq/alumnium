@@ -472,7 +472,7 @@ async function main() {
           ],
           define: {
             BUILD_COMMIT_SHA: JSON.stringify(commitSha),
-            BUILD_VERSION: JSON.stringify(ALUMNIUM_VERSION),
+            ALUMNIUM_VERSION: JSON.stringify(ALUMNIUM_VERSION),
             SINGLE_FILE_EXECUTABLE: "true",
           },
         });
