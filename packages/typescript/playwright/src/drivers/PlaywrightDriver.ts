@@ -3,6 +3,7 @@ import type {
   BrowserContext,
   CDPSession,
   Frame,
+  JSHandle,
   Locator,
   Page,
 } from "playwright-core";
@@ -19,6 +20,8 @@ import {
   PressKeyTool,
   retry,
   Slider,
+  type SliderGeometry,
+  type SliderScript,
   Telemetry,
   type ToolClass,
   TreeDevDrillError,
@@ -351,7 +354,19 @@ export class PlaywrightDriver extends BaseDriver<Locator> {
   async dragSlider(id: number, value: number): Promise<void> {
     const element = await this.findElement(id);
     await this.#scrollElementIfNeeded(element);
-    const slider = Slider.parse(await element.evaluate(Slider.SCRIPT, value));
+    const script = (await element.evaluateHandle(
+      Slider.EXPRESSION,
+    )) as JSHandle<SliderScript>;
+    let geometry: SliderGeometry | null;
+    try {
+      geometry = await element.evaluate(
+        (target, [slider, sliderValue]) => slider(target, sliderValue),
+        [script, value] as const,
+      );
+    } finally {
+      await script.dispose();
+    }
+    const slider = Slider.parse(geometry);
     if (!slider) {
       await element.fill(String(value));
     } else {

@@ -5,19 +5,21 @@ interface Point {
   y: number;
 }
 
-interface SliderGeometry {
+export interface SliderGeometry {
   from: Point;
   to: Point;
   width: number;
   height: number;
 }
 
+export type SliderScript = (
+  element: unknown,
+  value: number,
+) => SliderGeometry | null;
+
 /** Where to drag an ARIA slider to reach a value, as computed by scripts/slider.js. */
 export class Slider {
-  static readonly SCRIPT = new Function(`return (${sliderScriptSource})`)() as (
-    element: unknown,
-    value: number,
-  ) => SliderGeometry | null;
+  static readonly EXPRESSION = `(${sliderScriptSource})`;
   static readonly EXECUTE_SCRIPT = `return (${sliderScriptSource})(arguments[0], arguments[1]);`;
 
   private readonly geometry: SliderGeometry;
