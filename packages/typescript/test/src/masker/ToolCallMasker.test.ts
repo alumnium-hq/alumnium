@@ -825,6 +825,18 @@ describe("ToolCallMasker", () => {
 
       expect(masker.findLeaks({})).toEqual(["<secret.0>"]);
     });
+
+    it("does not report a failed call whose output is not JSON", () => {
+      const masker = new ToolCallMasker({ maskResponsePaths });
+      masker.registerContent(
+        "0",
+        "Error in createUser: timed out",
+        "test-data/createUser",
+        { secretsOnly: true },
+      );
+
+      expect(masker.findLeaks({})).toEqual([]);
+    });
   });
 
   describe("masksInputOf", () => {

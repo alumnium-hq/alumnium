@@ -1,12 +1,10 @@
 import { ALUMNIUM_VERSION, Telemetry } from "@alumnium/core/internal";
+import { alumniumMaskerProps } from "./masker/alumniumMaskerProps.ts";
 import { Masker } from "./masker/Masker.ts";
 import { Recording } from "./Recording.ts";
 import { RecordingLeakError } from "./RecordingLeakError.ts";
 
 const { logger } = Telemetry.get(import.meta.url);
-
-const DEFAULT_ALUMNIUM_SERVER = "alumnium";
-const ALUMNIUM_START_TOOL = "start";
 
 export namespace Recorder {
   export interface Props extends Masker.Props {
@@ -58,20 +56,7 @@ export class Recorder {
     this.#version = version ?? Recording.DEFAULT_VERSION;
     this.#text = text;
     this.#agent = agent;
-    const server = alumniumServer ?? DEFAULT_ALUMNIUM_SERVER;
-    this.#masker = new Masker({
-      ...maskerProps,
-      registerResponsePaths: {
-        ...this.#alumniumRegisterResponsePaths(server),
-        ...maskerProps.registerResponsePaths,
-      },
-      // Alumnium's goals and statements are prose an LLM reads, which takes
-      // its values from `params`.
-      wholeValueOnlyTools: [
-        `${server}/*`,
-        ...(maskerProps.wholeValueOnlyTools ?? []),
-      ],
-    });
+    this.#masker = new Masker(alumniumMaskerProps(maskerProps, alumniumServer));
   }
 
   /**
@@ -241,25 +226,6 @@ export class Recorder {
         },
       };
     }
-  }
-
-  /**
-   * Response paths of Alumnium's own tools worth registering: only the driver
-   * id a `start` returns. Every other output is the outcome of the call,
-   * re-produced by replaying it, and its small values - seconds waited, token
-   * counts - would otherwise take the mask of a value a later non-Alumnium call
-   * produces, since the earliest call's mask wins.
-   *
-   * @param server - Name the host gave Alumnium's MCP server.
-   * @returns `registerResponsePaths` for Alumnium's tools.
-   */
-  #alumniumRegisterResponsePaths(
-    server: string = DEFAULT_ALUMNIUM_SERVER,
-  ): Record<string, string[]> {
-    return {
-      [`${server}/*`]: [],
-      [`${server}/${ALUMNIUM_START_TOOL}`]: ["id"],
-    };
   }
 
   #assertNotFinished() {

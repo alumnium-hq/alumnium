@@ -38,6 +38,24 @@ describe("Env", () => {
     expect(Env.ALUMNIUM_MCP_REQUIRE_STEP).toBe(expected);
   });
 
+  it.each([
+    [undefined, undefined],
+    ["true", true],
+    ["false", false],
+  ])("parses change analysis %s as %s", (value, expected) => {
+    vi.stubEnv("ALUMNIUM_CHANGE_ANALYSIS", value);
+    expect(Env.ALUMNIUM_CHANGE_ANALYSIS).toBe(expected);
+  });
+
+  it.each([
+    [undefined, 2],
+    ["0", 0],
+    ["5", 5],
+  ])("parses check confirmations %s as %s", (value, expected) => {
+    vi.stubEnv("ALUMNIUM_CHECK_CONFIRMATIONS", value);
+    expect(Env.ALUMNIUM_CHECK_CONFIRMATIONS).toBe(expected);
+  });
+
   it("uses driver and model defaults when their variables are empty", () => {
     vi.stubEnv("ALUMNIUM_DRIVER", "");
     vi.stubEnv("ALUMNIUM_MODEL", "");

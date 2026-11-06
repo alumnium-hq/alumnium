@@ -32,6 +32,7 @@ export namespace McpTool {
   export interface ExecuteHelpers {
     logger: LoggerSchema.Like;
     cache: boolean;
+    meta: Meta;
   }
 
   export type OutputContent = z.infer<typeof McpTool.OutputContent>;
@@ -41,6 +42,7 @@ export namespace McpTool {
 
 export abstract class McpTool {
   static readonly CACHE_META_KEY = "alumnium.ai/cache";
+  static readonly CHANGE_ANALYSIS_META_KEY = "alumnium.ai/change-analysis";
 
   static IdInput = z.object({ id: z.string() });
 
@@ -71,6 +73,7 @@ export abstract class McpTool {
         const result = await props.execute(input, {
           logger: executeLogger,
           cache: meta?.[McpTool.CACHE_META_KEY] !== false,
+          meta: meta ?? {},
         });
 
         executeLogger.info("Completed");

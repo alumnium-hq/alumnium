@@ -544,4 +544,23 @@ describe("Recorder", () => {
     expect(error.message).toContain("<host-var.PASSWORD>");
     expect(error.message).not.toContain("p4ssw0rd");
   });
+
+  it("stores a recording whose failed call returned an error message", () => {
+    const recorder = createRecorder({
+      maskResponsePaths: { "test-data/*": ["**.token"] },
+    });
+    recorder.onToolUse({
+      id: "1",
+      server: "test-data",
+      tool: "createHost",
+      input: {},
+    });
+    recorder.onToolResult({
+      id: "1",
+      content: text("Error in createHost: listing did not become ready"),
+      isError: true,
+    });
+
+    expect(() => recorder.finish(PASSED)).not.toThrow();
+  });
 });
