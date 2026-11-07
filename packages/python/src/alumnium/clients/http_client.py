@@ -28,6 +28,7 @@ class HttpClient:
         tools: dict[str, type[BaseTool]],
         planner: bool = True,
         exclude_attributes: set[str] | None = None,
+        knowledge: str | None = None,
     ):
         self._server_pid: str | None = None
         self.base_url = self._resolve_url(url)
@@ -40,6 +41,7 @@ class HttpClient:
             "platform": platform,
             "planner": planner,
             "exclude_attributes": list(exclude_attributes or []),
+            **({"knowledge": knowledge} if knowledge else {}),
             **(
                 {
                     "provider": model.provider.value,
@@ -115,19 +117,37 @@ class HttpClient:
         response_data = response.json()
         return (response_data["explanation"], response_data["steps"])
 
-    def add_example(self, goal: str, actions: list[str], app: str = "unknown"):
+    def add_example(self, goal: str, actions: list[str], app: str = "unknown", layer: str = "product"):
         response = post(
             f"{self.base_url}/v1/sessions/{self.session_id}/examples",
-            json={"goal": goal, "actions": actions, "app": app},
+            json={"goal": goal, "actions": actions, "app": app, "layer": layer},
             timeout=30,
         )
         response.raise_for_status()
         return response.json()
 
-    def add_hint(self, kind: str, instruction: str, hint: str, app: str = "unknown"):
+    def add_hint(self, kind: str, instruction: str, hint: str, app: str = "unknown", layer: str = "product"):
         response = post(
             f"{self.base_url}/v1/sessions/{self.session_id}/hints",
-            json={"kind": kind, "instruction": instruction, "hint": hint, "app": app},
+            json={"kind": kind, "instruction": instruction, "hint": hint, "app": app, "layer": layer},
+            timeout=30,
+        )
+        response.raise_for_status()
+        return response.json()
+
+    def forget_lesson(self, kind: str, instruction: str, layer: str = "product") -> bool:
+        response = post(
+            f"{self.base_url}/v1/sessions/{self.session_id}/lessons/forget",
+            json={"kind": kind, "instruction": instruction, "layer": layer},
+            timeout=30,
+        )
+        response.raise_for_status()
+        return bool(response.json()["forgotten"])
+
+    def clear_layer(self, layer: str = "product"):
+        response = post(
+            f"{self.base_url}/v1/sessions/{self.session_id}/lessons/clear",
+            json={"layer": layer},
             timeout=30,
         )
         response.raise_for_status()

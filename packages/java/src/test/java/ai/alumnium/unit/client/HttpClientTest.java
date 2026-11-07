@@ -24,6 +24,8 @@ class HttpClientTest {
 
   private final AtomicReference<JsonNode> elementsBody = new AtomicReference<>();
   private final AtomicReference<JsonNode> hintsBody = new AtomicReference<>();
+  private final AtomicReference<JsonNode> forgetBody = new AtomicReference<>();
+  private final AtomicReference<JsonNode> sessionsBody = new AtomicReference<>();
   private HttpServer server;
   private HttpClient client;
 
@@ -35,10 +37,14 @@ class HttpClientTest {
         exchange -> {
           String path = exchange.getRequestURI().getPath();
           if (path.equals("/v1/sessions")) {
+            sessionsBody.set(MAPPER.readTree(exchange.getRequestBody()));
             respond(exchange, "{\"session_id\":\"session\",\"model\":\"openai/gpt\"}");
           } else if (path.equals("/v1/sessions/session/elements")) {
             elementsBody.set(MAPPER.readTree(exchange.getRequestBody()));
             respond(exchange, "{\"elements\":[{\"id\":1,\"explanation\":\"button\"}]}");
+          } else if (path.equals("/v1/sessions/session/lessons/forget")) {
+            forgetBody.set(MAPPER.readTree(exchange.getRequestBody()));
+            respond(exchange, "{\"forgotten\":true}");
           } else if (path.equals("/v1/sessions/session/hints")) {
             hintsBody.set(MAPPER.readTree(exchange.getRequestBody()));
             respond(exchange, "{\"success\":true}");
@@ -89,6 +95,42 @@ class HttpClientTest {
     assertThat(hintsBody.get().path("instruction").asText()).isEqualTo("total");
     assertThat(hintsBody.get().path("hint").asText()).isEqualTo("use the 'Total' row");
     assertThat(hintsBody.get().path("app").asText()).isEqualTo("example-com");
+  }
+
+  @Test
+  void omitsKnowledgeByDefault() {
+    assertThat(sessionsBody.get().has("knowledge")).isFalse();
+  }
+
+  @Test
+  void sendsKnowledgeScope() {
+    new HttpClient(
+            "http://127.0.0.1:" + server.getAddress().getPort(),
+            null,
+            "web-selenium",
+            List.of(),
+            true,
+            Set.of(),
+            "live-chat")
+        .close();
+
+    assertThat(sessionsBody.get().path("knowledge").asText()).isEqualTo("live-chat");
+  }
+
+  @Test
+  void addHintSendsLayer() {
+    client.addHint("find", "login", "button 'Sign in'", "example-com", "android");
+
+    assertThat(hintsBody.get().path("layer").asText()).isEqualTo("android");
+  }
+
+  @Test
+  void forgetLessonPostsLesson() {
+    assertThat(client.forgetLesson("find", "login", "web")).isTrue();
+
+    assertThat(forgetBody.get().path("kind").asText()).isEqualTo("find");
+    assertThat(forgetBody.get().path("instruction").asText()).isEqualTo("login");
+    assertThat(forgetBody.get().path("layer").asText()).isEqualTo("web");
   }
 
   private static void respond(HttpExchange exchange, String body) throws IOException {

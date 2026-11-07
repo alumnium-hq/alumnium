@@ -232,7 +232,7 @@ When Alumnium can't tell whether a statement is true, teach it what to look at w
 <LanguageContent lang="java">
 
 ```java
-al.learn().check("cart is empty", "the cart icon has no item count badge when empty");
+al.knowledge().check("cart is empty", "the cart icon has no item count badge when empty");
 ```
 
 </LanguageContent>
@@ -240,7 +240,7 @@ al.learn().check("cart is empty", "the cart icon has no item count badge when em
 <LanguageContent lang="python">
 
 ```python
-al.learn.check("cart is empty", "the cart icon has no item count badge when empty")
+al.knowledge.check("cart is empty", "the cart icon has no item count badge when empty")
 ```
 
 </LanguageContent>
@@ -248,7 +248,7 @@ al.learn.check("cart is empty", "the cart icon has no item count badge when empt
 <LanguageContent lang="typescript">
 
 ```typescript
-await al.learn.check(
+await al.knowledge.check(
   "cart is empty",
   "the cart icon has no item count badge when empty",
 );
@@ -256,7 +256,7 @@ await al.learn.check(
 
 </LanguageContent>
 
-Like [examples][learn], hints are persisted for the app under test and apply to later test runs. Every hint learned with `learn.get()` and `learn.check()` is provided whenever Alumnium verifies statements, so a hint also helps with similar statements.
+Like [examples][learn], hints apply to the current session, or to later test runs too when knowledge is persisted. Every hint learned with `knowledge.get()` and `knowledge.check()` is provided whenever Alumnium verifies statements, so a hint also helps with similar statements.
 
 ## Flakiness
 

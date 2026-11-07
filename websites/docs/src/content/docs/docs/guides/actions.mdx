@@ -216,7 +216,7 @@ You can either provide the exact steps manually each time (see the section above
 <LanguageContent lang="java">
 
 ```java
-al.learn().act(
+al.knowledge().act(
   "delete \"Test\" task",
   List.of(
     "hover \"Test\" task",
@@ -230,7 +230,7 @@ al.learn().act(
 <LanguageContent lang="python">
 
 ```python
-al.learn.do(
+al.knowledge.do(
   goal='delete "Test" task',
   actions=[
     'hover "Test" task',
@@ -244,7 +244,7 @@ al.learn.do(
 <LanguageContent lang="typescript">
 
 ```typescript
-await al.learn.do('delete "Test" task', [
+await al.knowledge.do('delete "Test" task', [
   'hover "Test" task',
   'click "x" button near "Test" task',
 ]);
@@ -253,10 +253,6 @@ await al.learn.do('delete "Test" task', [
 </LanguageContent>
 
 From now on, Alumnium knows what to do when told to delete a task.
-
-Calling `learn()` directly is the same as `learn.do()`. Alumnium can also learn hints for [retrievals][get], [verifications][check], [elements][find] and [areas][area].
-
-Examples are persisted for the app under test in the `.alumnium/knowledge` directory, so they also apply to later test runs. If you teach Alumnium before navigating to the app, the example is persisted for the app of the first action. Clearing learned examples also removes the examples and hints persisted for the current app. See [`ALUMNIUM_KNOWLEDGE`][knowledge] to keep examples in the current session only.
 
 <video
   class="rounded-xl"
@@ -272,6 +268,157 @@ Examples are persisted for the app under test in the `.alumnium/knowledge` direc
   <source src="/videos/learn-2.mp4" type="video/mp4" />
   <source src="/videos/learn-2.webm" type="video/webm" />
 </video>
+
+`al.learn` is a deprecated alias of `al.knowledge`, and calling `al.learn()` directly is the same as `al.knowledge.do()`. Alumnium can also learn hints for [retrievals][get], [verifications][check], [elements][find] and [areas][area].
+
+Examples apply to the current session only, so teach them in the setup phase of your tests. Set [`ALUMNIUM_KNOWLEDGE`][knowledge] to `true` to persist them in the `.alumnium/knowledge` directory, so they also apply to later test runs.
+
+### Knowledge Scope
+
+When knowledge is persisted, examples are kept for the app under test by default: the website host, or the bundle ID or package of a mobile app. If you teach Alumnium before navigating to the app, the example is persisted for the app of the first action, and Alumnium warns when a session ends before that happens.
+
+To share examples between apps, such as staging and production hosts or the web, iOS and Android builds of one product, map them to a product in `.alumnium/knowledge/knowledge.json`. An app entry is matched as drivers report it, and `*` matches any part of it:
+
+```json
+{
+  "products": {
+    "live-chat": {
+      "apps": ["*.sprinklr.com", "localhost:*", "com.sprinklr.chat"]
+    }
+  }
+}
+```
+
+You can also set the scope explicitly, which lets you teach Alumnium without opening the app at all. The `knowledge` option takes precedence over [`ALUMNIUM_KNOWLEDGE_SCOPE`][knowledge-scope-env], which takes precedence over the manifest.
+
+<LanguageContent lang="java">
+
+```java
+Alumni al = new Alumni(driver, new Alumni.Options().withKnowledge("live-chat"));
+```
+
+</LanguageContent>
+
+<LanguageContent lang="python">
+
+```python
+al = Alumni(driver, knowledge="live-chat")
+```
+
+</LanguageContent>
+
+<LanguageContent lang="typescript">
+
+```typescript
+const al = new Alumni(driver, { knowledge: "live-chat" });
+```
+
+</LanguageContent>
+
+### Knowledge Layers
+
+Examples are learned in the product layer and apply to every platform. When steps differ on one platform, teach them for that platform; when an example applies to every app, such as dismissing a cookie banner, teach it as shared. On the same instruction, the platform layer wins over the product layer, which wins over the shared layer.
+
+<LanguageContent lang="java">
+
+```java
+al.knowledge().on("android").act(
+  "delete \"Test\" task",
+  List.of("long-press \"Test\" task", "tap \"Delete\"")
+);
+al.knowledge().shared().act("dismiss cookie banner", List.of("click \"Accept\" button"));
+```
+
+</LanguageContent>
+
+<LanguageContent lang="python">
+
+```python
+al.knowledge.on("android").do('delete "Test" task', ['long-press "Test" task', 'tap "Delete"'])
+al.knowledge.shared().do("dismiss cookie banner", ['click "Accept" button'])
+```
+
+</LanguageContent>
+
+<LanguageContent lang="typescript">
+
+```typescript
+await al.knowledge.on("android").do('delete "Test" task', [
+  'long-press "Test" task',
+  'tap "Delete"',
+]);
+await al.knowledge.shared().do("dismiss cookie banner", ['click "Accept" button']);
+```
+
+</LanguageContent>
+
+Each layer is a readable JSON file you can review and edit by hand:
+
+```
+.alumnium/knowledge/
+  knowledge.json           # products manifest
+  shared.json              # shared layer
+  live-chat/lessons.json   # product layer
+  live-chat/android.json   # platform layer: web.json, ios.json, android.json
+```
+
+```json
+{
+  "do": {
+    "delete \"Test\" task": ["hover \"Test\" task", "click \"x\" button near \"Test\" task"]
+  },
+  "get": {
+    "total amount": "use the 'Total' row, not 'Subtotal'"
+  }
+}
+```
+
+Alumnium sends only the examples relevant to each instruction: exact matches, then up to [`ALUMNIUM_KNOWLEDGE_TOP_K`][knowledge-top-k] of the most similar ones.
+
+### Forgetting Examples
+
+Forget one example, or every example of a layer. Clearing learned examples only drops the ones learned in the current session, so a teardown doesn't erase examples other tests rely on.
+
+<LanguageContent lang="java">
+
+```java
+al.knowledge().forget("do", "delete \"Test\" task");
+al.knowledge().on("android").clear();
+al.clearLearnExamples(); // current session only
+```
+
+</LanguageContent>
+
+<LanguageContent lang="python">
+
+```python
+al.knowledge.forget("do", 'delete "Test" task')
+al.knowledge.on("android").clear()
+al.clear_learn_examples()  # current session only
+```
+
+</LanguageContent>
+
+<LanguageContent lang="typescript">
+
+```typescript
+await al.knowledge.forget("do", 'delete "Test" task');
+await al.knowledge.on("android").clear();
+await al.clearLearnExamples(); // current session only
+```
+
+</LanguageContent>
+
+The `alumnium knowledge` command inspects and maintains persisted examples:
+
+```sh
+alumnium knowledge list
+alumnium knowledge validate
+alumnium knowledge explain 'delete "Test" task' --app todomvc.com --platform web
+alumnium knowledge migrate
+```
+
+`validate` exits with an error when the manifest or a layer file is invalid, so you can run it in CI. `explain` shows which examples are sent with an instruction and the layer each comes from. `migrate` moves examples saved by earlier versions into `lessons.json`.
 
 ## Vision
 
@@ -476,3 +623,5 @@ In addition, Alumnium automatically retries actions when errors occur during the
 [check]: /docs/guides/verifications#teach-with-hints
 [find]: /docs/guides/elements#teach-with-hints
 [area]: /docs/guides/areas#teach-with-hints
+[knowledge-scope-env]: /docs/reference#alumnium_knowledge_scope
+[knowledge-top-k]: /docs/reference#alumnium_knowledge_top_k

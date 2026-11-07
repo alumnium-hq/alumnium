@@ -200,7 +200,7 @@ When Alumnium retrieves the wrong data, for example because the page shows sever
 <LanguageContent lang="java">
 
 ```java
-al.learn().get("total amount", "use the 'Total' row, not 'Subtotal'");
+al.knowledge().get("total amount", "use the 'Total' row, not 'Subtotal'");
 ```
 
 </LanguageContent>
@@ -208,7 +208,7 @@ al.learn().get("total amount", "use the 'Total' row, not 'Subtotal'");
 <LanguageContent lang="python">
 
 ```python
-al.learn.get("total amount", "use the 'Total' row, not 'Subtotal'")
+al.knowledge.get("total amount", "use the 'Total' row, not 'Subtotal'")
 ```
 
 </LanguageContent>
@@ -216,12 +216,12 @@ al.learn.get("total amount", "use the 'Total' row, not 'Subtotal'")
 <LanguageContent lang="typescript">
 
 ```typescript
-await al.learn.get("total amount", "use the 'Total' row, not 'Subtotal'");
+await al.knowledge.get("total amount", "use the 'Total' row, not 'Subtotal'");
 ```
 
 </LanguageContent>
 
-Like [examples][learn], hints are persisted for the app under test and apply to later test runs. Every hint learned with `learn.get()` and `learn.check()` is provided whenever Alumnium retrieves data, so a hint also helps with similar requests.
+Like [examples][learn], hints apply to the current session, or to later test runs too when knowledge is persisted. Every hint learned with `knowledge.get()` and `knowledge.check()` is provided whenever Alumnium retrieves data, so a hint also helps with similar requests.
 
 ## Flakiness
 

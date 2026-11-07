@@ -46,7 +46,7 @@ describe("Knowledge", () => {
     // the lesson is persisted right away.
     const teacher = await setup();
     await teacher.$.navigate(TODO_URL);
-    await teacher.al.learn('delete the "this is Al" task', [
+    await teacher.al.knowledge.do('delete the "this is Al" task', [
       'hover the "this is Al" task',
       'click button "x" near the "this is Al" task',
     ]);
@@ -86,13 +86,13 @@ describe("Knowledge", () => {
     const teacher = await setup();
     await teacher.$.navigate(ACCOUNT_PAGE);
     await Promise.all([
-      teacher.al.learn.get("status", "the status means the billing status"),
-      teacher.al.learn.check(
+      teacher.al.knowledge.get("status", "the status means the billing status"),
+      teacher.al.knowledge.check(
         "account is active",
         "the account is active only when its billing status is 'Paid'",
       ),
-      teacher.al.learn.find("save button", "the button 'Keep for later'"),
-      teacher.al.learn.area("orders table", "the 'Archived orders' table"),
+      teacher.al.knowledge.find("save button", "the button 'Keep for later'"),
+      teacher.al.knowledge.area("orders table", "the 'Archived orders' table"),
     ]);
 
     // The second session is separate and never calls learn.

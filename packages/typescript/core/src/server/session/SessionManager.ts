@@ -26,6 +26,7 @@ export namespace SessionManager {
     excludeAttributes?: string[] | undefined;
     sessionId?: SessionId | undefined;
     app?: AppId | undefined;
+    knowledge?: string | undefined;
   }
 }
 
@@ -89,7 +90,9 @@ export class SessionManager {
   async deleteSession(sessionId: SessionId): Promise<boolean> {
     tracer.end(sessionId);
 
-    if (sessionId in this.#sessions) {
+    const session = this.#sessions[sessionId];
+    if (session) {
+      session.close();
       delete this.#sessions[sessionId];
       logger.info(`Deleted session: ${sessionId}`);
       return true;

@@ -9,7 +9,7 @@ describe("Calculator", () => {
 
       // Mistral skips '+' button.
       if (model.provider === "mistralai")
-        await result.al.learn("4 / 2 =", [
+        await result.al.knowledge.do("4 / 2 =", [
           "click button '4'",
           "click button '÷'",
           "click button '2'",

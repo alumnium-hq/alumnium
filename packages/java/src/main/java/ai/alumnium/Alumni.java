@@ -20,6 +20,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,12 +41,13 @@ import org.slf4j.LoggerFactory;
 public final class Alumni implements AutoCloseable {
 
   private static final Logger LOG = LoggerFactory.getLogger(Alumni.class);
+  private static final AtomicBoolean WARNED_DEPRECATED_LEARN = new AtomicBoolean();
 
   private final BaseDriver driver;
   private final Model model;
   private final HttpClient client;
   private final Cache cache;
-  private final Learn learn;
+  private final Knowledge knowledge;
   private final Map<String, Class<? extends BaseTool>> tools;
   private final boolean changeAnalysis;
 
@@ -85,13 +87,14 @@ public final class Alumni implements AutoCloseable {
             this.driver.platform(),
             toolSchemas,
             planner,
-            excludeAttributes);
+            excludeAttributes,
+            opts.knowledge());
 
     this.model = client.model();
     LOG.info("Using model: {}/{}", this.model.provider().value(), this.model.name());
 
     this.cache = new Cache(this.client);
-    this.learn = new Learn(this.client, this.driver);
+    this.knowledge = new Knowledge(this.client, this.driver);
     LOG.info("Using HTTP client with server: {}", this.client.baseUrl());
   }
 
@@ -261,26 +264,51 @@ public final class Alumni implements AutoCloseable {
   }
 
   /**
-   * Adds a new learning example on what steps should be take to achieve the goal. The example is
-   * persisted for the current app and applies to later sessions.
-   *
-   * @param goal The goal to be achieved. Use same format as in {@link #act(String)}.
-   * @param actions A list of actions to achieve the goal.
+   * Teaches Alumnium how to handle instructions of {@link #act(String)}, {@link #get(String)},
+   * {@link #check(String)}, {@link #find(String)} and {@link #area(String)}, e.g. {@code
+   * al.knowledge().act(goal, actions)}. Lessons apply to the session, and to later sessions when
+   * {@code ALUMNIUM_KNOWLEDGE} is enabled.
    */
-  public void learn(String goal, List<String> actions) {
-    learn.act(goal, actions);
+  public Knowledge knowledge() {
+    return knowledge;
   }
 
   /**
-   * Teaches Alumnium how to handle instructions of {@link #act(String)}, {@link #get(String)},
-   * {@link #check(String)}, {@link #find(String)} and {@link #area(String)}. Lessons are persisted
-   * for the current app and apply to later sessions.
+   * Teaches the actions to perform to achieve the goal with {@link #act(String)}.
+   *
+   * @param goal The goal to be achieved. Use same format as in {@link #act(String)}.
+   * @param actions A list of actions to achieve the goal.
+   * @deprecated Use {@code knowledge().act(goal, actions)} instead.
    */
-  public Learn learn() {
-    return learn;
+  @Deprecated
+  public void learn(String goal, List<String> actions) {
+    warnDeprecatedLearn();
+    knowledge.act(goal, actions);
   }
 
-  /** Clear all learning examples, including the ones persisted for the current app. */
+  /**
+   * The same as {@link #knowledge()}.
+   *
+   * @deprecated Use {@link #knowledge()} instead.
+   */
+  @Deprecated
+  public Learn learn() {
+    warnDeprecatedLearn();
+    return new Learn(client, driver);
+  }
+
+  private static void warnDeprecatedLearn() {
+    if (WARNED_DEPRECATED_LEARN.compareAndSet(false, true)) {
+      LOG.warn(
+          "Alumni.learn() is deprecated and will be removed in a future release, use"
+              + " Alumni.knowledge() instead, e.g. al.knowledge().act(goal, actions).");
+    }
+  }
+
+  /**
+   * Clears examples and hints learned in this session. Persisted lessons are kept; use {@link
+   * Knowledge#forget(String, String)} or {@link Knowledge#clear()} to remove them.
+   */
   public void clearLearnExamples() {
     client.clearExamples();
   }
@@ -410,9 +438,21 @@ public final class Alumni implements AutoCloseable {
       Boolean planner,
       Boolean changeAnalysis,
       Set<String> excludeAttributes,
-      Set<String> disabledTools) {
+      Set<String> disabledTools,
+      String knowledge) {
     public Options() {
-      this(null, null, List.of(), null, null, null, Set.of());
+      this(null, null, List.of(), null, null, null, Set.of(), null);
+    }
+
+    public Options(
+        String url,
+        Model model,
+        List<Class<? extends BaseTool>> extraTools,
+        Boolean planner,
+        Boolean changeAnalysis,
+        Set<String> excludeAttributes,
+        Set<String> disabledTools) {
+      this(url, model, extraTools, planner, changeAnalysis, excludeAttributes, disabledTools, null);
     }
 
     public Options(
@@ -422,7 +462,7 @@ public final class Alumni implements AutoCloseable {
         Boolean planner,
         Boolean changeAnalysis,
         Set<String> excludeAttributes) {
-      this(url, model, extraTools, planner, changeAnalysis, excludeAttributes, Set.of());
+      this(url, model, extraTools, planner, changeAnalysis, excludeAttributes, Set.of(), null);
     }
 
     public Options {
@@ -435,37 +475,104 @@ public final class Alumni implements AutoCloseable {
 
     public Options withUrl(String url) {
       return new Options(
-          url, model, extraTools, planner, changeAnalysis, excludeAttributes, disabledTools);
+          url,
+          model,
+          extraTools,
+          planner,
+          changeAnalysis,
+          excludeAttributes,
+          disabledTools,
+          knowledge);
     }
 
     public Options withModel(Model model) {
       return new Options(
-          url, model, extraTools, planner, changeAnalysis, excludeAttributes, disabledTools);
+          url,
+          model,
+          extraTools,
+          planner,
+          changeAnalysis,
+          excludeAttributes,
+          disabledTools,
+          knowledge);
     }
 
     public Options withExtraTools(List<Class<? extends BaseTool>> extraTools) {
       return new Options(
-          url, model, extraTools, planner, changeAnalysis, excludeAttributes, disabledTools);
+          url,
+          model,
+          extraTools,
+          planner,
+          changeAnalysis,
+          excludeAttributes,
+          disabledTools,
+          knowledge);
     }
 
     public Options withPlanner(Boolean planner) {
       return new Options(
-          url, model, extraTools, planner, changeAnalysis, excludeAttributes, disabledTools);
+          url,
+          model,
+          extraTools,
+          planner,
+          changeAnalysis,
+          excludeAttributes,
+          disabledTools,
+          knowledge);
     }
 
     public Options withChangeAnalysis(Boolean changeAnalysis) {
       return new Options(
-          url, model, extraTools, planner, changeAnalysis, excludeAttributes, disabledTools);
+          url,
+          model,
+          extraTools,
+          planner,
+          changeAnalysis,
+          excludeAttributes,
+          disabledTools,
+          knowledge);
     }
 
     public Options withExcludeAttributes(Set<String> excludeAttributes) {
       return new Options(
-          url, model, extraTools, planner, changeAnalysis, excludeAttributes, disabledTools);
+          url,
+          model,
+          extraTools,
+          planner,
+          changeAnalysis,
+          excludeAttributes,
+          disabledTools,
+          knowledge);
+    }
+
+    /**
+     * Knowledge scope, such as a product name, that learned lessons persist in. Lets lessons
+     * persist without an app and share them across apps. Defaults to {@code
+     * ALUMNIUM_KNOWLEDGE_SCOPE}, then the product the knowledge manifest maps the app to, then the
+     * app itself.
+     */
+    public Options withKnowledge(String knowledge) {
+      return new Options(
+          url,
+          model,
+          extraTools,
+          planner,
+          changeAnalysis,
+          excludeAttributes,
+          disabledTools,
+          knowledge);
     }
 
     public Options withDisabledTools(Set<String> disabledTools) {
       return new Options(
-          url, model, extraTools, planner, changeAnalysis, excludeAttributes, disabledTools);
+          url,
+          model,
+          extraTools,
+          planner,
+          changeAnalysis,
+          excludeAttributes,
+          disabledTools,
+          knowledge);
     }
   }
 

@@ -62,10 +62,18 @@ export namespace Tracer {
       Attrs: SpansAlumniAttrsBase;
     };
 
-    "alumni.learn": {
+    "alumni.knowledge.learn": {
       Attrs: SpansAlumniAttrsBase & {
-        "alumni.learn.kind": "do" | "get" | "check" | "find" | "area";
+        "alumni.knowledge.kind": "do" | "get" | "check" | "find" | "area";
       };
+    };
+
+    "alumni.knowledge.forget": {
+      Attrs: SpansAlumniAttrsBase;
+    };
+
+    "alumni.knowledge.clear": {
+      Attrs: SpansAlumniAttrsBase;
     };
 
     "alumni.clear_learn_examples": {
@@ -115,6 +123,14 @@ export namespace Tracer {
     };
 
     "client.add_hint": {
+      Attrs: SpansClientAttrsBase;
+    };
+
+    "client.forget_lesson": {
+      Attrs: SpansClientAttrsBase;
+    };
+
+    "client.clear_layer": {
       Attrs: SpansClientAttrsBase;
     };
 

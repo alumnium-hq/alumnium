@@ -13,28 +13,28 @@ describe("Native To Do application", () => {
       await Promise.all(
         os() === "android"
           ? [
-              al.learn('create a new task "this is Al"', [
+              al.knowledge.do('create a new task "this is Al"', [
                 'type "this is Al" in "Title" textbox',
                 'type "this is Al" in "Enter your task here" textbox',
                 "click button 'Save'",
               ]),
-              al.learn('mark the "this is Al" task as completed', [
+              al.knowledge.do('mark the "this is Al" task as completed', [
                 'click checkbox near the "this is Al" task',
               ]),
-              al.learn('delete the "this is Al" task', [
+              al.knowledge.do('delete the "this is Al" task', [
                 "click on the 'this is Al' task to open its details",
                 "click button 'Delete'",
               ]),
             ]
           : [
-              al.learn('create a new task "this is Al"', [
+              al.knowledge.do('create a new task "this is Al"', [
                 'type "this is Al" to a text field',
                 "click save button",
               ]),
-              al.learn('mark the "this is Al" task as completed', [
+              al.knowledge.do('mark the "this is Al" task as completed', [
                 'click image near the "this is Al" task',
               ]),
-              al.learn('delete the "this is Al" task', [
+              al.knowledge.do('delete the "this is Al" task', [
                 'click image "-" near the "this is Al" task',
                 'click button "Delete" near the "this is Al" task',
                 "click done button",

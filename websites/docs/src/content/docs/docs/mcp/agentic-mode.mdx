@@ -29,6 +29,8 @@ In agentic mode, the MCP Server exposes Alumnium's core automation capabilities:
 | `do`                                | Execute natural language automation commands with optional vision support   |
 | `check`                             | Verify statements about the current page state with optional vision support |
 | `get`                               | Extract data from pages using natural language descriptions                 |
+| `learn`                             | Teach how to handle instructions that `do`, `check` or `get` got wrong      |
+| `forget`                            | Forget a lesson taught with `learn` that turned out wrong                   |
 | `wait`                              | Wait a fixed duration or until a natural language condition is met          |
 | `fetch_accessibility_tree`          | Debug page structure with raw accessibility tree                            |
 
@@ -45,6 +47,19 @@ Set `vision` to `true` when choosing an action requires visual information, such
 ### `get`
 
 [Extract][8] data from the application based on natural language descriptions. If data is not found, returns explanation why it can't be retrieved. Alumnium automatically captures screenshot upon completion and stores it in the artifacts directory.
+
+### `learn`
+
+Teach Alumnium how to handle an instruction after `do`, `get` or `check` handled it incorrectly. Pass `kind` (`do`, `get` or `check`), the `instruction` in the same format as passed to that tool, and either:
+
+- `actions` for `do`: the [steps][14] that achieve the goal;
+- `hint` for `get` and `check`: where to [look for data][15] or what makes a [statement true][16].
+
+The lesson applies to the rest of the session. Set [`ALUMNIUM_KNOWLEDGE`][17] to `true` to persist it in the `.alumnium/knowledge` directory of the MCP server, so it also applies to later sessions and test runs. Pass `layer` to choose where: `product` (default) for every platform of the app, `web`, `ios` or `android` for one platform, or `shared` for every app. Set `knowledge` in `alumnium:options` of `start` to persist lessons in a named [knowledge scope][18].
+
+### `forget`
+
+Forget a lesson taught with `learn`. Pass the `kind`, the `instruction` exactly as taught, and the `layer` it was taught in (`product` by default). Returns whether a lesson was forgotten.
 
 ### `wait`
 
@@ -67,3 +82,8 @@ Returns the raw accessibility tree of the current page as XML. Useful for debugg
 [11]: /docs/getting-started/configuration#codex
 [12]: https://cursor.com/docs/cloud-agent
 [13]: /docs/getting-started/configuration#cursor
+[14]: /docs/guides/actions#teach-with-examples
+[15]: /docs/guides/retrievals#teach-with-hints
+[16]: /docs/guides/verifications#teach-with-hints
+[17]: /docs/reference#alumnium_knowledge
+[18]: /docs/guides/actions#knowledge-scope

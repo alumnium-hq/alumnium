@@ -51,3 +51,20 @@ def test_area_find_passes_cache_to_client():
     Area.find(area, "login button", cache=False)
 
     assert area.client.find_element.call_args.kwargs["cache"] is False
+
+
+def create_session_body(**kwargs) -> dict:
+    with patch("alumnium.clients.http_client.post") as post:
+        post.return_value.json.return_value = {"session_id": "session", "model": "openai/gpt-5-nano"}
+        HttpClient("http://localhost:8013", None, "chromium", {}, **kwargs)
+
+    assert post.call_args.args[0] == "http://localhost:8013/v1/sessions"
+    return post.call_args.kwargs["json"]
+
+
+def test_init_omits_knowledge_by_default():
+    assert "knowledge" not in create_session_body()
+
+
+def test_init_sends_knowledge_scope():
+    assert create_session_body(knowledge="live-chat")["knowledge"] == "live-chat"

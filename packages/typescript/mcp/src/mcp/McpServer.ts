@@ -18,7 +18,9 @@ import { checkMcpTool, getCheckMcpInputSchema } from "./tools/checkMcpTool.ts";
 import { directMcpTools } from "./tools/directMcpTools.ts";
 import { doMcpTool, getDoMcpInputSchema } from "./tools/doMcpTool.ts";
 import { fetchAccessibilityTreeMcpTool } from "./tools/fetchAccessibilityTreeMcpTool.ts";
+import { forgetMcpTool } from "./tools/forgetMcpTool.ts";
 import { getMcpTool } from "./tools/getMcpTool.ts";
+import { learnMcpTool } from "./tools/learnMcpTool.ts";
 import type { McpTool } from "./tools/McpTool.ts";
 import { startMcpTool } from "./tools/startMcpTool.ts";
 import { stopMcpTool } from "./tools/stopMcpTool.ts";
@@ -30,7 +32,9 @@ const AGENTIC_MCP_TOOLS = [
   checkMcpTool,
   doMcpTool,
   fetchAccessibilityTreeMcpTool,
+  forgetMcpTool,
   getMcpTool,
+  learnMcpTool,
   startMcpTool,
   stopMcpTool,
   waitMcpTool,

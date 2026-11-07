@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   ActorAgent,
   AreaAgent,
@@ -10,6 +10,7 @@ import {
 } from "@alumnium/core/agents";
 import {
   CreateSessionResponse,
+  Env,
   GlobalFileStorePaths,
   type Http,
   Model,
@@ -20,6 +21,9 @@ import { serverApp } from "./serverApp.ts";
 describe("serverApp", () => {
   beforeEach(() => {
     serverApp.store.sessions = new SessionManager();
+    // Persisting knowledge is opt-in, so enable it for the tests of persistence.
+    vi.stubEnv("ALUMNIUM_KNOWLEDGE", "true");
+    Env.reset();
 
     pushMock(
       vi
@@ -63,6 +67,11 @@ describe("serverApp", () => {
         .spyOn(ChangesAnalyzerAgent.prototype, "invoke")
         .mockResolvedValue("Button text changed from 'Click me' to 'Submit'."),
     );
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    Env.reset();
   });
 
   describe("GET /health", () => {
@@ -608,9 +617,39 @@ describe("serverApp", () => {
         }),
       );
       expect(response.status).toBe(200);
-      expect(await storeDir.flatTree()).toEqual([
-        expect.stringMatching(/^example-com\/do\/[0-9a-f]+\.json$/),
-      ]);
+      expect(await storeDir.flatTree()).toEqual(["example-com/lessons.json"]);
+    });
+  });
+
+  describe("POST /sessions knowledge", () => {
+    it("persists examples in the knowledge scope without an app", async () => {
+      const storeDir = await createMockDir({ prefix: "server-scope" });
+      pushMock(
+        vi
+          .spyOn(GlobalFileStorePaths, "globalSubDir")
+          .mockReturnValue(storeDir.path),
+      );
+      const sessionId = await createSession([], { knowledge: "live-chat" });
+      const response = await serverApp.handle(
+        createRequest("POST", `/sessions/${sessionId}/examples`, {
+          goal: "login to the app",
+          actions: ["click submit"],
+        }),
+      );
+      expect(response.status).toBe(200);
+      expect(await storeDir.flatTree()).toEqual(["live-chat/lessons.json"]);
+    });
+
+    it("rejects invalid knowledge scopes", async () => {
+      const response = await serverApp.handle(
+        createRequest("POST", "/sessions", {
+          provider: "anthropic",
+          platform: "chromium",
+          tools: [],
+          knowledge: "../escape",
+        }),
+      );
+      expect(response.status).toBe(500);
     });
   });
 
@@ -636,9 +675,7 @@ describe("serverApp", () => {
         success: true,
         message: "Hint added successfully",
       });
-      expect(await storeDir.flatTree()).toEqual([
-        expect.stringMatching(/^example-com\/get\/[0-9a-f]+\.json$/),
-      ]);
+      expect(await storeDir.flatTree()).toEqual(["example-com/lessons.json"]);
     });
 
     it("rejects unknown hint kinds", async () => {
@@ -651,6 +688,68 @@ describe("serverApp", () => {
         }),
       );
       expect(response.status).toBe(500);
+    });
+  });
+
+  describe("POST /sessions/:session_id/lessons", () => {
+    async function setupStore() {
+      const storeDir = await createMockDir({ prefix: "server-lessons" });
+      pushMock(
+        vi
+          .spyOn(GlobalFileStorePaths, "globalSubDir")
+          .mockReturnValue(storeDir.path),
+      );
+      const sessionId = await createSession([], { knowledge: "live-chat" });
+      const post = (path: string, body: unknown) =>
+        serverApp.handle(
+          createRequest("POST", `/sessions/${sessionId}${path}`, body),
+        );
+      return { storeDir, post };
+    }
+
+    it("persists examples in the requested layer", async () => {
+      const { storeDir, post } = await setupStore();
+
+      const response = await post("/examples", {
+        goal: "login to the app",
+        actions: ["tap submit"],
+        layer: "android",
+      });
+
+      expect(response.status).toBe(200);
+      expect(await storeDir.flatTree()).toEqual(["live-chat/android.json"]);
+    });
+
+    it("forgets a lesson", async () => {
+      const { storeDir, post } = await setupStore();
+      await post("/hints", {
+        kind: "find",
+        instruction: "login",
+        hint: "button Sign in",
+      });
+
+      const response = await post("/lessons/forget", {
+        kind: "find",
+        instruction: "login",
+      });
+
+      expect(response.status).toBe(200);
+      expect(await response.json()).toEqual({ forgotten: true });
+      expect(await storeDir.flatTree()).toEqual([]);
+    });
+
+    it("clears a layer", async () => {
+      const { storeDir, post } = await setupStore();
+      await post("/examples", {
+        goal: "login to the app",
+        actions: ["click submit"],
+        layer: "shared",
+      });
+
+      const response = await post("/lessons/clear", { layer: "shared" });
+
+      expect(response.status).toBe(200);
+      expect(await storeDir.flatTree()).toEqual([]);
     });
   });
 
@@ -669,7 +768,10 @@ describe("serverApp", () => {
   });
 });
 
-async function createSession(excludeAttributes: string[] = []) {
+async function createSession(
+  excludeAttributes: string[] = [],
+  body: Record<string, unknown> = {},
+) {
   const response = await serverApp.handle(
     createRequest("POST", "/sessions", {
       provider: "anthropic",
@@ -677,6 +779,7 @@ async function createSession(excludeAttributes: string[] = []) {
       platform: "chromium",
       tools: getSampleToolSchemas(),
       exclude_attributes: excludeAttributes,
+      ...body,
     }),
   );
   return CreateSessionResponse.parse(await response.json()).session_id;
