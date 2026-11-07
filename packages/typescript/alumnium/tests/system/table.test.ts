@@ -9,7 +9,7 @@ describe("Table", () => {
 
       // These models double-click to sort
       if (model.provider === "mistralai")
-        await al.learn("sort by web site", ["click 'Web Site' header"]);
+        await al.knowledge.do("sort by web site", ["click 'Web Site' header"]);
 
       if (isMobile)
         skip("Area is not properly extracted from Appium source code.");

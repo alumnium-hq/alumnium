@@ -8,13 +8,13 @@ describe("Swag Labs", () => {
       const { al, driverId, model, $ } = result;
 
       await Promise.all([
-        al.learn("add laptop to cart", [
+        al.knowledge.do("add laptop to cart", [
           "click button 'Add to cart' next to 'laptop' product",
         ]),
-        al.learn("go to shopping cart", [
+        al.knowledge.do("go to shopping cart", [
           "click link after 'Swag Labs' with a number text in it",
         ]),
-        al.learn("sort products by lowest shipping cost", [
+        al.knowledge.do("sort products by lowest shipping cost", [
           driverId === "appium-ios"
             ? "click generic element after 'Products' text"
             : "click combobox with options",

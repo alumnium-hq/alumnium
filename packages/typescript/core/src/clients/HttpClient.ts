@@ -10,6 +10,9 @@ import { convertToolsToSchemas } from "../tools/index.ts";
 import type {
   AddExampleRequest,
   AddHintRequest,
+  ClearLayerRequest,
+  ForgetLessonRequest,
+  ForgetLessonResponse,
   AreaRequest,
   AreaResponse,
   ChangesRequest,
@@ -105,11 +108,12 @@ export class HttpClient extends Client {
     return this.spanAttrs();
   })
   async addExample(props: Client.AddExampleProps): Promise<void> {
-    const { goal, actions, app } = props;
+    const { goal, actions, app, layer } = props;
     const body: AddExampleRequest = {
       goal,
       actions,
       ...(app ? { app } : {}),
+      ...(layer ? { layer } : {}),
     };
     await this.#sessionFetch("POST", "/examples", body);
   }
@@ -118,14 +122,41 @@ export class HttpClient extends Client {
     return this.spanAttrs();
   })
   async addHint(props: Client.AddHintProps): Promise<void> {
-    const { kind, instruction, hint, app } = props;
+    const { kind, instruction, hint, app, layer } = props;
     const body: AddHintRequest = {
       kind,
       instruction,
       hint,
       ...(app ? { app } : {}),
+      ...(layer ? { layer } : {}),
     };
     await this.#sessionFetch("POST", "/hints", body);
+  }
+
+  @span("client.forget_lesson", function () {
+    return this.spanAttrs();
+  })
+  async forgetLesson(props: Client.ForgetLessonProps): Promise<boolean> {
+    const { kind, instruction, layer } = props;
+    const body: ForgetLessonRequest = {
+      kind,
+      instruction,
+      ...(layer ? { layer } : {}),
+    };
+    const result = await this.#sessionFetch<ForgetLessonResponse>(
+      "POST",
+      "/lessons/forget",
+      body,
+    );
+    return result.forgotten;
+  }
+
+  @span("client.clear_layer", function () {
+    return this.spanAttrs();
+  })
+  async clearLayer(props: Client.ClearLayerProps): Promise<void> {
+    const body: ClearLayerRequest = props.layer ? { layer: props.layer } : {};
+    await this.#sessionFetch("POST", "/lessons/clear", body);
   }
 
   @span("client.clear_examples", function () {
@@ -306,6 +337,7 @@ export class HttpClient extends Client {
       tools: toolSchemas,
       planner: this.planner,
       exclude_attributes: this.excludeAttributes,
+      ...(this.knowledge ? { knowledge: this.knowledge } : {}),
     };
 
     const result = await this.#fetch<SessionResponse>(

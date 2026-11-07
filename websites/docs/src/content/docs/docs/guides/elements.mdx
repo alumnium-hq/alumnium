@@ -119,7 +119,7 @@ When Alumnium finds the wrong element, teach it how to locate the right one with
 <LanguageContent lang="java">
 
 ```java
-al.learn().find("login button", "the button 'Sign in' in the page header");
+al.knowledge().find("login button", "the button 'Sign in' in the page header");
 ```
 
 </LanguageContent>
@@ -127,7 +127,7 @@ al.learn().find("login button", "the button 'Sign in' in the page header");
 <LanguageContent lang="python">
 
 ```python
-al.learn.find("login button", "the button 'Sign in' in the page header")
+al.knowledge.find("login button", "the button 'Sign in' in the page header")
 ```
 
 </LanguageContent>
@@ -135,11 +135,11 @@ al.learn.find("login button", "the button 'Sign in' in the page header")
 <LanguageContent lang="typescript">
 
 ```typescript
-await al.learn.find("login button", "the button 'Sign in' in the page header");
+await al.knowledge.find("login button", "the button 'Sign in' in the page header");
 ```
 
 </LanguageContent>
 
-Like [examples][learn], hints are persisted for the app under test and apply to later test runs. Every hint learned with `learn.find()` is provided whenever Alumnium finds elements.
+Like [examples][learn], hints apply to the current session, or to later test runs too when knowledge is persisted. Every hint learned with `knowledge.find()` is provided whenever Alumnium finds elements.
 
 [learn]: /docs/guides/actions#teach-with-examples
