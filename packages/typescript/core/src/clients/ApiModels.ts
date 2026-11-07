@@ -27,6 +27,7 @@ export interface SessionRequest {
   tools: { [key: string]: any }[];
   planner: boolean;
   exclude_attributes?: string[] | undefined;
+  knowledge?: string | undefined;
 }
 
 export interface SessionResponse {
@@ -104,10 +105,13 @@ export interface FindResponse {
   elements: ElementRef[];
 }
 
+export type LessonLayer = "shared" | "product" | "web" | "ios" | "android";
+
 export interface AddExampleRequest {
   goal: string;
   actions: string[];
   app?: AppId;
+  layer?: LessonLayer;
 }
 
 export interface AddHintRequest {
@@ -115,6 +119,21 @@ export interface AddHintRequest {
   instruction: string;
   hint: string;
   app?: AppId;
+  layer?: LessonLayer;
+}
+
+export interface ForgetLessonRequest {
+  kind: "do" | "get" | "check" | "find" | "area";
+  instruction: string;
+  layer?: LessonLayer;
+}
+
+export interface ForgetLessonResponse {
+  forgotten: boolean;
+}
+
+export interface ClearLayerRequest {
+  layer?: LessonLayer;
 }
 
 export interface ChangeState {

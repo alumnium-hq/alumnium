@@ -165,18 +165,18 @@ def alumnium(context):
         context.al.driver.delay = 0.1
 
         if driver_name == "appium-ios":
-            context.al.learn(
+            context.al.knowledge.do(
                 goal='create a new task "this is Al"',
                 actions=[
                     'type "this is Al" to a text field',
                     "click save button",
                 ],
             )
-            context.al.learn(
+            context.al.knowledge.do(
                 goal='mark the "this is Al" task as completed',
                 actions=['click image near the "this is Al" task'],
             )
-            context.al.learn(
+            context.al.knowledge.do(
                 goal='delete the "this is Al" task',
                 actions=[
                     "click edit button",
@@ -191,7 +191,7 @@ def alumnium(context):
             # Workaround for LambdaTest stale page source issue
             context.al.driver.double_fetch_page_source = True
 
-            context.al.learn(
+            context.al.knowledge.do(
                 goal='create a new task "this is Al"',
                 actions=[
                     'type "this is Al" in "Title" textbox',
@@ -199,11 +199,11 @@ def alumnium(context):
                     "click button 'Save'",
                 ],
             )
-            context.al.learn(
+            context.al.knowledge.do(
                 goal='mark the "this is Al" task as completed',
                 actions=['click checkbox near the "this is Al" task'],
             )
-            context.al.learn(
+            context.al.knowledge.do(
                 goal='delete the "this is Al" task',
                 actions=[
                     "click on the 'this is Al' task to open details (click on its parent View)",
@@ -211,18 +211,18 @@ def alumnium(context):
                 ],
             )
     else:
-        context.al.learn(
+        context.al.knowledge.do(
             goal='create a new task "this is Al"',
             actions=[
                 'type "this is Al" in textbox "what needs to be done"',
                 'press key "Enter"',
             ],
         )
-        context.al.learn(
+        context.al.knowledge.do(
             goal='mark the "this is Al" task as completed',
             actions=['click checkbox near the "this is Al" task'],
         )
-        context.al.learn(
+        context.al.knowledge.do(
             goal='delete the "this is Al" task',
             actions=[
                 'hover the "this is Al" task',

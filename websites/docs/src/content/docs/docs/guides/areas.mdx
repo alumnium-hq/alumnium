@@ -159,7 +159,7 @@ When Alumnium picks the wrong area, teach it how to identify the right one with 
 <LanguageContent lang="java">
 
 ```java
-al.learn().area("shopping cart", "the side panel with the 'Bag' heading");
+al.knowledge().area("shopping cart", "the side panel with the 'Bag' heading");
 ```
 
 </LanguageContent>
@@ -167,7 +167,7 @@ al.learn().area("shopping cart", "the side panel with the 'Bag' heading");
 <LanguageContent lang="python">
 
 ```python
-al.learn.area("shopping cart", "the side panel with the 'Bag' heading")
+al.knowledge.area("shopping cart", "the side panel with the 'Bag' heading")
 ```
 
 </LanguageContent>
@@ -175,11 +175,11 @@ al.learn.area("shopping cart", "the side panel with the 'Bag' heading")
 <LanguageContent lang="typescript">
 
 ```typescript
-await al.learn.area("shopping cart", "the side panel with the 'Bag' heading");
+await al.knowledge.area("shopping cart", "the side panel with the 'Bag' heading");
 ```
 
 </LanguageContent>
 
-Like [examples][learn], hints are persisted for the app under test and apply to later test runs. Every hint learned with `learn.area()` is provided whenever Alumnium identifies areas.
+Like [examples][learn], hints apply to the current session, or to later test runs too when knowledge is persisted. Every hint learned with `knowledge.area()` is provided whenever Alumnium identifies areas.
 
 [learn]: /docs/guides/actions#teach-with-examples

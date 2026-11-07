@@ -1,7 +1,9 @@
 import { type AppId, isPlaceholderAppId } from "../../AppId.ts";
 import { Logger } from "../../telemetry/Logger.ts";
 import type { SessionContext } from "../session/SessionContext.ts";
-import type { KnowledgeStore } from "./KnowledgeStore.ts";
+import { KnowledgeLayer } from "./KnowledgeLayer.ts";
+import type { KnowledgeManifest } from "./KnowledgeManifest.ts";
+import { KnowledgeStore } from "./KnowledgeStore.ts";
 
 const logger = Logger.get(import.meta.url);
 
@@ -10,174 +12,321 @@ export namespace Knowledge {
 
   export type HintKind = KnowledgeStore.HintKind;
 
+  export type Layer = KnowledgeLayer.Layer;
+
   /** Lessons of a kind by instruction. */
   export type Lessons<K extends Kind> = Map<string, KnowledgeStore.Values[K]>;
+
+  export interface Props {
+    context: SessionContext;
+    /** Store to persist lessons in, `null` to keep them in the session. */
+    store: KnowledgeStore | null;
+    /** Platform of the session, which picks its platform layer. */
+    platform: KnowledgeLayer.Platform;
+    /** Explicit scope, so lessons persist without an app. */
+    scope?: string | undefined;
+  }
+
+  export interface LearnOptions {
+    /** Layer to persist in, the product layer by default. */
+    layer?: Layer | undefined;
+    /** App the lesson was learned on, the session app by default. */
+    app?: AppId | undefined;
+  }
+
+  export interface Unsaved {
+    kind: Kind;
+    instruction: string;
+    layer: Layer;
+  }
+
+  /** A resolved lesson with the layer it comes from. */
+  export interface Resolved<K extends Kind> {
+    value: KnowledgeStore.Values[K];
+    layer: Layer;
+    /** Whether it was learned in the session and isn't persisted yet. */
+    session: boolean;
+  }
 }
 
 /**
- * Lessons available to a session: the ones learned in it, plus the ones
- * persisted for the current app by previous sessions.
+ * Lessons available to a session, merged from layers: shared lessons, the
+ * product's lessons and its lessons for the session platform, with lessons
+ * learned in the session on top. On the same kind and instruction, the more
+ * specific layer wins.
  *
- * Lessons are often learned before navigating to the app under test, so when
- * the app isn't known yet, they're persisted once a request for an app
- * resolves lessons.
+ * The product scope is, in order: the explicit scope, the product the
+ * manifest maps the session app to, or the app itself. Lessons are often
+ * learned before navigating to the app under test, so without an explicit
+ * scope and before the app is known, product and platform lessons are
+ * persisted once a request for an app resolves lessons.
  */
 export class Knowledge {
   #context: SessionContext;
   #store: KnowledgeStore | null;
-  #learned = new Map<Knowledge.Kind, Map<string, unknown>>();
-  #pending = new Map<Knowledge.Kind, Set<string>>();
-  #persisted = new Map<string, Promise<Map<string, unknown>>>();
+  #platform: KnowledgeLayer.Platform;
+  #scope: string | undefined;
+  #manifest: Promise<KnowledgeManifest> | undefined;
+  /** Lessons learned in the session by layer, kind and instruction. */
+  #learned = new Map<Knowledge.Layer, KnowledgeStore.Lessons>();
+  /** Lessons learned in the session, waiting for a scope to persist in. */
+  #pending: Knowledge.Unsaved[] = [];
+  /** Persisted lessons by layer file. */
+  #loaded = new Map<string, Promise<KnowledgeStore.Lessons>>();
 
-  constructor(context: SessionContext, store: KnowledgeStore | null) {
-    this.#context = context;
-    this.#store = store;
+  constructor(props: Knowledge.Props) {
+    this.#context = props.context;
+    this.#store = props.store;
+    this.#platform = props.platform;
+    this.#scope = props.scope;
   }
 
-  /**
-   * Learns a lesson for the instruction.
-   *
-   * @param app App the lesson was learned on, the session app by default.
-   */
+  get platform(): KnowledgeLayer.Platform {
+    return this.#platform;
+  }
+
+  /** Learns a lesson for the instruction. */
   async learn<K extends Knowledge.Kind>(
     kind: K,
     instruction: string,
     value: KnowledgeStore.Values[K],
-    app?: AppId,
+    options: Knowledge.LearnOptions = {},
   ): Promise<void> {
-    this.#ofKind(this.#learned, kind, Map).set(instruction, value);
+    const layer = options.layer ?? KnowledgeLayer.DEFAULT;
+    this.#lessonsOf(this.#learned, layer, kind).set(instruction, value);
+    this.#removePending(layer, kind, instruction);
     if (!this.#store) return;
 
-    const pending = this.#ofKind(this.#pending, kind, Set);
-    const target = [app, this.#context.app].find(
-      (candidate) => candidate && !isPlaceholderAppId(candidate),
-    );
-    if (target) {
-      pending.delete(instruction);
-      await this.#persist(target, kind, instruction, value);
-    } else {
+    const scope = await this.#layerScope(layer, options.app);
+    if (scope === undefined) {
       logger.debug(
-        `Deferring persisting ${kind} lesson until app is known: ${instruction}`,
+        `Deferring persisting ${kind} lesson until its scope is known: ${instruction}`,
       );
-      pending.add(instruction);
+      this.#pending.push({ kind, instruction, layer });
+      return;
     }
+
+    await this.#persist(scope, layer, kind, instruction, value);
   }
 
   /**
-   * Resolves lessons of the kind for the session app. Lessons learned in
-   * the session override persisted ones for the same instruction.
+   * Resolves lessons of the kind that apply to the session, with the layer
+   * each comes from.
    */
+  async resolve<K extends Knowledge.Kind>(
+    kind: K,
+  ): Promise<Map<string, Knowledge.Resolved<K>>> {
+    const resolved = new Map<string, Knowledge.Resolved<K>>();
+    const layers = KnowledgeLayer.applicable(this.#platform);
+
+    const scope = await this.#resolveScope();
+    if (scope) await this.#persistPending(scope);
+
+    if (this.#store) {
+      for (const layer of layers) {
+        if (layer !== "shared" && !scope) continue;
+        const lessons = await this.#load(scope, layer);
+        for (const [instruction, value] of lessons[kind]) {
+          resolved.set(instruction, {
+            value: value as KnowledgeStore.Values[K],
+            layer,
+            session: false,
+          });
+        }
+      }
+    }
+
+    for (const layer of layers) {
+      const learned = this.#learned.get(layer)?.[kind];
+      for (const [instruction, value] of learned ?? []) {
+        resolved.set(instruction, {
+          value: value as KnowledgeStore.Values[K],
+          layer,
+          session: true,
+        });
+      }
+    }
+
+    return resolved;
+  }
+
+  /** Resolves lessons of the kind that apply to the session. */
   async lessons<K extends Knowledge.Kind>(
     kind: K,
   ): Promise<Knowledge.Lessons<K>> {
-    const learned = (this.#learned.get(kind) ??
-      new Map()) as Knowledge.Lessons<K>;
-    const app = this.#context.app;
-    if (!this.#store || isPlaceholderAppId(app)) return new Map(learned);
-
-    await this.#persistPending(app);
-    const persisted = (await this.#load(app, kind)) as Knowledge.Lessons<K>;
-    return new Map([...persisted, ...learned]);
+    const resolved = await this.resolve(kind);
+    return new Map([...resolved].map(([key, { value }]) => [key, value]));
   }
 
-  /** Forgets lessons learned in the session and persisted for the session app. */
-  async clear(): Promise<void> {
+  /**
+   * Forgets a lesson in a layer: learned in the session and persisted.
+   *
+   * @returns Whether a lesson was forgotten.
+   */
+  async forget(
+    kind: Knowledge.Kind,
+    instruction: string,
+    layer: Knowledge.Layer = KnowledgeLayer.DEFAULT,
+  ): Promise<boolean> {
+    let forgotten =
+      this.#learned.get(layer)?.[kind].delete(instruction) ?? false;
+    this.#removePending(layer, kind, instruction);
+    if (!this.#store) return forgotten;
+
+    const scope = await this.#layerScope(layer);
+    if (scope === undefined) return forgotten;
+
+    if (await this.#store.forget(scope, layer, kind, instruction)) {
+      forgotten = true;
+    }
+    this.#loaded.delete(Knowledge.#key(scope, layer));
+    return forgotten;
+  }
+
+  /** Forgets all persisted lessons of a layer and the ones learned in it. */
+  async clearLayer(
+    layer: Knowledge.Layer = KnowledgeLayer.DEFAULT,
+  ): Promise<void> {
+    this.#learned.delete(layer);
+    this.#pending = this.#pending.filter((lesson) => lesson.layer !== layer);
+    if (!this.#store) return;
+
+    const scope = await this.#layerScope(layer);
+    if (scope === undefined) {
+      throw new Error(
+        `Can't clear the ${layer} layer before its knowledge scope is known`,
+      );
+    }
+
+    await this.#store.clearLayer(scope, layer);
+    this.#loaded.delete(Knowledge.#key(scope, layer));
+  }
+
+  /**
+   * Forgets lessons learned in the session. Persisted lessons are kept, so
+   * teardowns don't erase lessons other test suites rely on.
+   */
+  clearSession(): void {
     this.#learned.clear();
-    this.#pending.clear();
-
-    const app = this.#context.app;
-    if (!this.#store || isPlaceholderAppId(app)) return;
-
-    for (const key of this.#persisted.keys()) {
-      if (key.startsWith(`${app}/`)) this.#persisted.delete(key);
-    }
-    try {
-      await this.#store.clearApp(app);
-    } catch (error) {
-      logger.warn(`Failed to clear lessons for ${app}: {error}`, { error });
-    }
+    this.#pending = [];
   }
 
-  /** Persists lessons of all kinds learned before the app was known. */
-  async #persistPending(app: AppId): Promise<void> {
-    const pending = [...this.#pending].flatMap(([kind, instructions]) =>
-      [...instructions].map((instruction) => [kind, instruction] as const),
-    );
-    this.#pending.clear();
+  /** Lessons learned in the session that haven't been persisted yet. */
+  unsaved(): Knowledge.Unsaved[] {
+    return [...this.#pending];
+  }
 
-    await Promise.all(
-      pending.flatMap(([kind, instruction]) => {
-        const value = this.#learned.get(kind)?.get(instruction);
-        return value === undefined
-          ? []
-          : [
-              this.#persist(
-                app,
-                kind,
-                instruction,
-                value as KnowledgeStore.Values[typeof kind],
-              ),
-            ];
-      }),
+  /**
+   * Resolves the product scope: the explicit scope, the product the manifest
+   * maps the app to, or the app itself. `null` without a store, or while the
+   * app isn't known.
+   *
+   * @param app App to resolve, the session app when it's a placeholder.
+   */
+  async #resolveScope(app?: AppId): Promise<string | null> {
+    if (!this.#store) return null;
+    if (this.#scope) return this.#scope;
+
+    const target = [app, this.#context.app].find(
+      (candidate) => candidate && !isPlaceholderAppId(candidate),
     );
+    if (!target) return null;
+
+    this.#manifest ??= this.#store.manifest();
+    return (await this.#manifest).resolve(target) ?? target;
+  }
+
+  /**
+   * Resolves the scope a layer persists in: `null` for the shared layer, which
+   * needs none, `undefined` while the product scope isn't known.
+   */
+  async #layerScope(
+    layer: Knowledge.Layer,
+    app?: AppId,
+  ): Promise<string | null | undefined> {
+    if (layer === "shared") return null;
+    return (await this.#resolveScope(app)) ?? undefined;
+  }
+
+  /** Persists lessons learned before the scope was known. */
+  async #persistPending(scope: string): Promise<void> {
+    const pending = this.#pending;
+    this.#pending = [];
+
+    for (const { kind, instruction, layer } of pending) {
+      const value = this.#learned.get(layer)?.[kind].get(instruction);
+      if (value === undefined) continue;
+      await this.#persist(scope, layer, kind, instruction, value as never);
+    }
   }
 
   async #persist<K extends Knowledge.Kind>(
-    app: AppId,
+    scope: string | null,
+    layer: Knowledge.Layer,
     kind: K,
     instruction: string,
     value: KnowledgeStore.Values[K],
   ): Promise<void> {
     const store = this.#store;
     if (!store) return;
+    const where = Knowledge.#key(scope, layer);
 
     try {
-      await store.save(app, kind, instruction, value);
-      logger.debug(`Persisted ${kind} lesson for ${app}: ${instruction}`);
+      await store.save(scope, layer, kind, instruction, value);
+      logger.debug(`Persisted ${kind} lesson in ${where}: ${instruction}`);
     } catch (error) {
-      logger.warn(`Failed to persist ${kind} lesson for ${app}: {error}`, {
+      logger.warn(`Failed to persist ${kind} lesson in ${where}: {error}`, {
         error,
       });
       return;
     }
 
-    (await this.#persisted.get(Knowledge.#key(app, kind)))?.set(
-      instruction,
-      value,
-    );
+    const loaded = await this.#loaded.get(where)?.catch(() => null);
+    loaded?.[kind].set(instruction, value as never);
   }
 
-  #load(app: AppId, kind: Knowledge.Kind): Promise<Map<string, unknown>> {
-    const key = Knowledge.#key(app, kind);
-    let loaded = this.#persisted.get(key);
+  #load(
+    scope: string | null,
+    layer: Knowledge.Layer,
+  ): Promise<KnowledgeStore.Lessons> {
+    const key = Knowledge.#key(scope, layer);
+    let loaded = this.#loaded.get(key);
     if (!loaded) {
-      loaded = (this.#store?.lessons(app, kind) ?? Promise.resolve([]))
-        .then((entries) => new Map<string, unknown>(entries))
-        .catch((error) => {
-          logger.warn(`Failed to load ${kind} lessons for ${app}: {error}`, {
-            error,
-          });
-          return new Map<string, unknown>();
-        });
-      this.#persisted.set(key, loaded);
+      loaded =
+        this.#store?.layer(scope, layer) ??
+        Promise.resolve(KnowledgeStore.empty());
+      this.#loaded.set(key, loaded);
     }
     return loaded;
   }
 
-  #ofKind<Collection>(
-    collections: Map<Knowledge.Kind, Collection>,
-    kind: Knowledge.Kind,
-    Create: new () => Collection,
-  ): Collection {
-    let collection = collections.get(kind);
-    if (!collection) {
-      collection = new Create();
-      collections.set(kind, collection);
+  #lessonsOf<K extends Knowledge.Kind>(
+    lessons: Map<Knowledge.Layer, KnowledgeStore.Lessons>,
+    layer: Knowledge.Layer,
+    kind: K,
+  ): Map<string, KnowledgeStore.Values[K]> {
+    let layerLessons = lessons.get(layer);
+    if (!layerLessons) {
+      layerLessons = KnowledgeStore.empty();
+      lessons.set(layer, layerLessons);
     }
-    return collection;
+    return layerLessons[kind];
   }
 
-  static #key(app: AppId, kind: Knowledge.Kind): string {
-    return `${app}/${kind}`;
+  #removePending(
+    layer: Knowledge.Layer,
+    kind: Knowledge.Kind,
+    instruction: string,
+  ): void {
+    this.#pending = this.#pending.filter(
+      (lesson) =>
+        lesson.layer !== layer ||
+        lesson.kind !== kind ||
+        lesson.instruction !== instruction,
+    );
+  }
+
+  static #key(scope: string | null, layer: Knowledge.Layer): string {
+    return scope === null ? layer : `${scope}/${layer}`;
   }
 }

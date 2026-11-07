@@ -16,7 +16,7 @@ import { retry } from "../utils/retry.ts";
 import { Area } from "./Area.ts";
 import { Cache } from "./Cache.ts";
 import { AssertionError } from "./errors/AssertionError.ts";
-import { Learn } from "./Learn.ts";
+import { Knowledge } from "./Knowledge.ts";
 import type { DoResult, DoStep } from "./result.ts";
 
 const { tracer, logger } = Telemetry.get(import.meta.url);
@@ -32,6 +32,13 @@ export namespace Alumni {
     changeAnalysis?: boolean | undefined;
     excludeAttributes?: string[] | undefined;
     navigationPolicy?: NavigationPolicy.Options | undefined;
+    /**
+     * Knowledge scope, such as a product name, that learned lessons persist
+     * in. Lets lessons persist without an app and share them across apps.
+     * Defaults to `ALUMNIUM_KNOWLEDGE_SCOPE`, then the product the knowledge
+     * manifest maps the app to, then the app itself.
+     */
+    knowledge?: string | undefined;
   }
 
   interface ParamsOptions {
@@ -75,10 +82,18 @@ export class Alumni<TDriver extends BaseDriver = BaseDriver> {
   public cache: Cache;
   /**
    * Teaches Alumnium how to handle instructions of `do()`, `get()`, `check()`,
-   * `find()` and `area()`. Lessons are persisted for the current app and
-   * apply to later sessions. Calling it directly is the same as `learn.do()`.
+   * `find()` and `area()`, e.g. `knowledge.do(goal, actions)`. Lessons apply
+   * to the session, and to later sessions when `ALUMNIUM_KNOWLEDGE` is
+   * enabled.
    */
-  readonly learn: Learn.Callable;
+  readonly knowledge: Knowledge.Scoped;
+  /**
+   * The same as `knowledge`, and calling it directly is the same as
+   * `knowledge.do()`.
+   *
+   * @deprecated Use `knowledge` instead, e.g. `al.knowledge.do(goal, actions)`.
+   */
+  readonly learn: Knowledge.Callable;
   private changeAnalysis: boolean;
 
   constructor(driver: TDriver, options: Alumni.Options = {}) {
@@ -110,6 +125,7 @@ export class Alumni<TDriver extends BaseDriver = BaseDriver> {
       planner,
       excludeAttributes:
         options.excludeAttributes ?? Env.ALUMNIUM_EXCLUDE_ATTRIBUTES,
+      knowledge: options.knowledge,
     };
 
     if (url) {
@@ -127,7 +143,8 @@ export class Alumni<TDriver extends BaseDriver = BaseDriver> {
     }
 
     this.cache = new Cache(this.client);
-    this.learn = Learn.callable(this.client, this.driver);
+    this.knowledge = Knowledge.scoped(this.client, this.driver);
+    this.learn = Knowledge.deprecatedCallable(this.knowledge);
   }
 
   @span("alumni.model", spanAttrs)

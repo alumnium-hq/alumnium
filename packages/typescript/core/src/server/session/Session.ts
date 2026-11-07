@@ -26,6 +26,9 @@ import { createCacheMiddleware } from "../cache/CacheMiddleware.ts";
 import { ServerCache } from "../cache/ServerCache.ts";
 import { CacheFactory } from "../CacheFactory.ts";
 import { Knowledge } from "../knowledge/Knowledge.ts";
+import { KnowledgeLayer } from "../knowledge/KnowledgeLayer.ts";
+import { KnowledgeManifest } from "../knowledge/KnowledgeManifest.ts";
+import { KnowledgeRelevance } from "../knowledge/KnowledgeRelevance.ts";
 import { KnowledgeStore } from "../knowledge/KnowledgeStore.ts";
 import { SessionContext } from "./SessionContext.ts";
 import { SessionId } from "./SessionId.ts";
@@ -43,6 +46,8 @@ export namespace Session {
     tools: ToolDefinition[];
     planner?: boolean | undefined;
     excludeAttributes?: Set<string> | undefined;
+    /** Knowledge scope, `ALUMNIUM_KNOWLEDGE_SCOPE` by default. */
+    knowledge?: string | undefined;
   }
 }
 
@@ -90,10 +95,14 @@ export class Session {
     this.excludeAttributes = props.excludeAttributes ?? new Set();
     this.#context = new SessionContext({ app, sessionId });
     this.cache = CacheFactory.createCache(this.#context, model);
-    this.knowledge = new Knowledge(
-      this.#context,
-      Env.ALUMNIUM_KNOWLEDGE ? new KnowledgeStore() : null,
-    );
+    this.knowledge = new Knowledge({
+      context: this.#context,
+      store: Env.ALUMNIUM_KNOWLEDGE ? new KnowledgeStore() : null,
+      platform: KnowledgeLayer.platform(this.platform),
+      scope: KnowledgeManifest.Name.optional().parse(
+        props.knowledge ?? Env.ALUMNIUM_KNOWLEDGE_SCOPE,
+      ),
+    });
 
     logger.info(
       `Created session ${sessionId} with model ${model.provider}/${model.name} and platform ${platform}`,
@@ -149,71 +158,132 @@ export class Session {
   }
 
   /**
-   * Learns actions to achieve the goal, persisting them for the app.
+   * Learns actions to achieve the goal, persisting them in the layer.
    *
-   * @param app App the example was learned on, the session app by default.
+   * @param options App the example was learned on and layer to persist in.
    */
-  addExample(goal: string, actions: string[], app?: AppId): Promise<void> {
-    return this.knowledge.learn("do", goal, actions, app);
+  addExample(
+    goal: string,
+    actions: string[],
+    options: Knowledge.LearnOptions = {},
+  ): Promise<void> {
+    return this.knowledge.learn("do", goal, actions, options);
   }
 
   /**
-   * Learns a hint on how to handle the instruction, persisting it for the app.
+   * Learns a hint on how to handle the instruction, persisting it in the
+   * layer.
    *
-   * @param app App the hint was learned on, the session app by default.
+   * @param options App the hint was learned on and layer to persist in.
    */
   addHint(
     kind: Knowledge.HintKind,
     instruction: string,
     hint: string,
-    app?: AppId,
+    options: Knowledge.LearnOptions = {},
   ): Promise<void> {
-    return this.knowledge.learn(kind, instruction, hint, app);
+    return this.knowledge.learn(kind, instruction, hint, options);
   }
 
-  /** Forgets lessons learned in the session and persisted for the session app. */
-  clearExamples(): Promise<void> {
-    return this.knowledge.clear();
+  /**
+   * Forgets a lesson in the layer, the product layer by default.
+   *
+   * @returns Whether a lesson was forgotten.
+   */
+  forgetLesson(
+    kind: Knowledge.Kind,
+    instruction: string,
+    layer?: Knowledge.Layer,
+  ): Promise<boolean> {
+    return this.knowledge.forget(kind, instruction, layer);
   }
 
-  /** Provides the planner with examples for the session app. */
-  async syncExamples(): Promise<void> {
-    const examples = await this.knowledge.lessons("do");
-    this.plannerAgent.setExamples(examples);
+  /** Forgets all lessons of the layer, the product layer by default. */
+  clearLayer(layer?: Knowledge.Layer): Promise<void> {
+    return this.knowledge.clearLayer(layer);
   }
 
-  /** Provides the agent with hints for the session app. */
-  async syncHints(agent: "retriever" | "locator" | "area"): Promise<void> {
+  /** Forgets lessons learned in the session. Persisted lessons are kept. */
+  async clearExamples(): Promise<void> {
+    this.knowledge.clearSession();
+  }
+
+  /** Provides the planner with examples relevant to the goal. */
+  async syncExamples(goal: string): Promise<void> {
+    const examples = Session.#select(await this.knowledge.lessons("do"), goal);
+    this.plannerAgent.setExamples(
+      examples.map(({ instruction, value }) => [instruction, value]),
+    );
+  }
+
+  /** Provides the agent with hints relevant to the instruction. */
+  async syncHints(
+    agent: "retriever" | "locator" | "area",
+    instruction: string,
+  ): Promise<void> {
     switch (agent) {
       case "retriever": {
-        const hints = await this.#hints("get", "check");
+        const hints = await this.#hints(instruction, "get", "check");
         this.retrieverAgent.setHints(hints);
         return;
       }
 
       case "locator": {
-        const hints = await this.#hints("find");
+        const hints = await this.#hints(instruction, "find");
         this.locatorAgent.setHints(hints);
         return;
       }
 
       case "area": {
-        const hints = await this.#hints("area");
+        const hints = await this.#hints(instruction, "area");
         this.areaAgent.setHints(hints);
         return;
       }
     }
   }
 
-  async #hints(...kinds: Knowledge.HintKind[]): Promise<BaseAgent.Hint[]> {
-    const lessons = await Promise.all(
-      kinds.map(async (kind) =>
-        [...(await this.knowledge.lessons(kind))].map(
-          ([instruction, hint]) => ({ kind, instruction, hint }),
-        ),
-      ),
+  /** Selects the hints of each kind relevant to the instruction. */
+  async #hints(
+    instruction: string,
+    ...kinds: Knowledge.HintKind[]
+  ): Promise<BaseAgent.Hint[]> {
+    const hints: BaseAgent.Hint[] = [];
+    for (const kind of kinds) {
+      const lessons = await this.knowledge.lessons(kind);
+      for (const { instruction: lesson, value } of Session.#select(
+        lessons,
+        instruction,
+      )) {
+        hints.push({ kind, instruction: lesson, hint: value });
+      }
+    }
+    return hints;
+  }
+
+  static #select<Value>(
+    lessons: Map<string, Value>,
+    instruction: string,
+  ): KnowledgeRelevance.Scored<Value>[] {
+    return KnowledgeRelevance.select(
+      lessons,
+      instruction,
+      Env.ALUMNIUM_KNOWLEDGE_TOP_K,
     );
-    return lessons.flat();
+  }
+
+  /** Ends the session, warning about lessons that were never persisted. */
+  close(): void {
+    const unsaved = this.knowledge.unsaved();
+    if (!unsaved.length) return;
+
+    const lessons = unsaved
+      .map(
+        ({ kind, instruction, layer }) => `${kind} "${instruction}" (${layer})`,
+      )
+      .join(", ");
+    logger.warn(
+      `Session ${this.sessionId} ended with ${unsaved.length} lesson(s) never persisted, because no app was known: ${lessons}. Navigate before the first action, or set a knowledge scope with the \`knowledge\` option or ALUMNIUM_KNOWLEDGE_SCOPE.`,
+    );
   }
 
   updateContext(props: SessionContext.UpdateProps): void {
