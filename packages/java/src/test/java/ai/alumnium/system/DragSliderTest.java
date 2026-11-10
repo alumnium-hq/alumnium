@@ -33,4 +33,23 @@ public class DragSliderTest extends BaseTest {
     al.act("drag the distance slider to 30");
     al.check("the distance is 30 miles");
   }
+
+  @Test
+  void testDragControlledSlider() {
+    navigate("controlled_slider.html");
+
+    al.act("drag the storage slider to 20");
+    al.check("the storage is 20 TB");
+  }
+
+  @Test
+  void testDragRangeSlider() {
+    navigate("range_slider.html");
+
+    al.act("drag the maximum price slider to 20");
+    al.check("the price is $0 – $20");
+
+    al.act("drag the minimum price slider to 15");
+    al.check("the price is $15 – $20");
+  }
 }

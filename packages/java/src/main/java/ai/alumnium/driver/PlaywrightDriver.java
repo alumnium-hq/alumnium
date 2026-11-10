@@ -158,23 +158,43 @@ public final class PlaywrightDriver extends BaseDriver {
   public void dragSlider(int id, double value) {
     Locator element = findElement(id);
     scrollElementIfNeeded(element);
-    Slider slider = Slider.parse(element.evaluate(Slider.SCRIPT, value));
-    if (slider == null) {
-      element.fill(stripTrailingZeros(value));
-    } else {
-      // ARIA sliders (e.g. <div role="slider">) only respond to real pointer drags.
-      var box = element.boundingBox();
-      if (box == null) {
-        throw new IllegalStateException("Slider " + id + " is not visible");
-      }
+    boolean isSlider =
+        Slider.set(
+            new Slider.Actions() {
+              @Override
+              public Object next(boolean reset) {
+                return element.evaluate(Slider.EVALUATE_SCRIPT, List.of(value, reset));
+              }
 
-      Slider.Offset start = slider.startOffset();
-      Slider.Offset end = slider.endOffset();
-      page.mouse().move(box.x + start.x(), box.y + start.y());
-      page.mouse().down();
-      page.mouse().move(box.x + end.x(), box.y + end.y(), new Mouse.MoveOptions().setSteps(10));
-      page.mouse().up();
+              @Override
+              public void down(Slider.Point point) {
+                moveMouseOver(element, id, point, 1);
+                page.mouse().down();
+              }
+
+              @Override
+              public void move(Slider.Point point) {
+                moveMouseOver(element, id, point, 5);
+              }
+
+              @Override
+              public void up() {
+                page.mouse().up();
+              }
+            });
+    if (!isSlider) {
+      element.fill(stripTrailingZeros(value));
     }
+  }
+
+  private void moveMouseOver(Locator element, int id, Slider.Point point, int steps) {
+    var box = element.boundingBox();
+    if (box == null) {
+      throw new IllegalStateException("Slider " + id + " is not visible");
+    }
+    Slider.Offset offset = point.offset();
+    page.mouse()
+        .move(box.x + offset.x(), box.y + offset.y(), new Mouse.MoveOptions().setSteps(steps));
   }
 
   @Override

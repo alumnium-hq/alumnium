@@ -1,0 +1,123 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Range Slider Test Page</title>
+    <style>
+      /* Laid out like noUiSlider: handles sit in transformed full-width
+         wrappers and their centers reach the ends of the track. */
+      .base {
+        position: relative;
+        width: 400px;
+        height: 8px;
+        margin: 40px;
+        background: #ddd;
+      }
+      .origin {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        /* Doesn't cover the other handle. */
+        height: 0;
+      }
+      .handle {
+        position: absolute;
+        top: -8px;
+        right: -12px;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: #36c;
+        cursor: grab;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Range Slider Test Page</h1>
+
+    <p>Price: $<span id="min">0</span> – $<span id="max">200</span></p>
+    <div class="base" id="base">
+      <div class="origin">
+        <div
+          class="handle"
+          role="slider"
+          tabindex="0"
+          aria-label="Minimum price"
+          aria-valuemin="0"
+          aria-valuemax="200"
+        ></div>
+      </div>
+      <div class="origin">
+        <div
+          class="handle"
+          role="slider"
+          tabindex="0"
+          aria-label="Maximum price"
+          aria-valuemin="0"
+          aria-valuemax="200"
+        ></div>
+      </div>
+    </div>
+
+    <script>
+      const MAX = 200;
+      const base = document.getElementById("base");
+      const origins = [...document.querySelectorAll(".origin")];
+      const handles = [...document.querySelectorAll(".handle")];
+      const outputs = [
+        document.getElementById("min"),
+        document.getElementById("max"),
+      ];
+      // Applied values, which only change when a drag ends.
+      const applied = [0, MAX];
+
+      function render(values) {
+        values.forEach((value, index) => {
+          origins[index].style.transform =
+            `translate(${(value / MAX) * 100 - 100}%, 0)`;
+          handles[index].setAttribute("aria-valuenow", value);
+          handles[index].setAttribute("aria-valuetext", `$${value}`);
+        });
+      }
+
+      function valueAt(clientX) {
+        const box = base.getBoundingClientRect();
+        const ratio = Math.min(
+          1,
+          Math.max(0, (clientX - box.left) / box.width),
+        );
+        return Math.round(ratio * MAX);
+      }
+
+      handles.forEach((handle, index) => {
+        handle.addEventListener("pointerdown", (event) => {
+          if (!event.isTrusted) return;
+          event.preventDefault();
+          const values = [...applied];
+          const offset =
+            event.clientX -
+            (handle.getBoundingClientRect().left + handle.offsetWidth / 2);
+          const move = (moved) => {
+            const value = valueAt(moved.clientX - offset);
+            values[index] =
+              index === 0
+                ? Math.min(value, values[1])
+                : Math.max(value, values[0]);
+            render(values);
+          };
+          const stop = () => {
+            document.removeEventListener("pointermove", move);
+            document.removeEventListener("pointerup", stop);
+            // Like a store filter, apply the range when the drag ends.
+            applied.splice(0, 2, ...values);
+            applied.forEach((value, i) => (outputs[i].textContent = value));
+          };
+          document.addEventListener("pointermove", move);
+          document.addEventListener("pointerup", stop);
+        });
+      });
+
+      render(applied);
+    </script>
+  </body>
+</html>

@@ -15,6 +15,7 @@ import {
   Keys,
   PressKeyTool,
   Slider,
+  type SliderStep,
   Telemetry,
   type ToolClass,
   TypeTool,
@@ -91,28 +92,32 @@ export abstract class SeleniumDriver extends BaseDriver<WebElement> {
   async dragSlider(id: number, value: number): Promise<void> {
     const element = await this.findElement(id);
     await this.#scrollElementIntoCenter(element);
-    const slider = Slider.parse(
-      await this.driver.executeScript<Slider["geometry"] | null>(
-        Slider.EXECUTE_SCRIPT,
-        element,
-        value,
-      ),
-    );
-    if (slider) {
-      // ARIA sliders (e.g. <div role="slider">) only respond to real pointer drags.
-      // Pointer offsets are relative to the element's center.
-      const actions = this.driver.actions({ async: true });
-      await actions
-        .move({ origin: element, ...slider.startCenterOffset() })
-        .press()
-        .move({ origin: element, ...slider.endCenterOffset(), duration: 300 })
-        .release()
-        .perform();
-    } else {
+    const isSlider = await Slider.set({
+      next: (reset) =>
+        this.driver.executeScript<SliderStep | null>(
+          Slider.EXECUTE_SCRIPT,
+          element,
+          value,
+          reset,
+        ),
+      // Pointer offsets are relative to the element's center. The pointer stays
+      // pressed between performs until it is released.
+      down: (point) =>
+        this.driver
+          .actions({ async: true })
+          .move({ origin: element, ...point.centerOffset() })
+          .press()
+          .perform(),
+      move: (point) =>
+        this.driver
+          .actions({ async: true })
+          .move({ origin: element, ...point.centerOffset(), duration: 100 })
+          .perform(),
+      up: () => this.driver.actions({ async: true }).release().perform(),
+    });
+    if (!isSlider) {
       await this.driver.executeScript(
-        "arguments[0].value = arguments[1];" +
-          "arguments[0].dispatchEvent(new Event('input', {bubbles: true}));" +
-          "arguments[0].dispatchEvent(new Event('change', {bubbles: true}));",
+        Slider.SET_INPUT_VALUE_SCRIPT,
         element,
         String(value),
       );
