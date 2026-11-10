@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Scrollable List Test Page</title>
+    <style>
+      /* Like a chat app, the page itself does not scroll, only the thread. */
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        overflow: hidden;
+      }
+      body {
+        display: flex;
+        flex-direction: column;
+        font-family: sans-serif;
+      }
+      #status {
+        margin: 0;
+        padding: 8px;
+        background: #eee;
+      }
+      #thread {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px;
+      }
+      .message {
+        margin: 8px 0;
+        padding: 16px;
+        border-radius: 8px;
+        background: #def;
+      }
+    </style>
+  </head>
+  <body>
+    <p id="status"></p>
+    <!-- The thread starts scrolled to the newest message. Older messages are
+         only loaded when it is scrolled near the top, so they cannot be
+         reached by scrolling to an element that is already on the page. -->
+    <section id="thread" aria-label="Messages"></section>
+
+    <script>
+      const TOTAL = 60;
+      const PAGE = 20;
+      const thread = document.getElementById("thread");
+      const status = document.getElementById("status");
+      let oldest = TOTAL + 1;
+
+      function loadOlder() {
+        if (oldest === 1) return;
+        const from = Math.max(oldest - PAGE, 1);
+        const fragment = document.createDocumentFragment();
+        for (let n = from; n < oldest; n++) {
+          const message = document.createElement("p");
+          message.className = "message";
+          message.textContent = `Message ${n}`;
+          fragment.appendChild(message);
+        }
+        // Keep the visible messages in place while prepending older ones.
+        const fromBottom = thread.scrollHeight - thread.scrollTop;
+        thread.prepend(fragment);
+        thread.scrollTop = thread.scrollHeight - fromBottom;
+        oldest = from;
+        status.textContent = `Oldest loaded message: Message ${oldest}`;
+      }
+
+      loadOlder();
+      thread.scrollTop = thread.scrollHeight;
+      thread.addEventListener("scroll", () => {
+        if (thread.scrollTop < 50) loadOlder();
+      });
+    </script>
+  </body>
+</html>
