@@ -39,6 +39,10 @@ async function bundleDriverScripts() {
     path.resolve(scriptsDir, "slider.js"),
     "utf-8",
   );
+  const setInputValueSource = await fs.readFile(
+    path.resolve(scriptsDir, "setInputValue.js"),
+    "utf-8",
+  );
 
   const bundlePath = path.resolve(scriptsDir, "bundledScripts.ts");
   await fs.writeFile(
@@ -48,6 +52,8 @@ async function bundleDriverScripts() {
 export const waiterScriptSource = ${JSON.stringify(waiterSource)};
 
 export const sliderScriptSource = ${JSON.stringify(sliderSource)};
+
+export const setInputValueScriptSource = ${JSON.stringify(setInputValueSource)};
 `,
   );
   return bundlePath;

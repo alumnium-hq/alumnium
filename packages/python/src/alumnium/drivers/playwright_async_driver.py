@@ -19,7 +19,7 @@ from ..tools.upload_tool import UploadTool
 from .base_driver import BaseDriver
 from .keys import Key
 from .playwright_driver import PlaywrightDriver
-from .slider import Slider
+from .slider import AsyncSliderActions, Slider, SliderPoint
 from .waiter import WAITER_SCRIPT, WAITER_SNAPSHOT_SCRIPT, wait_for_page_to_load_async
 
 logger = get_logger(__name__)
@@ -123,21 +123,35 @@ class PlaywrightAsyncDriver(BaseDriver):
     async def _drag_slider(self, id: int, value: float):
         element = await self._find_element(id)
         await self._scroll_element_if_needed(element)
-        slider = Slider.parse(await element.evaluate(Slider.SCRIPT, value))
-        if not slider:
-            await element.fill(f"{value:g}")
-        else:
-            # ARIA sliders (e.g. <div role="slider">) only respond to real pointer drags.
+        mouse = self.page.mouse
+
+        async def next(reset: bool):
+            return await element.evaluate(Slider.EVALUATE_SCRIPT, [value, reset])
+
+        async def move_mouse(point: SliderPoint, steps: int = 1):
             box = await element.bounding_box()
             if not box:
                 raise RuntimeError(f"Slider {id} is not visible")
-            mouse = self.page.mouse
-            start_x, start_y = slider.start_offset()
-            end_x, end_y = slider.end_offset()
-            await mouse.move(box["x"] + start_x, box["y"] + start_y)
+            x, y = point.offset()
+            await mouse.move(box["x"] + x, box["y"] + y, steps=steps)
+
+        async def down(point: SliderPoint):
+            await move_mouse(point)
             await mouse.down()
-            await mouse.move(box["x"] + end_x, box["y"] + end_y, steps=10)
-            await mouse.up()
+
+        async def move(point: SliderPoint):
+            await move_mouse(point, 5)
+
+        is_slider = await Slider.set_async(
+            AsyncSliderActions(
+                next=next,
+                down=down,
+                move=move,
+                up=mouse.up,
+            )
+        )
+        if not is_slider:
+            await element.fill(f"{value:g}")
 
     def drag_and_drop(self, from_id: int, to_id: int):
         self._run_async(self._drag_and_drop(from_id, to_id))

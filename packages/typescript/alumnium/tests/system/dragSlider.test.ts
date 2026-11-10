@@ -50,4 +50,38 @@ describe("Drag Slider", () => {
       assert: expect.assert,
     });
   });
+
+  it("sets a slider on a page that tracks its value", async ({
+    expect,
+    setup,
+  }) => {
+    const { al, $ } = await setup({
+      extraTools: [DragSliderTool],
+    });
+
+    await $.navigate("controlled_slider.html");
+
+    await al.do("drag the storage slider to 20");
+    await al.check("the storage is 20 TB", {
+      assert: expect.assert,
+    });
+  });
+
+  it("sets both handles of a range slider", async ({ expect, setup }) => {
+    const { al, $ } = await setup({
+      extraTools: [DragSliderTool],
+    });
+
+    await $.navigate("range_slider.html");
+
+    await al.do("drag the maximum price slider to 20");
+    await al.check("the price is $0 – $20", {
+      assert: expect.assert,
+    });
+
+    await al.do("drag the minimum price slider to 15");
+    await al.check("the price is $15 – $20", {
+      assert: expect.assert,
+    });
+  });
 });

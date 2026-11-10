@@ -20,7 +20,7 @@ from ..tools.type_tool import TypeTool
 from ..tools.upload_tool import UploadTool
 from .base_driver import BaseDriver
 from .keys import Key
-from .slider import Slider
+from .slider import Slider, SliderActions
 from .waiter import WAITER_SCRIPT, WAITER_SNAPSHOT_SCRIPT, wait_for_page_to_load
 
 if TYPE_CHECKING:
@@ -114,26 +114,27 @@ class SeleniumDriver(BaseDriver):
     def drag_slider(self, id: int, value: float):
         element = self.find_element(id)
         self._scroll_element_into_center(element)
-        slider = Slider.parse(self.driver.execute_script(Slider.EXECUTE_SCRIPT, element, value))
-        if slider:
-            # ARIA sliders (e.g. <div role="slider">) only respond to real pointer drags.
-            # Pointer offsets are relative to the element's center.
-            (
-                ActionChains(self.driver)
-                .move_to_element_with_offset(element, *slider.start_center_offset())
-                .click_and_hold()
-                .move_to_element_with_offset(element, *slider.end_center_offset())
-                .release()
-                .perform()
+        is_slider = Slider.set(
+            SliderActions(
+                next=lambda reset: self.driver.execute_script(Slider.EXECUTE_SCRIPT, element, value, reset),
+                # Pointer offsets are relative to the element's center. The pointer
+                # stays pressed between performs until it is released.
+                down=lambda point: (
+                    ActionChains(self.driver)
+                    .move_to_element_with_offset(element, *point.center_offset())
+                    .click_and_hold()
+                    .perform()
+                ),
+                move=lambda point: (
+                    ActionChains(self.driver, duration=100)
+                    .move_to_element_with_offset(element, *point.center_offset())
+                    .perform()
+                ),
+                up=lambda: ActionChains(self.driver).release().perform(),
             )
-        else:
-            self.driver.execute_script(
-                "arguments[0].value = arguments[1];"
-                "arguments[0].dispatchEvent(new Event('input', {bubbles: true}));"
-                "arguments[0].dispatchEvent(new Event('change', {bubbles: true}));",
-                element,
-                str(value),
-            )
+        )
+        if not is_slider:
+            self.driver.execute_script(Slider.SET_INPUT_VALUE_SCRIPT, element, str(value))
 
     def drag_and_drop(self, from_id: int, to_id: int):
         from_element = self.find_element(from_id)

@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Controlled Slider Test Page</title>
+  </head>
+  <body>
+    <h1>Controlled Slider Test Page</h1>
+
+    <p>Storage: <span id="value">100</span> TB</p>
+    <label for="storage">Storage</label>
+    <input type="range" id="storage" min="1" max="100" value="100" />
+
+    <script>
+      // Some pages replace the global Event constructor with their own.
+      window.Event = function Event(type) {
+        this.type = type;
+      };
+
+      // Like React, track the value set through the element and ignore input
+      // events that don't change it. Setting `element.value` and firing an
+      // input event is therefore ignored, unlike a real user interaction.
+      const input = document.getElementById("storage");
+      const output = document.getElementById("value");
+      const { get, set } = Object.getOwnPropertyDescriptor(
+        HTMLInputElement.prototype,
+        "value",
+      );
+      let tracked = input.value;
+      Object.defineProperty(input, "value", {
+        configurable: true,
+        get() {
+          return get.call(this);
+        },
+        set(value) {
+          tracked = String(value);
+          set.call(this, value);
+        },
+      });
+      input.addEventListener("input", () => {
+        const value = get.call(input);
+        if (value === tracked) return;
+        tracked = value;
+        output.textContent = value;
+      });
+    </script>
+  </body>
+</html>

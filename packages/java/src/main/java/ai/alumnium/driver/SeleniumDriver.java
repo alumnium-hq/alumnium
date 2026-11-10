@@ -12,6 +12,7 @@ import ai.alumnium.tool.TypeTool;
 import ai.alumnium.tool.UploadTool;
 import ai.alumnium.util.Retry;
 import java.net.URI;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -97,29 +98,41 @@ public abstract non-sealed class SeleniumDriver extends BaseDriver {
   public void dragSlider(int id, double value) {
     WebElement element = findElement(id);
     scrollElementIntoCenter(element);
-    Slider slider =
-        Slider.parse(
-            ((JavascriptExecutor) driver).executeScript(Slider.EXECUTE_SCRIPT, element, value));
+    JavascriptExecutor executor = (JavascriptExecutor) driver;
+    boolean isSlider =
+        Slider.set(
+            new Slider.Actions() {
+              @Override
+              public Object next(boolean reset) {
+                return executor.executeScript(Slider.EXECUTE_SCRIPT, element, value, reset);
+              }
 
-    if (slider != null) {
-      // ARIA sliders (e.g. <div role="slider">) only respond to real pointer drags.
-      // Pointer offsets are relative to the element's center.
-      Slider.Offset start = slider.startCenterOffset();
-      Slider.Offset end = slider.endCenterOffset();
-      new Actions(driver)
-          .moveToElement(element, (int) start.x(), (int) start.y())
-          .clickAndHold()
-          .moveToElement(element, (int) end.x(), (int) end.y())
-          .release()
-          .perform();
-    } else {
-      ((JavascriptExecutor) driver)
-          .executeScript(
-              "arguments[0].value = arguments[1];arguments[0].dispatchEvent(new"
-                  + " Event('input', {bubbles: true}));arguments[0].dispatchEvent(new"
-                  + " Event('change', {bubbles: true}));",
-              element,
-              Double.toString(value));
+              // Pointer offsets are relative to the element's center. The pointer stays
+              // pressed between performs until it is released.
+              @Override
+              public void down(Slider.Point point) {
+                Slider.Offset offset = point.centerOffset();
+                new Actions(driver)
+                    .moveToElement(element, (int) offset.x(), (int) offset.y())
+                    .clickAndHold()
+                    .perform();
+              }
+
+              @Override
+              public void move(Slider.Point point) {
+                Slider.Offset offset = point.centerOffset();
+                new Actions(driver, Duration.ofMillis(100))
+                    .moveToElement(element, (int) offset.x(), (int) offset.y())
+                    .perform();
+              }
+
+              @Override
+              public void up() {
+                new Actions(driver).release().perform();
+              }
+            });
+    if (!isSlider) {
+      executor.executeScript(Slider.SET_INPUT_VALUE_SCRIPT, element, Double.toString(value));
     }
   }
 

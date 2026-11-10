@@ -31,3 +31,26 @@ def test_drag_aria_slider(al_factory, navigate):
 
     al.do("drag the distance slider to 30")
     al.check("the distance is 30 miles")
+
+
+@mark.xfail("appium" in driver_type, reason="Drag slider is not implemented in Appium yet")
+def test_drag_controlled_slider(al_factory, navigate):
+    al = al_factory(extra_tools=[DragSliderTool])
+
+    navigate("controlled_slider.html")
+
+    al.do("drag the storage slider to 20")
+    al.check("the storage is 20 TB")
+
+
+@mark.xfail("appium" in driver_type, reason="Drag slider is not implemented in Appium yet")
+def test_drag_range_slider(al_factory, navigate):
+    al = al_factory(extra_tools=[DragSliderTool])
+
+    navigate("range_slider.html")
+
+    al.do("drag the maximum price slider to 20")
+    al.check("the price is $0 – $20")
+
+    al.do("drag the minimum price slider to 15")
+    al.check("the price is $15 – $20")

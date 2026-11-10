@@ -20,7 +20,7 @@ import {
   PressKeyTool,
   retry,
   Slider,
-  type SliderGeometry,
+  type SliderPoint,
   type SliderScript,
   Telemetry,
   type ToolClass,
@@ -357,32 +357,38 @@ export class PlaywrightDriver extends BaseDriver<Locator> {
     const script = (await element.evaluateHandle(
       Slider.EXPRESSION,
     )) as JSHandle<SliderScript>;
-    let geometry: SliderGeometry | null;
+    let isSlider: boolean;
     try {
-      geometry = await element.evaluate(
-        (target, [slider, sliderValue]) => slider(target, sliderValue),
-        [script, value] as const,
-      );
+      isSlider = await Slider.set({
+        next: (reset) =>
+          element.evaluate(
+            (target, [slider, sliderValue, sliderReset]) =>
+              slider(target, sliderValue, sliderReset),
+            [script, value, reset] as const,
+          ),
+        down: async (point) => {
+          await this.#moveMouseOver(element, id, point);
+          await this.page.mouse.down();
+        },
+        move: (point) => this.#moveMouseOver(element, id, point, 5),
+        up: () => this.page.mouse.up(),
+      });
     } finally {
       await script.dispose();
     }
-    const slider = Slider.parse(geometry);
-    if (!slider) {
-      await element.fill(String(value));
-    } else {
-      // ARIA sliders (e.g. <div role="slider">) only respond to real pointer drags.
-      const box = await element.boundingBox();
-      if (!box) throw new Error(`Slider ${id} is not visible`);
-      const { mouse } = this.page;
-      const start = slider.startOffset();
-      const end = slider.endOffset();
-      await mouse.move(box.x + start.x, box.y + start.y);
-      await mouse.down();
-      await mouse.move(box.x + end.x, box.y + end.y, {
-        steps: 10,
-      });
-      await mouse.up();
-    }
+    if (!isSlider) await element.fill(String(value));
+  }
+
+  async #moveMouseOver(
+    element: Locator,
+    id: number,
+    point: SliderPoint,
+    steps = 1,
+  ): Promise<void> {
+    const box = await element.boundingBox();
+    if (!box) throw new Error(`Slider ${id} is not visible`);
+    const { x, y } = point.offset();
+    await this.page.mouse.move(box.x + x, box.y + y, { steps });
   }
 
   @span("driver.drag_and_drop", BaseDriver.spanAttrs)

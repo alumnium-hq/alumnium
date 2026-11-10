@@ -18,7 +18,7 @@ from ..tools.type_tool import TypeTool
 from ..tools.upload_tool import UploadTool
 from .base_driver import BaseDriver
 from .keys import Key
-from .slider import Slider
+from .slider import Slider, SliderActions, SliderPoint
 from .waiter import WAITER_SCRIPT, WAITER_SNAPSHOT_SCRIPT, wait_for_page_to_load
 
 logger = get_logger(__name__)
@@ -111,21 +111,29 @@ class PlaywrightDriver(BaseDriver):
     def drag_slider(self, id: int, value: float):
         element = self.find_element(id)
         self._scroll_element_if_needed(element)
-        slider = Slider.parse(element.evaluate(Slider.SCRIPT, value))
-        if not slider:
-            element.fill(f"{value:g}")
-        else:
-            # ARIA sliders (e.g. <div role="slider">) only respond to real pointer drags.
+        mouse = self.page.mouse
+
+        def move_mouse(point: SliderPoint, steps: int = 1):
             box = element.bounding_box()
             if not box:
                 raise RuntimeError(f"Slider {id} is not visible")
-            mouse = self.page.mouse
-            start_x, start_y = slider.start_offset()
-            end_x, end_y = slider.end_offset()
-            mouse.move(box["x"] + start_x, box["y"] + start_y)
+            x, y = point.offset()
+            mouse.move(box["x"] + x, box["y"] + y, steps=steps)
+
+        def down(point: SliderPoint):
+            move_mouse(point)
             mouse.down()
-            mouse.move(box["x"] + end_x, box["y"] + end_y, steps=10)
-            mouse.up()
+
+        is_slider = Slider.set(
+            SliderActions(
+                next=lambda reset: element.evaluate(Slider.EVALUATE_SCRIPT, [value, reset]),
+                down=down,
+                move=lambda point: move_mouse(point, 5),
+                up=mouse.up,
+            )
+        )
+        if not is_slider:
+            element.fill(f"{value:g}")
 
     def drag_and_drop(self, from_id: int, to_id: int):
         from_element = self.find_element(from_id)
