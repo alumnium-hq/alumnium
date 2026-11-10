@@ -13,5 +13,9 @@ export abstract class Keys {
     "ArrowUp",
     "ArrowLeft",
     "ArrowRight",
+    "Home",
+    "End",
+    "PageUp",
+    "PageDown",
   ] as const;
 }

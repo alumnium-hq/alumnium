@@ -169,6 +169,14 @@ class SeleniumDriver(BaseDriver):
             keys.append(Keys.ARROW_LEFT)
         elif key == Key.ARROW_RIGHT:
             keys.append(Keys.ARROW_RIGHT)
+        elif key == Key.HOME:
+            keys.append(Keys.HOME)
+        elif key == Key.END:
+            keys.append(Keys.END)
+        elif key == Key.PAGE_UP:
+            keys.append(Keys.PAGE_UP)
+        elif key == Key.PAGE_DOWN:
+            keys.append(Keys.PAGE_DOWN)
 
         ActionChains(self.driver).send_keys(*keys).perform()
 

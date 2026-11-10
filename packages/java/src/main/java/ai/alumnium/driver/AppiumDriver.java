@@ -121,6 +121,10 @@ public final class AppiumDriver extends BaseDriver {
           case ARROW_UP -> org.openqa.selenium.Keys.ARROW_UP;
           case ARROW_LEFT -> org.openqa.selenium.Keys.ARROW_LEFT;
           case ARROW_RIGHT -> org.openqa.selenium.Keys.ARROW_RIGHT;
+          case HOME -> org.openqa.selenium.Keys.HOME;
+          case END -> org.openqa.selenium.Keys.END;
+          case PAGE_UP -> org.openqa.selenium.Keys.PAGE_UP;
+          case PAGE_DOWN -> org.openqa.selenium.Keys.PAGE_DOWN;
         };
     new Actions(driver).sendKeys(code).perform();
   }

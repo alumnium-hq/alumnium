@@ -415,6 +415,10 @@ export class PlaywrightDriver extends BaseDriver<Locator> {
       ArrowUp: "ArrowUp",
       ArrowLeft: "ArrowLeft",
       ArrowRight: "ArrowRight",
+      Home: "Home",
+      End: "End",
+      PageUp: "PageUp",
+      PageDown: "PageDown",
     };
 
     await this.autoswitchToNewTabAction(() =>
