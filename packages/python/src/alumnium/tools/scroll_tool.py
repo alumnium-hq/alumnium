@@ -5,7 +5,7 @@ from .base_tool import BaseTool
 
 
 class ScrollTool(BaseTool):
-    """Scroll to an element."""
+    """Scroll the page so an element is centered on screen. To scroll a list, panel or page up or down, use ScrollInDirectionTool instead."""  # noqa: E501
 
     id: int = Field(description="Element identifier (ID)")
 

@@ -5,6 +5,7 @@ import {
   MoveTargetOutOfBoundsError,
   NoSuchSessionError,
 } from "selenium-webdriver/lib/error.js";
+import { Origin } from "selenium-webdriver/lib/input.js";
 import {
   AppId,
   BaseDriver,
@@ -14,6 +15,7 @@ import {
   HoverTool,
   Keys,
   PressKeyTool,
+  ScrollInDirectionTool,
   Slider,
   type SliderStep,
   Telemetry,
@@ -31,6 +33,7 @@ const { span } = tracer.dec();
 const stateful = BaseDriver.stateful;
 
 const WAITER_SCRIPT = waiterScriptSource;
+const SCROLL_SETTLE_DELAY = 300;
 
 /**
  * WebDriver actions shared by the browser-specific Selenium drivers, which
@@ -48,6 +51,7 @@ export abstract class SeleniumDriver extends BaseDriver<WebElement> {
     DragAndDropTool,
     HoverTool,
     PressKeyTool,
+    ScrollInDirectionTool,
     TypeTool,
     UploadTool,
   ]);
@@ -203,6 +207,53 @@ export abstract class SeleniumDriver extends BaseDriver<WebElement> {
   async scrollTo(id: number): Promise<void> {
     const element = await this.findElement(id);
     await this.#scrollElementIntoCenter(element);
+  }
+
+  @span("driver.scroll_in_direction", BaseDriver.spanAttrs)
+  @stateful
+  async scrollInDirection(
+    id: number,
+    direction: ScrollInDirectionTool.Direction,
+  ): Promise<void> {
+    const element = await this.findElement(id);
+    // Find the visible scroll area that contains the element, bringing it into
+    // view only when it is fully off screen. The wheel goes over the middle of
+    // that area and scrolls by most of its visible size, so no content is
+    // skipped, even when the element itself is scrolled away.
+    const { x, y, area } = (await this.driver.executeScript(
+      `const el = arguments[0];
+      const scrollArea = ${ScrollInDirectionTool.SCROLL_AREA_EXPRESSION};
+      let area = scrollArea(el);
+      if (!area) {
+        el.scrollIntoView({ block: "nearest", inline: "nearest" });
+        area = scrollArea(el);
+      }
+      if (!area) throw new Error("Scroll area is not visible");
+      const r = el.getBoundingClientRect();
+      return { x: r.left + area.offsetX, y: r.top + area.offsetY, area };`,
+      element,
+    )) as { x: number; y: number; area: ScrollInDirectionTool.Area };
+    const { deltaX, deltaY } = ScrollInDirectionTool.wheelDelta(
+      direction,
+      area,
+    );
+    // Wheel over the visible part of the area so the browser scrolls whatever
+    // scrollable ancestor is under the pointer, just like a user would.
+    // `Actions.scroll()` exists at runtime but is missing from @types.
+    const actions = this.driver.actions({ async: true }) as unknown as {
+      scroll(
+        x: number,
+        y: number,
+        deltaX: number,
+        deltaY: number,
+        origin: Origin,
+      ): { perform(): Promise<void> };
+    };
+    await actions
+      .scroll(Math.round(x), Math.round(y), deltaX, deltaY, Origin.VIEWPORT)
+      .perform();
+    // Wheel actions do not wait for scrolling to finish.
+    await this.driver.sleep(SCROLL_SETTLE_DELAY);
   }
 
   @span("driver.title", BaseDriver.spanAttrs)

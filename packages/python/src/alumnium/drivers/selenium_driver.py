@@ -1,10 +1,12 @@
 from abc import abstractmethod
+from time import sleep
 from typing import TYPE_CHECKING, Callable
 from urllib.parse import urlparse
 
 from retry import retry
 from selenium.common.exceptions import MoveTargetOutOfBoundsException
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.actions.wheel_input import ScrollOrigin
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.errorhandler import ElementNotInteractableException, JavascriptException
 from selenium.webdriver.remote.webdriver import WebDriver
@@ -16,10 +18,12 @@ from ..tools.click_tool import ClickTool
 from ..tools.drag_and_drop_tool import DragAndDropTool
 from ..tools.hover_tool import HoverTool
 from ..tools.press_key_tool import PressKeyTool
+from ..tools.scroll_in_direction_tool import ScrollInDirectionTool
 from ..tools.type_tool import TypeTool
 from ..tools.upload_tool import UploadTool
 from .base_driver import BaseDriver
 from .keys import Key
+from .scroll_area import ScrollArea, ScrollDirection
 from .slider import Slider, SliderActions
 from .waiter import WAITER_SCRIPT, WAITER_SNAPSHOT_SCRIPT, wait_for_page_to_load
 
@@ -53,6 +57,7 @@ class SeleniumDriver(BaseDriver):
             DragAndDropTool,
             HoverTool,
             PressKeyTool,
+            ScrollInDirectionTool,
             TypeTool,
             UploadTool,
         }
@@ -194,6 +199,28 @@ class SeleniumDriver(BaseDriver):
     def scroll_to(self, id: int):
         element = self.find_element(id)
         self._scroll_element_into_center(element)
+
+    def scroll_in_direction(self, id: int, direction: ScrollDirection):
+        element = self.find_element(id)
+        area = ScrollArea.from_script(self.driver.execute_script(ScrollArea.EXECUTE_SCRIPT, element))
+        if area is None:
+            # The scroll area is fully off screen: bring it into view first.
+            self.driver.execute_script("arguments[0].scrollIntoView({block: 'nearest', inline: 'nearest'});", element)
+            area = ScrollArea.from_script(self.driver.execute_script(ScrollArea.EXECUTE_SCRIPT, element))
+        if area is None:
+            raise RuntimeError(f"Element {id} has no visible scroll area")
+
+        # Wheel over the middle of the visible scroll area so the browser scrolls
+        # it just like a user would, by most of its visible size so no content is
+        # skipped, even when the element itself is scrolled away.
+        rect = self.driver.execute_script(
+            "const r = arguments[0].getBoundingClientRect(); return { x: r.left, y: r.top };",
+            element,
+        )
+        origin = ScrollOrigin.from_viewport(round(rect["x"] + area.offset_x), round(rect["y"] + area.offset_y))
+        delta_x, delta_y = area.wheel_delta(direction)
+        ActionChains(self.driver).scroll_from_origin(origin, delta_x, delta_y).perform()
+        sleep(ScrollArea.SETTLE_DELAY)
 
     @property
     def title(self) -> str:

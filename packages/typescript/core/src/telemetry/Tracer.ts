@@ -203,6 +203,10 @@ export namespace Tracer {
       Attrs: SpansDriverAttrs;
     };
 
+    "driver.scroll_in_direction": {
+      Attrs: SpansDriverAttrs;
+    };
+
     "driver.quit": {
       Attrs: SpansDriverAttrs;
     };

@@ -43,6 +43,10 @@ async function bundleDriverScripts() {
     path.resolve(scriptsDir, "setInputValue.js"),
     "utf-8",
   );
+  const scrollAreaSource = await fs.readFile(
+    path.resolve(scriptsDir, "scrollArea.js"),
+    "utf-8",
+  );
 
   const bundlePath = path.resolve(scriptsDir, "bundledScripts.ts");
   await fs.writeFile(
@@ -54,6 +58,8 @@ export const waiterScriptSource = ${JSON.stringify(waiterSource)};
 export const sliderScriptSource = ${JSON.stringify(sliderSource)};
 
 export const setInputValueScriptSource = ${JSON.stringify(setInputValueSource)};
+
+export const scrollAreaScriptSource = ${JSON.stringify(scrollAreaSource)};
 `,
   );
   return bundlePath;

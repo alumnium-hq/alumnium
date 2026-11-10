@@ -14,11 +14,13 @@ from ..tools.click_tool import ClickTool
 from ..tools.drag_and_drop_tool import DragAndDropTool
 from ..tools.hover_tool import HoverTool
 from ..tools.press_key_tool import PressKeyTool
+from ..tools.scroll_in_direction_tool import ScrollInDirectionTool
 from ..tools.type_tool import TypeTool
 from ..tools.upload_tool import UploadTool
 from .base_driver import BaseDriver
 from .keys import Key
 from .playwright_driver import PlaywrightDriver
+from .scroll_area import ScrollArea, ScrollDirection
 from .slider import AsyncSliderActions, Slider, SliderPoint
 from .waiter import WAITER_SCRIPT, WAITER_SNAPSHOT_SCRIPT, wait_for_page_to_load_async
 
@@ -43,6 +45,7 @@ class PlaywrightAsyncDriver(BaseDriver):
             DragAndDropTool,
             HoverTool,
             PressKeyTool,
+            ScrollInDirectionTool,
             TypeTool,
             UploadTool,
         }
@@ -210,6 +213,29 @@ class PlaywrightAsyncDriver(BaseDriver):
     async def _scroll_to(self, id: int):
         element = await self._find_element(id)
         await self._scroll_element_into_center(element)
+
+    def scroll_in_direction(self, id: int, direction: ScrollDirection):
+        self._run_async(self._scroll_in_direction(id, direction))
+
+    async def _scroll_in_direction(self, id: int, direction: ScrollDirection):
+        element = await self._find_element(id)
+        area = ScrollArea.from_script(await element.evaluate(ScrollArea.EVALUATE_SCRIPT))
+        if area is None:
+            # The scroll area is fully off screen: bring it into view first.
+            await element.evaluate("el => el.scrollIntoView({block: 'nearest', inline: 'nearest'})")
+            area = ScrollArea.from_script(await element.evaluate(ScrollArea.EVALUATE_SCRIPT))
+        box = await element.bounding_box()
+        if area is None or box is None:
+            raise RuntimeError(f"Element {id} has no visible scroll area")
+
+        # Wheel over the middle of the visible scroll area so the browser scrolls
+        # it just like a user would, by most of its visible size so no content is
+        # skipped. The offset is relative to the element, which keeps the point
+        # right inside iframes and when the element itself is scrolled away.
+        delta_x, delta_y = area.wheel_delta(direction)
+        await self.page.mouse.move(box["x"] + area.offset_x, box["y"] + area.offset_y)
+        await self.page.mouse.wheel(delta_x, delta_y)
+        await self.page.wait_for_timeout(ScrollArea.SETTLE_DELAY * 1000)
 
     @property
     def title(self) -> str:

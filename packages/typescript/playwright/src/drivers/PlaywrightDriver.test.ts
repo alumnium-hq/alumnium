@@ -8,6 +8,7 @@ import type {
 import { describe, expect, it, vi } from "vitest";
 import {
   type BaseAccessibilityTree,
+  ScrollInDirectionTool,
   TreeDevDrillError,
 } from "@alumnium/core/internal";
 import { TestTreeFactory } from "../../../core/src/drivers/__factories__/TestTreeFactory.ts";
@@ -295,6 +296,76 @@ describe("PlaywrightDriver", () => {
     expect(map.get("main")).toBe(main);
     expect(map.get("ad")).toBe(ad);
     expect(map.get("widget")).toBe(widget);
+  });
+
+  describe("scrollInDirection", () => {
+    function setup(areas: Array<ScrollInDirectionTool.Area | null>) {
+      const scrollAreaHandle = { dispose: vi.fn(async () => undefined) };
+      const session = { send: vi.fn(async () => ({})), on: vi.fn() };
+      const mouse = {
+        move: vi.fn(async () => undefined),
+        wheel: vi.fn(async () => undefined),
+      };
+      const page = {
+        on: vi.fn(),
+        context: () => ({
+          addInitScript: vi.fn(async () => undefined),
+          newCDPSession: vi.fn(async () => session),
+          on: vi.fn(),
+        }),
+        mainFrame: () => ({}),
+        frames: () => [],
+        waitForTimeout: vi.fn(async () => undefined),
+        mouse,
+      };
+      const element = {
+        boundingBox: vi.fn(async () => ({
+          x: 400,
+          y: -2000,
+          width: 600,
+          height: 3000,
+        })),
+        evaluateHandle: vi.fn(async () => scrollAreaHandle),
+        // Called with the scrollArea.js handle to measure, or alone to scroll
+        // the element into view.
+        evaluate: vi.fn(async (_fn: unknown, arg?: unknown) =>
+          arg === scrollAreaHandle ? areas.shift() : undefined,
+        ),
+      };
+      const scrollsIntoView = () =>
+        element.evaluate.mock.calls.filter(
+          ([, arg]) => arg !== scrollAreaHandle,
+        ).length;
+      const driver = new PlaywrightDriver(page as unknown as Page);
+      vi.spyOn(driver, "findElement").mockResolvedValue(
+        element as unknown as Locator,
+      );
+      return { driver, mouse, scrollsIntoView };
+    }
+
+    // A 500px tall chat thread whose visible center is 2300px below the top
+    // of the (mostly scrolled away) element.
+    const thread = { offsetX: 300, offsetY: 2300, width: 600, height: 500 };
+
+    it("wheels over the middle of the visible scroll area", async () => {
+      const { driver, mouse, scrollsIntoView } = setup([thread]);
+
+      await driver.scrollInDirection(1, "up");
+
+      expect(scrollsIntoView()).toBe(0);
+      expect(mouse.move).toHaveBeenCalledWith(700, 300);
+      // 80% of the area's 500px visible height, not the viewport.
+      expect(mouse.wheel).toHaveBeenCalledWith(0, -400);
+    });
+
+    it("brings an off-screen scroll area into view first", async () => {
+      const { driver, mouse, scrollsIntoView } = setup([null, thread]);
+
+      await driver.scrollInDirection(1, "down");
+
+      expect(scrollsIntoView()).toBe(1);
+      expect(mouse.wheel).toHaveBeenCalledWith(0, 400);
+    });
   });
 
   describe("drill probe", () => {
