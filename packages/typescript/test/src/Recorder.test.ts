@@ -522,7 +522,7 @@ describe("Recorder", () => {
       ]);
     });
 
-    it("refuses to finish when a secret output could not be masked", () => {
+    it("records output that is not JSON as is", () => {
       const recorder = createRecorder({ maskResponsePaths });
       recorder.onToolUse({
         id: "g",
@@ -530,9 +530,13 @@ describe("Recorder", () => {
         tool: "createUser",
         input: {},
       });
-      recorder.onToolResult({ id: "g", content: text("token=tok-37f2") });
+      recorder.onToolResult({ id: "g", content: text("null") });
 
-      expect(() => recorder.finish(PASSED)).toThrow(RecordingLeakError);
+      const recording = recorder.finish(PASSED);
+
+      expect(recording.steps[0]).toMatchObject({
+        result: { content: text("null") },
+      });
     });
   });
 

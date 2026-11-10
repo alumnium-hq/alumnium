@@ -494,11 +494,11 @@ describe("Masker", () => {
       ).toEqual([]);
     });
 
-    it("reports a call with response paths whose output is not JSON", () => {
+    it("ignores a call with response paths whose output is not JSON", () => {
       const masker = createMasker({ maskResponsePaths: { tool: ["token"] } });
       masker.registerOutput("3", "token: t0", "tool");
 
-      expect(masker.findLeaks({})).toEqual(["<secret.3>"]);
+      expect(masker.findLeaks({})).toEqual([]);
     });
   });
 

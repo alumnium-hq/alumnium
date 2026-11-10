@@ -820,10 +820,16 @@ describe("ToolCallMasker", () => {
       ]);
     });
 
-    it("reports a call with response paths whose output is not JSON", () => {
+    it("ignores a call with response paths whose output is not JSON", () => {
       const masker = secretsMasker("token=tok-37f2");
 
-      expect(masker.findLeaks({})).toEqual(["<secret.0>"]);
+      expect(masker.findLeaks({})).toEqual([]);
+    });
+
+    it("ignores a call with response paths whose output is a JSON scalar", () => {
+      const masker = secretsMasker("null");
+
+      expect(masker.findLeaks({})).toEqual([]);
     });
 
     it("does not report a failed call whose output is not JSON", () => {
