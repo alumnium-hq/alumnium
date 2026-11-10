@@ -223,13 +223,9 @@ export abstract class SeleniumDriver extends BaseDriver<WebElement> {
       direction,
       area,
     );
-    // `Actions.scroll()` exists at runtime but is missing from @types.
-    const actions = this.driver.actions({ async: true }) as unknown as {
-      scroll(...args: [number, number, number, number, Origin]): {
-        perform(): Promise<void>;
-      };
-    };
-    await actions
+    await this.driver
+      .actions({ async: true })
+      // @ts-expect-error -- Actions.scroll() exists since selenium-webdriver 4.2 but is missing from @types/selenium-webdriver.
       .scroll(
         Math.round(area.viewportX),
         Math.round(area.viewportY),
