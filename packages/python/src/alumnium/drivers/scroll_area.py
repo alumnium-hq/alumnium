@@ -15,11 +15,14 @@ class ScrollDirection(str, Enum):
 class ScrollArea:
     """
     The visible area that scrolls an element, as computed by scripts/scrollArea.js:
-    its visible size and visible center as an offset from the element's top-left corner.
+    its visible size and visible center, as an offset from the element's top-left
+    corner and in top-level viewport coordinates (across frames).
     """
 
     offset_x: float
     offset_y: float
+    viewport_x: float
+    viewport_y: float
     width: float
     height: float
 
@@ -39,6 +42,8 @@ class ScrollArea:
         return cls(
             offset_x=result["offsetX"],
             offset_y=result["offsetY"],
+            viewport_x=result["viewportX"],
+            viewport_y=result["viewportY"],
             width=result["width"],
             height=result["height"],
         )

@@ -212,12 +212,9 @@ class SeleniumDriver(BaseDriver):
 
         # Wheel over the middle of the visible scroll area so the browser scrolls
         # it just like a user would, by most of its visible size so no content is
-        # skipped, even when the element itself is scrolled away.
-        rect = self.driver.execute_script(
-            "const r = arguments[0].getBoundingClientRect(); return { x: r.left, y: r.top };",
-            element,
-        )
-        origin = ScrollOrigin.from_viewport(round(rect["x"] + area.offset_x), round(rect["y"] + area.offset_y))
+        # skipped, even when the element itself is scrolled away. Viewport
+        # coordinates include the offset of the frames the element is in.
+        origin = ScrollOrigin.from_viewport(round(area.viewport_x), round(area.viewport_y))
         delta_x, delta_y = area.wheel_delta(direction)
         ActionChains(self.driver).scroll_from_origin(origin, delta_x, delta_y).perform()
         sleep(ScrollArea.SETTLE_DELAY)

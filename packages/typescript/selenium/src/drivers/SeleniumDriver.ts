@@ -216,29 +216,26 @@ export abstract class SeleniumDriver extends BaseDriver<WebElement> {
     direction: ScrollInDirectionTool.Direction,
   ): Promise<void> {
     const element = await this.findElement(id);
-    // Find the visible scroll area that contains the element, bringing it into
-    // view only when it is fully off screen. The wheel goes over the middle of
-    // that area and scrolls by most of its visible size, so no content is
-    // skipped, even when the element itself is scrolled away.
-    const { x, y, area } = (await this.driver.executeScript(
-      `const el = arguments[0];
-      const scrollArea = ${ScrollInDirectionTool.SCROLL_AREA_EXPRESSION};
-      let area = scrollArea(el);
-      if (!area) {
-        el.scrollIntoView({ block: "nearest", inline: "nearest" });
-        area = scrollArea(el);
-      }
-      if (!area) throw new Error("Scroll area is not visible");
-      const r = el.getBoundingClientRect();
-      return { x: r.left + area.offsetX, y: r.top + area.offsetY, area };`,
-      element,
-    )) as { x: number; y: number; area: ScrollInDirectionTool.Area };
+    let area = await this.#scrollArea(element);
+    if (!area) {
+      // The scroll area is fully off screen: bring it into view first.
+      await this.driver.executeScript(
+        "arguments[0].scrollIntoView({ block: 'nearest', inline: 'nearest' });",
+        element,
+      );
+      area = await this.#scrollArea(element);
+    }
+    if (!area) throw new Error(`Element ${id} has no visible scroll area`);
+
+    // Wheel over the middle of the visible scroll area so the browser scrolls
+    // it just like a user would, by most of its visible size so no content is
+    // skipped, even when the element itself is scrolled away. Viewport
+    // coordinates include the offset of the frames the element is in.
+    const { viewportX: x, viewportY: y } = area;
     const { deltaX, deltaY } = ScrollInDirectionTool.wheelDelta(
       direction,
       area,
     );
-    // Wheel over the visible part of the area so the browser scrolls whatever
-    // scrollable ancestor is under the pointer, just like a user would.
     // `Actions.scroll()` exists at runtime but is missing from @types.
     const actions = this.driver.actions({ async: true }) as unknown as {
       scroll(
@@ -336,6 +333,15 @@ export abstract class SeleniumDriver extends BaseDriver<WebElement> {
   @span("driver.wait_for_selector", BaseDriver.spanAttrs)
   async waitForSelector(): Promise<void> {
     throw new Error("waitForSelector not supported for this driver");
+  }
+
+  async #scrollArea(
+    element: WebElement,
+  ): Promise<ScrollInDirectionTool.Area | null> {
+    return (await this.driver.executeScript(
+      ScrollInDirectionTool.SCROLL_AREA_SCRIPT,
+      element,
+    )) as ScrollInDirectionTool.Area | null;
   }
 
   async #scrollElementIntoCenter(element: WebElement): Promise<void> {

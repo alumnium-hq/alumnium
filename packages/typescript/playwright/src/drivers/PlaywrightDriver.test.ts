@@ -345,7 +345,14 @@ describe("PlaywrightDriver", () => {
 
     // A 500px tall chat thread whose visible center is 2300px below the top
     // of the (mostly scrolled away) element.
-    const thread = { offsetX: 300, offsetY: 2300, width: 600, height: 500 };
+    const thread = {
+      offsetX: 300,
+      offsetY: 2300,
+      viewportX: 700,
+      viewportY: 300,
+      width: 600,
+      height: 500,
+    };
 
     it("wheels over the middle of the visible scroll area", async () => {
       const { driver, mouse, scrollsIntoView } = setup([thread]);

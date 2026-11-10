@@ -76,8 +76,12 @@ export namespace ScrollInDirectionTool {
 
   /** Visible scroll area: its size and center relative to the element. */
   export interface Area {
+    /** Visible center relative to the element's top-left corner. */
     offsetX: number;
     offsetY: number;
+    /** Visible center in top-level viewport coordinates, across frames. */
+    viewportX: number;
+    viewportY: number;
     width: number;
     height: number;
   }
