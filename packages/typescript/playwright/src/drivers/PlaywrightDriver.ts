@@ -71,7 +71,6 @@ interface HTMLElement {
   value: string;
   scrollIntoView: (options: {
     block: "start" | "center" | "end" | "nearest";
-    inline?: "start" | "center" | "end" | "nearest";
   }) => void;
 }
 
@@ -82,7 +81,6 @@ interface NewTabAction {
 
 const CONTEXT_WAS_DESTROYED_ERROR = "Execution context was destroyed";
 const NEW_TAB_DELAY = 200;
-const SCROLL_SETTLE_DELAY = 300;
 
 const WAITER_SCRIPT = waiterScriptSource; // await readScript("waiter.js");
 const RETRY_OPTIONS: retry.Options = {
@@ -469,31 +467,24 @@ export class PlaywrightDriver extends BaseDriver<Locator> {
     direction: ScrollInDirectionTool.Direction,
   ): Promise<void> {
     const element = await this.findElement(id);
-    let area = await this.#scrollArea(element);
-    if (!area) {
-      // The scroll area is fully off screen: bring it into view first.
-      await element.evaluate((el: HTMLElement) =>
-        el.scrollIntoView({ block: "nearest", inline: "nearest" }),
-      );
-      area = await this.#scrollArea(element);
-    }
+    const script = (await element.evaluateHandle(
+      ScrollInDirectionTool.SCROLL_AREA_EXPRESSION,
+    )) as JSHandle<(target: unknown) => ScrollInDirectionTool.Area | null>;
+    const area = await element
+      .evaluate((target, scrollArea) => scrollArea(target), script)
+      .finally(() => script.dispose());
     const box = await element.boundingBox();
     ensure(area);
     ensure(box);
-
-    // Wheel over the middle of the visible scroll area so the browser scrolls
-    // it just like a user would, by most of its visible size so no content is
-    // skipped. The offset is relative to the element, which keeps the point
-    // right inside iframes and when the element itself is scrolled away.
-    const point = { x: box.x + area.offsetX, y: box.y + area.offsetY };
+    // Wheel over the area like a user. The offset from the element's top-level
+    // box keeps the point right inside cross-origin iframes too.
     const { deltaX, deltaY } = ScrollInDirectionTool.wheelDelta(
       direction,
       area,
     );
-    await this.page.mouse.move(point.x, point.y);
+    await this.page.mouse.move(box.x + area.offsetX, box.y + area.offsetY);
     await this.page.mouse.wheel(deltaX, deltaY);
-    // mouse.wheel() does not wait for scrolling to finish.
-    await this.page.waitForTimeout(SCROLL_SETTLE_DELAY);
+    await this.page.waitForTimeout(ScrollInDirectionTool.SETTLE_DELAY);
   }
 
   @span("driver.screenshot", BaseDriver.spanAttrs)
@@ -592,22 +583,6 @@ export class PlaywrightDriver extends BaseDriver<Locator> {
       logger.debug(error instanceof Error ? error.message : String(error));
       logger.debug(`Hover failed, scrolling into view instead`);
       await this.#scrollElementIntoCenter(element);
-    }
-  }
-
-  async #scrollArea(
-    element: Locator,
-  ): Promise<ScrollInDirectionTool.Area | null> {
-    const script = (await element.evaluateHandle(
-      ScrollInDirectionTool.SCROLL_AREA_EXPRESSION,
-    )) as JSHandle<(target: unknown) => ScrollInDirectionTool.Area | null>;
-    try {
-      return await element.evaluate(
-        (target, scrollArea) => scrollArea(target),
-        script,
-      );
-    } finally {
-      await script.dispose();
     }
   }
 

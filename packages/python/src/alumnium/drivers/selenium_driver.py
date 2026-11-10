@@ -23,7 +23,7 @@ from ..tools.type_tool import TypeTool
 from ..tools.upload_tool import UploadTool
 from .base_driver import BaseDriver
 from .keys import Key
-from .scroll_area import ScrollArea, ScrollDirection
+from .scroll_area import EVALUATE_SCRIPT, EXECUTE_SCRIPT, SETTLE_DELAY, ScrollDirection, wheel_delta
 from .slider import Slider, SliderActions
 from .waiter import WAITER_SCRIPT, WAITER_SNAPSHOT_SCRIPT, wait_for_page_to_load
 
@@ -201,23 +201,12 @@ class SeleniumDriver(BaseDriver):
         self._scroll_element_into_center(element)
 
     def scroll_in_direction(self, id: int, direction: ScrollDirection):
-        element = self.find_element(id)
-        area = ScrollArea.from_script(self.driver.execute_script(ScrollArea.EXECUTE_SCRIPT, element))
-        if area is None:
-            # The scroll area is fully off screen: bring it into view first.
-            self.driver.execute_script("arguments[0].scrollIntoView({block: 'nearest', inline: 'nearest'});", element)
-            area = ScrollArea.from_script(self.driver.execute_script(ScrollArea.EXECUTE_SCRIPT, element))
-        if area is None:
+        area = self.driver.execute_script(EXECUTE_SCRIPT, self.find_element(id))
+        if not area:
             raise RuntimeError(f"Element {id} has no visible scroll area")
-
-        # Wheel over the middle of the visible scroll area so the browser scrolls
-        # it just like a user would, by most of its visible size so no content is
-        # skipped, even when the element itself is scrolled away. Viewport
-        # coordinates include the offset of the frames the element is in.
-        origin = ScrollOrigin.from_viewport(round(area.viewport_x), round(area.viewport_y))
-        delta_x, delta_y = area.wheel_delta(direction)
-        ActionChains(self.driver).scroll_from_origin(origin, delta_x, delta_y).perform()
-        sleep(ScrollArea.SETTLE_DELAY)
+        origin = ScrollOrigin.from_viewport(round(area["viewportX"]), round(area["viewportY"]))
+        ActionChains(self.driver).scroll_from_origin(origin, *wheel_delta(direction, area)).perform()
+        sleep(SETTLE_DELAY)
 
     @property
     def title(self) -> str:

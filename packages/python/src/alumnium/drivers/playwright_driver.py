@@ -19,7 +19,7 @@ from ..tools.type_tool import TypeTool
 from ..tools.upload_tool import UploadTool
 from .base_driver import BaseDriver
 from .keys import Key
-from .scroll_area import ScrollArea, ScrollDirection
+from .scroll_area import EVALUATE_SCRIPT, EXECUTE_SCRIPT, SETTLE_DELAY, ScrollDirection, wheel_delta
 from .slider import Slider, SliderActions, SliderPoint
 from .waiter import WAITER_SCRIPT, WAITER_SNAPSHOT_SCRIPT, wait_for_page_to_load
 
@@ -172,23 +172,15 @@ class PlaywrightDriver(BaseDriver):
 
     def scroll_in_direction(self, id: int, direction: ScrollDirection):
         element = self.find_element(id)
-        area = ScrollArea.from_script(element.evaluate(ScrollArea.EVALUATE_SCRIPT))
-        if area is None:
-            # The scroll area is fully off screen: bring it into view first.
-            element.evaluate("el => el.scrollIntoView({block: 'nearest', inline: 'nearest'})")
-            area = ScrollArea.from_script(element.evaluate(ScrollArea.EVALUATE_SCRIPT))
+        area = element.evaluate(EVALUATE_SCRIPT)
         box = element.bounding_box()
-        if area is None or box is None:
+        if not area or not box:
             raise RuntimeError(f"Element {id} has no visible scroll area")
-
-        # Wheel over the middle of the visible scroll area so the browser scrolls
-        # it just like a user would, by most of its visible size so no content is
-        # skipped. The offset is relative to the element, which keeps the point
-        # right inside iframes and when the element itself is scrolled away.
-        delta_x, delta_y = area.wheel_delta(direction)
-        self.page.mouse.move(box["x"] + area.offset_x, box["y"] + area.offset_y)
-        self.page.mouse.wheel(delta_x, delta_y)
-        self.page.wait_for_timeout(ScrollArea.SETTLE_DELAY * 1000)
+        # Wheel over the area like a user. The offset from the element's top-level
+        # box keeps the point right inside cross-origin iframes too.
+        self.page.mouse.move(box["x"] + area["offsetX"], box["y"] + area["offsetY"])
+        self.page.mouse.wheel(*wheel_delta(direction, area))
+        self.page.wait_for_timeout(SETTLE_DELAY * 1000)
 
     @property
     def title(self) -> str:

@@ -23,35 +23,25 @@ export class ScrollInDirectionTool extends BaseTool {
     }),
   ];
 
-  /** Fraction of the scroll area scrolled by one call, leaving some overlap. */
-  static areaFraction = 0.8;
-
-  /**
-   * Scripts running `scripts/scrollArea.js`, which returns the visible scroll
-   * area of an element as a `ScrollInDirectionTool.Area`, or `null` when it is
-   * off screen. `SCROLL_AREA_EXPRESSION` evaluates to the function itself;
-   * `SCROLL_AREA_SCRIPT` calls it with the first WebDriver script argument.
-   */
+  /** `scripts/scrollArea.js` as a function expression and as a WebDriver script. */
   static readonly SCROLL_AREA_EXPRESSION = `(${scrollAreaScriptSource})`;
   static readonly SCROLL_AREA_SCRIPT = `return (${scrollAreaScriptSource})(arguments[0]);`;
+  /** Wheel input does not wait for scrolling to finish. */
+  static readonly SETTLE_DELAY = 300;
 
-  /** Wheel delta in pixels for a direction, based on the scroll area size. */
+  /** Scrolls 80% of the area's visible size, so consecutive scrolls overlap. */
   static wheelDelta(
     direction: ScrollInDirectionTool.Direction,
-    area: { width: number; height: number },
+    area: ScrollInDirectionTool.Area,
   ): { deltaX: number; deltaY: number } {
-    const x = Math.round(area.width * ScrollInDirectionTool.areaFraction);
-    const y = Math.round(area.height * ScrollInDirectionTool.areaFraction);
-    switch (direction) {
-      case "up":
-        return { deltaX: 0, deltaY: -y };
-      case "down":
-        return { deltaX: 0, deltaY: y };
-      case "left":
-        return { deltaX: -x, deltaY: 0 };
-      case "right":
-        return { deltaX: x, deltaY: 0 };
-    }
+    const x = Math.round(area.width * 0.8);
+    const y = Math.round(area.height * 0.8);
+    return {
+      up: { deltaX: 0, deltaY: -y },
+      down: { deltaX: 0, deltaY: y },
+      left: { deltaX: -x, deltaY: 0 },
+      right: { deltaX: x, deltaY: 0 },
+    }[direction];
   }
 
   id: number;
@@ -74,12 +64,10 @@ export class ScrollInDirectionTool extends BaseTool {
 export namespace ScrollInDirectionTool {
   export type Direction = (typeof DIRECTIONS)[number];
 
-  /** Visible scroll area: its size and center relative to the element. */
+  /** Result of `scripts/scrollArea.js`. */
   export interface Area {
-    /** Visible center relative to the element's top-left corner. */
     offsetX: number;
     offsetY: number;
-    /** Visible center in top-level viewport coordinates, across frames. */
     viewportX: number;
     viewportY: number;
     width: number;
