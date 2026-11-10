@@ -1,6 +1,7 @@
 import z from "zod";
 import { McpArtifactsStore } from "../McpArtifactsStore.ts";
 import { McpState } from "../McpState.ts";
+import { McpParams } from "./McpParams.ts";
 import { McpTool } from "./McpTool.ts";
 
 /**
@@ -8,7 +9,8 @@ import { McpTool } from "./McpTool.ts";
  */
 export const getMcpTool = McpTool.define("get", {
   description:
-    "Extract data from the page (e.g., 'user name', 'product prices', 'item count'). Returns the extracted data if it's available or explanation why it can't be extracted.",
+    "Extract data from the page (e.g., 'user name', 'product prices', 'item count'). Returns the extracted data if it's available or explanation why it can't be extracted. " +
+    McpParams.DESCRIPTION,
 
   inputSchema: z.object({
     id: z.string(),
@@ -19,13 +21,18 @@ export const getMcpTool = McpTool.define("get", {
       .boolean()
       .default(false)
       .describe("Use screenshot for extraction"),
+
+    params: McpParams.input(
+      `data 'the status of order {order}' with params {"order": "A-77"}`,
+    ),
   }),
 
   async execute(input, { cache }) {
-    const { id, data, vision } = input;
+    const { id, data, vision, params } = input;
+    McpParams.validate(data, params, "data description");
 
     const al = McpState.getDriverAlumni(id);
-    const result = await al.get(data, { vision, cache });
+    const result = await al.get(data, { vision, params, cache });
 
     await McpArtifactsStore.saveScreenshot({
       id,

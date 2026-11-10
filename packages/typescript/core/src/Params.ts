@@ -3,8 +3,10 @@ export namespace Params {
 }
 
 export abstract class Params {
+  static readonly PLACEHOLDER_PATTERN = /\{(\w+)\}/g;
+
   static substitute(text: string, params: Params.Values = {}): string {
-    return text.replace(/\{(\w+)\}/g, (token, name: string) =>
+    return text.replace(Params.PLACEHOLDER_PATTERN, (token, name: string) =>
       Object.hasOwn(params, name) ? params[name]! : token,
     );
   }

@@ -2,6 +2,7 @@ import z from "zod";
 import { AssertionError } from "@alumnium/core";
 import { McpArtifactsStore } from "../McpArtifactsStore.ts";
 import { McpState } from "../McpState.ts";
+import { McpParams } from "./McpParams.ts";
 import { McpTool } from "./McpTool.ts";
 
 /**
@@ -9,7 +10,8 @@ import { McpTool } from "./McpTool.ts";
  */
 export const checkMcpTool = McpTool.define("check", {
   description:
-    "Verify a statement is true about the current page. Returns the result and explanation.",
+    "Verify a statement is true about the current page. Returns the result and explanation. " +
+    McpParams.DESCRIPTION,
 
   inputSchema: McpTool.IdInput.extend({
     statement: z
@@ -20,6 +22,10 @@ export const checkMcpTool = McpTool.define("check", {
       .boolean()
       .default(false)
       .describe("Use screenshot for verification"),
+
+    params: McpParams.input(
+      `statement 'the confirmation code {code} is shown' with params {"code": "HMX4TQ"}`,
+    ),
 
     step: z
       .number()
@@ -32,14 +38,15 @@ export const checkMcpTool = McpTool.define("check", {
   }),
 
   async execute(input, { logger, cache }) {
-    const { id, statement, vision } = input;
+    const { id, statement, vision, params } = input;
+    McpParams.validate(statement, params, "statement");
 
     const al = McpState.getDriverAlumni(id);
 
     let explanation = "";
     let result = "";
     try {
-      explanation = await al.check(statement, { vision, cache });
+      explanation = await al.check(statement, { vision, params, cache });
       result = "success";
       logger.debug(`Success with ${explanation}`);
     } catch (error) {

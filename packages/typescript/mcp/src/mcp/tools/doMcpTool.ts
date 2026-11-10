@@ -15,6 +15,7 @@ import {
 } from "@alumnium/core";
 import { McpArtifactsStore } from "../McpArtifactsStore.ts";
 import { McpState } from "../McpState.ts";
+import { McpParams } from "./McpParams.ts";
 import { McpTool } from "./McpTool.ts";
 
 /**
@@ -64,7 +65,8 @@ export const doMcpTool = McpTool.define("do", {
     `Supported actions: ${getDoToolActions()}. ` +
     "Set vision=true to use a screenshot alongside the accessibility tree when controls are distinguishable by appearance. " +
     "IMPORTANT: Each call operates on the CURRENT PAGE state only. For multi-page workflows, issue separate calls (e.g., first 'navigate to URL', then 'search for X' as a separate call after page loads). " +
-    "Note that you don't need to scroll the page to interact with elements, Alumnium can locate and work with elements outside the viewport.",
+    "Note that you don't need to scroll the page to interact with elements, Alumnium can locate and work with elements outside the viewport. " +
+    McpParams.DESCRIPTION,
 
   inputSchema: z.object({
     id: z.string().describe("Driver ID from start"),
@@ -79,6 +81,10 @@ export const doMcpTool = McpTool.define("do", {
       .boolean()
       .default(false)
       .describe("Use a screenshot to distinguish controls by their appearance"),
+
+    params: McpParams.input(
+      `goal 'type {email} in the email field' with params {"email": "grace@example.com"}`,
+    ),
 
     step: z
       .number()
@@ -100,11 +106,13 @@ export const doMcpTool = McpTool.define("do", {
   }),
 
   async execute(input, { logger, cache }) {
-    const { id, goal, vision } = input;
+    const { id, goal, vision, params } = input;
+    McpParams.validate(goal, params, "goal");
 
     const al = McpState.getDriverAlumni(id);
     const { steps, explanation, changes } = await al.do(goal, {
       vision,
+      params,
       cache,
     });
 
