@@ -84,13 +84,6 @@ describe("SecretMasker", () => {
 
       expect(secrets.findLeaks(["token t0"])).toEqual(["<secret.0.token>"]);
     });
-
-    it("always reports an output marked unread", () => {
-      const secrets = new SecretMasker({ tool: ["token"] });
-      secrets.markUnread("3");
-
-      expect(secrets.findLeaks({})).toEqual(["<secret.3>"]);
-    });
   });
 
   it("finds secret masks anywhere in a value", () => {

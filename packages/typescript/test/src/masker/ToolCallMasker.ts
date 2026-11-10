@@ -63,9 +63,7 @@ export namespace ToolCallMasker {
 
   export interface RegisterOptions {
     /**
-     * Registers only the leaves at `maskResponsePaths`, for a failed call. An
-     * output that is not JSON is then its error message rather than the
-     * payload the paths describe, so it is not reported as unread either.
+     * Registers only the leaves at `maskResponsePaths`, for a failed call.
      */
     secretsOnly?: boolean | undefined;
   }
@@ -210,7 +208,7 @@ export class ToolCallMasker {
     options: ToolCallMasker.RegisterOptions = {},
   ): ToolCallMasker.Registered[] {
     // Checked before parsing, so that a tool registering nothing - e.g.
-    // one returning an accessibility tree - is not reported as non-JSON.
+    // one returning an accessibility tree - is not logged as non-JSON.
     if (this.#registersNothing(toolKey, options)) return [];
 
     const text = contentTexts(content).join("\n").trim();
@@ -233,7 +231,6 @@ export class ToolCallMasker {
           "The values it produced will be replayed as recorded.",
       );
       logger.debug(`-> Output: ${text}`);
-      if (this.#secrets.hasPaths(toolKey)) this.#secrets.markUnread(callId);
       return [];
     }
 

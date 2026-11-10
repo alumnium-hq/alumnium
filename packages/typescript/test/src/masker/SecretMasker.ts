@@ -1,9 +1,6 @@
-import { Telemetry } from "@alumnium/core/internal";
-import { findMasks, maskSegment } from "./maskerUtils.ts";
+import { findMasks } from "./maskerUtils.ts";
 import { ResponsePaths } from "./ResponsePaths.ts";
 import { SubstringMasker } from "./SubstringMasker.ts";
-
-const { logger } = Telemetry.get(import.meta.url);
 
 const SECRET_MASK_PREFIX = "<secret.";
 const SECRET_MASK_PATTERN = /<secret\.\w+(?:\.\w+)+(?::json)?>/g;
@@ -21,8 +18,6 @@ export class SecretMasker extends SubstringMasker {
   static PREFIX = SECRET_MASK_PREFIX;
 
   #paths: ResponsePaths;
-  // `<secret.id>` of calls with response paths but unreadable output.
-  #unreadOutputs = new Set<string>();
 
   /**
    * Finds secret masks anywhere in a value.
@@ -72,25 +67,5 @@ export class SecretMasker extends SubstringMasker {
    */
   registerSecret(mask: string, value: string) {
     this.register(mask, value);
-  }
-
-  /**
-   * Marks the output of a call with response paths as unreadable: its secrets
-   * cannot be told apart, so they are still in it in clear.
-   *
-   * @param callId - Id of the tool call, as the host agent assigned it.
-   */
-  markUnread(callId: string) {
-    logger.warn(
-      `Tool call ${callId} has response paths to mask, but its output is not JSON`,
-    );
-    this.#unreadOutputs.add(`${SECRET_MASK_PREFIX}${maskSegment(callId)}>`);
-  }
-
-  /**
-   * An unreadable output (see `markUnread`) is always reported, as `<secret.id>`.
-   */
-  override findLeaks(value: unknown): string[] {
-    return [...this.#unreadOutputs, ...super.findLeaks(value)];
   }
 }
