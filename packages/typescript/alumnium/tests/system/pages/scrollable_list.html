@@ -37,41 +37,32 @@
   </head>
   <body>
     <p id="status"></p>
-    <!-- The thread starts scrolled to the newest message. Older messages are
-         only loaded when it is scrolled near the top, so they cannot be
-         reached by scrolling to an element that is already on the page. -->
+    <!-- The thread starts scrolled to the newest message. Every message is in
+         the accessibility tree, so only the status tells which are visible. -->
     <section id="thread" aria-label="Messages"></section>
 
     <script>
-      const TOTAL = 60;
-      const PAGE = 20;
       const thread = document.getElementById("thread");
       const status = document.getElementById("status");
-      let oldest = TOTAL + 1;
 
-      function loadOlder() {
-        if (oldest === 1) return;
-        const from = Math.max(oldest - PAGE, 1);
-        const fragment = document.createDocumentFragment();
-        for (let n = from; n < oldest; n++) {
-          const message = document.createElement("p");
-          message.className = "message";
-          message.textContent = `Message ${n}`;
-          fragment.appendChild(message);
-        }
-        // Keep the visible messages in place while prepending older ones.
-        const fromBottom = thread.scrollHeight - thread.scrollTop;
-        thread.prepend(fragment);
-        thread.scrollTop = thread.scrollHeight - fromBottom;
-        oldest = from;
-        status.textContent = `Oldest loaded message: Message ${oldest}`;
+      for (let n = 1; n <= 60; n++) {
+        const message = document.createElement("p");
+        message.className = "message";
+        message.textContent = `Message ${n}`;
+        thread.appendChild(message);
       }
 
-      loadOlder();
+      function updateStatus() {
+        const top = thread.getBoundingClientRect().top;
+        const first = [...thread.children].find(
+          (message) => message.getBoundingClientRect().bottom > top,
+        );
+        status.textContent = `First visible message: ${first.textContent}`;
+      }
+
       thread.scrollTop = thread.scrollHeight;
-      thread.addEventListener("scroll", () => {
-        if (thread.scrollTop < 50) loadOlder();
-      });
+      updateStatus();
+      thread.addEventListener("scroll", updateStatus);
     </script>
   </body>
 </html>

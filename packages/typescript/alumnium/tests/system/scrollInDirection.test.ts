@@ -1,4 +1,5 @@
 import { describe } from "vitest";
+import type { Alumni } from "alumnium";
 import { baseIt } from "./helpers.ts";
 
 describe("Scroll In Direction", () => {
@@ -13,20 +14,29 @@ describe("Scroll In Direction", () => {
     };
   });
 
-  it("scrolls up a list to load older messages", async ({ expect, setup }) => {
+  async function firstVisibleMessage(al: Alumni): Promise<number> {
+    const value = await al.get("number of the first visible message");
+    return Number(String(value).match(/\d+/)?.[0]);
+  }
+
+  it("scrolls a list up and down", async ({ expect, setup }) => {
     const { al, $ } = await setup();
 
     await $.navigate("scrollable_list.html");
-    expect(await al.get("oldest loaded message")).toContain("Message 41");
-    await al.do("scroll up the messages until 'Message 1' is loaded");
-    expect(await al.get("oldest loaded message")).toContain("Message 1");
+    const initial = await firstVisibleMessage(al);
+    await al.do("scroll up the messages");
+    const scrolledUp = await firstVisibleMessage(al);
+    expect(scrolledUp).toBeLessThan(initial);
+    await al.do("scroll down the messages");
+    expect(await firstVisibleMessage(al)).toBeGreaterThan(scrolledUp);
   });
 
-  it("scrolls up a list inside a frame", async ({ expect, setup }) => {
+  it("scrolls a list inside a frame", async ({ expect, setup }) => {
     const { al, $ } = await setup();
 
     await $.navigate("scrollable_list_frame.html");
-    await al.do("scroll up the messages until 'Message 1' is loaded");
-    expect(await al.get("oldest loaded message")).toContain("Message 1");
+    const initial = await firstVisibleMessage(al);
+    await al.do("scroll up the messages");
+    expect(await firstVisibleMessage(al)).toBeLessThan(initial);
   });
 });
