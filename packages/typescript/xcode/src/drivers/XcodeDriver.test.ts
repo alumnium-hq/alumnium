@@ -91,6 +91,10 @@ describe(XcodeDriver, () => {
     ["ArrowDown", "\uf701"],
     ["ArrowLeft", "\uf702"],
     ["ArrowRight", "\uf703"],
+    ["Home", "\uf729"],
+    ["End", "\uf72b"],
+    ["PageUp", "\uf72c"],
+    ["PageDown", "\uf72d"],
   ] as const)("synthesizes %s", async (key, character) => {
     await driver.pressKey(key);
     expect(capture).toHaveBeenCalledWith(

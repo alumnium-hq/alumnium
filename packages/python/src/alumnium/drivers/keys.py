@@ -11,3 +11,7 @@ class Key(str, Enum):
     ARROW_UP = "ArrowUp"
     ARROW_LEFT = "ArrowLeft"
     ARROW_RIGHT = "ArrowRight"
+    HOME = "Home"
+    END = "End"
+    PAGE_UP = "PageUp"
+    PAGE_DOWN = "PageDown"

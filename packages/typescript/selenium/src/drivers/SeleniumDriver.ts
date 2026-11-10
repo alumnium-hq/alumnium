@@ -152,6 +152,10 @@ export abstract class SeleniumDriver extends BaseDriver<WebElement> {
         ArrowUp: SeleniumKey.ARROW_UP,
         ArrowLeft: SeleniumKey.ARROW_LEFT,
         ArrowRight: SeleniumKey.ARROW_RIGHT,
+        Home: SeleniumKey.HOME,
+        End: SeleniumKey.END,
+        PageUp: SeleniumKey.PAGE_UP,
+        PageDown: SeleniumKey.PAGE_DOWN,
       };
 
       const actions = this.driver.actions({ async: true });

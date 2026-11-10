@@ -87,6 +87,11 @@ export class XcodeDriver extends BaseDriver<never> {
       ArrowDown: "\uf701",
       ArrowLeft: "\uf702",
       ArrowRight: "\uf703",
+      // XCUIKeyboardKey navigation values (NS*FunctionKey).
+      Home: "\uf729",
+      End: "\uf72b",
+      PageUp: "\uf72c",
+      PageDown: "\uf72d",
     };
     await this.#perform(`sender keyboard kbd ${this.#encodeText(keys[key])}`);
   }

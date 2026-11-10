@@ -48,6 +48,10 @@ def test_convert_tool_with_enum():
                             "ArrowUp",
                             "ArrowLeft",
                             "ArrowRight",
+                            "Home",
+                            "End",
+                            "PageUp",
+                            "PageDown",
                         ],
                         "description": "Key to press.",
                     }
