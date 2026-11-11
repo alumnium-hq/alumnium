@@ -56,7 +56,7 @@ export class ScrollInDirectionTool extends BaseTool {
     this.direction = args.direction;
   }
 
-  async invoke(driver: ScrollInDirectionTool.Driver): Promise<void> {
+  async invoke(driver: BaseDriver): Promise<void> {
     await driver.scrollInDirection(this.id, this.direction);
   }
 }
@@ -72,10 +72,5 @@ export namespace ScrollInDirectionTool {
     viewportY: number;
     width: number;
     height: number;
-  }
-
-  /** Driver capable of scrolling an area with the mouse wheel. */
-  export interface Driver extends BaseDriver {
-    scrollInDirection(id: number, direction: Direction): Promise<void>;
   }
 }

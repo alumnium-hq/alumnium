@@ -149,6 +149,10 @@ export class MaestroDriver extends BaseDriver<never> {
     throw new Error("Scrolling to element is not supported on Maestro");
   }
 
+  scrollInDirection(): Promise<void> {
+    throw new Error("Scrolling in direction is not supported on Maestro");
+  }
+
   @span("driver.execute_script", BaseDriver.spanAttrs)
   executeScript(): Promise<void> {
     throw new Error("Executing scripts is not supported on Maestro");

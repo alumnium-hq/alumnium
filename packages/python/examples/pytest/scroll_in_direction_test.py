@@ -3,6 +3,8 @@ from os import getenv
 
 from pytest import mark
 
+from alumnium.tools import ScrollInDirectionTool
+
 unsupported_on_appium = mark.xfail(
     "appium" in getenv("ALUMNIUM_DRIVER", "selenium"),
     reason="Not supported on Appium driver yet",
@@ -11,11 +13,14 @@ unsupported_on_appium = mark.xfail(
 
 def first_visible_message(al) -> int:
     value = al.get("number of the first visible message")
-    return int(re.search(r"\d+", str(value)).group())
+    match = re.search(r"\d+", str(value))
+    assert match, f"No message number in {value!r}"
+    return int(match.group())
 
 
 @unsupported_on_appium
-def test_scroll_list_up_and_down(al, navigate):
+def test_scroll_list_up_and_down(al_factory, navigate):
+    al = al_factory(extra_tools=[ScrollInDirectionTool])
     navigate("scrollable_list.html")
     initial = first_visible_message(al)
     al.do("scroll up the messages")
@@ -26,7 +31,8 @@ def test_scroll_list_up_and_down(al, navigate):
 
 
 @unsupported_on_appium
-def test_scroll_list_inside_frame(al, navigate):
+def test_scroll_list_inside_frame(al_factory, navigate):
+    al = al_factory(extra_tools=[ScrollInDirectionTool])
     navigate("scrollable_list_frame.html")
     initial = first_visible_message(al)
     al.do("scroll up the messages")

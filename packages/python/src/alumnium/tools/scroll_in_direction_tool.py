@@ -13,4 +13,4 @@ class ScrollInDirectionTool(BaseTool):
     direction: ScrollDirection = Field(description="Direction to scroll the content.")
 
     def invoke(self, driver: BaseDriver):
-        driver.scroll_in_direction(self.id, self.direction)  # type: ignore[reportAttributeAccessIssue]  # ty:ignore[unresolved-attribute]
+        driver.scroll_in_direction(self.id, self.direction)

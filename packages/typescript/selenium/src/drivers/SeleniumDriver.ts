@@ -50,7 +50,6 @@ export abstract class SeleniumDriver extends BaseDriver<WebElement> {
     DragAndDropTool,
     HoverTool,
     PressKeyTool,
-    ScrollInDirectionTool,
     TypeTool,
     UploadTool,
   ]);

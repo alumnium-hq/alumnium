@@ -1,5 +1,5 @@
 import { describe } from "vitest";
-import type { Alumni } from "alumnium";
+import { type Alumni, ScrollInDirectionTool } from "alumnium";
 import { baseIt } from "./helpers.ts";
 
 describe("Scroll In Direction", () => {
@@ -20,7 +20,9 @@ describe("Scroll In Direction", () => {
   }
 
   it("scrolls a list up and down", async ({ expect, setup }) => {
-    const { al, $ } = await setup();
+    const { al, $ } = await setup({
+      extraTools: [ScrollInDirectionTool],
+    });
 
     await $.navigate("scrollable_list.html");
     const initial = await firstVisibleMessage(al);
@@ -32,7 +34,9 @@ describe("Scroll In Direction", () => {
   });
 
   it("scrolls a list inside a frame", async ({ expect, setup }) => {
-    const { al, $ } = await setup();
+    const { al, $ } = await setup({
+      extraTools: [ScrollInDirectionTool],
+    });
 
     await $.navigate("scrollable_list_frame.html");
     const initial = await firstVisibleMessage(al);
