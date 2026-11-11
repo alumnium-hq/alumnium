@@ -244,6 +244,23 @@ public final class PlaywrightDriver extends BaseDriver {
   }
 
   @Override
+  public void scrollInDirection(int id, ScrollDirection direction) {
+    Locator element = findElement(id);
+    ScrollArea.Measurement area =
+        ScrollArea.Measurement.of(element.evaluate(ScrollArea.EVALUATE_SCRIPT), id);
+    var box = element.boundingBox();
+    if (box == null) {
+      throw new IllegalStateException("Element " + id + " has no visible scroll area");
+    }
+    // Wheel over the area like a user. The offset from the element's top-level
+    // box keeps the point right inside cross-origin iframes too.
+    page.mouse().move(box.x + area.offsetX(), box.y + area.offsetY());
+    ScrollArea.Delta delta = area.wheelDelta(direction);
+    page.mouse().wheel(delta.x(), delta.y());
+    page.waitForTimeout(ScrollArea.SETTLE_DELAY_MS);
+  }
+
+  @Override
   public String title() {
     return page.title();
   }

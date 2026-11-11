@@ -22,6 +22,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.interactions.WheelInput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -197,6 +198,19 @@ public abstract non-sealed class SeleniumDriver extends BaseDriver {
   }
 
   @Override
+  public void scrollInDirection(int id, ScrollDirection direction) {
+    Object result =
+        ((JavascriptExecutor) driver).executeScript(ScrollArea.EXECUTE_SCRIPT, findElement(id));
+    ScrollArea.Measurement area = ScrollArea.Measurement.of(result, id);
+    WheelInput.ScrollOrigin origin =
+        WheelInput.ScrollOrigin.fromViewport(
+            (int) Math.round(area.viewportX()), (int) Math.round(area.viewportY()));
+    ScrollArea.Delta delta = area.wheelDelta(direction);
+    new Actions(driver).scrollFromOrigin(origin, delta.x(), delta.y()).perform();
+    sleep(ScrollArea.SETTLE_DELAY_MS);
+  }
+
+  @Override
   public String title() {
     return driver.getTitle();
   }
@@ -305,6 +319,14 @@ public abstract non-sealed class SeleniumDriver extends BaseDriver {
       if (!newest.equals(driver.getWindowHandle())) {
         driver.switchTo().window(newest);
       }
+    }
+  }
+
+  private static void sleep(long millis) {
+    try {
+      Thread.sleep(millis);
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
     }
   }
 

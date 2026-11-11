@@ -155,6 +155,11 @@ public final class AppiumDriver extends BaseDriver {
   }
 
   @Override
+  public void scrollInDirection(int id, ScrollDirection direction) {
+    throw new UnsupportedOperationException("scrollInDirection not supported for Appium");
+  }
+
+  @Override
   public String title() {
     ensureWebviewContext();
     try {
