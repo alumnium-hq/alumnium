@@ -11,7 +11,9 @@ unsupported_on_appium = mark.xfail(
 
 def first_visible_message(al) -> int:
     value = al.get("number of the first visible message")
-    return int(re.search(r"\d+", str(value)).group())
+    match = re.search(r"\d+", str(value))
+    assert match, f"No message number in {value!r}"
+    return int(match.group())
 
 
 @unsupported_on_appium
