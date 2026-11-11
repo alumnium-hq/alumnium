@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Scrollable List Test Page</title>
+    <style>
+      /* Like a chat app, the page itself does not scroll, only the thread. */
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        overflow: hidden;
+      }
+      body {
+        display: flex;
+        flex-direction: column;
+        font-family: sans-serif;
+      }
+      #status {
+        margin: 0;
+        padding: 8px;
+        background: #eee;
+      }
+      #thread {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 8px;
+      }
+      .message {
+        margin: 8px 0;
+        padding: 16px;
+        border-radius: 8px;
+        background: #def;
+      }
+    </style>
+  </head>
+  <body>
+    <p id="status"></p>
+    <!-- The thread starts scrolled to the newest message. Every message is in
+         the accessibility tree, so only the status tells which are visible. -->
+    <section id="thread" aria-label="Messages"></section>
+
+    <script>
+      const thread = document.getElementById("thread");
+      const status = document.getElementById("status");
+
+      for (let n = 1; n <= 60; n++) {
+        const message = document.createElement("p");
+        message.className = "message";
+        message.textContent = `Message ${n}`;
+        thread.appendChild(message);
+      }
+
+      function updateStatus() {
+        const top = thread.getBoundingClientRect().top;
+        const first = [...thread.children].find(
+          (message) => message.getBoundingClientRect().bottom > top,
+        );
+        status.textContent = `First visible message: ${first.textContent}`;
+      }
+
+      thread.scrollTop = thread.scrollHeight;
+      updateStatus();
+      thread.addEventListener("scroll", updateStatus);
+    </script>
+  </body>
+</html>

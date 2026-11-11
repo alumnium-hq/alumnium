@@ -19,6 +19,7 @@ from ..tools.upload_tool import UploadTool
 from .base_driver import BaseDriver
 from .keys import Key
 from .playwright_driver import PlaywrightDriver
+from .scroll_area import EVALUATE_SCRIPT, SETTLE_DELAY, ScrollDirection, wheel_delta
 from .slider import AsyncSliderActions, Slider, SliderPoint
 from .waiter import WAITER_SCRIPT, WAITER_SNAPSHOT_SCRIPT, wait_for_page_to_load_async
 
@@ -210,6 +211,21 @@ class PlaywrightAsyncDriver(BaseDriver):
     async def _scroll_to(self, id: int):
         element = await self._find_element(id)
         await self._scroll_element_into_center(element)
+
+    def scroll_in_direction(self, id: int, direction: ScrollDirection):
+        self._run_async(self._scroll_in_direction(id, direction))
+
+    async def _scroll_in_direction(self, id: int, direction: ScrollDirection):
+        element = await self._find_element(id)
+        area = await element.evaluate(EVALUATE_SCRIPT)
+        box = await element.bounding_box()
+        if not area or not box:
+            raise RuntimeError(f"Element {id} has no visible scroll area")
+        # Wheel over the area like a user. The offset from the element's top-level
+        # box keeps the point right inside cross-origin iframes too.
+        await self.page.mouse.move(box["x"] + area["offsetX"], box["y"] + area["offsetY"])
+        await self.page.mouse.wheel(*wheel_delta(direction, area))
+        await self.page.wait_for_timeout(SETTLE_DELAY * 1000)
 
     @property
     def title(self) -> str:

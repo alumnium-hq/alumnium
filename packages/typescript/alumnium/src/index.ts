@@ -34,6 +34,7 @@ export {
   NavigateToUrlTool,
   PressKeyTool,
   PrintToPdfTool,
+  ScrollInDirectionTool,
   ScrollTool,
   SwitchToNextTabTool,
   SwitchToPreviousTabTool,

@@ -18,6 +18,7 @@ from ..tools.type_tool import TypeTool
 from ..tools.upload_tool import UploadTool
 from .base_driver import BaseDriver
 from .keys import Key
+from .scroll_area import EVALUATE_SCRIPT, SETTLE_DELAY, ScrollDirection, wheel_delta
 from .slider import Slider, SliderActions, SliderPoint
 from .waiter import WAITER_SCRIPT, WAITER_SNAPSHOT_SCRIPT, wait_for_page_to_load
 
@@ -166,6 +167,18 @@ class PlaywrightDriver(BaseDriver):
     def scroll_to(self, id: int):
         element = self.find_element(id)
         self._scroll_element_into_center(element)
+
+    def scroll_in_direction(self, id: int, direction: ScrollDirection):
+        element = self.find_element(id)
+        area = element.evaluate(EVALUATE_SCRIPT)
+        box = element.bounding_box()
+        if not area or not box:
+            raise RuntimeError(f"Element {id} has no visible scroll area")
+        # Wheel over the area like a user. The offset from the element's top-level
+        # box keeps the point right inside cross-origin iframes too.
+        self.page.mouse.move(box["x"] + area["offsetX"], box["y"] + area["offsetY"])
+        self.page.mouse.wheel(*wheel_delta(direction, area))
+        self.page.wait_for_timeout(SETTLE_DELAY * 1000)
 
     @property
     def title(self) -> str:

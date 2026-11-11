@@ -65,6 +65,7 @@ export * from "./tools/NavigateBackTool.ts";
 export * from "./tools/NavigateToUrlTool.ts";
 export * from "./tools/PressKeyTool.ts";
 export * from "./tools/PrintToPdfTool.ts";
+export * from "./tools/ScrollInDirectionTool.ts";
 export * from "./tools/ScrollTool.ts";
 export * from "./tools/SwitchToNextTabTool.ts";
 export * from "./tools/SwitchToPreviousTabTool.ts";

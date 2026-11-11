@@ -8,6 +8,7 @@ from .navigate_back_tool import NavigateBackTool
 from .navigate_to_url_tool import NavigateToUrlTool
 from .press_key_tool import PressKeyTool
 from .print_to_pdf_tool import PrintToPdfTool
+from .scroll_in_direction_tool import ScrollInDirectionTool
 from .scroll_tool import ScrollTool
 from .switch_to_next_tab_tool import SwitchToNextTabTool
 from .switch_to_previous_tab_tool import SwitchToPreviousTabTool
@@ -25,6 +26,7 @@ __all__ = [
     "NavigateToUrlTool",
     "PressKeyTool",
     "PrintToPdfTool",
+    "ScrollInDirectionTool",
     "ScrollTool",
     "SwitchToNextTabTool",
     "SwitchToPreviousTabTool",

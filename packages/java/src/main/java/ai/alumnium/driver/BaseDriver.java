@@ -57,6 +57,8 @@ public abstract sealed class BaseDriver permits SeleniumDriver, PlaywrightDriver
 
   public abstract void scrollTo(int id);
 
+  public abstract void scrollInDirection(int id, ScrollDirection direction);
+
   public abstract String title();
 
   public abstract void type(int id, String text);

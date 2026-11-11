@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 from ..accessibility import BaseAccessibilityTree
 from . import Element
 from .keys import Key
+from .scroll_area import ScrollDirection
 
 
 class BaseDriver(ABC):
@@ -59,6 +60,10 @@ class BaseDriver(ABC):
 
     @abstractmethod
     def scroll_to(self, id: int):
+        pass
+
+    @abstractmethod
+    def scroll_in_direction(self, id: int, direction: ScrollDirection):
         pass
 
     @property

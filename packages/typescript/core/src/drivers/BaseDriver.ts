@@ -4,6 +4,7 @@ import { Env } from "../Env.ts";
 import { NavigationPolicy } from "../NavigationPolicy.ts";
 import { Telemetry } from "../telemetry/Telemetry.ts";
 import type { ToolClass } from "../tools/BaseTool.ts";
+import type { ScrollInDirectionTool } from "../tools/ScrollInDirectionTool.ts";
 import { TreeDevDrill } from "../tree/dev/TreeDevDrill.ts";
 import { TreeDevDrillError } from "../tree/dev/TreeDevDrillError.ts";
 import { TreeDevDrillStore } from "../tree/dev/TreeDevDrillStore.ts";
@@ -70,6 +71,10 @@ export abstract class BaseDriver<TElement = unknown> {
   abstract findElement(id: number): Promise<TElement>;
   abstract visit(url: string): Promise<void>;
   abstract scrollTo(id: number): Promise<void>;
+  abstract scrollInDirection(
+    id: number,
+    direction: ScrollInDirectionTool.Direction,
+  ): Promise<void>;
   abstract executeScript(script: string): Promise<void>;
   abstract switchToNextTab(): Promise<void>;
   abstract switchToPreviousTab(): Promise<void>;

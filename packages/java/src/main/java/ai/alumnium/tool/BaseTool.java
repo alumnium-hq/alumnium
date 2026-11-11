@@ -25,6 +25,7 @@ public sealed interface BaseTool
         NavigateBackTool,
         NavigateToUrlTool,
         PrintToPdfTool,
+        ScrollInDirectionTool,
         ScrollTool,
         SwitchToNextTabTool,
         SwitchToPreviousTabTool,

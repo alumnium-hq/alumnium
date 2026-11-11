@@ -297,6 +297,49 @@ describe("PlaywrightDriver", () => {
     expect(map.get("widget")).toBe(widget);
   });
 
+  it("wheels over the middle of the visible scroll area", async () => {
+    const mouse = { move: vi.fn(), wheel: vi.fn() };
+    const page = {
+      on: vi.fn(),
+      context: () => ({
+        addInitScript: vi.fn(async () => undefined),
+        newCDPSession: vi.fn(async () => ({ send: vi.fn(), on: vi.fn() })),
+        on: vi.fn(),
+      }),
+      mainFrame: () => ({}),
+      frames: () => [],
+      waitForTimeout: vi.fn(async () => undefined),
+      mouse,
+    };
+    const element = {
+      evaluateHandle: vi.fn(async () => ({ dispose: vi.fn() })),
+      // A 500px tall thread whose visible center is 2300px below the top of
+      // the mostly scrolled away element.
+      evaluate: vi.fn(async () => ({
+        offsetX: 300,
+        offsetY: 2300,
+        width: 600,
+        height: 500,
+      })),
+      boundingBox: vi.fn(async () => ({
+        x: 400,
+        y: -2000,
+        width: 600,
+        height: 3000,
+      })),
+    };
+    const driver = new PlaywrightDriver(page as unknown as Page);
+    vi.spyOn(driver, "findElement").mockResolvedValue(
+      element as unknown as Locator,
+    );
+
+    await driver.scrollInDirection(1, "up");
+
+    expect(mouse.move).toHaveBeenCalledWith(700, 300);
+    // 80% of the area's visible height, not the viewport.
+    expect(mouse.wheel).toHaveBeenCalledWith(0, -400);
+  });
+
   describe("drill probe", () => {
     it("runs the exact Playwright set/remove CDP probe", async () => {
       const send = vi.fn(async (command: string) => {

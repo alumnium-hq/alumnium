@@ -5,6 +5,7 @@ import {
   MoveTargetOutOfBoundsError,
   NoSuchSessionError,
 } from "selenium-webdriver/lib/error.js";
+import { Origin } from "selenium-webdriver/lib/input.js";
 import {
   AppId,
   BaseDriver,
@@ -14,6 +15,7 @@ import {
   HoverTool,
   Keys,
   PressKeyTool,
+  ScrollInDirectionTool,
   Slider,
   type SliderStep,
   Telemetry,
@@ -203,6 +205,35 @@ export abstract class SeleniumDriver extends BaseDriver<WebElement> {
   async scrollTo(id: number): Promise<void> {
     const element = await this.findElement(id);
     await this.#scrollElementIntoCenter(element);
+  }
+
+  @span("driver.scroll_in_direction", BaseDriver.spanAttrs)
+  @stateful
+  async scrollInDirection(
+    id: number,
+    direction: ScrollInDirectionTool.Direction,
+  ): Promise<void> {
+    const area = (await this.driver.executeScript(
+      ScrollInDirectionTool.SCROLL_AREA_SCRIPT,
+      await this.findElement(id),
+    )) as ScrollInDirectionTool.Area | null;
+    if (!area) throw new Error(`Element ${id} has no visible scroll area`);
+    const { deltaX, deltaY } = ScrollInDirectionTool.wheelDelta(
+      direction,
+      area,
+    );
+    await this.driver
+      .actions({ async: true })
+      // @ts-expect-error -- Actions.scroll() exists since selenium-webdriver 4.2 but is missing from @types/selenium-webdriver.
+      .scroll(
+        Math.round(area.viewportX),
+        Math.round(area.viewportY),
+        deltaX,
+        deltaY,
+        Origin.VIEWPORT,
+      )
+      .perform();
+    await this.driver.sleep(ScrollInDirectionTool.SETTLE_DELAY);
   }
 
   @span("driver.title", BaseDriver.spanAttrs)

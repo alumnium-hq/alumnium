@@ -1,10 +1,12 @@
 from abc import abstractmethod
+from time import sleep
 from typing import TYPE_CHECKING, Callable
 from urllib.parse import urlparse
 
 from retry import retry
 from selenium.common.exceptions import MoveTargetOutOfBoundsException
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.actions.wheel_input import ScrollOrigin
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.errorhandler import ElementNotInteractableException, JavascriptException
 from selenium.webdriver.remote.webdriver import WebDriver
@@ -20,6 +22,7 @@ from ..tools.type_tool import TypeTool
 from ..tools.upload_tool import UploadTool
 from .base_driver import BaseDriver
 from .keys import Key
+from .scroll_area import EXECUTE_SCRIPT, SETTLE_DELAY, ScrollDirection, wheel_delta
 from .slider import Slider, SliderActions
 from .waiter import WAITER_SCRIPT, WAITER_SNAPSHOT_SCRIPT, wait_for_page_to_load
 
@@ -194,6 +197,14 @@ class SeleniumDriver(BaseDriver):
     def scroll_to(self, id: int):
         element = self.find_element(id)
         self._scroll_element_into_center(element)
+
+    def scroll_in_direction(self, id: int, direction: ScrollDirection):
+        area = self.driver.execute_script(EXECUTE_SCRIPT, self.find_element(id))
+        if not area:
+            raise RuntimeError(f"Element {id} has no visible scroll area")
+        origin = ScrollOrigin.from_viewport(round(area["viewportX"]), round(area["viewportY"]))
+        ActionChains(self.driver).scroll_from_origin(origin, *wheel_delta(direction, area)).perform()
+        sleep(SETTLE_DELAY)
 
     @property
     def title(self) -> str:

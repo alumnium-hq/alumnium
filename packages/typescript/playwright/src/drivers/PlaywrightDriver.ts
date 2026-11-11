@@ -19,6 +19,7 @@ import {
   type Keys,
   PressKeyTool,
   retry,
+  ScrollInDirectionTool,
   Slider,
   type SliderPoint,
   type SliderScript,
@@ -456,6 +457,33 @@ export class PlaywrightDriver extends BaseDriver<Locator> {
   async scrollTo(id: number): Promise<void> {
     const element = await this.findElement(id);
     await this.#scrollElementIntoCenter(element);
+  }
+
+  @span("driver.scroll_in_direction", BaseDriver.spanAttrs)
+  @stateful
+  async scrollInDirection(
+    id: number,
+    direction: ScrollInDirectionTool.Direction,
+  ): Promise<void> {
+    const element = await this.findElement(id);
+    const script = (await element.evaluateHandle(
+      ScrollInDirectionTool.SCROLL_AREA_EXPRESSION,
+    )) as JSHandle<(target: unknown) => ScrollInDirectionTool.Area | null>;
+    const area = await element
+      .evaluate((target, scrollArea) => scrollArea(target), script)
+      .finally(() => script.dispose());
+    const box = await element.boundingBox();
+    ensure(area);
+    ensure(box);
+    // Wheel over the area like a user. The offset from the element's top-level
+    // box keeps the point right inside cross-origin iframes too.
+    const { deltaX, deltaY } = ScrollInDirectionTool.wheelDelta(
+      direction,
+      area,
+    );
+    await this.page.mouse.move(box.x + area.offsetX, box.y + area.offsetY);
+    await this.page.mouse.wheel(deltaX, deltaY);
+    await this.page.waitForTimeout(ScrollInDirectionTool.SETTLE_DELAY);
   }
 
   @span("driver.screenshot", BaseDriver.spanAttrs)
