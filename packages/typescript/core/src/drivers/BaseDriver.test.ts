@@ -160,6 +160,9 @@ describe(BaseDriver, () => {
       visit(): Promise<void> {
         throw new Error("Not implemented");
       }
+      scrollInDirection(): Promise<void> {
+        throw new Error("Not implemented");
+      }
       scrollTo(): Promise<void> {
         throw new Error("Not implemented");
       }

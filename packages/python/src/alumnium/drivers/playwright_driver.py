@@ -14,12 +14,11 @@ from ..tools.click_tool import ClickTool
 from ..tools.drag_and_drop_tool import DragAndDropTool
 from ..tools.hover_tool import HoverTool
 from ..tools.press_key_tool import PressKeyTool
-from ..tools.scroll_in_direction_tool import ScrollInDirectionTool
 from ..tools.type_tool import TypeTool
 from ..tools.upload_tool import UploadTool
 from .base_driver import BaseDriver
 from .keys import Key
-from .scroll_area import EVALUATE_SCRIPT, EXECUTE_SCRIPT, SETTLE_DELAY, ScrollDirection, wheel_delta
+from .scroll_area import EVALUATE_SCRIPT, SETTLE_DELAY, ScrollDirection, wheel_delta
 from .slider import Slider, SliderActions, SliderPoint
 from .waiter import WAITER_SCRIPT, WAITER_SNAPSHOT_SCRIPT, wait_for_page_to_load
 
@@ -47,7 +46,6 @@ class PlaywrightDriver(BaseDriver):
             DragAndDropTool,
             HoverTool,
             PressKeyTool,
-            ScrollInDirectionTool,
             TypeTool,
             UploadTool,
         }

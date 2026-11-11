@@ -110,7 +110,6 @@ export class PlaywrightDriver extends BaseDriver<Locator> {
     DragAndDropTool,
     HoverTool,
     PressKeyTool,
-    ScrollInDirectionTool,
     TypeTool,
     UploadTool,
   ]);

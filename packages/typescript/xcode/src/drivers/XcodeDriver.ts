@@ -168,6 +168,10 @@ export class XcodeDriver extends BaseDriver<never> {
     throw new Error("Xcode element did not become hittable after scrolling");
   }
 
+  scrollInDirection(): Promise<void> {
+    throw new Error("Scrolling in direction is not supported on Xcode");
+  }
+
   @span("driver.back", BaseDriver.spanAttrs)
   @stateful
   async back(): Promise<void> {

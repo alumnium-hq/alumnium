@@ -17,6 +17,7 @@ from ..tools.press_key_tool import PressKeyTool
 from ..tools.type_tool import TypeTool
 from .base_driver import BaseDriver
 from .keys import Key
+from .scroll_area import ScrollDirection
 
 logger = get_logger(__name__)
 
@@ -118,6 +119,9 @@ class AppiumDriver(BaseDriver):
     def scroll_to(self, id: int):
         element = self.find_element(id)
         self._scroll_into_view(element)
+
+    def scroll_in_direction(self, id: int, direction: ScrollDirection):
+        raise NotImplementedError("Scrolling in direction is not supported for this driver")
 
     @property
     def title(self) -> str:

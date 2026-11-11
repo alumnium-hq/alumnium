@@ -145,6 +145,10 @@ export class AppiumDriver extends BaseDriver<WebdriverIO.Element> {
     await this.scrollIntoView(element);
   }
 
+  async scrollInDirection(): Promise<void> {
+    throw new Error("Scrolling in direction is not supported for this driver");
+  }
+
   @span("driver.quit", BaseDriver.spanAttrs)
   async quit(): Promise<void> {
     // WebdriverIO handles session termination automatically.
