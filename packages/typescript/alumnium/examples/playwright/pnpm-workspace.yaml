@@ -30,3 +30,7 @@ overrides:
   "@alumnium/cli-linux-x64": "file:../../../dist/npm-alumnium-cli-linux-x64"
   "@alumnium/cli-windows-arm64": "file:../../../dist/npm-alumnium-cli-windows-arm64"
   "@alumnium/cli-windows-x64": "file:../../../dist/npm-alumnium-cli-windows-x64"
+
+  # Security floors for transitive dependencies pinned by upstream packages
+  "@ai-sdk/provider-utils@>=4.0.0 <4.0.33": "^4.0.33"
+  "@opentelemetry/core@<2.8.0": "^2.8.0"

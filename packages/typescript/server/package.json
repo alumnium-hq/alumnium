@@ -23,7 +23,6 @@
     "@alumnium/openai": "workspace:*",
     "@alumnium/openrouter": "workspace:*",
     "@alumnium/xai": "workspace:*",
-    "@elysiajs/cors": "^1.4.1",
     "elysia": "^1.4.26",
     "nanoid": "^5.1.9",
     "zod": "^4.4.1"

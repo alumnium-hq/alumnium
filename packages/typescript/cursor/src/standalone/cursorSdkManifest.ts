@@ -204,10 +204,10 @@ function findSdkVersion(
 }
 
 // Guards against silently generating a manifest that is missing packages the
-// SDK requires at runtime (verified against @cursor/sdk@1.0.23's dist).
+// SDK requires at runtime (verified against @cursor/sdk@1.0.40's dist).
 function assertClosureSanity(packages: CursorSdkVendorPackage[]): void {
   const names = new Set(packages.map((pkg) => pkg.name));
-  for (const required of ["undici", "@fastify/busboy", "zod"]) {
+  for (const required of ["@bufbuild/protobuf", "@connectrpc/connect", "zod"]) {
     if (!names.has(required)) {
       throw new Error(
         `Cursor SDK closure is missing "${required}" — the lockfile walk looks broken`,
