@@ -348,6 +348,10 @@ Sets the URL for OpenAI models if you access them via custom endpoint.
 
 JSON string of additional headers to send with OpenAI requests (e.g. `{"x-custom-header": "value"}`).
 
+### `OPENAI_REASONING_EFFORT`
+
+Reasoning effort for OpenAI reasoning models: `none`, `minimal`, `low`, `medium`, `high` or `xhigh`. Default is `low`. Ignored for `gpt-4o` models, which don't reason.
+
 ### `XAI_API_KEY`
 
 API key used when `ALUMNIUM_MODEL` is set to `xai`.

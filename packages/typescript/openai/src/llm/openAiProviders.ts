@@ -24,7 +24,7 @@ export function createOpenAiLlm(model: Model): LanguageModelV4 {
   return model.name.includes("gpt-4o")
     ? llm
     : withCallDefaults(llm, {
-        reasoning: "low",
+        reasoning: Env.OPENAI_REASONING_EFFORT,
         providerOptions: { openai: { reasoningSummary: "auto" } },
       });
 }

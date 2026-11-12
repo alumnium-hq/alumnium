@@ -478,6 +478,15 @@ export const Env = {
     );
   },
 
+  get OPENAI_REASONING_EFFORT() {
+    return envVar(
+      "OPENAI_REASONING_EFFORT",
+      z
+        .enum(["none", "minimal", "low", "medium", "high", "xhigh"])
+        .default("low"),
+    );
+  },
+
   get OPENROUTER_API_KEY() {
     return secretEnvVar("OPENROUTER_API_KEY", z.string().optional());
   },

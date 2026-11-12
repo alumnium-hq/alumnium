@@ -56,6 +56,21 @@ describe("Env", () => {
     expect(Env.ALUMNIUM_CHECK_CONFIRMATIONS).toBe(expected);
   });
 
+  it.each([
+    [undefined, "low"],
+    ["", "low"],
+    ["medium", "medium"],
+    ["none", "none"],
+  ])("parses OpenAI reasoning effort %s as %s", (value, expected) => {
+    vi.stubEnv("OPENAI_REASONING_EFFORT", value);
+    expect(Env.OPENAI_REASONING_EFFORT).toBe(expected);
+  });
+
+  it("rejects an unknown OpenAI reasoning effort", () => {
+    vi.stubEnv("OPENAI_REASONING_EFFORT", "extreme");
+    expect(() => Env.OPENAI_REASONING_EFFORT).toThrow();
+  });
+
   it("uses driver and model defaults when their variables are empty", () => {
     vi.stubEnv("ALUMNIUM_DRIVER", "");
     vi.stubEnv("ALUMNIUM_MODEL", "");
