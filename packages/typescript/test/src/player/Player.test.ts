@@ -102,6 +102,15 @@ function freshRun(overrides: Respond = () => undefined): Respond {
   };
 }
 
+/** Played calls without their timestamps, which are checked separately. */
+function untimed(calls: Player.PlayedCall[]) {
+  return calls.map(({ startedAt, endedAt, ...call }) => {
+    expect(Date.parse(startedAt)).not.toBeNaN();
+    expect(Date.parse(endedAt)).toBeGreaterThanOrEqual(Date.parse(startedAt));
+    return call;
+  });
+}
+
 describe("Player", () => {
   it("replays a recording with the values the fresh calls produce", async () => {
     const recording = record(
@@ -133,7 +142,7 @@ describe("Player", () => {
     const player = new Player({ executor, hostVars: { RUN_ID: "run-2" } });
     const result = await player.play(recording);
 
-    expect(result).toEqual({ status: "replayed", verdict: PASSED });
+    expect(result).toMatchObject({ status: "replayed", verdict: PASSED });
     expect(executed.find(({ call }) => call.tool === "start")?.options).toEqual(
       { meta: { "alumnium.ai/change-analysis": false } },
     );
@@ -157,11 +166,27 @@ describe("Player", () => {
         input: { id: "drv-2", save_cache: true },
       },
     ]);
+    expect(untimed(result.calls)).toEqual(
+      executed.map(({ call }, stepIndex) => ({
+        stepIndex,
+        call,
+        result: freshRun()(call),
+        attempt: 1,
+        ...(call.tool === "check" && { check: "agreed" }),
+      })),
+    );
   });
 
   it("reports narration and skips calls that failed when recorded or only exist in the agent", async () => {
     const recorder = new Recorder({ text: "Test", agent: "test" });
     recorder.onNarration({ narration: "thinking", text: "Looking up tools" });
+    recorder.onToolUse({
+      id: "0",
+      server: "alumnium",
+      tool: "start",
+      input: { capabilities: "{}" },
+    });
+    recorder.onToolResult({ id: "0", content: text({ id: "drv-1" }) });
     recorder.onToolUse({ id: "1", tool: "ToolSearch", input: { query: "x" } });
     recorder.onToolResult({ id: "1", content: "[]" });
     recorder.onToolUse({ id: "2", tool: "Bash", input: { command: "flaky" } });
@@ -182,7 +207,21 @@ describe("Player", () => {
     }).play(recording);
 
     expect(result.status).toBe("replayed");
-    expect(executed).toEqual([]);
+    expect(executed.map(({ call }) => call.tool)).toEqual(["start", "stop"]);
+    expect(untimed(result.calls).slice(1, 3)).toEqual([
+      {
+        stepIndex: 2,
+        call: { tool: "ToolSearch", input: { query: "x" } },
+        skipped: "it only exists inside the agent",
+        attempt: 1,
+      },
+      {
+        stepIndex: 3,
+        call: { tool: "Bash", input: { command: "flaky" } },
+        skipped: "it failed when recorded",
+        attempt: 1,
+      },
+    ]);
     expect(narration).toEqual(["Looking up tools"]);
     expect(skipped).toEqual([
       "ToolSearch: it only exists inside the agent",
@@ -202,6 +241,7 @@ describe("Player", () => {
       status: "diverged",
       error: "No executor for tool 'other/thing'",
       stepIndex: 0,
+      calls: [],
     });
   });
 
@@ -217,7 +257,7 @@ describe("Player", () => {
 
     const result = await new Player({ executor }).play(recording);
 
-    expect(result).toEqual({
+    expect(result).toMatchObject({
       status: "diverged",
       error: `Tool 'alumnium/do' failed: "No button"`,
       stepIndex: 1,
@@ -227,6 +267,56 @@ describe("Player", () => {
       tool: "stop",
       input: { id: "drv-2", save_cache: false },
     });
+    expect(untimed(result.calls)).toEqual([
+      {
+        stepIndex: 0,
+        call: { server: "alumnium", tool: "start", input: START.input },
+        result: ok({ id: "drv-2" }),
+        attempt: 1,
+      },
+      {
+        stepIndex: 1,
+        call: {
+          server: "alumnium",
+          tool: "do",
+          input: { id: "drv-2", goal: "click" },
+        },
+        result: { content: text("No button"), isError: true },
+        attempt: 1,
+      },
+    ]);
+  });
+
+  it("stops drivers the recording left open, leaving the stops out of the calls", async () => {
+    const recording = record([
+      START,
+      { ...START, content: text({ id: "drv-3" }) },
+      alumnium("stop", { save_cache: true }),
+    ]);
+    let driver = 1;
+    const { executor, executed } = createExecutor(
+      freshRun((call) =>
+        call.tool === "start" ? ok({ id: `drv-${++driver}` }) : undefined,
+      ),
+    );
+
+    const result = await new Player({ executor }).play(recording);
+
+    expect(result.status).toBe("replayed");
+    expect(executed.at(-1)?.call.input).toEqual({
+      id: "drv-3",
+      save_cache: false,
+    });
+    expect(
+      untimed(result.calls).map(({ stepIndex, call }) => [
+        stepIndex,
+        call.tool,
+      ]),
+    ).toEqual([
+      [0, "start"],
+      [1, "start"],
+      [2, "stop"],
+    ]);
   });
 
   it("diverges when a fresh call no longer produces a value a later input needs", async () => {
@@ -263,11 +353,19 @@ describe("Player", () => {
 
     const result = await new Player({ executor }).play(recording);
 
-    expect(result).toEqual({
+    expect(result).toMatchObject({
       status: "diverged",
       error: "Error: Connection closed",
       stepIndex: 0,
     });
+    expect(untimed(result.calls)).toEqual([
+      {
+        stepIndex: 0,
+        call: { server: "alumnium", tool: "start", input: START.input },
+        error: "Error: Connection closed",
+        attempt: 1,
+      },
+    ]);
   });
 
   describe("check", () => {
@@ -302,7 +400,10 @@ describe("Player", () => {
         observer: { onCheck: (_, outcome) => outcomes.push(outcome) },
       }).play(recording);
       const checks = executed.filter(({ call }) => call.tool === "check");
-      return { result, outcomes, checks };
+      const checkCalls = untimed(result.calls).filter(
+        ({ call }) => call.tool === "check",
+      );
+      return { result, outcomes, checks, checkCalls };
     }
 
     it("agrees with the same verdict", async () => {
@@ -323,11 +424,10 @@ describe("Player", () => {
     });
 
     it("re-asks a disagreeing check with the cache bypassed, continuing once it agrees", async () => {
-      const { result, outcomes, checks } = await play(check("success"), [
-        "failure",
-        "failure",
-        "success",
-      ]);
+      const { result, outcomes, checks, checkCalls } = await play(
+        check("success"),
+        ["failure", "failure", "success"],
+      );
 
       expect(result.status).toBe("replayed");
       expect(outcomes).toEqual(["unstable"]);
@@ -336,16 +436,24 @@ describe("Player", () => {
         { meta: { "alumnium.ai/cache": false } },
         { meta: { "alumnium.ai/cache": false } },
       ]);
+      expect(checkCalls).toEqual(
+        (["failure", "failure", "success"] as const).map((verdict, index) => ({
+          stepIndex: 1,
+          call: checks[index]!.call,
+          result: checkResult(verdict),
+          check: "unstable",
+          attempt: index + 1,
+        })),
+      );
     });
 
     it("diverges on a check that keeps disagreeing", async () => {
-      const { result, outcomes, checks } = await play(check("success"), [
-        "failure",
-        "failure",
-        "failure",
-      ]);
+      const { result, outcomes, checks, checkCalls } = await play(
+        check("success"),
+        ["failure", "failure", "failure"],
+      );
 
-      expect(result).toEqual({
+      expect(result).toMatchObject({
         status: "diverged",
         error:
           "Check 'greeting shown' failed where it passed when recorded, re-asked 2 times with the cache bypassed",
@@ -353,6 +461,14 @@ describe("Player", () => {
       });
       expect(outcomes).toEqual(["disagreed"]);
       expect(checks).toHaveLength(3);
+      expect(
+        checkCalls.map(({ attempt, check }) => ({ attempt, check })),
+      ).toEqual([
+        { attempt: 1, check: "disagreed" },
+        { attempt: 2, check: "disagreed" },
+        { attempt: 3, check: "disagreed" },
+      ]);
+      expect(untimed(result.calls).at(-1)?.call.tool).toBe("check");
     });
 
     it("diverges at once without confirmations", async () => {
