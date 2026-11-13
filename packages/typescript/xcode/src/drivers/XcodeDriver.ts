@@ -8,6 +8,8 @@ import {
   NavigateBackTool,
   PressKeyTool,
   ScrollTool,
+  ScrollInDirectionTool,
+  scrollPoints,
   sleep,
   Telemetry,
   type ToolClass,
@@ -30,6 +32,7 @@ export class XcodeDriver extends BaseDriver<never> {
     NavigateBackTool,
     PressKeyTool,
     ScrollTool,
+    ScrollInDirectionTool,
     TypeTool,
   ]);
   delay = 0;
@@ -57,11 +60,14 @@ export class XcodeDriver extends BaseDriver<never> {
   @span("driver.type", BaseDriver.spanAttrs)
   @stateful
   async type(id: number, text: string): Promise<void> {
-    const node = await this.#resolve(id);
+    const target = await (await this.#tree()).elementById(id);
+    const node = await this.#resolveNode(target, {
+      preferFocused: target.attributes["focused"] === "true",
+    });
     const point = this.#pointOf(node);
     await this.#perform(`t ${point.x} ${point.y}`, node.activationBundleId);
     // XCTest types into the focused control. Delete its current value before replacing it.
-    const focused = await this.#resolveNode(node);
+    const focused = await this.#resolveNode(node, { preferFocused: true });
     const value =
       focused.value === focused.attributes["placeholderValue"]
         ? ""
@@ -140,7 +146,9 @@ export class XcodeDriver extends BaseDriver<never> {
   async scrollTo(id: number): Promise<void> {
     const target = await (await this.#tree()).elementById(id);
     for (let attempt = 0; attempt < 10; attempt++) {
-      const tree = (await this.session.capture()).tree;
+      const tree = (
+        await this.session.capture(undefined, target.activationBundleId)
+      ).tree;
       const node = tree.resolve(target);
       if (node.hitPoint) return;
       let container = node.parent;
@@ -168,8 +176,41 @@ export class XcodeDriver extends BaseDriver<never> {
     throw new Error("Xcode element did not become hittable after scrolling");
   }
 
-  scrollInDirection(): Promise<void> {
-    throw new Error("Scrolling in direction is not supported on Xcode");
+  @span("driver.scroll_in_direction", BaseDriver.spanAttrs)
+  @stateful
+  async scrollInDirection(
+    id: number,
+    direction: ScrollInDirectionTool.Direction,
+  ): Promise<void> {
+    const node = await this.#resolve(id);
+    if (!node.frame)
+      throw new Error(
+        "Xcode cannot determine a frame for the scroll container",
+      );
+
+    let frame = node.frame;
+    for (let parent = node.parent; parent; parent = parent.parent) {
+      if (parent.type !== "Window" || !parent.frame) continue;
+      const x = Math.max(frame.x, parent.frame.x);
+      const y = Math.max(frame.y, parent.frame.y);
+      frame = {
+        x,
+        y,
+        width:
+          Math.min(frame.x + frame.width, parent.frame.x + parent.frame.width) -
+          x,
+        height:
+          Math.min(
+            frame.y + frame.height,
+            parent.frame.y + parent.frame.height,
+          ) - y,
+      };
+    }
+    const { start, end } = scrollPoints(frame, direction);
+    await this.#perform(
+      `t ${start.x} ${start.y} f ${end.x} ${end.y} 0.3`,
+      node.activationBundleId,
+    );
   }
 
   @span("driver.back", BaseDriver.spanAttrs)
@@ -273,11 +314,12 @@ export class XcodeDriver extends BaseDriver<never> {
 
   async #resolveNode(
     target: XcodeAccessibilityTree.Node,
+    options?: XcodeAccessibilityTree.ResolveOptions,
   ): Promise<XcodeAccessibilityTree.Node> {
     // Activating another app can move its windows; resolve only after activation.
     return (
       await this.session.capture(undefined, target.activationBundleId)
-    ).tree.resolve(target);
+    ).tree.resolve(target, options);
   }
 
   async #perform(command: string, bundleId?: string): Promise<void> {
