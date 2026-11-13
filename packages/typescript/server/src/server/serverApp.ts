@@ -1,4 +1,3 @@
-import { cors } from "@elysiajs/cors";
 import { Elysia } from "elysia";
 import * as anthropic from "@alumnium/anthropic";
 import * as aws from "@alumnium/aws";
@@ -52,7 +51,11 @@ const { logger } = telemetry;
 
 export const serverApp = new Elysia({ prefix: "/v1" })
   .use(ServerTelemetry.plugin(telemetry))
-  .use(cors())
+  .onRequest(({ request }) => {
+    const origin = request.headers.get("origin");
+    if (origin !== null && origin !== new URL(request.url).origin)
+      return new Response(null, { status: 403 });
+  })
   .state(() => ({ sessions: new SessionManager() }))
   .onError((ctx) => {
     const { error } = ctx;

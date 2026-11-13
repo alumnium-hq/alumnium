@@ -3,7 +3,7 @@
 import type { CursorSdkVendorManifest } from "./cursorSdkManifest.ts";
 
 export const cursorSdkVendorManifest: CursorSdkVendorManifest = {
-  sdkVersion: "1.0.30",
+  sdkVersion: "1.0.40",
   packages: [
     {
       name: "@bufbuild/protobuf",
@@ -18,12 +18,6 @@ export const cursorSdkVendorManifest: CursorSdkVendorManifest = {
         "sha512-iNKdJRi69YP3mq6AePRT8F/HrxWCewrhxnLMNm0vpqXAR8biwzRtO6Hjx80C6UvtKJ5sFmffQT7I4Baecz389w==",
     },
     {
-      name: "@connectrpc/connect-node",
-      version: "1.7.0",
-      integrity:
-        "sha512-6vaPIkG/NyhxlYgytLoR9KYbPhczEboFB2OYWkA9qvUz1K7efXfeGrlRxoLtpa+r8VxyIOw73w5ktNe743nD+A==",
-    },
-    {
       name: "@connectrpc/connect-web",
       version: "1.7.0",
       integrity:
@@ -31,70 +25,64 @@ export const cursorSdkVendorManifest: CursorSdkVendorManifest = {
     },
     {
       name: "@cursor/sdk",
-      version: "1.0.30",
+      version: "1.0.40",
       integrity:
-        "sha512-s3gIXfTD3w8ys+KFE81JjjoiJcynkHsf/JCDyXrnbliIac3dkT59hwYZII3XhsT1DlXIfqg+YzSMru6w1CkZow==",
+        "sha512-IaI59014gXLUTiWnVS2LlagOdSgWfMma0Sl4MwzsOh79UQf+CrKj+jj/AeX4vVPTlJ81X/Ca3dGytwPf/hWAQA==",
     },
     {
       name: "@cursor/sdk-darwin-arm64",
-      version: "1.0.30",
+      version: "1.0.40",
       integrity:
-        "sha512-O0w2fLd6jxrvAUOJGsKBs8VSi5OojqqEOMFBzHTHS82wU/DX3ZlizK3czzCXxDKs3l8j/BVQwVCxP9jMFcf41Q==",
+        "sha512-DHrygiLFP5VjJWT6b6yturkn8iy513Te9QN0UcU0OaWSwjgeQ5r99e5SgFY1/CSFjcDPOMJVKeODl6oOo7DXqA==",
       os: "darwin",
       cpu: "arm64",
       bin: {
-        rg: "bin/rg",
+        rg: "./bin/rg",
       },
     },
     {
       name: "@cursor/sdk-darwin-x64",
-      version: "1.0.30",
+      version: "1.0.40",
       integrity:
-        "sha512-TdjreV7V6gtSKbUaXDarfE1735PES6uzLgLxp42E5kT6EXpjQhKsifdsYOMdsO/RBw166kya/XxG24L/FUfEHA==",
+        "sha512-1B5bj/GSMfdkTtsC1tzPQ8zfosOI19mHBqweYGZpy1AaQoU4fCDxZqoOLPot6+QpuADYCbmKG9Cce8A29IOTiw==",
       os: "darwin",
       cpu: "x64",
       bin: {
-        rg: "bin/rg",
+        rg: "./bin/rg",
       },
     },
     {
       name: "@cursor/sdk-linux-arm64",
-      version: "1.0.30",
+      version: "1.0.40",
       integrity:
-        "sha512-1+bsmri6vJ2YuqL/SQ6QSx/ymu2eBzjGgT1bTgN47tCzxDgNOKacXtghpx4zdHM5AmOtT+aLXVVxXjStXmNtcA==",
+        "sha512-shSOtG/hxTuuUOY7ydxZIAqhAKCU6ETPLI5BPDDTS9OXoZAGrtm3CQWR5VG7DvX0xzszOdCjGCN+fIEIHtbmCg==",
       os: "linux",
       cpu: "arm64",
       bin: {
-        rg: "bin/rg",
+        rg: "./bin/rg",
       },
     },
     {
       name: "@cursor/sdk-linux-x64",
-      version: "1.0.30",
+      version: "1.0.40",
       integrity:
-        "sha512-5TRAM1xNwVr0Lox2ay5U5h+VY1OeqJLgnS28da7mx+ZkmeAU+hzuUFq2/lcIqoJrp2qBRdUH5WzI44JNtjBKmg==",
+        "sha512-d/mQePD01EgE3wqHR+iZecgOilHEXh6arftciQN8eT3cGx4bY5ikqTvZpuHJgfnIj/pbf1Sfh0ruQC5RHKWZqA==",
       os: "linux",
       cpu: "x64",
       bin: {
-        rg: "bin/rg",
+        rg: "./bin/rg",
       },
     },
     {
       name: "@cursor/sdk-win32-x64",
-      version: "1.0.30",
+      version: "1.0.40",
       integrity:
-        "sha512-kVjpWmLTFLL131TQm3ytz1HbAeyjBRAHMtr6vyLtbBMuLBb0la5igvt58Xi8mXwekymWXim1+rZj7ZYUO3K1rw==",
+        "sha512-iNWgHtttq8tWLQGM5KhfUphUzxOClBsqZSa/Gy2LIKPQakCMuBGXpQXYRLrX+CiYiAbCmeLL3sxBrjZfn7v/NA==",
       os: "win32",
       cpu: "x64",
       bin: {
-        rg: "bin/rg.exe",
+        rg: "./bin/rg.exe",
       },
-    },
-    {
-      name: "@fastify/busboy",
-      version: "2.1.1",
-      integrity:
-        "sha512-vBZP4NlzfOlerQTnba4aqZoMhE/a9HY7HRqoOPaETQcSQuWEIyZMHGfVu6w9wGtGK5fED5qRs2DteVCjOH60sA==",
     },
     {
       name: "@statsig/client-core",
@@ -109,16 +97,10 @@ export const cursorSdkVendorManifest: CursorSdkVendorManifest = {
         "sha512-LFa5E0LjT6sTfZv3sNGoyRLSZ1078+agdgOA+Vm1ecjG+KbSOfBLTW7hMwimrJ29slRwbYDzbtKaPJo/R37N2g==",
     },
     {
-      name: "undici",
-      version: "5.29.0",
-      integrity:
-        "sha512-raqeBD6NQK4SkWhQzeYKd1KmIG6dllBOTt55Rmkt4HtI9mwdWtJljnrXjAFUBLTSN67HWrOIZ3EPF4kjUw80Bg==",
-    },
-    {
       name: "zod",
-      version: "3.25.76",
+      version: "4.6.7",
       integrity:
-        "sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==",
+        "sha512-g8W2D2kU6a8untc053fX1uVBKzM7yqAxW/3zwk83+6RyF2+SKOuV+c0wBDhUwzV1PaGapmZH+rmcUzPf+3CGwg==",
     },
   ],
 };

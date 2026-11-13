@@ -72,6 +72,59 @@ describe("serverApp", () => {
     });
   });
 
+  describe("cross-origin requests", () => {
+    const origin = "https://example.org";
+
+    it("rejects listing sessions", async () => {
+      await createSession();
+      const response = await serverApp.handle(
+        createRequest("GET", "/sessions", undefined, { origin }),
+      );
+      expect(response.status).toBe(403);
+      expect(await response.text()).toBe("");
+      expect(response.headers.get("access-control-allow-origin")).toBeNull();
+    });
+
+    it("rejects deleting a session", async () => {
+      const sessionId = await createSession();
+      const response = await serverApp.handle(
+        createRequest("DELETE", `/sessions/${sessionId}`, undefined, {
+          origin,
+        }),
+      );
+      expect(response.status).toBe(403);
+      expect(serverApp.store.sessions.listSessions()).toEqual([sessionId]);
+    });
+
+    it("rejects preflight requests", async () => {
+      const response = await serverApp.handle(
+        createRequest("OPTIONS", "/sessions", undefined, {
+          origin,
+          "access-control-request-method": "DELETE",
+        }),
+      );
+      expect(response.status).toBe(403);
+      expect(response.headers.get("access-control-allow-origin")).toBeNull();
+    });
+
+    it("doesn't send CORS headers without an origin", async () => {
+      const response = await serverApp.handle(
+        createRequest("GET", "/sessions"),
+      );
+      expect(response.status).toBe(200);
+      expect(response.headers.get("access-control-allow-origin")).toBeNull();
+    });
+
+    it("allows same-origin requests", async () => {
+      const response = await serverApp.handle(
+        createRequest("GET", "/sessions", undefined, {
+          origin: "http://localhost",
+        }),
+      );
+      expect(response.status).toBe(200);
+    });
+  });
+
   describe("POST /sessions", () => {
     async function postSession(model: { provider?: string; name?: string }) {
       const response = await serverApp.handle(
@@ -620,11 +673,16 @@ async function createSession(excludeAttributes: string[] = []) {
   return CreateSessionResponse.parse(await response.json()).session_id;
 }
 
-function createRequest(method: Http.Method, path: string, body?: unknown) {
-  const init: RequestInit = { method };
+function createRequest(
+  method: Http.Method | "OPTIONS",
+  path: string,
+  body?: unknown,
+  headers: Record<string, string> = {},
+) {
+  const init: RequestInit = { method, headers };
   if (typeof body === "object" && body) {
     Object.assign(init, {
-      headers: { "content-type": "application/json" },
+      headers: { ...headers, "content-type": "application/json" },
       body: JSON.stringify(body),
     });
   }
