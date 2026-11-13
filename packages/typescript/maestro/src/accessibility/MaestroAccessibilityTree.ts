@@ -311,16 +311,7 @@ export class MaestroAccessibilityTree extends BaseAccessibilityTree<MaestroSessi
     };
   }
 
-  async scrollFrame(rawId?: number): Promise<MaestroAccessibilityTree.Frame> {
-    if (rawId === undefined) {
-      const frames = this.#windowFrames(this.#hierarchy.elements);
-      const frame = frames.sort(
-        (a, b) => b.width * b.height - a.width * a.height,
-      )[0];
-      if (!frame) throw new Error("Maestro cannot determine the screen bounds");
-      return frame;
-    }
-
+  async scrollFrame(rawId: number): Promise<MaestroAccessibilityTree.Frame> {
     const element = await this.elementById(rawId);
     if (!element.maestroBounds)
       throw new Error(`Element with raw_id=${rawId} has no bounds to act on`);
@@ -341,19 +332,6 @@ export class MaestroAccessibilityTree extends BaseAccessibilityTree<MaestroSessi
       };
     }
     return frame;
-  }
-
-  #windowFrames(
-    nodes: MaestroSession.Node[],
-  ): MaestroAccessibilityTree.Frame[] {
-    return nodes.flatMap((node) => {
-      const bounds = this.#expand(node)["bounds"];
-      if (bounds) {
-        const frame = MaestroAccessibilityTree.frameOf(bounds);
-        if (frame.width > 0 && frame.height > 0) return [frame];
-      }
-      return this.#windowFrames(this.#childrenOf(node));
-    });
   }
 
   /** Scopes the tree to the subtree rooted at `rawId`. */

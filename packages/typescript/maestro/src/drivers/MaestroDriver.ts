@@ -125,7 +125,7 @@ export class MaestroDriver extends BaseDriver<never> {
   @span("driver.scroll_in_direction", BaseDriver.spanAttrs)
   @stateful
   async scrollInDirection(
-    id: number | undefined,
+    id: number,
     direction: ScrollInDirectionTool.Direction,
   ): Promise<void> {
     const tree =

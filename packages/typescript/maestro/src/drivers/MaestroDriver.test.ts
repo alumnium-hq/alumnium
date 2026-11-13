@@ -63,72 +63,33 @@ describe(MaestroDriver, () => {
     },
   );
 
-  it.each([
-    ["down", "200,600", "200,200"],
-    ["up", "200,200", "200,600"],
-    ["right", "300,400", "100,400"],
-    ["left", "100,400", "300,400"],
-  ] as const)(
-    "scrolls the screen %s without requiring an element ID",
-    async (direction, start, end) => {
-      await driver.scrollInDirection(undefined, direction);
-      expect(run).toHaveBeenCalledWith(
-        `- swipe:\n    start: "${start}"\n    end: "${end}"`,
-      );
-    },
-  );
+  it("keeps the Profile swipe on screen and above its bottom controls", async () => {
+    inspect.mockResolvedValueOnce({
+      ui_schema: { abbreviations: {}, defaults: {} },
+      elements: [
+        {
+          b: "[0,0][402,874]",
+          c: [
+            {
+              b: "[0,0][402,874]",
+              c: [
+                { b: "[0,221][402,1091]" },
+                { a11y: "Switch to hosting", b: "[108,717][294,761]" },
+                { a11y: "Tab bar", b: "[0,783][402,874]" },
+              ],
+            },
+          ],
+        },
+        { b: "[0,0][402,54]" },
+      ],
+    });
 
-  it.each([
-    [undefined, "201,656", "201,219"],
-    [3, "201,711", "201,384"],
-  ])(
-    "keeps the Profile swipe on screen and above its bottom controls (target %s)",
-    async (id, start, end) => {
-      inspect.mockResolvedValueOnce({
-        ui_schema: { abbreviations: {}, defaults: {} },
-        elements: [
-          {
-            b: "[0,0][402,874]",
-            c: [
-              {
-                b: "[0,0][402,874]",
-                c: [
-                  { b: "[0,221][402,1091]" },
-                  { a11y: "Switch to hosting", b: "[108,717][294,761]" },
-                  { a11y: "Tab bar", b: "[0,783][402,874]" },
-                ],
-              },
-            ],
-          },
-          { b: "[0,0][402,54]" },
-        ],
-      });
+    await driver.scrollInDirection(3, "down");
 
-      await driver.scrollInDirection(id, "down");
-
-      expect(run).toHaveBeenCalledWith(
-        `- swipe:\n    start: "${start}"\n    end: "${end}"`,
-      );
-    },
-  );
-
-  it.each([false, true])(
-    "finds the Android app viewport inside a boundless root (status bar first: %s)",
-    async (statusBarFirst) => {
-      const app = { b: "[0,0][1080,2400]" };
-      const statusBar = { b: "[0,0][1080,63]" };
-      inspect.mockResolvedValueOnce({
-        ui_schema: { platform: "android", abbreviations: {}, defaults: {} },
-        elements: [{ c: statusBarFirst ? [statusBar, app] : [app, statusBar] }],
-      });
-
-      await driver.scrollInDirection(undefined, "down");
-
-      expect(run).toHaveBeenCalledWith(
-        '- swipe:\n    start: "540,1800"\n    end: "540,600"',
-      );
-    },
-  );
+    expect(run).toHaveBeenCalledWith(
+      '- swipe:\n    start: "201,711"\n    end: "201,384"',
+    );
+  });
 
   it("clips a container to its nested viewport on both axes", async () => {
     inspect.mockResolvedValueOnce({
@@ -151,18 +112,6 @@ describe(MaestroDriver, () => {
   it("rejects a fully offscreen container without sending a gesture", async () => {
     await expect(driver.scrollInDirection(3, "down")).rejects.toThrow(
       "no visible area",
-    );
-    expect(run).not.toHaveBeenCalled();
-  });
-
-  it("rejects a screen without bounds without sending a gesture", async () => {
-    inspect.mockResolvedValueOnce({
-      ui_schema: { abbreviations: {}, defaults: {} },
-      elements: [{}],
-    });
-
-    await expect(driver.scrollInDirection(undefined, "down")).rejects.toThrow(
-      "cannot determine the screen bounds",
     );
     expect(run).not.toHaveBeenCalled();
   });

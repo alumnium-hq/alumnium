@@ -56,13 +56,6 @@ describe("direct native scrolling", () => {
     expect(McpState.getDriverState("test-scroll").tree).not.toBe(tree);
   });
 
-  it("scrolls the screen without fetching element IDs first and returns a fresh tree", async () => {
-    const output = await tool.execute({ id: "test-scroll", direction: "down" });
-    expect(al.driver.scrollInDirection).toHaveBeenCalledWith(undefined, "down");
-    expect(output[1]?.text).toContain('resource-id="list"');
-    expect(McpState.getDriverState("test-scroll").tree).toBeDefined();
-  });
-
   it("maps the container ID and returns a fresh tree after scrolling", async () => {
     await fetchAccessibilityTreeMcpTool.execute({ id: "test-scroll" });
     const tree = McpState.getDriverState("test-scroll").tree!;
@@ -98,13 +91,13 @@ describe("direct native scrolling", () => {
       new McpArtifactsStore("test-scroll"),
     );
     await expect(
-      tool.execute({ id: "test-scroll", direction: "down" }),
+      tool.execute({ id: "test-scroll", element_id: 1, direction: "down" }),
     ).rejects.toThrow("disabled");
   });
 
   it("validates direction values", async () => {
     await expect(
-      tool.execute({ id: "test-scroll", direction: "diagonal" }),
+      tool.execute({ id: "test-scroll", element_id: 1, direction: "diagonal" }),
     ).rejects.toThrow();
     expect(al.driver.scrollInDirection).not.toHaveBeenCalled();
   });

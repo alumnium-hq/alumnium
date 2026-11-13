@@ -179,18 +179,11 @@ export class XcodeDriver extends BaseDriver<never> {
   @span("driver.scroll_in_direction", BaseDriver.spanAttrs)
   @stateful
   async scrollInDirection(
-    id: number | undefined,
+    id: number,
     direction: ScrollInDirectionTool.Direction,
   ): Promise<void> {
-    const node =
-      id === undefined
-        ? (await this.session.capture(undefined, this.session.appId)).tree.find(
-            (candidate) =>
-              candidate.type === "Window" &&
-              candidate.activationBundleId === this.session.appId,
-          )
-        : await this.#resolve(id);
-    if (!node?.frame)
+    const node = await this.#resolve(id);
+    if (!node.frame)
       throw new Error(
         "Xcode cannot determine a frame for the scroll container",
       );

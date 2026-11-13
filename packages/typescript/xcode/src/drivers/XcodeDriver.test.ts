@@ -209,14 +209,6 @@ describe(XcodeDriver, () => {
     },
   );
 
-  it("scrolls the app window without an element ID", async () => {
-    await driver.scrollInDirection(undefined, "down");
-    expect(capture).toHaveBeenCalledWith(
-      "t 196.5 639 f 196.5 213 0.3",
-      "com.ayodeji.TodoList",
-    );
-  });
-
   it("keeps the gesture inside the visible part of a container", async () => {
     source =
       "Application bundle identifier: com.ayodeji.TodoList\nApplication, label: 'Todo'\n  Window, {{0, 0}, {400, 800}}\n    ScrollView, {{0, 100}, {400, 1200}}";
@@ -232,17 +224,6 @@ describe(XcodeDriver, () => {
       "Application bundle identifier: com.ayodeji.TodoList\nApplication, label: 'Todo'\n  Window, {{0, 0}, {400, 800}}\n    ScrollView, {{0, 1000}, {400, 600}}";
     await expect(driver.scrollInDirection(3, "down")).rejects.toThrow(
       "no visible area",
-    );
-    expect(capture.mock.calls.every(([command]) => command === undefined)).toBe(
-      true,
-    );
-  });
-
-  it("does not scroll another application's window when the app is missing", async () => {
-    source =
-      "Application bundle identifier: com.other\nApplication, label: 'Other'\n  Window, {{0, 0}, {400, 800}}";
-    await expect(driver.scrollInDirection(undefined, "down")).rejects.toThrow(
-      "cannot determine a frame",
     );
     expect(capture.mock.calls.every(([command]) => command === undefined)).toBe(
       true,

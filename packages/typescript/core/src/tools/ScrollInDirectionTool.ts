@@ -13,8 +13,7 @@ export class ScrollInDirectionTool extends BaseTool {
       name: "id",
       type: "integer",
       description:
-        "Identifier (ID) of the scrollable area. Browsers also accept an element inside it. Omit to scroll the screen on Maestro or Xcode; required for browsers.",
-      required: false,
+        "Identifier (ID) of the scrollable area, or of any element inside it",
     }),
     field({
       name: "direction",
@@ -45,11 +44,11 @@ export class ScrollInDirectionTool extends BaseTool {
     }[direction];
   }
 
-  id: number | undefined;
+  id: number;
   direction: ScrollInDirectionTool.Direction;
 
   constructor(args: {
-    id?: number;
+    id: number;
     direction: ScrollInDirectionTool.Direction;
   }) {
     super();
