@@ -1,6 +1,6 @@
 {
   "name": "@alumnium/test",
-  "version": "0.25.0-alpha.2",
+  "version": "0.25.0-alpha.3",
   "description": "Alumnium test runner",
   "license": "MIT",
   "type": "module",
