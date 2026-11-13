@@ -110,13 +110,12 @@ export class MaestroDriver extends BaseDriver<never> {
     const tree =
       (await this.getAccessibilityTree()) as MaestroAccessibilityTree;
     const selector = await tree.selectorFor(id);
-    const yaml = Object.entries(selector)
-      .map(([key, value]) => `      ${key}: ${JSON.stringify(value)}`)
-      .join("\n");
     try {
-      await this.session.run(
-        `- scrollUntilVisible:\n    element:\n${yaml}\n    timeout: 20000`,
-      );
+      await this.session.run(lit`
+        - scrollUntilVisible:
+            element: ${JSON.stringify(selector)}
+            timeout: 20000
+      `);
     } finally {
       this.resetAccessibilityTree();
     }
@@ -132,7 +131,11 @@ export class MaestroDriver extends BaseDriver<never> {
       (await this.getAccessibilityTree()) as MaestroAccessibilityTree;
     const frame = await tree.scrollFrame(id);
     const { start, end } = scrollPoints(frame, direction);
-    const command = `- swipe:\n    start: "${Math.round(start.x)},${Math.round(start.y)}"\n    end: "${Math.round(end.x)},${Math.round(end.y)}"`;
+    const command = lit`
+      - swipe:
+          start: "${Math.round(start.x)},${Math.round(start.y)}"
+          end: "${Math.round(end.x)},${Math.round(end.y)}"
+    `;
     logger.info("Scrolling {direction} within {frame}: {start} to {end}", {
       direction,
       frame,

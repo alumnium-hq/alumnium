@@ -1,3 +1,4 @@
+import { lit } from "smollit";
 import {
   beforeEach,
   describe,
@@ -119,9 +120,11 @@ describe(MaestroDriver, () => {
   it("scrolls to an offscreen target with literal selector text", async () => {
     const previous = await driver.getAccessibilityTree();
     await driver.scrollTo(3);
-    expect(run).toHaveBeenCalledWith(
-      `- scrollUntilVisible:\n    element:\n      id: ${JSON.stringify("log\\.out\\[0\\]")}\n      text: ${JSON.stringify("Log out \\(now\\)")}\n    timeout: 20000`,
-    );
+    expect(run).toHaveBeenCalledWith(lit`
+      - scrollUntilVisible:
+          element: ${JSON.stringify({ id: "log\\.out\\[0\\]", text: "Log out \\(now\\)" })}
+          timeout: 20000
+    `);
     expect(await driver.getAccessibilityTree()).not.toBe(previous);
   });
 
