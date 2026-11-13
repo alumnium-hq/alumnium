@@ -74,6 +74,17 @@ public final class HttpClient implements AutoCloseable {
       List<?> toolSchemas,
       boolean planner,
       Set<String> excludeAttributes) {
+    this(url, model, platform, toolSchemas, planner, excludeAttributes, null);
+  }
+
+  public HttpClient(
+      String url,
+      Model model,
+      String platform,
+      List<?> toolSchemas,
+      boolean planner,
+      Set<String> excludeAttributes,
+      String knowledge) {
     this.http =
         java.net.http.HttpClient.newBuilder()
             .executor(Executors.newVirtualThreadPerTaskExecutor())
@@ -92,6 +103,9 @@ public final class HttpClient implements AutoCloseable {
     body.put(
         "exclude_attributes",
         excludeAttributes == null ? List.of() : List.copyOf(excludeAttributes));
+    if (knowledge != null && !knowledge.isBlank()) {
+      body.put("knowledge", knowledge);
+    }
 
     JsonNode resp = postJson("/v1/sessions", body, Duration.ofSeconds(30));
     this.model = Model.fromString(resp.path("model").asText(null));
@@ -314,12 +328,52 @@ public final class HttpClient implements AutoCloseable {
   }
 
   public Map<String, Object> addExample(String goal, List<String> actions) {
+    return addExample(goal, actions, "unknown");
+  }
+
+  public Map<String, Object> addExample(String goal, List<String> actions, String app) {
+    return addExample(goal, actions, app, "product");
+  }
+
+  public Map<String, Object> addExample(
+      String goal, List<String> actions, String app, String layer) {
     JsonNode data =
         postJson(
             "/v1/sessions/" + requireSession() + "/examples",
-            Map.of("goal", goal, "actions", actions),
+            Map.of("goal", goal, "actions", actions, "app", app, "layer", layer),
             Duration.ofSeconds(30));
     return MAPPER.convertValue(data, MAP_OF_OBJECT);
+  }
+
+  public Map<String, Object> addHint(String kind, String instruction, String hint, String app) {
+    return addHint(kind, instruction, hint, app, "product");
+  }
+
+  public Map<String, Object> addHint(
+      String kind, String instruction, String hint, String app, String layer) {
+    JsonNode data =
+        postJson(
+            "/v1/sessions/" + requireSession() + "/hints",
+            Map.of(
+                "kind", kind, "instruction", instruction, "hint", hint, "app", app, "layer", layer),
+            Duration.ofSeconds(30));
+    return MAPPER.convertValue(data, MAP_OF_OBJECT);
+  }
+
+  public boolean forgetLesson(String kind, String instruction, String layer) {
+    JsonNode data =
+        postJson(
+            "/v1/sessions/" + requireSession() + "/lessons/forget",
+            Map.of("kind", kind, "instruction", instruction, "layer", layer),
+            Duration.ofSeconds(30));
+    return data.path("forgotten").asBoolean(false);
+  }
+
+  public void clearLayer(String layer) {
+    postJson(
+        "/v1/sessions/" + requireSession() + "/lessons/clear",
+        Map.of("layer", layer),
+        Duration.ofSeconds(30));
   }
 
   public void clearExamples() {

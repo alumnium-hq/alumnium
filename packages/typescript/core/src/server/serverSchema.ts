@@ -3,6 +3,8 @@ import { AppId } from "../AppId.ts";
 import { Driver } from "../drivers/Driver.ts";
 import { Model } from "../Model.ts";
 import type { ToolDefinition } from "../tools/ToolDefinition.ts";
+import { KnowledgeLayer } from "./knowledge/KnowledgeLayer.ts";
+import { KnowledgeManifest } from "./knowledge/KnowledgeManifest.ts";
 import { SessionId } from "./session/SessionId.ts";
 
 //#region Types
@@ -66,6 +68,7 @@ export const CreateSessionBody = z.object({
   tools: z.array(z.custom<ToolDefinition>()),
   planner: z.boolean().default(true),
   exclude_attributes: z.array(z.string()).default([]),
+  knowledge: KnowledgeManifest.Name.optional(),
 });
 
 export const CreateSessionResponse = z.object({
@@ -120,9 +123,31 @@ export const PlanStepActionsResponse = z.object({
 
 //#region Add example //////////////////////////////////////////////////////////
 
-export const AddExampleBody = z.object({
+export const AddExampleBody = CacheableRequestBody.extend({
   goal: z.string(),
   actions: z.array(z.string()),
+  layer: KnowledgeLayer.Layer.optional(),
+});
+
+export const AddHintBody = CacheableRequestBody.extend({
+  kind: z.enum(["get", "check", "find", "area"]),
+  instruction: z.string(),
+  hint: z.string(),
+  layer: KnowledgeLayer.Layer.optional(),
+});
+
+export const ForgetLessonBody = z.object({
+  kind: z.enum(["do", "get", "check", "find", "area"]),
+  instruction: z.string(),
+  layer: KnowledgeLayer.Layer.optional(),
+});
+
+export const ForgetLessonResponse = z.object({
+  forgotten: z.boolean(),
+});
+
+export const ClearLayerBody = z.object({
+  layer: KnowledgeLayer.Layer.optional(),
 });
 
 //#endregion

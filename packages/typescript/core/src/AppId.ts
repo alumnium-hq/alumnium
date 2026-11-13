@@ -19,3 +19,17 @@ export const AppId = z
 export type AppId = z.infer<typeof AppId>;
 
 export const UNKNOWN_APP_ID: AppId = DEFAULT_APP_ID as AppId;
+
+// Apps browsers start on before navigating anywhere: about:blank, data:, chrome://newtab.
+const PLACEHOLDER_APP_IDS = new Set<string>([
+  DEFAULT_APP_ID,
+  "",
+  "about-blank",
+  "data",
+  "newtab",
+]);
+
+/** Whether the app ID doesn't identify an app under test yet. */
+export function isPlaceholderAppId(app: AppId): boolean {
+  return PLACEHOLDER_APP_IDS.has(app);
+}

@@ -20,7 +20,7 @@ public class TableTest extends BaseTest {
         "Area is not properly extracted from Appium source code.");
 
     if (al.model().provider() == Provider.MISTRALAI) {
-      al.learn("sort by web site", List.of("click 'Web Site' header"));
+      al.knowledge().act("sort by web site", List.of("click 'Web Site' header"));
     }
   }
 

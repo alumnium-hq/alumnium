@@ -354,7 +354,7 @@ export class ElementsCache extends ServerCache {
   ): ElementsCache.InitiatedData {
     const cacheKey = this.#cacheKey(agentMeta);
     const cacheHash: ElementsCache.CacheHash = xxh64Str(
-      CACHE_VERSION + cacheKey,
+      CACHE_VERSION + cacheKey + this.#cacheKeySuffix(agentMeta),
     );
 
     const memoryKey = this.#memoryKey(cacheHash, request);
@@ -380,6 +380,13 @@ export class ElementsCache extends ServerCache {
       default:
         return meta satisfies never;
     }
+  }
+
+  /** Learned lessons change responses, so responses made with different lessons must not be reused. */
+  #cacheKeySuffix(meta: ElementsCache.AgentMeta): string {
+    return "examplesHash" in meta && meta.examplesHash
+      ? `|examples:${meta.examplesHash}`
+      : "";
   }
 
   #isEligible(

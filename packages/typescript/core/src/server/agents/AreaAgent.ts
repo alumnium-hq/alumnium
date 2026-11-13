@@ -37,6 +37,8 @@ export class AreaAgent extends BaseAgent {
     kind: z.literal("area"),
     description: z.string(),
     treeXml: z.string(),
+    /** Fingerprint of hints learned for the app. */
+    examplesHash: z.string().optional(),
   });
 
   constructor(model: Model, llm: LanguageModel) {

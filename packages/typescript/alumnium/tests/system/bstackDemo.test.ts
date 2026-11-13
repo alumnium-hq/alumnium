@@ -6,7 +6,7 @@ describe("BrowserStack Demo", () => {
     return async (options) => {
       const result = await setup(options);
 
-      await result.al.learn("add 'Laptop' to cart", [
+      await result.al.knowledge.do("add 'Laptop' to cart", [
         "click button 'Add to cart' next to 'Laptop' product",
       ]);
       await result.$.navigate("https://bstackdemo.com");

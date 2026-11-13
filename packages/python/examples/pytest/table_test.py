@@ -9,7 +9,7 @@ from alumnium import Provider
 def learn(al):
     # These models double-click to sort
     if al.model.provider == Provider.MISTRALAI:
-        al.learn(
+        al.knowledge.do(
             goal="sort by web site",
             actions=["click 'Web Site' header"],
         )

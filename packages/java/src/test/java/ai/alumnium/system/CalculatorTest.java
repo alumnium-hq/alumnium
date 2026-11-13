@@ -15,9 +15,11 @@ public class CalculatorTest extends BaseTest {
   @BeforeAll
   static void learn() {
     if (al.model().provider() == Provider.MISTRALAI) {
-      al.learn(
-          "4 / 2 =",
-          List.of("click button '4'", "click button '÷'", "click button '2'", "click button '='"));
+      al.knowledge()
+          .act(
+              "4 / 2 =",
+              List.of(
+                  "click button '4'", "click button '÷'", "click button '2'", "click button '='"));
     }
   }
 

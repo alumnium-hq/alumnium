@@ -52,6 +52,8 @@ export class RetrieverAgent extends BaseAgent {
     title: z.string(),
     url: z.string(),
     screenshot: z.string().nullable(),
+    /** Fingerprint of hints learned for the app. */
+    examplesHash: z.string().optional(),
   });
 
   static Output = z.tuple([

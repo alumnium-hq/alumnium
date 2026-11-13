@@ -49,6 +49,31 @@ export const Env = {
     return envVar("ALUMNIUM_CACHE_PATH", pathString().optional());
   },
 
+  get ALUMNIUM_KNOWLEDGE() {
+    return envVar("ALUMNIUM_KNOWLEDGE", z.stringbool().default(false));
+  },
+
+  get ALUMNIUM_KNOWLEDGE_PATH() {
+    return envVar("ALUMNIUM_KNOWLEDGE_PATH", pathString().optional());
+  },
+
+  get ALUMNIUM_KNOWLEDGE_TOP_K() {
+    return envVar(
+      "ALUMNIUM_KNOWLEDGE_TOP_K",
+      z.coerce.number().int().nonnegative().default(8),
+    );
+  },
+
+  get ALUMNIUM_KNOWLEDGE_SCOPE() {
+    return envVar(
+      "ALUMNIUM_KNOWLEDGE_SCOPE",
+      z
+        .string()
+        .regex(/^[A-Za-z0-9][A-Za-z0-9._-]*$/)
+        .optional(),
+    );
+  },
+
   get ALUMNIUM_CHANGE_ANALYSIS() {
     return envVar("ALUMNIUM_CHANGE_ANALYSIS", z.stringbool().optional());
   },

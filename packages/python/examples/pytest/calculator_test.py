@@ -8,7 +8,7 @@ alumnium_driver = getenv("ALUMNIUM_DRIVER", "selenium")
 @fixture(autouse=True)
 def learn(al):
     # Mistral skips '+' button.
-    al.learn(
+    al.knowledge.do(
         goal="4 / 2 =",
         actions=[
             "click button '4'",

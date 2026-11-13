@@ -12,9 +12,12 @@ import ai.alumnium.tool.PressKeyTool;
 import ai.alumnium.tool.TypeTool;
 import io.appium.java_client.AppiumBy;
 import io.appium.java_client.remote.SupportsContextSwitching;
+import java.net.URI;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Supplier;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -33,6 +36,8 @@ import org.slf4j.LoggerFactory;
 public final class AppiumDriver extends BaseDriver {
 
   private static final Logger LOG = LoggerFactory.getLogger(AppiumDriver.class);
+  private static final Set<String> BROWSER_APP_IDS =
+      Set.of("com.apple.mobilesafari", "com.android.chrome");
 
   public enum Platform {
     ANDROID,
@@ -188,15 +193,47 @@ public final class AppiumDriver extends BaseDriver {
     }
   }
 
+  /**
+   * Identifies the app under test. In mobile browsers, it's the website rather than the browser, so
+   * different websites don't share the cache and learned lessons.
+   */
   @Override
   public String app() {
-    var caps = driver.getCapabilities();
+    return appId(driver.getCapabilities(), this::url);
+  }
+
+  /**
+   * Identifies the app under test from session capabilities and, in mobile browsers, the current
+   * URL.
+   */
+  public static String appId(Capabilities caps, Supplier<String> url) {
+    String appId = null;
     for (String key :
         new String[] {"appPackage", "bundleId", "appium:appPackage", "appium:bundleId"}) {
       Object v = caps.getCapability(key);
-      if (v != null && !v.toString().isEmpty()) return v.toString();
+      if (v != null && !v.toString().isEmpty()) {
+        appId = v.toString();
+        break;
+      }
     }
-    return "unknown";
+
+    Object browserName = caps.getCapability("browserName");
+    boolean isBrowser =
+        (browserName != null && !browserName.toString().isEmpty())
+            || BROWSER_APP_IDS.contains(appId);
+    if (isBrowser) {
+      String currentUrl = url.get();
+      if (currentUrl != null && !currentUrl.isEmpty()) {
+        try {
+          String host = URI.create(currentUrl).getHost();
+          return host == null ? "unknown" : host;
+        } catch (RuntimeException e) {
+          return "unknown";
+        }
+      }
+    }
+
+    return appId == null ? "unknown" : appId;
   }
 
   @Override

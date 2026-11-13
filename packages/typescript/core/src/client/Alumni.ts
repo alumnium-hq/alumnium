@@ -16,6 +16,7 @@ import { retry } from "../utils/retry.ts";
 import { Area } from "./Area.ts";
 import { Cache } from "./Cache.ts";
 import { AssertionError } from "./errors/AssertionError.ts";
+import { Knowledge } from "./Knowledge.ts";
 import type { DoResult, DoStep } from "./result.ts";
 
 const { tracer, logger } = Telemetry.get(import.meta.url);
@@ -31,6 +32,13 @@ export namespace Alumni {
     changeAnalysis?: boolean | undefined;
     excludeAttributes?: string[] | undefined;
     navigationPolicy?: NavigationPolicy.Options | undefined;
+    /**
+     * Knowledge scope, such as a product name, that learned lessons persist
+     * in. Lets lessons persist without an app and share them across apps.
+     * Defaults to `ALUMNIUM_KNOWLEDGE_SCOPE`, then the product the knowledge
+     * manifest maps the app to, then the app itself.
+     */
+    knowledge?: string | undefined;
   }
 
   interface ParamsOptions {
@@ -72,6 +80,20 @@ export class Alumni<TDriver extends BaseDriver = BaseDriver> {
 
   private tools: Record<string, ToolClass> = {};
   public cache: Cache;
+  /**
+   * Teaches Alumnium how to handle instructions of `do()`, `get()`, `check()`,
+   * `find()` and `area()`, e.g. `knowledge.do(goal, actions)`. Lessons apply
+   * to the session, and to later sessions when `ALUMNIUM_KNOWLEDGE` is
+   * enabled.
+   */
+  readonly knowledge: Knowledge.Scoped;
+  /**
+   * The same as `knowledge`, and calling it directly is the same as
+   * `knowledge.do()`.
+   *
+   * @deprecated Use `knowledge` instead, e.g. `al.knowledge.do(goal, actions)`.
+   */
+  readonly learn: Knowledge.Callable;
   private changeAnalysis: boolean;
 
   constructor(driver: TDriver, options: Alumni.Options = {}) {
@@ -103,6 +125,7 @@ export class Alumni<TDriver extends BaseDriver = BaseDriver> {
       planner,
       excludeAttributes:
         options.excludeAttributes ?? Env.ALUMNIUM_EXCLUDE_ATTRIBUTES,
+      knowledge: options.knowledge,
     };
 
     if (url) {
@@ -120,6 +143,8 @@ export class Alumni<TDriver extends BaseDriver = BaseDriver> {
     }
 
     this.cache = new Cache(this.client);
+    this.knowledge = Knowledge.scoped(this.client, this.driver);
+    this.learn = Knowledge.deprecatedCallable(this.knowledge);
   }
 
   @span("alumni.model", spanAttrs)
@@ -332,11 +357,6 @@ export class Alumni<TDriver extends BaseDriver = BaseDriver> {
       this.tools,
       this.client,
     );
-  }
-
-  @span("alumni.learn", spanAttrs)
-  async learn(goal: string, actions: string[]): Promise<void> {
-    return this.client.addExample({ goal, actions });
   }
 
   @span("alumni.clear_learn_examples", spanAttrs)

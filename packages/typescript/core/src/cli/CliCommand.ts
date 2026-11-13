@@ -60,9 +60,17 @@ export abstract class CliCommand {
 
       register: (cli: CAC) => {
         definition.cli = cli;
-        let command = cli.command(name, description);
+
+        // Positional args are passed to the action in order, before options.
+        const positionals = Object.entries(Args.shape).flatMap(([key, Arg]) => {
+          const meta = CliCommand.positional.get(Arg as z.ZodType);
+          return meta ? [{ key, meta }] : [];
+        });
+        const usage = [name, ...positionals.map(({ meta }) => meta.syntax)];
+        let command = cli.command(usage.join(" "), description);
 
         Object.values(Args.shape).forEach((Arg) => {
+          if (CliCommand.positional.get(Arg as z.ZodType)) return;
           const meta = CliCommand.option.get(Arg);
           always(meta);
 
@@ -75,13 +83,30 @@ export abstract class CliCommand {
           });
         });
 
-        command.action(definition.action);
+        command.action((...values: unknown[]) => {
+          const options = { ...(values.at(-1) as Record<string, unknown>) };
+          positionals.forEach(({ key }, index) => {
+            const value = values.at(index);
+            if (value !== undefined) options[key] = value;
+          });
+          return definition.action(options as never);
+        });
       },
     };
     return definition;
   }
 
   static option = z.registry<{
+    name: string;
+    syntax: string;
+    description: string;
+  }>();
+
+  /**
+   * Positional argument, `<name>` when required or `[name]` when optional,
+   * in the order of the args schema.
+   */
+  static positional = z.registry<{
     name: string;
     syntax: string;
     description: string;
@@ -118,7 +143,8 @@ function printError<Type>(error: $ZodError<Type>, Schema: z.ZodType<Type>) {
 
     if (!tree.errors.length) return;
 
-    const meta = CliCommand.option.get(Schema);
+    const meta =
+      CliCommand.option.get(Schema) ?? CliCommand.positional.get(Schema);
     if (!meta) return;
 
     errors.push(`- ${ansi.bold(`${meta.name}`)}: ${tree.errors.join(", ")}`);

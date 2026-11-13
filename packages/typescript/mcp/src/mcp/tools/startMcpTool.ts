@@ -119,6 +119,7 @@ export const startMcpTool = McpTool.define("start", {
             - "fullPageScreenshot" (boolean, default false) — capture full-page screenshots.
             - "headers" (object) — extra HTTP headers, supported for Selenium and Playwright. A string value is sent with every request, e.g. {"Authorization": "Bearer token"}; an object value is sent only to hosts matching the key, e.g. {".example.com": {"X-Feature": "on"}};
             - "headless" (boolean, default false) — run browsers/simulators headless, supported for Maestro, Playwright, Selenium, and Xcode;
+            - "knowledge" (string) — knowledge scope, such as a product name, that lessons taught with \`learn\` persist in, e.g. "live-chat"; defaults to ALUMNIUM_KNOWLEDGE_SCOPE, then the product the knowledge manifest maps the app to, then the app itself;
             - "navigationPolicy" (object) — domain allowlist/denylist for navigation, e.g. {"allowedDomains": ["(^|\\.)example\\.com$"], "deniedDomains": ["internal"]}. Both fields are string[] of case-insensitive regex patterns matched against the hostname and full URL. When "allowedDomains" is non-empty, only matching URLs are allowed; otherwise everything is allowed except "deniedDomains" matches. Link-local/metadata IPs and file:// are always blocked;
             - "newTabTimeout" (number, default 10000) — maximum ms to wait after a new tab is announced, Playwright only;
             - "permissions" (string[]) — browser permissions to grant, Playwright only, e.g. ["camera"];
@@ -208,6 +209,10 @@ export const startMcpTool = McpTool.define("start", {
       alumniumOptions["changeAnalysis"],
       Env.ALUMNIUM_CHANGE_ANALYSIS,
     );
+    const knowledge =
+      typeof alumniumOptions["knowledge"] === "string"
+        ? alumniumOptions["knowledge"]
+        : undefined;
     const excludeAttributes = Array.isArray(
       alumniumOptions["excludeAttributes"],
     )
@@ -325,6 +330,7 @@ export const startMcpTool = McpTool.define("start", {
       "executablePath",
       "headers",
       "headless",
+      "knowledge",
       "navigationPolicy",
       "permissions",
       "planner",
@@ -434,6 +440,7 @@ export const startMcpTool = McpTool.define("start", {
       changeAnalysis,
       excludeAttributes,
       navigationPolicy,
+      knowledge,
     });
 
     // Apply driver options to Alumnium driver
