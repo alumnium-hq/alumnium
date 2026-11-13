@@ -19,7 +19,7 @@
     "alwaysly": "^0.4.0",
     "case-anything": "^3.1.2",
     "cloakbrowser": "0.5.12",
-    "playwright-core": "^1.60.0",
+    "playwright-core": "^1.61.0",
     "selenium-webdriver": "^4.41.0",
     "webdriverio": "^10.2.0",
     "zod": "^4.4.1"

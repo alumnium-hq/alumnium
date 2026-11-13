@@ -91,8 +91,8 @@
         "ollama-ai-provider-v2": "^4.0.1",
         "openai-oauth": "1.0.2",
         "picocolors": "^1.1.1",
-        "playwright": "^1.60.0",
-        "playwright-core": "^1.60.0",
+        "playwright": "^1.61.0",
+        "playwright-core": "^1.61.0",
         "selenium-webdriver": "^4.41.0",
         "smol-toml": "^1.6.1",
         "smollit": "^0.2.0",
@@ -300,7 +300,7 @@
         "alwaysly": "^0.4.0",
         "case-anything": "^3.1.2",
         "cloakbrowser": "0.5.12",
-        "playwright-core": "^1.60.0",
+        "playwright-core": "^1.61.0",
         "selenium-webdriver": "^4.41.0",
         "webdriverio": "^10.2.0",
         "zod": "^4.4.1",
@@ -362,7 +362,7 @@
       "dependencies": {
         "@alumnium/core": "workspace:*",
         "alwaysly": "^0.4.0",
-        "playwright-core": "^1.60.0",
+        "playwright-core": "^1.61.0",
       },
     },
     "packages/typescript/selenium": {

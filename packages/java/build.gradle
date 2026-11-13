@@ -54,7 +54,7 @@ ext {
     assertjVersion = '3.26.3'
     jacksonVersion = '2.18.2'
     junitVersion = '5.11.4'
-    playwrightVersion = '1.60.0'
+    playwrightVersion = '1.61.0'
     seleniumVersion = '4.27.0'
     slf4jVersion = '2.0.16'
 }

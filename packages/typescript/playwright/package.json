@@ -10,6 +10,6 @@
   "dependencies": {
     "@alumnium/core": "workspace:*",
     "alwaysly": "^0.4.0",
-    "playwright-core": "^1.60.0"
+    "playwright-core": "^1.61.0"
   }
 }
