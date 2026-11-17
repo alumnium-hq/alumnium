@@ -76,7 +76,7 @@ export const doMcpTool = McpTool.define("do", {
     goal: z
       .string()
       .describe(
-        "Natural language description of what to do on the current page. Do NOT combine actions that span multiple pages in a single goal.",
+        "Natural language description of what to do on the current page. Alumnium sees only this goal, not your task or earlier calls, so include any constraint on how to do it (e.g. 'without clicking any button'). Do NOT combine actions that span multiple pages in a single goal.",
       ),
 
     vision: z
