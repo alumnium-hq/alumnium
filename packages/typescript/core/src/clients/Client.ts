@@ -15,6 +15,7 @@ export namespace Client {
     tools: Record<string, ToolClass>;
     planner: boolean | undefined;
     excludeAttributes: string[] | undefined;
+    knowledge?: string | undefined;
   }
 
   export interface PlanActionsResult {
@@ -59,7 +60,39 @@ export namespace Client {
   export interface AddExampleProps {
     goal: string;
     actions: string[];
+    app?: AppId | undefined;
+    layer?: LessonLayer | undefined;
   }
+
+  export interface AddHintProps {
+    kind: HintKind;
+    instruction: string;
+    hint: string;
+    app?: AppId | undefined;
+    layer?: LessonLayer | undefined;
+  }
+
+  export interface ForgetLessonProps {
+    kind: LessonKind;
+    instruction: string;
+    layer?: LessonLayer | undefined;
+  }
+
+  export interface ClearLayerProps {
+    layer?: LessonLayer | undefined;
+  }
+
+  /** Kinds of instructions hints are learned for, named after `Alumni` methods. */
+  export type HintKind = "get" | "check" | "find" | "area";
+
+  /** Kinds of lessons, named after `Alumni` methods. */
+  export type LessonKind = "do" | HintKind;
+
+  /**
+   * Layer a lesson persists in: shared by all products, the product on every
+   * platform (the default), or the product on one platform.
+   */
+  export type LessonLayer = "shared" | "product" | "web" | "ios" | "android";
 
   export interface ExecuteActionProps {
     goal: string;
@@ -104,6 +137,7 @@ export abstract class Client {
   protected tools: Record<string, ToolClass>;
   protected planner: boolean;
   protected excludeAttributes: string[] | undefined;
+  protected knowledge: string | undefined;
 
   constructor(props: Client.Props) {
     this.platform = props.platform;
@@ -111,6 +145,7 @@ export abstract class Client {
     this.tools = props.tools;
     this.planner = props.planner ?? true;
     this.excludeAttributes = props.excludeAttributes;
+    this.knowledge = props.knowledge;
   }
 
   abstract getHealth(): Promise<Client.Health>;
@@ -124,6 +159,12 @@ export abstract class Client {
   ): Promise<Client.PlanActionsResult>;
 
   abstract addExample(props: Client.AddExampleProps): Promise<void>;
+
+  abstract addHint(props: Client.AddHintProps): Promise<void>;
+
+  abstract forgetLesson(props: Client.ForgetLessonProps): Promise<boolean>;
+
+  abstract clearLayer(props: Client.ClearLayerProps): Promise<void>;
 
   abstract clearExamples(): Promise<void>;
 

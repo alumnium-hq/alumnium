@@ -95,6 +95,22 @@ Sets the cache provider used by Alumnium. Supported values are:
 
 Sets the directory where the filesystem cache is stored. Default is `.alumnium/cache`.
 
+### `ALUMNIUM_KNOWLEDGE`
+
+Set to `true` to persist examples and hints taught with `knowledge` for the app under test, so they apply to later sessions and test runs, including ones using other language bindings. When disabled, they apply to the current session only. Default is `false`.
+
+### `ALUMNIUM_KNOWLEDGE_PATH`
+
+Sets the directory where examples and hints taught with `knowledge` are persisted. Default is `.alumnium/knowledge`.
+
+### `ALUMNIUM_KNOWLEDGE_TOP_K`
+
+Maximum number of similar examples or hints of each kind sent with an instruction, in addition to exact matches. Default is `8`.
+
+### `ALUMNIUM_KNOWLEDGE_SCOPE`
+
+Sets the [knowledge scope][knowledge-scope] that examples and hints taught with `knowledge` persist in, such as a product name. The `knowledge` option of `Alumni` takes precedence. By default, Alumnium uses the product the knowledge manifest maps the app to, or the app itself.
+
 ### `ALUMNIUM_CHANGE_ANALYSIS`
 
 Set to `true` to enable analysis of UI changes made by `do()`. When enabled, Alumnium captures the accessibility tree before and after each action and returns a description of what changed. Default is `false` when using Alumnium as a library and `true` when running Alumnium MCP server.
@@ -363,3 +379,4 @@ API key used when `ALUMNIUM_MODEL` is set to `openrouter`.
 [1]: https://docs.github.com/en/actions/monitoring-and-troubleshooting-workflows/troubleshooting-workflows/enabling-debug-logging
 [3]: /docs/guides/mcp
 [4]: https://litterbox.catbox.moe
+[knowledge-scope]: /docs/guides/actions#knowledge-scope

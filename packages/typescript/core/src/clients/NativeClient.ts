@@ -56,6 +56,7 @@ export class NativeClient extends Client {
       driver: this.driver,
       planner: this.planner,
       excludeAttributes: this.excludeAttributes,
+      knowledge: this.knowledge,
     });
     // NOTE: Failures surface when the session is awaited.
     this.session.catch(() => {});
@@ -97,6 +98,7 @@ export class NativeClient extends Client {
       return { explanation: goal, steps: [goal] };
     }
 
+    await session.syncExamples(goal);
     const tree = session.parseTree(accessibilityTree);
     const [explanation, steps] = await session.plannerAgent.invoke(
       goal,
@@ -111,17 +113,40 @@ export class NativeClient extends Client {
   @span("client.add_example", spanAttrs)
   async addExample(props: Client.AddExampleProps): Promise<void> {
     const session = await this.session;
-    const { goal, actions } = props;
+    const { goal, actions, app, layer } = props;
     logger.debug(
       `Adding example. Goal: ${goal}, Actions: ${JSON.stringify(actions)}`,
     );
-    session.plannerAgent.addExample(goal, actions);
+    await session.addExample(goal, actions, { app, layer });
+  }
+
+  @span("client.add_hint", spanAttrs)
+  async addHint(props: Client.AddHintProps): Promise<void> {
+    const session = await this.session;
+    const { kind, instruction, hint, app, layer } = props;
+    logger.debug(
+      `Adding ${kind} hint. Instruction: ${instruction}, Hint: ${hint}`,
+    );
+    await session.addHint(kind, instruction, hint, { app, layer });
+  }
+
+  @span("client.forget_lesson", spanAttrs)
+  async forgetLesson(props: Client.ForgetLessonProps): Promise<boolean> {
+    const session = await this.session;
+    const { kind, instruction, layer } = props;
+    return session.forgetLesson(kind, instruction, layer);
+  }
+
+  @span("client.clear_layer", spanAttrs)
+  async clearLayer(props: Client.ClearLayerProps): Promise<void> {
+    const session = await this.session;
+    await session.clearLayer(props.layer);
   }
 
   @span("client.clear_examples", spanAttrs)
   async clearExamples(): Promise<void> {
     const session = await this.session;
-    session.plannerAgent.clearExamples();
+    await session.clearExamples();
   }
 
   @span("client.execute_action", spanAttrs)
@@ -168,6 +193,7 @@ export class NativeClient extends Client {
     } = props;
 
     session.updateContext({ app });
+    await session.syncHints("retriever", statement);
 
     const tree = session.parseTree(accessibilityTree);
     const excludeAttrs = new Set([
@@ -190,6 +216,7 @@ export class NativeClient extends Client {
     const session = await this.session;
     const { description, accessibilityTree, app } = props;
     session.updateContext({ app });
+    await session.syncHints("area", description);
 
     const tree = session.parseTree(accessibilityTree);
     const area = await session.areaAgent.invoke(
@@ -206,6 +233,7 @@ export class NativeClient extends Client {
     const session = await this.session;
     const { description, accessibilityTree, app, cache } = props;
     session.updateContext({ app });
+    await session.syncHints("locator", description);
 
     const tree = session.parseTree(accessibilityTree);
     const element = (

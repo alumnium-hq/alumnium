@@ -62,7 +62,17 @@ export namespace Tracer {
       Attrs: SpansAlumniAttrsBase;
     };
 
-    "alumni.learn": {
+    "alumni.knowledge.learn": {
+      Attrs: SpansAlumniAttrsBase & {
+        "alumni.knowledge.kind": "do" | "get" | "check" | "find" | "area";
+      };
+    };
+
+    "alumni.knowledge.forget": {
+      Attrs: SpansAlumniAttrsBase;
+    };
+
+    "alumni.knowledge.clear": {
       Attrs: SpansAlumniAttrsBase;
     };
 
@@ -109,6 +119,18 @@ export namespace Tracer {
     };
 
     "client.add_example": {
+      Attrs: SpansClientAttrsBase;
+    };
+
+    "client.add_hint": {
+      Attrs: SpansClientAttrsBase;
+    };
+
+    "client.forget_lesson": {
+      Attrs: SpansClientAttrsBase;
+    };
+
+    "client.clear_layer": {
       Attrs: SpansClientAttrsBase;
     };
 

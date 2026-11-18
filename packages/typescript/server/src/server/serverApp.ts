@@ -166,6 +166,7 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                   }
 
                   session.updateContext({ app: ctx.body.app });
+                  await session.syncExamples(ctx.body.goal);
 
                   const accessibilityTree = session.parseTree(
                     ctx.body.accessibility_tree,
@@ -238,10 +239,10 @@ export const serverApp = new Elysia({ prefix: "/v1" })
               "/examples",
               async (ctx) => {
                 const { session } = ctx;
-                session.plannerAgent.addExample(
-                  ctx.body.goal,
-                  ctx.body.actions,
-                );
+                await session.addExample(ctx.body.goal, ctx.body.actions, {
+                  app: ctx.body.app,
+                  layer: ctx.body.layer,
+                });
                 return {
                   success: true,
                   message: "Example added successfully",
@@ -255,13 +256,79 @@ export const serverApp = new Elysia({ prefix: "/v1" })
 
             //#endregion
 
+            //#region Add hint /////////////////////////////////////////////////
+
+            .post(
+              "/hints",
+              async (ctx) => {
+                const { session } = ctx;
+                await session.addHint(
+                  ctx.body.kind,
+                  ctx.body.instruction,
+                  ctx.body.hint,
+                  { app: ctx.body.app, layer: ctx.body.layer },
+                );
+                return {
+                  success: true,
+                  message: "Hint added successfully",
+                };
+              },
+              {
+                body: s.AddHintBody,
+                response: s.SuccessResponse,
+              },
+            )
+
+            //#endregion
+
+            //#region Forget lesson ////////////////////////////////////////////
+
+            .post(
+              "/lessons/forget",
+              async (ctx) => {
+                const { session } = ctx;
+                const forgotten = await session.forgetLesson(
+                  ctx.body.kind,
+                  ctx.body.instruction,
+                  ctx.body.layer,
+                );
+                return { forgotten };
+              },
+              {
+                body: s.ForgetLessonBody,
+                response: s.ForgetLessonResponse,
+              },
+            )
+
+            //#endregion
+
+            //#region Clear layer //////////////////////////////////////////////
+
+            .post(
+              "/lessons/clear",
+              async (ctx) => {
+                const { session } = ctx;
+                await session.clearLayer(ctx.body.layer);
+                return {
+                  success: true,
+                  message: "Layer cleared successfully",
+                };
+              },
+              {
+                body: s.ClearLayerBody,
+                response: s.SuccessResponse,
+              },
+            )
+
+            //#endregion
+
             //#region Clear examples ///////////////////////////////////////////
 
             .delete(
               "/examples",
-              (ctx) => {
+              async (ctx) => {
                 const { session } = ctx;
-                session.plannerAgent.clearExamples();
+                await session.clearExamples();
                 return {
                   success: true,
                   message: "All examples cleared successfully",
@@ -281,6 +348,7 @@ export const serverApp = new Elysia({ prefix: "/v1" })
               async (ctx) => {
                 const { session } = ctx;
                 session.updateContext({ app: ctx.body.app });
+                await session.syncHints("retriever", ctx.body.statement);
 
                 const accessibilityTree = session.parseTree(
                   ctx.body.accessibility_tree,
@@ -320,6 +388,7 @@ export const serverApp = new Elysia({ prefix: "/v1" })
               async (ctx) => {
                 const { session } = ctx;
                 session.updateContext({ app: ctx.body.app });
+                await session.syncHints("area", ctx.body.description);
 
                 const accessibilityTree = session.parseTree(
                   ctx.body.accessibility_tree,
@@ -350,6 +419,7 @@ export const serverApp = new Elysia({ prefix: "/v1" })
               async (ctx) => {
                 const { session } = ctx;
                 session.updateContext({ app: ctx.body.app });
+                await session.syncHints("locator", ctx.body.description);
 
                 const accessibilityTree = session.parseTree(
                   ctx.body.accessibility_tree,
