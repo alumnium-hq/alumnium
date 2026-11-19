@@ -12,7 +12,7 @@ import {
 import { PlaywrightDriver } from "@alumnium/playwright";
 import type { MobileDevice } from "./devices/MobileDevice.ts";
 import type { McpArtifactsStore } from "./McpArtifactsStore.ts";
-import type { McpDriver } from "./mcpDrivers.ts";
+import { closeMcpDriver, type McpDriver } from "./mcpDrivers.ts";
 
 const { logger, tracer } = Telemetry.get(import.meta.url);
 const { span } = tracer.dec();
@@ -125,7 +125,7 @@ export abstract class McpState {
     id: string,
     state: McpState.Driver,
   ): Promise<[string, LlmUsageStats]> {
-    const { al, artifactsStore, device } = state;
+    const { al, artifactsStore, device, mcpDriver } = state;
     try {
       const stats = await al.getStats();
       if (al.driver instanceof PlaywrightDriver) {
@@ -140,13 +140,7 @@ export abstract class McpState {
       return [artifactsStore.dir, stats];
     } finally {
       try {
-        try {
-          await al.quit();
-        } finally {
-          // MCP owns the browser, including any other tabs opened by this session.
-          if (al.driver instanceof PlaywrightDriver)
-            await al.driver.page.context().browser()?.close();
-        }
+        await closeMcpDriver(mcpDriver, al);
       } finally {
         try {
           await device?.close();

@@ -20,13 +20,16 @@ import {
   Telemetry,
   ZoomTool,
 } from "@alumnium/core/internal";
-import { createMobileDevice } from "../devices/MobileDevice.ts";
+import {
+  deviceOptionsSchema,
+  type MobileDevice,
+} from "../devices/MobileDevice.ts";
 import { McpArtifactsStore } from "../McpArtifactsStore.ts";
 import {
   closeMcpDriver,
   createChromeDriver,
   createFirefoxDriver,
-  createMobileDriver,
+  createMobileSession,
   type McpDriver,
 } from "../mcpDrivers.ts";
 import { McpProfilesStore } from "../McpProfilesStore.ts";
@@ -117,14 +120,14 @@ export const startMcpTool = McpTool.define("start", {
             - "changeAnalysis" (boolean, default true) — enable UI changes analysis agent;
             - "cookies" (array) — cookies to set, supported for Selenium and Playwright, e.g. [{"name": "session", "value": "abc123", "domain": ".example.com"}];
             - "device" (string or object) — the device to run on, e.g. "iPhone 16" (Playwright built-in preset name or a custom object with viewport/userAgent/deviceScaleFactor/isMobile/hasTouch, iOS real device unique device identifier, Android/iOS simulator name, etc.);
-            - "deviceLifecycle" ("reuse" or "create", default "reuse") — with "create", use "device" as an existing iOS simulator template and create a fresh temporary simulator. Stop and process shutdown delete only the simulator created by this session. Android device creation is not supported yet;
-            - "deviceLocation" (object) — GPS coordinates {"latitude": 37.7, "longitude": -122.4} for a temporary device; requires "deviceLifecycle": "create";
+            - "deviceLifecycle" ("reuse" or "create", default "reuse") — with "create", request a fresh iOS simulator. Maestro and Xcode create it locally from the selected simulator template. Appium delegates creation and deletion to its XCUITest server, using server-side deviceName/platformVersion selection without a fixed UDID. The endpoint must support enforceFreshSimulatorCreation. Stop and process shutdown release the owned session and simulator. Android device creation is not supported yet;
+            - "deviceLocation" (object) — GPS coordinates {"latitude": 37.7, "longitude": -122.4} for a temporary device; Appium applies them through its server; requires "deviceLifecycle": "create";
             - "disabledTools" (string[]) — tool class names to disable for this session, e.g. ["ExecuteJavascriptTool"];
             - "excludeAttributes" (string[]) — accessibility attributes to exclude from the tree, e.g., ["src"];
             - "executablePath" (string) — path to a custom Chrome or Firefox executable;
             - "fullPageScreenshot" (boolean, default false) — capture full-page screenshots.
             - "headers" (object) — extra HTTP headers, supported for Selenium and Playwright. A string value is sent with every request, e.g. {"Authorization": "Bearer token"}; an object value is sent only to hosts matching the key, e.g. {".example.com": {"X-Feature": "on"}};
-            - "headless" (boolean, default false) — run browsers/simulators headless, supported for Maestro, Playwright, Selenium, and Xcode;
+            - "headless" (boolean, default false) — run browsers/simulators headless, supported for Maestro, Playwright, Selenium, Xcode, and fresh Appium iOS simulators;
             - "navigationPolicy" (object) — domain allowlist/denylist for navigation, e.g. {"allowedDomains": ["(^|\\.)example\\.com$"], "deniedDomains": ["internal"]}. Both fields are string[] of case-insensitive regex patterns matched against the hostname and full URL. When "allowedDomains" is non-empty, only matching URLs are allowed; otherwise everything is allowed except "deniedDomains" matches. Link-local/metadata IPs and file:// are always blocked;
             - "newTabTimeout" (number, default 10000) — maximum ms to wait after a new tab is announced, Playwright only;
             - "permissions" (string[]) — browser permissions to grant, Playwright only, e.g. ["camera"];
@@ -287,8 +290,9 @@ export const startMcpTool = McpTool.define("start", {
       }),
     };
 
-    // Shared mobile options, translated per driver in `createMobileDriver`.
+    // Shared mobile options, translated per driver in `createMobileSession`.
     const mobileOptions: McpDriver.MobileOptions = {
+      ...deviceOptionsSchema.parse(alumniumOptions),
       ...(typeof alumniumOptions["headless"] === "boolean" && {
         headless: alumniumOptions["headless"],
       }),
@@ -350,14 +354,11 @@ export const startMcpTool = McpTool.define("start", {
     logger.info(`Starting driver ${id} for platform: ${platformName}`);
 
     return McpState.startDriver(async () => {
-      const device = createMobileDevice(platformName, alumniumOptions, id);
+      let device: MobileDevice | undefined;
       let al: Alumni | undefined;
       let driver: McpDriver | undefined;
       try {
         const platform = Driver.Platform.safeParse(platformName).data;
-        const preparedMobileOptions = device
-          ? await device.prepare(mobileOptions)
-          : mobileOptions;
         switch (platform) {
           case "chromium": {
             driver = await tracer.span(
@@ -384,7 +385,7 @@ export const startMcpTool = McpTool.define("start", {
           case "ios":
           case "android":
             {
-              driver = await tracer.span(
+              const session = await tracer.span(
                 "mcp.driver.start",
                 {
                   "mcp.driver.id": id,
@@ -396,13 +397,16 @@ export const startMcpTool = McpTool.define("start", {
                   "driver.platform": platform,
                 },
                 () =>
-                  createMobileDriver(
+                  createMobileSession(
                     platform,
                     capabilities,
                     serverUrl,
-                    preparedMobileOptions,
+                    mobileOptions,
+                    id,
                   ),
               );
+              driver = session.driver;
+              device = session.device;
             }
             break;
 
@@ -503,8 +507,7 @@ export const startMcpTool = McpTool.define("start", {
         ];
       } catch (error) {
         try {
-          if (al) await al.quit();
-          else if (driver) await closeMcpDriver(driver);
+          if (driver) await closeMcpDriver(driver, al);
         } catch (cleanupError) {
           logger.warn(`Driver startup cleanup failed: ${cleanupError}`);
         } finally {
