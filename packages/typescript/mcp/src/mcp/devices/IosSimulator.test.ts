@@ -114,7 +114,7 @@ describe("temporary iOS simulator", () => {
     ]);
   });
 
-  it.each(["missing", undefined])(
+  it.each(["missing"])(
     "rejects unavailable templates before creating anything: %s",
     async (device) => {
       await expect(simulator.prepare({ device })).rejects.toThrow(

@@ -1,22 +1,9 @@
 import { existsSync } from "node:fs";
 import path from "node:path";
-import z from "zod";
 import { exec } from "@alumnium/core/internal";
 import type { McpDriver } from "../mcpDrivers.ts";
+import { resolveIosSimulatorProfile } from "./iosSimulatorProfile.ts";
 import type { MobileDevice } from "./MobileDevice.ts";
-
-const devicesSchema = z.object({
-  devices: z.record(
-    z.string(),
-    z.array(
-      z.object({
-        udid: z.string(),
-        name: z.string(),
-        deviceTypeIdentifier: z.string(),
-      }),
-    ),
-  ),
-});
 
 export class IosSimulator implements MobileDevice {
   readonly #name: string;
@@ -35,38 +22,13 @@ export class IosSimulator implements MobileDevice {
   async prepare(
     options: McpDriver.MobileOptions,
   ): Promise<McpDriver.MobileOptions> {
-    if (!options.device)
-      throw new Error(
-        "Creating an iOS simulator requires a device name or UDID to use as a template",
-      );
-    const result = await exec("xcrun", [
-      "simctl",
-      "list",
-      "devices",
-      "available",
-      "--json",
-    ]);
-    const { devices } = devicesSchema.parse(JSON.parse(result.stdout));
-    const matches = Object.entries(devices)
-      .flatMap(([runtime, entries]) =>
-        entries.map((device) => ({ runtime, ...device })),
-      )
-      .filter(
-        (device) =>
-          device.udid.toLowerCase() === options.device?.toLowerCase() ||
-          device.name === options.device,
-      );
-    const [template, ...others] = matches;
-    if (!template || others.length)
-      throw new Error(
-        "The simulator template is unavailable or ambiguous; select an available simulator by UDID",
-      );
+    const profile = await resolveIosSimulatorProfile(options.device);
     const created = await exec("xcrun", [
       "simctl",
       "create",
       `Alumnium-${this.#name}`,
-      template.deviceTypeIdentifier,
-      template.runtime,
+      profile.deviceType,
+      profile.runtime,
     ]);
     this.#device = created.stdout.trim();
     await exec("xcrun", ["simctl", "boot", this.#device]);

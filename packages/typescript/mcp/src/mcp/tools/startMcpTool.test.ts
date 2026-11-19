@@ -64,19 +64,40 @@ beforeEach(async () => {
   vi.mocked(exec).mockImplementation(async (command, args) => ({
     status: 0,
     stderr: "",
-    stdout: args.includes("list")
-      ? JSON.stringify({
-          devices: {
-            runtime: [
-              { udid: "source", name: "iPhone", deviceTypeIdentifier: "type" },
+    stdout: args.includes("--show-sdk-version")
+      ? "27.2"
+      : args.includes("list")
+        ? JSON.stringify({
+            devicetypes: [
+              {
+                identifier: "type",
+                name: "iPhone 18 Pro",
+                minRuntimeVersion: 0,
+                maxRuntimeVersion: 4294967295,
+              },
             ],
-          },
-        })
-      : args.includes("create")
-        ? `owned-${++created}\n`
-        : command === "/usr/libexec/PlistBuddy"
-          ? "com.test\n"
-          : "",
+            runtimes: [
+              {
+                identifier: "com.apple.CoreSimulator.SimRuntime.iOS-27-2",
+                version: "27.2",
+                isAvailable: true,
+              },
+            ],
+            devices: {
+              runtime: [
+                {
+                  udid: "source",
+                  name: "iPhone",
+                  deviceTypeIdentifier: "type",
+                },
+              ],
+            },
+          })
+        : args.includes("create")
+          ? `owned-${++created}\n`
+          : command === "/usr/libexec/PlistBuddy"
+            ? "com.test\n"
+            : "",
   }));
 });
 
@@ -136,6 +157,27 @@ describe("MCP simulator lifecycle", () => {
         ),
     ).toBe(false);
     expect(mocks.quit).toHaveBeenCalledTimes(1);
+  });
+
+  it("creates a simulator when the caller does not provide a template", async () => {
+    const result = await start({ device: undefined });
+    expect(exec).toHaveBeenCalledWith("xcrun", [
+      "--sdk",
+      "iphonesimulator",
+      "--show-sdk-version",
+    ]);
+    expect(createMobileDriver).toHaveBeenCalledWith(
+      "ios",
+      expect.anything(),
+      null,
+      expect.objectContaining({ device: "owned-1", app: "com.test" }),
+    );
+    await stopMcpTool.execute({ id: result.id, save_cache: false });
+    expect(exec).toHaveBeenLastCalledWith("xcrun", [
+      "simctl",
+      "delete",
+      "owned-1",
+    ]);
   });
 
   it("keeps multiple sessions independent through separate stop calls", async () => {
