@@ -24,11 +24,18 @@ export const stopMcpTool = McpTool.define("stop", {
     const id = String(input.id);
     const saveCache = Boolean(input["save_cache"] || false);
 
-    // Save cache if requested
-    if (saveCache) {
-      const al = McpState.getDriverAlumni(id);
-      await al.cache.save();
-      logger.info("Cache saved");
+    try {
+      // Save cache if requested
+      if (saveCache) {
+        const al = McpState.getDriverAlumni(id);
+        await al.cache.save();
+        logger.info("Cache saved");
+      }
+    } catch (error) {
+      await McpState.cleanupDriver(id).catch((cleanupError) => {
+        logger.warn(`Cleanup after cache failure failed: ${cleanupError}`);
+      });
+      throw error;
     }
 
     // Cleanup driver and get stats

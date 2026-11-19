@@ -10,6 +10,7 @@ import {
   Telemetry,
 } from "@alumnium/core/internal";
 import { PlaywrightDriver } from "@alumnium/playwright";
+import type { MobileDevice } from "./devices/MobileDevice.ts";
 import type { McpArtifactsStore } from "./McpArtifactsStore.ts";
 import type { McpDriver } from "./mcpDrivers.ts";
 
@@ -25,12 +26,19 @@ export namespace McpState {
     readonly mcpDriver: McpDriver;
     readonly artifactsStore: McpArtifactsStore;
     stepCounter: number;
+    readonly device?: MobileDevice | undefined;
+    cleanup?: Promise<[string, LlmUsageStats]>;
   }
 }
 
 export abstract class McpState {
   static #drivers: Record<string, McpState.Driver> = {}; // id -> driver state
   static #nextDriverId = 1;
+  static #starting = new Set<{
+    promise: Promise<unknown>;
+    controller: AbortController;
+    device: MobileDevice | undefined;
+  }>();
 
   static #cleanupHooksRegistered = false;
   static #cleanupAllPromise: Promise<void> | null = null;
@@ -53,6 +61,7 @@ export abstract class McpState {
     al: Alumni,
     mcpDriver: McpDriver,
     artifactsStore: McpArtifactsStore,
+    device?: MobileDevice,
   ): void {
     this.#registerCleanupHooks();
 
@@ -61,6 +70,7 @@ export abstract class McpState {
       mcpDriver,
       artifactsStore: artifactsStore,
       stepCounter: 1,
+      device,
     };
 
     logger.debug(`Registered driver ${id}`);
@@ -93,53 +103,102 @@ export abstract class McpState {
     return driverState;
   }
 
-  @span("mcp.driver.shutdown", (id) => ({ "mcp.driver.id": id }))
-  static async cleanupDriver(id: string): Promise<[string, LlmUsageStats]> {
-    const driverState = this.getDriverState(id);
-
-    logger.debug(`Cleaning up driver ${id}`);
-
-    const { al } = driverState;
-    const stats = await al.getStats();
-
-    if (al.driver instanceof PlaywrightDriver) {
-      logger.debug(`Driver ${id}: Stopping Playwright tracing`);
-
-      const tracePath =
-        await driverState.artifactsStore.ensureFilePath("trace.zip");
-      await al.driver.page.context().tracing.stop({ path: tracePath });
-    }
-
-    // Save token stats to JSON file
-    const statsPath = await driverState.artifactsStore.writeJson(
-      "token-stats.json",
-      stats,
-    );
-    logger.info(`Driver ${id}: Token stats saved to ${statsPath}`);
-
+  static async startDriver<T>(
+    start: (signal: AbortSignal) => Promise<T>,
+    device?: MobileDevice,
+  ): Promise<T> {
+    if (this.#cleanupAllPromise)
+      throw new Error(
+        "Cannot start a driver while MCP sessions are shutting down",
+      );
+    this.#registerCleanupHooks();
+    const controller = new AbortController();
+    const starting = {
+      promise: Promise.resolve().then(() => start(controller.signal)),
+      controller,
+      device,
+    };
+    this.#starting.add(starting);
     try {
-      await al.quit();
+      return await starting.promise;
     } finally {
-      // MCP owns the browser, including any other tabs opened by this session.
-      if (al.driver instanceof PlaywrightDriver)
-        await al.driver.page.context().browser()?.close();
+      this.#starting.delete(starting);
     }
-
-    delete this.#drivers[id];
-    tracer.end(id);
-    logger.debug(`Driver ${id} cleanup complete`);
-
-    return [driverState.artifactsStore.dir, stats];
   }
 
-  static async cleanupAllDrivers(): Promise<void> {
-    const ids = Object.keys(this.#drivers);
+  @span("mcp.driver.shutdown", (id) => ({ "mcp.driver.id": id }))
+  static cleanupDriver(id: string): Promise<[string, LlmUsageStats]> {
+    const state = this.getDriverState(id);
+    state.cleanup ??= this.#cleanupDriver(id, state);
+    return state.cleanup;
+  }
+
+  static async #cleanupDriver(
+    id: string,
+    state: McpState.Driver,
+  ): Promise<[string, LlmUsageStats]> {
+    const { al, artifactsStore, device } = state;
+    try {
+      const stats = await al.getStats();
+      if (al.driver instanceof PlaywrightDriver) {
+        const tracePath = await artifactsStore.ensureFilePath("trace.zip");
+        await al.driver.page.context().tracing.stop({ path: tracePath });
+      }
+      const statsPath = await artifactsStore.writeJson(
+        "token-stats.json",
+        stats,
+      );
+      logger.info(`Driver ${id}: Token stats saved to ${statsPath}`);
+      return [artifactsStore.dir, stats];
+    } finally {
+      try {
+        try {
+          await al.quit();
+        } finally {
+          // MCP owns the browser, including any other tabs opened by this session.
+          if (al.driver instanceof PlaywrightDriver)
+            await al.driver.page.context().browser()?.close();
+        }
+      } finally {
+        try {
+          await device?.close();
+        } finally {
+          delete this.#drivers[id];
+          tracer.end(id);
+        }
+      }
+    }
+  }
+
+  static cleanupAllDrivers(): Promise<void> {
+    this.#cleanupAllPromise ??= this.#cleanupAllDrivers().finally(() => {
+      this.#cleanupAllPromise = null;
+    });
+    return this.#cleanupAllPromise;
+  }
+
+  static async #cleanupAllDrivers(): Promise<void> {
+    const starting = [...this.#starting];
+    for (const { controller } of starting) controller.abort();
+    const closing = this.#cleanupRegisteredDrivers();
+    await Promise.allSettled(
+      starting.map(async ({ device }) => {
+        await device?.close();
+      }),
+    );
+    await Promise.allSettled([
+      closing,
+      ...starting.map(({ promise }) => promise),
+    ]);
+    await this.#cleanupRegisteredDrivers();
+  }
+
+  static async #cleanupRegisteredDrivers(): Promise<void> {
     await Promise.all(
-      ids.map(async (id) => {
-        logger.debug(`Exit hook: stopping driver ${id}`);
-        await this.cleanupDriver(id).catch((err) => {
+      Object.keys(this.#drivers).map(async (id) => {
+        await this.cleanupDriver(id).catch((error) => {
           logger.debug(`Exit hook: error stopping driver ${id}: {error}`, {
-            error: err,
+            error,
           });
         });
       }),
@@ -150,32 +209,23 @@ export abstract class McpState {
     this.#drivers = {};
     this.#nextDriverId = 1;
     this.#cleanupAllPromise = null;
+    this.#starting.clear();
   }
 
   static #registerCleanupHooks(): void {
     if (this.#cleanupHooksRegistered) return;
 
-    process.once("beforeExit", () => void this.#cleanupAllDriversOnce());
+    process.once("beforeExit", () => void this.cleanupAllDrivers());
     process.once(
       "SIGINT",
-      () => void this.#cleanupAllDriversOnce().finally(() => process.exit(0)),
+      () => void this.cleanupAllDrivers().finally(() => process.exit(0)),
     );
     process.once(
       "SIGTERM",
-      () => void this.#cleanupAllDriversOnce().finally(() => process.exit(0)),
+      () => void this.cleanupAllDrivers().finally(() => process.exit(0)),
     );
 
     logger.debug("Registered MCP cleanup hooks");
     this.#cleanupHooksRegistered = true;
-  }
-
-  static #cleanupAllDriversOnce(): Promise<void> {
-    if (!this.#cleanupAllPromise) {
-      this.#cleanupAllPromise = this.cleanupAllDrivers().finally(() => {
-        this.#cleanupAllPromise = null;
-      });
-    }
-
-    return this.#cleanupAllPromise;
   }
 }
