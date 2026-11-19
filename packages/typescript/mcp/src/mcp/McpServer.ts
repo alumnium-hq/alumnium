@@ -14,6 +14,7 @@ import {
   McpMode,
   McpTransport,
 } from "@alumnium/core/internal";
+import { McpState } from "./McpState.ts";
 import { checkMcpTool, getCheckMcpInputSchema } from "./tools/checkMcpTool.ts";
 import { directMcpTools } from "./tools/directMcpTools.ts";
 import { doMcpTool, getDoMcpInputSchema } from "./tools/doMcpTool.ts";
@@ -86,7 +87,13 @@ export class McpServer {
       logger.info(`Started MCP server at ${new URL("/mcp", server.url)}`);
     } else {
       logger.info("Starting MCP server with stdio transport");
-      await this.#createServer(this.#mode).connect(new StdioServerTransport());
+      const server = this.#createServer(this.#mode);
+      const shutdown = () => {
+        void McpState.cleanupAllDrivers().finally(() => process.exit(0));
+      };
+      server.server.onclose = () => process.stdin.off("end", shutdown);
+      await server.connect(new StdioServerTransport());
+      process.stdin.once("end", shutdown);
     }
   }
 
