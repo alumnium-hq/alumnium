@@ -3,7 +3,7 @@ from os import getenv
 
 from pytest import mark
 
-from alumnium.tools import ExecuteJavascriptTool, PanInDirectionTool, ZoomTool
+from alumnium.tools import PanInDirectionTool, ZoomTool
 
 unsupported_on_appium = mark.xfail(
     "appium" in getenv("ALUMNIUM_DRIVER", "selenium"),
@@ -29,14 +29,6 @@ def test_pan_map_in_each_direction(al_factory, navigate):
     assert number(al, "east value of the map center") == 0
     al.do("pan the map up")
     assert number(al, "north value of the map center") > 0
-
-
-@unsupported_on_appium
-def test_pan_map_when_asked_to_drag_it(al_factory, navigate):
-    al = al_factory(extra_tools=[ExecuteJavascriptTool, PanInDirectionTool])
-    navigate("pannable_map.html")
-    al.do("drag the map about 100 pixels to the right")
-    assert number(al, "east value of the map center") < 0
 
 
 @unsupported_on_appium

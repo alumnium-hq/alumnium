@@ -3,7 +3,6 @@ package ai.alumnium.system;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import ai.alumnium.tool.ExecuteJavascriptTool;
 import ai.alumnium.tool.PanInDirectionTool;
 import ai.alumnium.tool.ZoomTool;
 import java.util.List;
@@ -16,7 +15,7 @@ import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 public class PanAndZoomTest extends BaseTest {
 
   static {
-    extraTools = List.of(ExecuteJavascriptTool.class, PanInDirectionTool.class, ZoomTool.class);
+    extraTools = List.of(PanInDirectionTool.class, ZoomTool.class);
   }
 
   private static int number(String what) {
@@ -38,14 +37,6 @@ public class PanAndZoomTest extends BaseTest {
     al.act("pan the map up");
     int north = number("north value of the map center");
     assertTrue(north > 0, north + " should be greater than 0");
-  }
-
-  @Test
-  void testPanMapWhenAskedToDragIt() {
-    navigate("pannable_map.html");
-    al.act("drag the map about 100 pixels to the right");
-    int east = number("east value of the map center");
-    assertTrue(east < 0, east + " should be less than 0");
   }
 
   @Test

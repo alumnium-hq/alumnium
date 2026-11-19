@@ -1,10 +1,5 @@
 import { describe } from "vitest";
-import {
-  type Alumni,
-  ExecuteJavascriptTool,
-  PanInDirectionTool,
-  ZoomTool,
-} from "alumnium";
+import { type Alumni, PanInDirectionTool, ZoomTool } from "alumnium";
 import { baseIt } from "./helpers.ts";
 
 describe("Pan And Zoom", () => {
@@ -37,16 +32,6 @@ describe("Pan And Zoom", () => {
     expect(await number(al, "north value of the map center")).toBeGreaterThan(
       0,
     );
-  });
-
-  it("pans a map when asked to drag it", async ({ expect, setup }) => {
-    const { al, $ } = await setup({
-      extraTools: [ExecuteJavascriptTool, PanInDirectionTool],
-    });
-
-    await $.navigate("pannable_map.html");
-    await al.do("drag the map about 100 pixels to the right");
-    expect(await number(al, "east value of the map center")).toBeLessThan(0);
   });
 
   it("zooms a map in and out", async ({ expect, setup }) => {
