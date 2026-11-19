@@ -2,7 +2,7 @@ import type { WebDriver } from "selenium-webdriver";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { Driver, Env, FileStore } from "@alumnium/core/internal";
 import {
-  createMobileDriver,
+  createMobileSession,
   createPlaywrightDriver,
   createSeleniumDriver,
   createFirefoxDriver,
@@ -124,14 +124,27 @@ const mobileMocks = vi.hoisted(() => {
     close,
   }));
   const updateSettings = vi.fn(async () => {});
+  const deleteSession = vi.fn(async () => {});
+  const setGeoLocation = vi.fn(async () => {});
   const xcodeStart = vi.fn(async (props: Record<string, unknown>) => ({
     props,
   }));
   const remote = vi.fn(async (options: { capabilities: unknown }) => ({
     capabilities: options.capabilities,
     updateSettings,
+    deleteSession,
+    setGeoLocation,
   }));
-  return { launchApp, close, maestroStart, xcodeStart, remote, updateSettings };
+  return {
+    launchApp,
+    close,
+    maestroStart,
+    xcodeStart,
+    remote,
+    updateSettings,
+    deleteSession,
+    setGeoLocation,
+  };
 });
 
 vi.mock("webdriverio", () => ({ remote: mobileMocks.remote }));
@@ -494,9 +507,9 @@ describe("Appium capability translation", () => {
   async function translated(
     os: Driver.MobileOs,
     capabilities: Record<string, unknown>,
-    options: Parameters<typeof createMobileDriver>[3],
+    options: Parameters<typeof createMobileSession>[3],
   ): Promise<Record<string, unknown>> {
-    await createMobileDriver(os, capabilities, null, options);
+    await createMobileSession(os, capabilities, null, options);
     return mobileMocks.remote.mock.calls[0]![0].capabilities as Record<
       string,
       unknown
@@ -597,7 +610,7 @@ describe("Appium capability translation", () => {
   });
 });
 
-describe("createMobileDriver", () => {
+describe("createMobileSession", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -611,7 +624,7 @@ describe("createMobileDriver", () => {
     vi.stubEnv("ALUMNIUM_DRIVER", "appium-ios");
     Env.reset();
 
-    await createMobileDriver("ios", { platformName: "ios" }, null, {
+    await createMobileSession("ios", { platformName: "ios" }, null, {
       app: "com.example.app",
       device: "UDID-1",
       appReset: true,
@@ -632,7 +645,7 @@ describe("createMobileDriver", () => {
     vi.stubEnv("ALUMNIUM_DRIVER", "maestro");
     Env.reset();
 
-    await createMobileDriver("ios", { platformName: "ios" }, null, {
+    await createMobileSession("ios", { platformName: "ios" }, null, {
       app: "com.example.app",
       device: "UDID-1",
       appReset: true,
@@ -651,7 +664,7 @@ describe("createMobileDriver", () => {
     vi.stubEnv("ALUMNIUM_DRIVER", "maestro");
     Env.reset();
 
-    await createMobileDriver("ios", {}, null, {
+    await createMobileSession("ios", {}, null, {
       app: "com.example.app",
     });
 
@@ -665,7 +678,7 @@ describe("createMobileDriver", () => {
     vi.stubEnv("ALUMNIUM_DRIVER", "maestro");
     Env.reset();
 
-    await createMobileDriver("ios", {}, null, {
+    await createMobileSession("ios", {}, null, {
       app: "com.example.app",
       appArguments: ["-UITesting"],
       appEnvironment: { API_URL: "https://staging.example.com" },
@@ -681,7 +694,7 @@ describe("createMobileDriver", () => {
     vi.stubEnv("ALUMNIUM_DRIVER", "maestro");
     Env.reset();
 
-    await createMobileDriver("ios", {}, null, {
+    await createMobileSession("ios", {}, null, {
       app: "com.example.app",
     });
 
@@ -695,7 +708,7 @@ describe("createMobileDriver", () => {
     Env.reset();
 
     await expect(
-      createMobileDriver("ios", {}, null, {
+      createMobileSession("ios", {}, null, {
         app: "/tmp/TodoList.app",
       }),
     ).rejects.toThrow(/cannot install/);
@@ -707,7 +720,7 @@ describe("createMobileDriver", () => {
     Env.reset();
 
     await expect(
-      createMobileDriver(
+      createMobileSession(
         "ios",
         { "appium:bundleId": "com.example.app" },
         null,
@@ -720,7 +733,7 @@ describe("createMobileDriver", () => {
   it.each([false, true])("passes headless=%s to Maestro", async (headless) => {
     vi.stubEnv("ALUMNIUM_DRIVER", "maestro");
     Env.reset();
-    await createMobileDriver("ios", {}, null, { app: "com.todo", headless });
+    await createMobileSession("ios", {}, null, { app: "com.todo", headless });
     expect(mobileMocks.maestroStart).toHaveBeenCalledWith(
       expect.objectContaining({ headless }),
     );
@@ -731,7 +744,10 @@ describe("createMobileDriver", () => {
     Env.reset();
     mobileMocks.launchApp.mockRejectedValueOnce(new Error("Launch failed"));
     await expect(
-      createMobileDriver("ios", {}, null, { app: "com.todo", headless: false }),
+      createMobileSession("ios", {}, null, {
+        app: "com.todo",
+        headless: false,
+      }),
     ).rejects.toThrow("Launch failed");
     expect(mobileMocks.close).toHaveBeenCalledOnce();
   });
@@ -750,7 +766,7 @@ describe("Xcode mobile sessions", () => {
   });
 
   it("routes simulator and launch options to Xcode without starting Appium", async () => {
-    await createMobileDriver("ios", {}, null, {
+    await createMobileSession("ios", {}, null, {
       app: "/tmp/Todo.xcodeproj",
       device: "iPhone 16",
       appArguments: ["-UITesting"],
@@ -769,7 +785,7 @@ describe("Xcode mobile sessions", () => {
   it.each(["Todo.xcodeproj", "Todo.xcworkspace"])(
     "resolves a relative %s app path without an explicit bundle id",
     async (app) => {
-      await createMobileDriver("ios", {}, null, { app });
+      await createMobileSession("ios", {}, null, { app });
       expect(mobileMocks.xcodeStart).toHaveBeenCalledWith({
         appPath: `${process.cwd()}/${app}`,
         device: undefined,
@@ -785,21 +801,21 @@ describe("Xcode mobile sessions", () => {
   });
 
   it.each([false, true])("passes headless=%s to Xcode", async (headless) => {
-    await createMobileDriver("ios", {}, null, { app: "com.todo", headless });
+    await createMobileSession("ios", {}, null, { app: "com.todo", headless });
     expect(mobileMocks.xcodeStart).toHaveBeenCalledWith(
       expect.objectContaining({ headless }),
     );
   });
 
   it.each([false, true])("passes appReset=%s to Xcode", async (appReset) => {
-    await createMobileDriver("ios", {}, null, { app: "com.todo", appReset });
+    await createMobileSession("ios", {}, null, { app: "com.todo", appReset });
     expect(mobileMocks.xcodeStart).toHaveBeenCalledWith(
       expect.objectContaining({ appReset }),
     );
   });
 
   it("accepts a local .app with launch arguments and environment without a workspace", async () => {
-    await createMobileDriver("ios", {}, null, {
+    await createMobileSession("ios", {}, null, {
       app: "/tmp/Todo List.app",
       appArguments: ["-UITesting"],
       appEnvironment: { TESTING: "true" },
@@ -813,7 +829,7 @@ describe("Xcode mobile sessions", () => {
   });
 
   it("keeps bundle IDs ending in .app as installed app identifiers", async () => {
-    await createMobileDriver("ios", {}, null, { app: "com.example.app" });
+    await createMobileSession("ios", {}, null, { app: "com.example.app" });
     expect(mobileMocks.xcodeStart).toHaveBeenCalledWith(
       expect.objectContaining({ appId: "com.example.app" }),
     );
@@ -821,17 +837,17 @@ describe("Xcode mobile sessions", () => {
 
   it("rejects unsupported platforms, remote apps, and missing app options", async () => {
     await expect(
-      createMobileDriver("android", {}, null, { app: "com.todo" }),
+      createMobileSession("android", {}, null, { app: "com.todo" }),
     ).rejects.toThrow("iOS simulators");
     await expect(
-      createMobileDriver("ios", {}, null, {
+      createMobileSession("ios", {}, null, {
         app: "https://example.com/Todo.app",
       }),
     ).rejects.toThrow("local .app");
     await expect(
-      createMobileDriver("ios", {}, null, { app: "/tmp/Todo.ipa" }),
+      createMobileSession("ios", {}, null, { app: "/tmp/Todo.ipa" }),
     ).rejects.toThrow("local .app");
-    await expect(createMobileDriver("ios", {}, null, {})).rejects.toThrow(
+    await expect(createMobileSession("ios", {}, null, {})).rejects.toThrow(
       "Xcode requires app",
     );
     expect(mobileMocks.xcodeStart).not.toHaveBeenCalled();

@@ -7,15 +7,23 @@ export interface MobileDevice {
   close(): Promise<void>;
 }
 
-export const deviceOptionsSchema = z.object({
-  deviceLifecycle: z.enum(["reuse", "create"]).default("reuse"),
-  deviceLocation: z
-    .object({
-      latitude: z.number().min(-90).max(90),
-      longitude: z.number().min(-180).max(180),
-    })
-    .optional(),
-});
+export const deviceOptionsSchema = z
+  .object({
+    deviceLifecycle: z.enum(["reuse", "create"]).default("reuse"),
+    deviceLocation: z
+      .object({
+        latitude: z.number().min(-90).max(90),
+        longitude: z.number().min(-180).max(180),
+      })
+      .optional(),
+  })
+  .refine(
+    (options) =>
+      options.deviceLifecycle === "create" || !options.deviceLocation,
+    {
+      message: "deviceLocation requires deviceLifecycle: create",
+    },
+  );
 
 export function createMobileDevice(
   platform: string,
@@ -24,11 +32,7 @@ export function createMobileDevice(
 ): MobileDevice | undefined {
   const { deviceLifecycle, deviceLocation } =
     deviceOptionsSchema.parse(options);
-  if (deviceLifecycle === "reuse") {
-    if (deviceLocation)
-      throw new Error("deviceLocation requires deviceLifecycle: create");
-    return;
-  }
+  if (deviceLifecycle === "reuse") return;
   switch (platform) {
     case "ios":
       return new IosSimulator(id, deviceLocation);
