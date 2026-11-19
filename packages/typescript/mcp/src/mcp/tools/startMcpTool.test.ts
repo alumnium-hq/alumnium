@@ -3,6 +3,7 @@ import os from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createLlmUsageStats, Env, exec } from "@alumnium/core/internal";
+import { IosSimulator } from "../devices/IosSimulator.ts";
 import { createMobileDriver, type McpDriver } from "../mcpDrivers.ts";
 import { McpState } from "../McpState.ts";
 import { startMcpTool } from "./startMcpTool.ts";
@@ -161,11 +162,11 @@ describe("MCP simulator lifecycle", () => {
 
   it("creates a simulator when the caller does not provide a template", async () => {
     const result = await start({ device: undefined });
-    expect(exec).toHaveBeenCalledWith("xcrun", [
-      "--sdk",
-      "iphonesimulator",
-      "--show-sdk-version",
-    ]);
+    expect(exec).toHaveBeenCalledWith(
+      "xcrun",
+      ["--sdk", "iphonesimulator", "--show-sdk-version"],
+      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+    );
     expect(createMobileDriver).toHaveBeenCalledWith(
       "ios",
       expect.anything(),
@@ -310,4 +311,40 @@ describe("MCP simulator lifecycle", () => {
       "owned-1",
     ]);
   });
+});
+
+it("deletes the simulator while backend startup is blocked and closes a late backend", async () => {
+  const ready = Promise.withResolvers<void>();
+  vi.mocked(createMobileDriver).mockImplementationOnce(async () => {
+    await ready.promise;
+    return { close: mocks.closeDriver } as unknown as McpDriver;
+  });
+  const failed = expect(start()).rejects.toMatchObject({ name: "AbortError" });
+  await vi.waitFor(() => expect(createMobileDriver).toHaveBeenCalledTimes(1));
+  const stopping = McpState.cleanupAllDrivers();
+  await vi.waitFor(() =>
+    expect(exec).toHaveBeenCalledWith("xcrun", ["simctl", "delete", "owned-1"]),
+  );
+  expect(mocks.closeDriver).not.toHaveBeenCalled();
+  ready.resolve();
+  await failed;
+  await stopping;
+  expect(mocks.closeDriver).toHaveBeenCalledTimes(1);
+});
+
+it("does not create a backend if shutdown interrupts the preparation handoff", async () => {
+  const prepare = vi
+    .spyOn(IosSimulator.prototype, "prepare")
+    .mockImplementationOnce(async (options) => {
+      queueMicrotask(() => {
+        void McpState.cleanupAllDrivers();
+      });
+      return options;
+    });
+  try {
+    await expect(start()).rejects.toMatchObject({ name: "AbortError" });
+    expect(createMobileDriver).not.toHaveBeenCalled();
+  } finally {
+    prepare.mockRestore();
+  }
 });

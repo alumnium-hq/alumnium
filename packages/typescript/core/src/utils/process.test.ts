@@ -70,3 +70,15 @@ it("rejects commands terminated by the timeout", async () => {
     }),
   ).rejects.toThrow("exited with status null");
 });
+
+it("cancels an executing command when its signal aborts", async () => {
+  const controller = new AbortController();
+  const result = expect(
+    exec(process.execPath, ["-e", "setInterval(() => {}, 1000)"], {
+      signal: controller.signal,
+      killSignal: "SIGKILL",
+    }),
+  ).rejects.toMatchObject({ name: "AbortError" });
+  controller.abort();
+  await result;
+});

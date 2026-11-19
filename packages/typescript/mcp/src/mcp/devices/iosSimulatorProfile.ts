@@ -46,20 +46,29 @@ const catalogSchema = z.object({
 });
 
 type Catalog = z.infer<typeof catalogSchema>;
-let installation: Promise<void> | undefined;
+let installation:
+  | {
+      promise: Promise<void>;
+      controller: AbortController;
+      waiters: number;
+    }
+  | undefined;
 
-export async function resolveIosSimulatorProfile(device?: string): Promise<{
+export async function resolveIosSimulatorProfile(
+  device?: string,
+  signal?: AbortSignal,
+): Promise<{
   deviceType: string;
   runtime: string;
 }> {
+  signal?.throwIfAborted();
+  const commandOptions = { signal, killSignal: "SIGKILL" as const };
   if (device) {
-    const result = await exec("xcrun", [
-      "simctl",
-      "list",
-      "devices",
-      "available",
-      "--json",
-    ]);
+    const result = await exec(
+      "xcrun",
+      ["simctl", "list", "devices", "available", "--json"],
+      commandOptions,
+    );
     const { devices } = devicesSchema.parse(JSON.parse(result.stdout));
     const matches = Object.entries(devices)
       .flatMap(([runtime, entries]) =>
@@ -85,25 +94,31 @@ export async function resolveIosSimulatorProfile(device?: string): Promise<{
   let version: string;
   try {
     version = (
-      await exec("xcrun", ["--sdk", "iphonesimulator", "--show-sdk-version"])
+      await exec(
+        "xcrun",
+        ["--sdk", "iphonesimulator", "--show-sdk-version"],
+        commandOptions,
+      )
     ).stdout.trim();
   } catch (error) {
+    signal?.throwIfAborted();
     throw new Error(
       `iOS simulators require Xcode with iOS support. Install Xcode, complete its first-launch setup, and select it in Xcode Settings > Locations: ${error}`,
       { cause: error },
     );
   }
-  let catalog = await readCatalog();
+  let catalog = await readCatalog(signal);
   if (!catalog.devicetypes.some(isDefaultDevice))
     throw new Error(
       "Xcode has no iPhone device profiles. Complete Xcode's first-launch setup before creating a simulator",
     );
   let profile = findProfile(catalog, version);
   if (!profile) {
-    await installRuntime(version);
-    catalog = await readCatalog();
+    await installRuntime(version, signal);
+    catalog = await readCatalog(signal);
     profile = findProfile(catalog, version);
   }
+  signal?.throwIfAborted();
   if (!profile)
     throw new Error(
       `No compatible iPhone simulator is available for iOS ${version} after runtime installation. Check the iOS runtime in Xcode Settings > Components`,
@@ -111,8 +126,11 @@ export async function resolveIosSimulatorProfile(device?: string): Promise<{
   return profile;
 }
 
-async function readCatalog(): Promise<Catalog> {
-  const result = await exec("xcrun", ["simctl", "list", "--json"]);
+async function readCatalog(signal?: AbortSignal): Promise<Catalog> {
+  const result = await exec("xcrun", ["simctl", "list", "--json"], {
+    signal,
+    killSignal: "SIGKILL",
+  });
   return catalogSchema.parse(JSON.parse(result.stdout));
 }
 
@@ -166,8 +184,30 @@ function isDefaultDevice(device: Catalog["devicetypes"][number]): boolean {
   );
 }
 
-function installRuntime(version: string): Promise<void> {
-  installation ??= new Promise<void>((resolve, reject) => {
+async function installRuntime(
+  version: string,
+  signal?: AbortSignal,
+): Promise<void> {
+  signal?.throwIfAborted();
+  const current = (installation ??= startRuntimeInstallation(version));
+  current.waiters++;
+  const cancelled = Promise.withResolvers<void>();
+  const abort = () => cancelled.reject(signal?.reason);
+  signal?.addEventListener("abort", abort, { once: true });
+  try {
+    await Promise.race([current.promise, cancelled.promise]);
+  } finally {
+    signal?.removeEventListener("abort", abort);
+    if (!--current.waiters && installation === current) {
+      installation = undefined;
+      current.controller.abort();
+    }
+  }
+}
+
+function startRuntimeInstallation(version: string) {
+  const controller = new AbortController();
+  const promise = new Promise<void>((resolve, reject) => {
     logger.info(
       `Downloading and installing the iOS ${version} Simulator runtime through Xcode. This first-time download can take several minutes`,
     );
@@ -178,6 +218,7 @@ function installRuntime(version: string): Promise<void> {
         stdio: ["ignore", 2, 2],
         timeout: 30 * 60_000,
         killSignal: "SIGKILL",
+        signal: controller.signal,
       },
     );
     child.once("error", reject);
@@ -191,7 +232,7 @@ function installRuntime(version: string): Promise<void> {
         );
     });
   }).finally(() => {
-    installation = undefined;
+    if (installation?.controller === controller) installation = undefined;
   });
-  return installation;
+  return { promise, controller, waiters: 0 };
 }
