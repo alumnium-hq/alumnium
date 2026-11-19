@@ -115,7 +115,7 @@ export const startMcpTool = McpTool.define("start", {
             - "changeAnalysis" (boolean, default true) — enable UI changes analysis agent;
             - "cookies" (array) — cookies to set, supported for Selenium and Playwright, e.g. [{"name": "session", "value": "abc123", "domain": ".example.com"}];
             - "device" (string or object) — the device to run on, e.g. "iPhone 16" (Playwright built-in preset name or a custom object with viewport/userAgent/deviceScaleFactor/isMobile/hasTouch, iOS real device unique device identifier, Android/iOS simulator name, etc.);
-            - "deviceLifecycle" ("reuse" or "create", default "reuse") — with "create" (Maestro and Xcode only), use "device" as an existing iOS simulator template and create a fresh temporary simulator. Stop and process shutdown delete only the simulator created by this session. Android device creation is not supported yet;
+            - "deviceLifecycle" ("reuse" or "create", default "reuse") — with "create" (Maestro and Xcode only), create a fresh temporary iOS simulator. Without "device", choose a compatible iPhone for the selected Xcode and download its iOS runtime if needed. "device" optionally pins an existing simulator template. Stop and process shutdown delete only the simulator created by this session. Android device creation is not supported yet;
             - "deviceLocation" (object) — GPS coordinates {"latitude": 37.7, "longitude": -122.4} for a temporary device; requires "deviceLifecycle": "create";
             - "disabledTools" (string[]) — tool class names to disable for this session, e.g. ["ExecuteJavascriptTool"];
             - "excludeAttributes" (string[]) — accessibility attributes to exclude from the tree, e.g., ["src"];
