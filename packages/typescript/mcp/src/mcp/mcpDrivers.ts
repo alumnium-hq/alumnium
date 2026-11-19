@@ -13,8 +13,6 @@ import {
   remote as remoteWebdriverio,
   type Browser as WebdriverIoBrowser,
 } from "webdriverio";
-import z from "zod";
-import type { Alumni } from "alumnium";
 import {
   type Driver,
   Env,
@@ -25,11 +23,6 @@ import {
 import { MaestroSession } from "@alumnium/maestro";
 import { XcodeSession } from "@alumnium/xcode";
 import { ensurePlaywrightChromiumInstalled } from "../standalone/installPlaywrightBrowsers.ts";
-import {
-  createMobileDevice,
-  deviceOptionsSchema,
-  type MobileDevice,
-} from "./devices/MobileDevice.ts";
 import { proxyFromEnv } from "./proxyFromEnv.ts";
 
 const logger = Logger.get(import.meta.url);
@@ -41,25 +34,13 @@ export type McpDriver =
   | MaestroSession
   | XcodeSession;
 
-export async function closeMcpDriver(
-  driver: McpDriver,
-  al?: Pick<Alumni, "quit">,
-): Promise<void> {
-  let closedByAlumni = false;
-  try {
-    await al?.quit();
-    closedByAlumni = al !== undefined;
-  } finally {
-    if ("deleteSession" in driver) await driver.deleteSession();
-    else if ("context" in driver) {
-      // MCP owns the browser, including any other tabs opened by this session.
-      const context = driver.context();
-      await (context.browser() ?? context).close();
-    } else if (!closedByAlumni) {
-      if ("quit" in driver) await driver.quit();
-      else await driver.close();
-    }
-  }
+export async function closeMcpDriver(driver: McpDriver): Promise<void> {
+  if ("deleteSession" in driver) await driver.deleteSession();
+  else if ("quit" in driver) await driver.quit();
+  else if ("context" in driver) {
+    const context = driver.context();
+    await (context.browser() ?? context).close();
+  } else await driver.close();
 }
 
 export namespace McpDriver {
@@ -68,7 +49,7 @@ export namespace McpDriver {
   export type Cookies = PlaywrightCookie[];
   export type Headers = Record<string, string | Record<string, string>>;
 
-  export interface MobileOptions extends z.input<typeof deviceOptionsSchema> {
+  export interface MobileOptions {
     /**
      * The mobile app to run. Either an identifier of an installed app — an iOS bundle id or an
      * Android package name — or, for Appium, a reference to an app to install: a local `.app`/
@@ -85,13 +66,8 @@ export namespace McpDriver {
      * Maestro matches identifiers against its connected devices.
      */
     device?: string | undefined;
-    /** Hide the macOS Simulator window. Default is false. */
+    /** Hide the macOS Simulator window. Maestro and Xcode only. Default is false. */
     headless?: boolean | undefined;
-  }
-
-  export interface MobileSession {
-    driver: McpDriver;
-    device?: MobileDevice | undefined;
   }
 
   export interface Capabilities {
@@ -620,96 +596,21 @@ async function createCloakBrowserDriver(
 /**
  * Create a mobile driver from capabilities.
  */
-export async function createMobileSession(
+export async function createMobileDriver(
   os: Driver.MobileOs,
   capabilities: McpDriver.Capabilities,
   serverUrl: string | null | undefined,
   mobileOptions: McpDriver.MobileOptions = {},
-  id = "session",
-): Promise<McpDriver.MobileSession> {
+): Promise<McpDriver> {
   const driverKind = Env.ALUMNIUM_DRIVER;
-  const lifecycle = deviceOptionsSchema.parse(mobileOptions);
   logger.info(`Creating mobile driver for ${os} using ${driverKind}`);
-  if (driverKind === "maestro" || driverKind === "xcode") {
-    const device = createMobileDevice(os, lifecycle, id);
-    try {
-      const options = device
-        ? await device.prepare(mobileOptions)
-        : mobileOptions;
-      const driver =
-        driverKind === "maestro"
-          ? await createMaestroDriver(os, options)
-          : await createXcodeDriver(os, options);
-      return { driver, device };
-    } catch (error) {
-      await device?.close().catch((cleanupError) => {
-        logger.warn(`Device startup cleanup failed: ${cleanupError}`);
-      });
-      throw error;
-    }
-  }
-  translateToAppiumCapabilities(os, capabilities, mobileOptions);
-  if (lifecycle.deviceLifecycle === "create") {
-    configureFreshAppiumSimulator(os, capabilities, mobileOptions);
-  }
-  return {
-    driver: await createAppiumDriver(
-      os,
-      capabilities,
-      serverUrl,
-      lifecycle.deviceLocation,
-    ),
-  };
-}
-
-function configureFreshAppiumSimulator(
-  os: Driver.MobileOs,
-  capabilities: McpDriver.Capabilities,
-  options: McpDriver.MobileOptions,
-): void {
-  if (os !== "ios")
-    throw new Error(
-      "Fresh Appium simulators are only supported for iOS XCUITest sessions",
-    );
-  const grouped = z
-    .record(z.string(), z.unknown())
-    .optional()
-    .parse(capabilities["appium:options"]);
-  const automation =
-    grouped?.["automationName"] ??
-    capabilities["appium:automationName"] ??
-    "XCUITest";
-  if (typeof automation !== "string" || automation.toLowerCase() !== "xcuitest")
-    throw new Error(
-      "deviceLifecycle: create requires Appium's XCUITest automation",
-    );
-  if ((grouped?.["udid"] ?? capabilities["appium:udid"]) !== undefined)
-    throw new Error(
-      "Fresh Appium simulators require server-side deviceName/platformVersion selection, not a fixed UDID",
-    );
-  const translated: [string, unknown][] = [
-    ["appium:automationName", automation],
-    ["appium:enforceFreshSimulatorCreation", true],
-  ];
-  if (options.headless !== undefined)
-    translated.push(["appium:isHeadless", options.headless]);
-  setAppiumCapabilities(capabilities, translated);
-}
-
-function setAppiumCapabilities(
-  capabilities: McpDriver.Capabilities,
-  entries: [string, unknown][],
-): void {
-  const grouped = z
-    .record(z.string(), z.unknown())
-    .optional()
-    .parse(capabilities["appium:options"]);
-  if (grouped) {
-    for (const [key, value] of entries)
-      grouped[key.slice("appium:".length)] = value;
-    capabilities["appium:options"] = grouped;
+  if (driverKind === "maestro") {
+    return createMaestroDriver(os, mobileOptions);
+  } else if (driverKind === "xcode") {
+    return createXcodeDriver(os, mobileOptions);
   } else {
-    for (const [key, value] of entries) capabilities[key] = value;
+    translateToAppiumCapabilities(os, capabilities, mobileOptions);
+    return createAppiumDriver(os, capabilities, serverUrl);
   }
 }
 
@@ -767,7 +668,7 @@ function translateToAppiumCapabilities(
   const translated: [key: string, value: unknown][] = [];
   if (app !== undefined) {
     // An installable goes to `appium:app`; an identifier names an app already on the device.
-    const key = isAppInstallReference(app)
+    const key = isAppReference(app)
       ? "appium:app"
       : os === "ios"
         ? "appium:bundleId"
@@ -797,15 +698,14 @@ function translateToAppiumCapabilities(
     translated.push(["appium:processArguments", processArgs]);
   }
 
-  setAppiumCapabilities(capabilities, translated);
+  for (const [key, value] of translated) {
+    capabilities[key] = value;
+  }
 }
 
 function isAppReference(application: string): boolean {
-  return existsSync(application) || isAppInstallReference(application);
-}
-
-function isAppInstallReference(application: string): boolean {
   return (
+    existsSync(application) ||
     /[\\/]/.test(application) ||
     /^[a-z][a-z0-9+.-]*:\/\//i.test(application) ||
     /\.(apk|aab|ipa|zip)$/i.test(application)
@@ -890,7 +790,6 @@ export async function createAppiumDriver(
   os: Driver.MobileOs,
   capabilities: McpDriver.Capabilities,
   serverUrl: string | null | undefined,
-  location?: McpDriver.MobileOptions["deviceLocation"],
 ): Promise<WebdriverIoBrowser> {
   const settings = capabilities["appium:settings"] || {};
   delete capabilities["appium:settings"];
@@ -920,20 +819,13 @@ export async function createAppiumDriver(
 
   const driver = await remoteWebdriverio(remoteOptions);
 
-  try {
-    if (Object.keys(settings).length) {
-      logger.debug("Applying Appium settings: {settings}", { settings });
-      await driver.updateSettings(settings);
-    }
-    if (location) await driver.setGeoLocation(location);
-    logger.debug(`Appium driver for ${os} created successfully`);
-    return driver;
-  } catch (error) {
-    await driver.deleteSession().catch((cleanupError) => {
-      logger.warn(`Appium startup cleanup failed: ${cleanupError}`);
-    });
-    throw error;
+  if (Object.keys(settings).length) {
+    logger.debug("Applying Appium settings: {settings}", { settings });
+    await driver.updateSettings(settings);
   }
+
+  logger.debug(`Appium driver for ${os} created successfully`);
+  return driver;
 }
 
 /** Playwright `BrowserContextOptions` fields that describe a device/viewport emulation profile. */
