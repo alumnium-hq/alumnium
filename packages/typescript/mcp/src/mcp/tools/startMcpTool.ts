@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { never } from "alwaysly";
+import { lit } from "smollit";
 import z from "zod";
 import { Alumni } from "alumnium";
 import {
@@ -96,7 +97,7 @@ export const startMcpTool = McpTool.define("start", {
 
   inputSchema: z.object({
     capabilities: z.string().describe(
-      `
+      lit`
           JSON string or path to a JSON file with Selenium/Appium/Playwright capabilities and Alumnium-specific options.
 
           Must include "platformName" (e.g., "chrome", "firefox", "ios", "android"). Firefox always runs through Selenium.
@@ -133,9 +134,7 @@ export const startMcpTool = McpTool.define("start", {
             - "userAgent" (string) — custom User-Agent header sent with every request, supported for Selenium and Playwright.
 
           Example: '{"platformName": "chrome", "alumnium:options": {"headless": true, "executablePath": "/Applications/Arc.app/Contents/MacOS/Arc", "profile": "work"}}'.
-        `
-        .replace(/\n\s*/g, " ")
-        .trim(),
+        `,
     ),
 
     server_url: z
@@ -347,15 +346,17 @@ export const startMcpTool = McpTool.define("start", {
 
     logger.info(`Starting driver ${id} for platform: ${platformName}`);
 
-    return McpState.startDriver(async () => {
-      const device = createMobileDevice(platformName, alumniumOptions, id);
+    const mobileDevice = createMobileDevice(platformName, alumniumOptions, id);
+    return McpState.startDriver(async (signal) => {
       let al: Alumni | undefined;
       let driver: McpDriver | undefined;
       try {
+        signal.throwIfAborted();
         const platform = Driver.Platform.safeParse(platformName).data;
-        const preparedMobileOptions = device
-          ? await device.prepare(mobileOptions)
+        const preparedMobileOptions = mobileDevice
+          ? await mobileDevice.prepare(mobileOptions)
           : mobileOptions;
+        signal.throwIfAborted();
         switch (platform) {
           case "chromium": {
             driver = await tracer.span(
@@ -427,6 +428,7 @@ export const startMcpTool = McpTool.define("start", {
             never(platform);
         }
 
+        signal.throwIfAborted();
         tracer.span("mcp.driver.active", { "mcp.driver.id": id }, id);
 
         al = new Alumni(driver, {
@@ -483,7 +485,8 @@ export const startMcpTool = McpTool.define("start", {
           driverName += " (cloakbrowser)";
         }
 
-        McpState.registerDriver(id, al, driver, artifactsStore, device);
+        signal.throwIfAborted();
+        McpState.registerDriver(id, al, driver, artifactsStore, mobileDevice);
 
         return [
           {
@@ -503,13 +506,13 @@ export const startMcpTool = McpTool.define("start", {
         } catch (cleanupError) {
           logger.warn(`Driver startup cleanup failed: ${cleanupError}`);
         } finally {
-          await device?.close().catch((cleanupError) => {
+          await mobileDevice?.close().catch((cleanupError) => {
             logger.warn(`Device startup cleanup failed: ${cleanupError}`);
           });
         }
         tracer.end(id);
         throw error;
       }
-    });
+    }, mobileDevice);
   },
 });

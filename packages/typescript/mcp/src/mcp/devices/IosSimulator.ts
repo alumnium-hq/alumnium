@@ -10,6 +10,8 @@ export class IosSimulator implements MobileDevice {
   readonly #location: { latitude: number; longitude: number } | undefined;
   #device = "";
   #closing: Promise<void> | undefined;
+  #preparing: Promise<McpDriver.MobileOptions> | undefined;
+  readonly #preparation = new AbortController();
 
   constructor(
     name: string,
@@ -19,10 +21,18 @@ export class IosSimulator implements MobileDevice {
     this.#location = location;
   }
 
-  async prepare(
+  prepare(options: McpDriver.MobileOptions): Promise<McpDriver.MobileOptions> {
+    this.#preparing = this.#prepare(options);
+    return this.#preparing;
+  }
+
+  async #prepare(
     options: McpDriver.MobileOptions,
   ): Promise<McpDriver.MobileOptions> {
-    const profile = await resolveIosSimulatorProfile(options.device);
+    const signal = this.#preparation.signal;
+    signal.throwIfAborted();
+    const profile = await resolveIosSimulatorProfile(options.device, signal);
+    signal.throwIfAborted();
     const created = await exec("xcrun", [
       "simctl",
       "create",
@@ -31,27 +41,35 @@ export class IosSimulator implements MobileDevice {
       profile.runtime,
     ]);
     this.#device = created.stdout.trim();
-    await exec("xcrun", ["simctl", "boot", this.#device]);
-    await exec("xcrun", ["simctl", "bootstatus", this.#device, "-b"]);
+    signal.throwIfAborted();
+    const commandOptions = { signal, killSignal: "SIGKILL" as const };
+    await exec("xcrun", ["simctl", "boot", this.#device], commandOptions);
+    await exec(
+      "xcrun",
+      ["simctl", "bootstatus", this.#device, "-b"],
+      commandOptions,
+    );
     if (this.#location) {
       const { latitude, longitude } = this.#location;
-      await exec("xcrun", [
-        "simctl",
-        "location",
-        this.#device,
-        "set",
-        `${latitude},${longitude}`,
-      ]);
+      await exec(
+        "xcrun",
+        ["simctl", "location", this.#device, "set", `${latitude},${longitude}`],
+        commandOptions,
+      );
     }
     let app = options.app;
     if (app && /\.app[\\/]?$/.test(app) && existsSync(app)) {
       const appPath = path.resolve(app);
-      const bundle = await exec("/usr/libexec/PlistBuddy", [
-        "-c",
-        "Print :CFBundleIdentifier",
-        path.join(appPath, "Info.plist"),
-      ]);
-      await exec("xcrun", ["simctl", "install", this.#device, appPath]);
+      const bundle = await exec(
+        "/usr/libexec/PlistBuddy",
+        ["-c", "Print :CFBundleIdentifier", path.join(appPath, "Info.plist")],
+        commandOptions,
+      );
+      await exec(
+        "xcrun",
+        ["simctl", "install", this.#device, appPath],
+        commandOptions,
+      );
       app = bundle.stdout.trim();
     }
     return {
@@ -68,8 +86,9 @@ export class IosSimulator implements MobileDevice {
   }
 
   async #close(): Promise<void> {
+    this.#preparation.abort();
+    await this.#preparing?.catch(() => {});
     if (!this.#device) return;
-    await exec("xcrun", ["simctl", "shutdown", this.#device]).catch(() => {});
     await exec("xcrun", ["simctl", "delete", this.#device]);
     this.#device = "";
   }

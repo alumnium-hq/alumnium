@@ -85,8 +85,7 @@ describe("temporary iOS simulator", () => {
     const closing = simulator.close();
     expect(simulator.close()).toBe(closing);
     await closing;
-    expect(vi.mocked(exec).mock.calls.slice(-2)).toEqual([
-      ["xcrun", ["simctl", "shutdown", "owned-device"]],
+    expect(vi.mocked(exec).mock.calls.slice(-1)).toEqual([
       ["xcrun", ["simctl", "delete", "owned-device"]],
     ]);
   });
@@ -105,13 +104,11 @@ describe("temporary iOS simulator", () => {
         app: "com.apple.Preferences",
       }),
     ).toMatchObject({ device: "owned-device", app: "com.apple.Preferences" });
-    expect(exec).toHaveBeenCalledWith("xcrun", [
-      "simctl",
-      "location",
-      "owned-device",
-      "set",
-      "37.7,-122.4",
-    ]);
+    expect(exec).toHaveBeenCalledWith(
+      "xcrun",
+      ["simctl", "location", "owned-device", "set", "37.7,-122.4"],
+      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+    );
   });
 
   it.each(["missing"])(
@@ -165,10 +162,11 @@ describe("temporary iOS simulator", () => {
     },
   );
 
-  it("deletes even when shutdown fails", async () => {
+  it("deletes directly without waiting for a separate shutdown", async () => {
     await simulator.prepare({ device: template.udid });
-    vi.mocked(exec).mockRejectedValueOnce(new Error("already shut down"));
+    vi.mocked(exec).mockClear();
     await simulator.close();
+    expect(exec).toHaveBeenCalledTimes(1);
     expect(exec).toHaveBeenLastCalledWith("xcrun", [
       "simctl",
       "delete",
@@ -221,4 +219,63 @@ describe("mobile device lifecycle selection", () => {
       ).toThrow();
     },
   );
+});
+
+it.each(["boot", "bootstatus", "install"])(
+  "cancels %s and deletes the simulator during startup shutdown",
+  async (phase) => {
+    const entered = Promise.withResolvers<void>();
+    const implementation = vi.mocked(exec).getMockImplementation()!;
+    vi.mocked(exec).mockImplementation(async (command, args, options) => {
+      if (!args.includes(phase)) return implementation(command, args, options);
+      return new Promise((_resolve, reject) => {
+        const signal = options?.signal;
+        if (!signal) throw new Error("Missing cancellation signal");
+        signal.addEventListener("abort", () => reject(signal.reason), {
+          once: true,
+        });
+        entered.resolve();
+      });
+    });
+    const failed = expect(
+      simulator.prepare({ device: template.udid, app }),
+    ).rejects.toMatchObject({ name: "AbortError" });
+    await entered.promise;
+    await simulator.close();
+    await failed;
+    expect(exec).toHaveBeenLastCalledWith("xcrun", [
+      "simctl",
+      "delete",
+      "owned-device",
+    ]);
+  },
+);
+
+it("captures a newly created device's id before cancellation deletes it", async () => {
+  const entered = Promise.withResolvers<void>();
+  const created = Promise.withResolvers<void>();
+  const implementation = vi.mocked(exec).getMockImplementation()!;
+  vi.mocked(exec).mockImplementation(async (command, args, options) => {
+    if (args.includes("create")) {
+      entered.resolve();
+      await created.promise;
+    }
+    return implementation(command, args, options);
+  });
+  const failed = expect(
+    simulator.prepare({ device: template.udid }),
+  ).rejects.toMatchObject({ name: "AbortError" });
+  await entered.promise;
+  const closing = simulator.close();
+  created.resolve();
+  await closing;
+  await failed;
+  expect(exec).toHaveBeenLastCalledWith("xcrun", [
+    "simctl",
+    "delete",
+    "owned-device",
+  ]);
+  expect(
+    vi.mocked(exec).mock.calls.some(([, args]) => args.includes("boot")),
+  ).toBe(false);
 });

@@ -34,7 +34,11 @@ export namespace McpState {
 export abstract class McpState {
   static #drivers: Record<string, McpState.Driver> = {}; // id -> driver state
   static #nextDriverId = 1;
-  static #starting = new Set<Promise<unknown>>();
+  static #starting = new Set<{
+    promise: Promise<unknown>;
+    controller: AbortController;
+    device: MobileDevice | undefined;
+  }>();
 
   static #cleanupHooksRegistered = false;
   static #cleanupAllPromise: Promise<void> | null = null;
@@ -99,16 +103,24 @@ export abstract class McpState {
     return driverState;
   }
 
-  static async startDriver<T>(start: () => Promise<T>): Promise<T> {
+  static async startDriver<T>(
+    start: (signal: AbortSignal) => Promise<T>,
+    device?: MobileDevice,
+  ): Promise<T> {
     if (this.#cleanupAllPromise)
       throw new Error(
         "Cannot start a driver while MCP sessions are shutting down",
       );
     this.#registerCleanupHooks();
-    const starting = Promise.resolve().then(start);
+    const controller = new AbortController();
+    const starting = {
+      promise: Promise.resolve().then(() => start(controller.signal)),
+      controller,
+      device,
+    };
     this.#starting.add(starting);
     try {
-      return await starting;
+      return await starting.promise;
     } finally {
       this.#starting.delete(starting);
     }
@@ -166,7 +178,22 @@ export abstract class McpState {
   }
 
   static async #cleanupAllDrivers(): Promise<void> {
-    await Promise.allSettled([...this.#starting]);
+    const starting = [...this.#starting];
+    for (const { controller } of starting) controller.abort();
+    const closing = this.#cleanupRegisteredDrivers();
+    await Promise.allSettled(
+      starting.map(async ({ device }) => {
+        await device?.close();
+      }),
+    );
+    await Promise.allSettled([
+      closing,
+      ...starting.map(({ promise }) => promise),
+    ]);
+    await this.#cleanupRegisteredDrivers();
+  }
+
+  static async #cleanupRegisteredDrivers(): Promise<void> {
     await Promise.all(
       Object.keys(this.#drivers).map(async (id) => {
         await this.cleanupDriver(id).catch((error) => {

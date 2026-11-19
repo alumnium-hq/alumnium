@@ -255,3 +255,50 @@ describe("iOS simulator profiles", () => {
     },
   );
 });
+
+it("keeps a shared runtime download alive until all callers cancel", async () => {
+  catalog.runtimes = [];
+  const installer = new EventEmitter();
+  let installationSignal: AbortSignal | undefined;
+  mocks.spawn.mockImplementationOnce((_command, _args, options) => {
+    installationSignal = options.signal;
+    return installer;
+  });
+  const first = new AbortController();
+  const second = new AbortController();
+  const firstFailed = expect(
+    resolveProfile(undefined, first.signal),
+  ).rejects.toMatchObject({ name: "AbortError" });
+  const secondFailed = expect(
+    resolveProfile(undefined, second.signal),
+  ).rejects.toMatchObject({ name: "AbortError" });
+  await vi.waitFor(() => expect(mocks.spawn).toHaveBeenCalledTimes(1));
+  first.abort();
+  await firstFailed;
+  expect(installationSignal?.aborted).toBe(false);
+  second.abort();
+  await secondFailed;
+  expect(installationSignal?.aborted).toBe(true);
+  installer.emit("error", new Error("cancelled"));
+  await expect(resolveProfile()).resolves.toBeDefined();
+});
+
+it("allows another caller to complete a shared download after one cancels", async () => {
+  catalog.runtimes = [];
+  const installer = new EventEmitter();
+  mocks.spawn.mockReturnValueOnce(installer);
+  const controller = new AbortController();
+  const failed = expect(
+    resolveProfile(undefined, controller.signal),
+  ).rejects.toMatchObject({ name: "AbortError" });
+  const successful = resolveProfile();
+  await vi.waitFor(() => expect(mocks.spawn).toHaveBeenCalledTimes(1));
+  controller.abort();
+  await failed;
+  downloaded();
+  installer.emit("close", 0);
+  await expect(successful).resolves.toEqual({
+    deviceType: phone.identifier,
+    runtime: runtime.identifier,
+  });
+});

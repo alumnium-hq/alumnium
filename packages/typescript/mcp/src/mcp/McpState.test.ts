@@ -104,3 +104,26 @@ describe("MCP device ownership", () => {
     expect(close).toHaveBeenCalledTimes(1);
   });
 });
+
+it("closes starting devices and active sessions before a blocked backend finishes", async () => {
+  register();
+  const ready = Promise.withResolvers<void>();
+  const startingDevice = { prepare: vi.fn(), close: vi.fn(async () => {}) };
+  let signal: AbortSignal | undefined;
+  const starting = McpState.startDriver(async (startupSignal) => {
+    signal = startupSignal;
+    await ready.promise;
+    startupSignal.throwIfAborted();
+  }, startingDevice);
+  const failed = expect(starting).rejects.toMatchObject({ name: "AbortError" });
+  await vi.waitFor(() => expect(signal).toBeDefined());
+  const stopping = McpState.cleanupAllDrivers();
+  await vi.waitFor(() => {
+    expect(signal?.aborted).toBe(true);
+    expect(startingDevice.close).toHaveBeenCalledTimes(1);
+    expect(close).toHaveBeenCalledTimes(1);
+  });
+  ready.resolve();
+  await failed;
+  await stopping;
+});
