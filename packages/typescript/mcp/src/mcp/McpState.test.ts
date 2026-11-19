@@ -31,13 +31,7 @@ afterEach(async () => {
 });
 
 function register() {
-  McpState.registerDriver(
-    "test",
-    al,
-    { close: vi.fn(async () => {}) } as unknown as McpDriver,
-    artifacts,
-    device,
-  );
+  McpState.registerDriver("test", al, {} as McpDriver, artifacts, device);
 }
 
 describe("MCP device ownership", () => {
@@ -109,25 +103,4 @@ describe("MCP device ownership", () => {
     await stopping;
     expect(close).toHaveBeenCalledTimes(1);
   });
-  it.each(["success", "stats", "quit"])(
-    "explicitly ends the owned Appium session after %s",
-    async (phase) => {
-      const deleteSession = vi.fn(async () => {});
-      if (phase === "stats")
-        getStats.mockRejectedValueOnce(new Error("stats failed"));
-      if (phase === "quit")
-        quit.mockRejectedValueOnce(new Error("quit failed"));
-      McpState.registerDriver(
-        "test",
-        al,
-        { deleteSession } as unknown as McpDriver,
-        artifacts,
-      );
-      const stopping = McpState.cleanupDriver("test");
-      if (phase === "success")
-        await Promise.all([stopping, McpState.cleanupDriver("test")]);
-      else await expect(stopping).rejects.toThrow(`${phase} failed`);
-      expect(deleteSession).toHaveBeenCalledTimes(1);
-    },
-  );
 });

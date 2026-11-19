@@ -2,7 +2,7 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { exec } from "@alumnium/core/internal";
+import { Env, exec } from "@alumnium/core/internal";
 import { IosSimulator } from "./IosSimulator.ts";
 import { createMobileDevice } from "./MobileDevice.ts";
 
@@ -178,6 +178,16 @@ describe("temporary iOS simulator", () => {
 });
 
 describe("mobile device lifecycle selection", () => {
+  beforeEach(() => {
+    vi.stubEnv("ALUMNIUM_DRIVER", "maestro");
+    Env.reset();
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    Env.reset();
+  });
+
   it.each(["ios", "android", "chrome"])(
     "keeps existing %s sessions unchanged by default",
     (platform) => {
@@ -185,25 +195,30 @@ describe("mobile device lifecycle selection", () => {
     },
   );
 
-  it("selects iOS creation and rejects unsupported platforms and invalid settings", () => {
-    expect(
-      createMobileDevice("ios", { deviceLifecycle: "create" }, "test"),
-    ).toBeInstanceOf(IosSimulator);
-    expect(() =>
-      createMobileDevice("android", { deviceLifecycle: "create" }, "test"),
-    ).toThrow("not supported");
-    expect(() =>
-      createMobileDevice("ios", { deviceLifecycle: "typo" }, "test"),
-    ).toThrow();
-    expect(() =>
-      createMobileDevice(
-        "ios",
-        {
-          deviceLifecycle: "create",
-          deviceLocation: { latitude: 91, longitude: 0 },
-        },
-        "test",
-      ),
-    ).toThrow();
-  });
+  it.each(["maestro", "xcode"])(
+    "selects iOS creation for %s and rejects unsupported platforms and invalid settings",
+    (backend) => {
+      vi.stubEnv("ALUMNIUM_DRIVER", backend);
+      Env.reset();
+      expect(
+        createMobileDevice("ios", { deviceLifecycle: "create" }, "test"),
+      ).toBeInstanceOf(IosSimulator);
+      expect(() =>
+        createMobileDevice("android", { deviceLifecycle: "create" }, "test"),
+      ).toThrow("not supported");
+      expect(() =>
+        createMobileDevice("ios", { deviceLifecycle: "typo" }, "test"),
+      ).toThrow();
+      expect(() =>
+        createMobileDevice(
+          "ios",
+          {
+            deviceLifecycle: "create",
+            deviceLocation: { latitude: 91, longitude: 0 },
+          },
+          "test",
+        ),
+      ).toThrow();
+    },
+  );
 });
