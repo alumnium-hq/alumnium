@@ -6,7 +6,7 @@ const DIRECTIONS = ["in", "out"] as const;
 
 export class ZoomTool extends BaseTool {
   static description =
-    "Zoom a map or other zoomable canvas in or out around its center, like a pinch. If the map has its own zoom in/out buttons, click them instead.";
+    "Zoom a map or other zoomable canvas in or out around its center, like a pinch. Use it for any request to zoom by a gesture, a pinch, the mouse wheel or scrolling on the map: don't use ScrollInDirectionTool to zoom. If the map has its own zoom in/out buttons, click them instead, unless asked not to.";
   static fields: FieldMetadata[] = [
     field({
       name: "id",

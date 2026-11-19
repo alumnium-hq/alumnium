@@ -7,9 +7,11 @@ import { Params } from "../../Params.ts";
 import { pythonicFormat } from "../../pythonic/pythonicFormat.ts";
 import { Telemetry } from "../../telemetry/Telemetry.ts";
 import { NavigateToUrlTool } from "../../tools/NavigateToUrlTool.ts";
+import { PanInDirectionTool } from "../../tools/PanInDirectionTool.ts";
 import { SwitchToNextTabTool } from "../../tools/SwitchToNextTabTool.ts";
 import { SwitchToPreviousTabTool } from "../../tools/SwitchToPreviousTabTool.ts";
 import { UploadTool } from "../../tools/UploadTool.ts";
+import { ZoomTool } from "../../tools/ZoomTool.ts";
 import { BaseAgent } from "./BaseAgent.ts";
 
 const { tracer, logger } = Telemetry.get(import.meta.url);
@@ -81,6 +83,35 @@ I don't need to click the button first, as the upload action will handle that.
 Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
 `.trim();
 
+  static readonly #PAN_IN_DIRECTION_EXAMPLE = `
+Example:
+Input:
+Given the following XML accessibility tree:
+\`\`\`xml
+<region name="Map" roledescription="map" />
+\`\`\`
+Outline the actions needed to achieve the following goal: pan the map to the right by dragging it
+Output:
+Explanation: In order to pan the map, I am going to use the pan in direction action on the map region.
+A map is panned by dragging it, so I don't use drag and drop: it needs an element to drop onto.
+I keep the words of the goal for the direction.
+Actions: ['pan in direction region "Map": "pan the map to the right"']
+`.trim();
+
+  static readonly #ZOOM_EXAMPLE = `
+Example:
+Input:
+Given the following XML accessibility tree:
+\`\`\`xml
+<region name="Map" roledescription="map" />
+\`\`\`
+Outline the actions needed to achieve the following goal: zoom out the map twice by scrolling down over it with the mouse wheel
+Output:
+Explanation: In order to zoom the map, I am going to use the zoom action on the map region, once for each time.
+Scrolling over a map zooms it, so I don't use the scroll action: it is for scrolling pages and lists.
+Actions: ['zoom region "Map": "zoom out"', 'zoom region "Map": "zoom out"']
+`.trim();
+
   toolNames: string[];
   // TODO: There's a bug in Bun that results in `#baseExamples` compiled to
   // `__privateGet(this, _baseExamples)` which causes a runtime error.
@@ -103,6 +134,14 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
 
     if (toolNames.includes(NavigateToUrlTool.name)) {
       this.baseExamples += `\n\n${PlannerAgent.#NAVIGATE_TO_URL_EXAMPLE}`;
+    }
+
+    if (toolNames.includes(PanInDirectionTool.name)) {
+      this.baseExamples += `\n\n${PlannerAgent.#PAN_IN_DIRECTION_EXAMPLE}`;
+    }
+
+    if (toolNames.includes(ZoomTool.name)) {
+      this.baseExamples += `\n\n${PlannerAgent.#ZOOM_EXAMPLE}`;
     }
 
     if (toolNames.includes(UploadTool.name)) {
