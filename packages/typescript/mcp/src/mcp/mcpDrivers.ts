@@ -34,6 +34,15 @@ export type McpDriver =
   | MaestroSession
   | XcodeSession;
 
+export async function closeMcpDriver(driver: McpDriver): Promise<void> {
+  if ("deleteSession" in driver) await driver.deleteSession();
+  else if ("quit" in driver) await driver.quit();
+  else if ("context" in driver) {
+    const context = driver.context();
+    await (context.browser() ?? context).close();
+  } else await driver.close();
+}
+
 export namespace McpDriver {
   type PlaywrightCookie = Parameters<BrowserContext["addCookies"]>[0][number];
 

@@ -18,8 +18,10 @@ import {
   SwitchToPreviousTabTool,
   Telemetry,
 } from "@alumnium/core/internal";
+import { createMobileDevice } from "../devices/MobileDevice.ts";
 import { McpArtifactsStore } from "../McpArtifactsStore.ts";
 import {
+  closeMcpDriver,
   createChromeDriver,
   createFirefoxDriver,
   createMobileDriver,
@@ -104,15 +106,17 @@ export const startMcpTool = McpTool.define("start", {
           Example file path: "/path/to/capabilities.json".
 
           Alumnium-specific options go in "alumnium:options":
-            - "app" (string) — the mobile app to run: an iOS bundle id or Android package name (e.g. "com.example.app"); path to .app/.ipa/.apk (Appium and Maestro); path to .xcodeproj/.xcworkspace (Xcode); cloud provider URL (e.g. "lt://123-456") (Appium);
+            - "app" (string) — the mobile app to run: an iOS bundle id or Android package name (e.g. "com.example.app"); path to .app/.ipa/.apk (Appium; Maestro accepts a local .app when deviceLifecycle is "create"); path to .xcodeproj/.xcworkspace (Xcode); cloud provider URL (e.g. "lt://123-456") (Appium);
             - "appArguments" (string[]) — command-line arguments to launch the mobile app with, e.g. ["-UITesting"];
             - "appEnvironment" (object) — environment variables to launch the mobile app with, e.g. {"API_URL": "https://staging.example.com"};
-            - "appReset" (boolean, default false) — wipe the app's state before launching it;
+            - "appReset" (boolean, default false) — wipe the app's state before launching it. A newly created simulator already has fresh app state;
             - "autoswitchToNewTab" (boolean, default true) — auto-switch to newly opened tabs;
             - "baseUrl" (string) — URL to navigate to automatically after driver start, e.g. "https://example.com";
             - "changeAnalysis" (boolean, default true) — enable UI changes analysis agent;
             - "cookies" (array) — cookies to set, supported for Selenium and Playwright, e.g. [{"name": "session", "value": "abc123", "domain": ".example.com"}];
             - "device" (string or object) — the device to run on, e.g. "iPhone 16" (Playwright built-in preset name or a custom object with viewport/userAgent/deviceScaleFactor/isMobile/hasTouch, iOS real device unique device identifier, Android/iOS simulator name, etc.);
+            - "deviceLifecycle" ("reuse" or "create", default "reuse") — with "create", use "device" as an existing iOS simulator template and create a fresh temporary simulator. Stop and process shutdown delete only the simulator created by this session. Android device creation is not supported yet;
+            - "deviceLocation" (object) — GPS coordinates {"latitude": 37.7, "longitude": -122.4} for a temporary device; requires "deviceLifecycle": "create";
             - "disabledTools" (string[]) — tool class names to disable for this session, e.g. ["ExecuteJavascriptTool"];
             - "excludeAttributes" (string[]) — accessibility attributes to exclude from the tree, e.g., ["src"];
             - "executablePath" (string) — path to a custom Chrome or Firefox executable;
@@ -320,6 +324,8 @@ export const startMcpTool = McpTool.define("start", {
       "changeAnalysis",
       "cookies",
       "device",
+      "deviceLifecycle",
+      "deviceLocation",
       "disabledTools",
       "excludeAttributes",
       "executablePath",
@@ -341,146 +347,169 @@ export const startMcpTool = McpTool.define("start", {
 
     logger.info(`Starting driver ${id} for platform: ${platformName}`);
 
-    const platform = Driver.Platform.safeParse(platformName).data;
-    let driver: McpDriver;
-    switch (platform) {
-      case "chromium": {
-        driver = await tracer.span(
-          "mcp.driver.start",
-          {
-            "mcp.driver.id": id,
-            "driver.kind":
-              Env.ALUMNIUM_DRIVER === "selenium" ? "selenium" : "playwright",
-            "driver.platform": platform,
-          },
-          () =>
-            createChromeDriver(
-              capabilities,
-              serverUrl,
-              artifactsStore,
-              driverOptions,
-            ),
-        );
-        break;
-      }
-
-      case "ios":
-      case "android":
-        {
-          driver = await tracer.span(
-            "mcp.driver.start",
-            {
-              "mcp.driver.id": id,
-              "driver.kind":
-                Env.ALUMNIUM_DRIVER === "maestro" ||
-                Env.ALUMNIUM_DRIVER === "xcode"
-                  ? Env.ALUMNIUM_DRIVER
-                  : "appium",
-              "driver.platform": platform,
-            },
-            () =>
-              createMobileDriver(
-                platform,
-                capabilities,
-                serverUrl,
-                mobileOptions,
-              ),
-          );
-        }
-        break;
-
-      case "firefox": {
-        driver = await tracer.span(
-          "mcp.driver.start",
-          {
-            "mcp.driver.id": id,
-            "driver.kind": "selenium",
-            "driver.platform": platform,
-          },
-          () => createFirefoxDriver(capabilities, serverUrl, driverOptions),
-        );
-        break;
-      }
-
-      case undefined:
-        logger.error(`Unsupported platformName: ${platformName}`);
-        throw new Error(
-          `Unsupported platformName: ${platformName}. Supported values: chrome, chromium, firefox, ios, android`,
-        );
-
-      default:
-        never(platform);
-    }
-
-    tracer.span("mcp.driver.active", { "mcp.driver.id": id }, id);
-
-    const al = new Alumni(driver, {
-      extraTools:
-        Env.ALUMNIUM_DRIVER === "xcode"
-          ? []
-          : [
-              DragSliderTool,
-              ExecuteJavascriptTool,
-              NavigateBackTool,
-              NavigateToUrlTool,
-              PrintToPdfTool,
-              ScrollInDirectionTool,
-              ScrollTool,
-              SwitchToNextTabTool,
-              SwitchToPreviousTabTool,
-            ],
-      planner,
-      disabledTools,
-      changeAnalysis,
-      excludeAttributes,
-      navigationPolicy,
-    });
-
-    // Apply driver options to Alumnium driver
-    if (Object.keys(driverSettings).length) {
-      logger.debug(`Applying driver options: {driverSettings}`, {
-        driverSettings,
-      });
-      for (const [key, value] of Object.entries(driverSettings)) {
-        if (key in al.driver) {
-          try {
-            // @ts-expect-error -- Driver settings are applied dynamically by name.
-            al.driver[key] = value;
-            logger.debug(`Set driver option ${key}={value}`, { value });
-          } catch (error) {
-            logger.warn(`Failed to set driver option ${key}: ${error}`);
+    return McpState.startDriver(async () => {
+      const device = createMobileDevice(platformName, alumniumOptions, id);
+      let al: Alumni | undefined;
+      let driver: McpDriver | undefined;
+      try {
+        const platform = Driver.Platform.safeParse(platformName).data;
+        const preparedMobileOptions = device
+          ? await device.prepare(mobileOptions)
+          : mobileOptions;
+        switch (platform) {
+          case "chromium": {
+            driver = await tracer.span(
+              "mcp.driver.start",
+              {
+                "mcp.driver.id": id,
+                "driver.kind":
+                  Env.ALUMNIUM_DRIVER === "selenium"
+                    ? "selenium"
+                    : "playwright",
+                "driver.platform": platform,
+              },
+              () =>
+                createChromeDriver(
+                  capabilities,
+                  serverUrl,
+                  artifactsStore,
+                  driverOptions,
+                ),
+            );
+            break;
           }
-        } else {
-          logger.warn(`Unknown driver option: ${key}`);
+
+          case "ios":
+          case "android":
+            {
+              driver = await tracer.span(
+                "mcp.driver.start",
+                {
+                  "mcp.driver.id": id,
+                  "driver.kind":
+                    Env.ALUMNIUM_DRIVER === "maestro" ||
+                    Env.ALUMNIUM_DRIVER === "xcode"
+                      ? Env.ALUMNIUM_DRIVER
+                      : "appium",
+                  "driver.platform": platform,
+                },
+                () =>
+                  createMobileDriver(
+                    platform,
+                    capabilities,
+                    serverUrl,
+                    preparedMobileOptions,
+                  ),
+              );
+            }
+            break;
+
+          case "firefox": {
+            driver = await tracer.span(
+              "mcp.driver.start",
+              {
+                "mcp.driver.id": id,
+                "driver.kind": "selenium",
+                "driver.platform": platform,
+              },
+              () => createFirefoxDriver(capabilities, serverUrl, driverOptions),
+            );
+            break;
+          }
+
+          case undefined:
+            logger.error(`Unsupported platformName: ${platformName}`);
+            throw new Error(
+              `Unsupported platformName: ${platformName}. Supported values: chrome, chromium, firefox, ios, android`,
+            );
+
+          default:
+            never(platform);
         }
+
+        tracer.span("mcp.driver.active", { "mcp.driver.id": id }, id);
+
+        al = new Alumni(driver, {
+          extraTools:
+            Env.ALUMNIUM_DRIVER === "xcode"
+              ? []
+              : [
+                  DragSliderTool,
+                  ExecuteJavascriptTool,
+                  NavigateBackTool,
+                  NavigateToUrlTool,
+                  PrintToPdfTool,
+                  ScrollInDirectionTool,
+                  ScrollTool,
+                  SwitchToNextTabTool,
+                  SwitchToPreviousTabTool,
+                ],
+          planner,
+          disabledTools,
+          changeAnalysis,
+          excludeAttributes,
+          navigationPolicy,
+        });
+
+        // Apply driver options to Alumnium driver
+        if (Object.keys(driverSettings).length) {
+          logger.debug(`Applying driver options: {driverSettings}`, {
+            driverSettings,
+          });
+          for (const [key, value] of Object.entries(driverSettings)) {
+            if (key in al.driver) {
+              try {
+                // @ts-expect-error -- Driver settings are applied dynamically by name.
+                al.driver[key] = value;
+                logger.debug(`Set driver option ${key}={value}`, { value });
+              } catch (error) {
+                logger.warn(`Failed to set driver option ${key}: ${error}`);
+              }
+            } else {
+              logger.warn(`Unknown driver option: ${key}`);
+            }
+          }
+        }
+
+        if (baseUrl) {
+          logger.info(`Navigating to baseUrl: ${baseUrl}`);
+          await al.driver.visit(baseUrl);
+        }
+
+        const model = await al.model();
+        let driverName: string = al.driver.kind;
+
+        if (platform == "chromium" && Env.ALUMNIUM_DRIVER === "cloakbrowser") {
+          driverName += " (cloakbrowser)";
+        }
+
+        McpState.registerDriver(id, al, driver, artifactsStore, device);
+
+        return [
+          {
+            type: "text",
+            text: JSON.stringify({
+              id: id,
+              driver: driverName,
+              model: `${model.provider}/${model.name}`,
+              platform_name: platformName,
+            }),
+          },
+        ];
+      } catch (error) {
+        try {
+          if (al) await al.quit();
+          else if (driver) await closeMcpDriver(driver);
+        } catch (cleanupError) {
+          logger.warn(`Driver startup cleanup failed: ${cleanupError}`);
+        } finally {
+          await device?.close().catch((cleanupError) => {
+            logger.warn(`Device startup cleanup failed: ${cleanupError}`);
+          });
+        }
+        tracer.end(id);
+        throw error;
       }
-    }
-
-    if (baseUrl) {
-      logger.info(`Navigating to baseUrl: ${baseUrl}`);
-      await al.driver.visit(baseUrl);
-    }
-
-    // Register driver in global state
-    McpState.registerDriver(id, al, driver, artifactsStore);
-
-    const model = await al.model();
-    let driverName: string = al.driver.kind;
-
-    if (platform == "chromium" && Env.ALUMNIUM_DRIVER === "cloakbrowser") {
-      driverName += " (cloakbrowser)";
-    }
-
-    return [
-      {
-        type: "text",
-        text: JSON.stringify({
-          id: id,
-          driver: driverName,
-          model: `${model.provider}/${model.name}`,
-          platform_name: platformName,
-        }),
-      },
-    ];
+    });
   },
 });
