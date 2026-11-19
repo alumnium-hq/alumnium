@@ -10,6 +10,8 @@ import { startMcpTool } from "./startMcpTool.ts";
 import { stopMcpTool } from "./stopMcpTool.ts";
 
 const mocks = vi.hoisted(() => ({
+  startRecording: vi.fn(async () => {}),
+  stopRecording: vi.fn(async () => {}),
   quit: vi.fn(async () => {}),
   closeDriver: vi.fn(async () => {}),
   construct: vi.fn(() => {}),
@@ -17,6 +19,12 @@ const mocks = vi.hoisted(() => ({
   model: vi.fn(async () => ({ provider: "test", name: "test" })),
 }));
 
+vi.mock("../devices/IosRecording.ts", () => ({
+  IosRecording: class {
+    start = mocks.startRecording;
+    stop = mocks.stopRecording;
+  },
+}));
 vi.mock("alumnium", () => ({
   Alumni: class {
     constructor() {
@@ -48,10 +56,13 @@ beforeEach(async () => {
   McpState.clear();
   vi.clearAllMocks();
   created = 0;
+  mocks.startRecording.mockReset().mockResolvedValue(undefined);
+  mocks.stopRecording.mockReset().mockResolvedValue(undefined);
   directory = await fs.mkdtemp(path.join(os.tmpdir(), "alumnium-start-"));
   app = path.join(directory, "Test.app");
   await fs.mkdir(app);
   vi.stubEnv("ALUMNIUM_DRIVER", "maestro");
+  vi.stubEnv("ALUMNIUM_MCP_RECORD_VIDEOS", "true");
   vi.stubEnv("ALUMNIUM_MCP_ARTIFACTS_DIR", directory);
   Env.reset();
   vi.mocked(createMobileDriver).mockResolvedValue({
@@ -174,6 +185,38 @@ describe("MCP simulator lifecycle", () => {
       expect.objectContaining({ device: "owned-1", app: "com.test" }),
     );
     await stopMcpTool.execute({ id: result.id, save_cache: false });
+    expect(exec).toHaveBeenLastCalledWith("xcrun", [
+      "simctl",
+      "delete",
+      "owned-1",
+    ]);
+  });
+
+  it("records to the session artifacts and supports opting out", async () => {
+    const recorded = await start();
+    expect(mocks.startRecording).toHaveBeenCalledWith(
+      "owned-1",
+      expect.stringMatching(/videos\/ios\.mp4$/),
+      expect.any(AbortSignal),
+    );
+    await stopMcpTool.execute({ id: recorded.id, save_cache: false });
+    expect(mocks.stopRecording).toHaveBeenCalledTimes(1);
+    const unrecorded = await start({ recordVideos: false });
+    expect(mocks.startRecording).toHaveBeenCalledTimes(1);
+    await stopMcpTool.execute({ id: unrecorded.id, save_cache: false });
+    expect(mocks.stopRecording).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps session artifacts and simulator cleanup when recording fails", async () => {
+    mocks.startRecording.mockRejectedValueOnce(new Error("recording failed"));
+    const session = await start();
+    mocks.stopRecording.mockRejectedValueOnce(new Error("finalization failed"));
+    const stopped = await stopMcpTool.execute({
+      id: session.id,
+      save_cache: false,
+    });
+    expect(JSON.parse(stopped[0]!.text)).toHaveProperty("artifacts_dir");
+    expect(mocks.stopRecording).toHaveBeenCalledTimes(1);
     expect(exec).toHaveBeenLastCalledWith("xcrun", [
       "simctl",
       "delete",

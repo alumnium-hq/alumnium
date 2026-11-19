@@ -3,8 +3,17 @@ import os from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { Env, exec } from "@alumnium/core/internal";
+import { McpArtifactsStore } from "../McpArtifactsStore.ts";
 import { IosSimulator } from "./IosSimulator.ts";
 import { createMobileDevice } from "./MobileDevice.ts";
+
+const recording = vi.hoisted(() => ({ start: vi.fn(), stop: vi.fn() }));
+vi.mock("./IosRecording.ts", () => ({
+  IosRecording: class {
+    start = recording.start;
+    stop = recording.stop;
+  },
+}));
 
 vi.mock("@alumnium/core/internal", async (original) => ({
   ...(await original<typeof import("@alumnium/core/internal")>()),
@@ -25,6 +34,8 @@ beforeEach(async () => {
   app = path.join(directory, "Test.app");
   await fs.mkdir(app);
   simulator = new IosSimulator("test");
+  recording.start.mockReset().mockResolvedValue(undefined);
+  recording.stop.mockReset().mockResolvedValue(undefined);
   vi.mocked(exec)
     .mockReset()
     .mockImplementation(async (command, args) => ({
@@ -87,6 +98,45 @@ describe("temporary iOS simulator", () => {
     await closing;
     expect(vi.mocked(exec).mock.calls.slice(-1)).toEqual([
       ["xcrun", ["simctl", "delete", "owned-device"]],
+    ]);
+  });
+
+  it("records the created device and finalizes its video before deletion", async () => {
+    const file = path.join(directory, "videos/ios.mp4");
+    simulator = new IosSimulator("test", undefined, file);
+    await simulator.prepare({ device: template.udid });
+    expect(recording.start).toHaveBeenCalledWith(
+      "owned-device",
+      file,
+      expect.any(AbortSignal),
+    );
+    recording.stop.mockImplementation(async () => {
+      expect(
+        vi.mocked(exec).mock.calls.some(([, args]) => args.includes("delete")),
+      ).toBe(false);
+    });
+    await simulator.close();
+    expect(recording.stop).toHaveBeenCalledTimes(1);
+    expect(exec).toHaveBeenLastCalledWith("xcrun", [
+      "simctl",
+      "delete",
+      "owned-device",
+    ]);
+  });
+
+  it("still deletes its simulator when finalizing the recording fails", async () => {
+    simulator = new IosSimulator(
+      "test",
+      undefined,
+      path.join(directory, "ios.mp4"),
+    );
+    await simulator.prepare({ device: template.udid });
+    recording.stop.mockRejectedValueOnce(new Error("recording failed"));
+    await simulator.close();
+    expect(exec).toHaveBeenLastCalledWith("xcrun", [
+      "simctl",
+      "delete",
+      "owned-device",
     ]);
   });
 
@@ -176,6 +226,8 @@ describe("temporary iOS simulator", () => {
 });
 
 describe("mobile device lifecycle selection", () => {
+  const artifactsStore = new McpArtifactsStore("test");
+
   beforeEach(() => {
     vi.stubEnv("ALUMNIUM_DRIVER", "maestro");
     Env.reset();
@@ -189,7 +241,9 @@ describe("mobile device lifecycle selection", () => {
   it.each(["ios", "android", "chrome"])(
     "keeps existing %s sessions unchanged by default",
     (platform) => {
-      expect(createMobileDevice(platform, {}, "test")).toBeUndefined();
+      expect(
+        createMobileDevice(platform, {}, "test", artifactsStore),
+      ).toBeUndefined();
     },
   );
 
@@ -199,13 +253,28 @@ describe("mobile device lifecycle selection", () => {
       vi.stubEnv("ALUMNIUM_DRIVER", backend);
       Env.reset();
       expect(
-        createMobileDevice("ios", { deviceLifecycle: "create" }, "test"),
+        createMobileDevice(
+          "ios",
+          { deviceLifecycle: "create" },
+          "test",
+          artifactsStore,
+        ),
       ).toBeInstanceOf(IosSimulator);
       expect(() =>
-        createMobileDevice("android", { deviceLifecycle: "create" }, "test"),
+        createMobileDevice(
+          "android",
+          { deviceLifecycle: "create" },
+          "test",
+          artifactsStore,
+        ),
       ).toThrow("not supported");
       expect(() =>
-        createMobileDevice("ios", { deviceLifecycle: "typo" }, "test"),
+        createMobileDevice(
+          "ios",
+          { deviceLifecycle: "typo" },
+          "test",
+          artifactsStore,
+        ),
       ).toThrow();
       expect(() =>
         createMobileDevice(
@@ -215,6 +284,7 @@ describe("mobile device lifecycle selection", () => {
             deviceLocation: { latitude: 91, longitude: 0 },
           },
           "test",
+          artifactsStore,
         ),
       ).toThrow();
     },
@@ -278,4 +348,35 @@ it("captures a newly created device's id before cancellation deletes it", async 
   expect(
     vi.mocked(exec).mock.calls.some(([, args]) => args.includes("boot")),
   ).toBe(false);
+});
+
+it("interrupts recording startup before deleting the owned simulator", async () => {
+  simulator = new IosSimulator(
+    "test",
+    undefined,
+    path.join(directory, "ios.mp4"),
+  );
+  const entered = Promise.withResolvers<void>();
+  recording.start.mockImplementationOnce(
+    async (_device: string, _file: string, signal: AbortSignal) => {
+      return new Promise((_resolve, reject) => {
+        signal.addEventListener("abort", () => reject(signal.reason), {
+          once: true,
+        });
+        entered.resolve();
+      });
+    },
+  );
+  const failed = expect(
+    simulator.prepare({ device: template.udid }),
+  ).rejects.toMatchObject({ name: "AbortError" });
+  await entered.promise;
+  await simulator.close();
+  await failed;
+  expect(recording.stop).toHaveBeenCalledTimes(1);
+  expect(exec).toHaveBeenLastCalledWith("xcrun", [
+    "simctl",
+    "delete",
+    "owned-device",
+  ]);
 });

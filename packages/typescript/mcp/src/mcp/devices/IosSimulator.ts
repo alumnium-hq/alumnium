@@ -1,13 +1,18 @@
 import { existsSync } from "node:fs";
 import path from "node:path";
-import { exec } from "@alumnium/core/internal";
+import { exec, Logger } from "@alumnium/core/internal";
 import type { McpDriver } from "../mcpDrivers.ts";
+import { IosRecording } from "./IosRecording.ts";
 import { resolveIosSimulatorProfile } from "./iosSimulatorProfile.ts";
 import type { MobileDevice } from "./MobileDevice.ts";
+
+const logger = Logger.get(import.meta.url);
 
 export class IosSimulator implements MobileDevice {
   readonly #name: string;
   readonly #location: { latitude: number; longitude: number } | undefined;
+  readonly #videoPath: string | undefined;
+  #recording: IosRecording | undefined;
   #device = "";
   #closing: Promise<void> | undefined;
   #preparing: Promise<McpDriver.MobileOptions> | undefined;
@@ -16,9 +21,11 @@ export class IosSimulator implements MobileDevice {
   constructor(
     name: string,
     location?: { latitude: number; longitude: number },
+    videoPath?: string,
   ) {
     this.#name = name;
     this.#location = location;
+    this.#videoPath = videoPath;
   }
 
   prepare(options: McpDriver.MobileOptions): Promise<McpDriver.MobileOptions> {
@@ -72,6 +79,16 @@ export class IosSimulator implements MobileDevice {
       );
       app = bundle.stdout.trim();
     }
+    if (this.#videoPath) {
+      this.#recording = new IosRecording();
+      await this.#recording
+        .start(this.#device, this.#videoPath, signal)
+        .catch((error) => {
+          signal.throwIfAborted();
+          logger.warn(`iOS video recording failed: ${error}`);
+        });
+    }
+    signal.throwIfAborted();
     return {
       ...options,
       device: this.#device,
@@ -89,7 +106,15 @@ export class IosSimulator implements MobileDevice {
     this.#preparation.abort();
     await this.#preparing?.catch(() => {});
     if (!this.#device) return;
-    await exec("xcrun", ["simctl", "delete", this.#device]);
-    this.#device = "";
+    try {
+      await this.#recording
+        ?.stop()
+        .catch((error) =>
+          logger.warn(`iOS video finalization failed: ${error}`),
+        );
+    } finally {
+      await exec("xcrun", ["simctl", "delete", this.#device]);
+      this.#device = "";
+    }
   }
 }
