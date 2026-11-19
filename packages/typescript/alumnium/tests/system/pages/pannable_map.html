@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pannable Map Test Page</title>
+    <style>
+      body {
+        font-family: sans-serif;
+      }
+      #map {
+        width: 600px;
+        height: 400px;
+        border: 1px solid #333;
+        background: #cde;
+        cursor: grab;
+        touch-action: none;
+        user-select: none;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Behaves like a map library: it pans only once a press has moved past
+         a few pixels, and leaves the plain wheel to the page, zooming only on
+         a pinch (a wheel with Control held). -->
+    <p id="status" aria-live="polite"></p>
+    <div
+      id="map"
+      role="region"
+      aria-label="Map"
+      aria-roledescription="map"
+      tabindex="0"
+    ></div>
+    <script>
+      const map = document.getElementById("map");
+      const status = document.getElementById("status");
+      const view = { x: 0, y: 0, zoom: 10 };
+      const DRAG_THRESHOLD = 3;
+      let press = null;
+
+      function render() {
+        // East and north are positive, like longitude and latitude.
+        status.textContent = `Map center: east ${Math.round(view.x)}, north ${Math.round(view.y)}. Zoom level: ${Math.round(view.zoom * 100) / 100}.`;
+      }
+
+      map.addEventListener("pointerdown", (event) => {
+        press = { x: event.clientX, y: event.clientY, dragging: false };
+        map.setPointerCapture(event.pointerId);
+      });
+      map.addEventListener("pointermove", (event) => {
+        if (!press) return;
+        const dx = event.clientX - press.x;
+        const dy = event.clientY - press.y;
+        if (!press.dragging && Math.hypot(dx, dy) < DRAG_THRESHOLD) return;
+        press.dragging = true;
+        // Dragging the content right moves the view west.
+        view.x -= dx;
+        view.y += dy;
+        press.x = event.clientX;
+        press.y = event.clientY;
+        render();
+      });
+      map.addEventListener("pointerup", () => {
+        press = null;
+      });
+      map.addEventListener(
+        "wheel",
+        (event) => {
+          if (!event.ctrlKey) return;
+          event.preventDefault();
+          // A pinch is a burst of small wheel moves: 200px make one level.
+          view.zoom -= event.deltaY / 200;
+          render();
+        },
+        { passive: false },
+      );
+
+      render();
+    </script>
+  </body>
+</html>

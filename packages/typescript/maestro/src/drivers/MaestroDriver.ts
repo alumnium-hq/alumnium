@@ -7,6 +7,7 @@ import {
   ClickTool,
   type Driver,
   type Keys,
+  PanInDirectionTool,
   PressKeyTool,
   ScrollTool,
   ScrollInDirectionTool,
@@ -33,6 +34,7 @@ export class MaestroDriver extends BaseDriver<never> {
 
   public supportedTools: Set<ToolClass> = new Set([
     ClickTool,
+    PanInDirectionTool,
     PressKeyTool,
     ScrollTool,
     ScrollInDirectionTool,
@@ -127,6 +129,28 @@ export class MaestroDriver extends BaseDriver<never> {
     id: number,
     direction: ScrollInDirectionTool.Direction,
   ): Promise<void> {
+    await this.#swipe(id, direction);
+  }
+
+  // A touch screen pans a map with the swipe that scrolls a list.
+  @span("driver.pan_in_direction", BaseDriver.spanAttrs)
+  @stateful
+  async panInDirection(
+    id: number,
+    direction: PanInDirectionTool.Direction,
+  ): Promise<void> {
+    await this.#swipe(id, direction);
+  }
+
+  zoom(): Promise<void> {
+    throw new Error("Zooming is not supported on Maestro");
+  }
+
+  /** Swipes within the element to move the view in the direction. */
+  async #swipe(
+    id: number,
+    direction: ScrollInDirectionTool.Direction,
+  ): Promise<void> {
     const tree =
       (await this.getAccessibilityTree()) as MaestroAccessibilityTree;
     const frame = await tree.scrollFrame(id);
@@ -136,7 +160,7 @@ export class MaestroDriver extends BaseDriver<never> {
           start: "${Math.round(start.x)},${Math.round(start.y)}"
           end: "${Math.round(end.x)},${Math.round(end.y)}"
     `;
-    logger.info("Scrolling {direction} within {frame}: {start} to {end}", {
+    logger.info("Swiping {direction} within {frame}: {start} to {end}", {
       direction,
       frame,
       start,

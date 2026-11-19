@@ -261,6 +261,57 @@ public final class PlaywrightDriver extends BaseDriver {
   }
 
   @Override
+  public void panInDirection(int id, ScrollDirection direction) {
+    MapGestures.Drag drag = visibleFrame(id).pan(direction);
+    // Drag like a user: maps ignore a press and release without moves between,
+    // and fling when released while the pointer is still moving.
+    page.mouse().move(drag.start().x(), drag.start().y());
+    page.mouse().down();
+    try {
+      page.mouse()
+          .move(
+              drag.end().x(),
+              drag.end().y(),
+              new Mouse.MoveOptions().setSteps(MapGestures.PAN_STEPS));
+      page.waitForTimeout(MapGestures.PAN_HOLD_DELAY_MS);
+    } finally {
+      page.mouse().up();
+    }
+    page.waitForTimeout(MapGestures.PAN_SETTLE_DELAY_MS);
+  }
+
+  @Override
+  public void zoom(int id, ZoomDirection direction) {
+    MapGestures.Frame frame = visibleFrame(id);
+    // Wheel with Control held is what a trackpad pinch sends. Maps zoom on it
+    // even when they leave the plain wheel to the page.
+    page.mouse().move(frame.x() + frame.width() / 2, frame.y() + frame.height() / 2);
+    page.keyboard().down("Control");
+    try {
+      for (int step = 0; step < MapGestures.ZOOM_WHEEL_STEPS; step++) {
+        page.mouse().wheel(0, MapGestures.zoomWheelDelta(direction));
+      }
+    } finally {
+      page.keyboard().up("Control");
+    }
+    page.waitForTimeout(MapGestures.ZOOM_SETTLE_DELAY_MS);
+  }
+
+  /** The part of the element that is on screen, in page viewport coordinates. */
+  private MapGestures.Frame visibleFrame(int id) {
+    Locator element = findElement(id);
+    scrollElementIfNeeded(element);
+    var box = element.boundingBox();
+    if (box == null) {
+      throw new IllegalStateException("Element " + id + " is not visible");
+    }
+    double viewportWidth = ((Number) page.evaluate("innerWidth")).doubleValue();
+    double viewportHeight = ((Number) page.evaluate("innerHeight")).doubleValue();
+    return new MapGestures.Frame(box.x, box.y, box.width, box.height)
+        .clipTo(viewportWidth, viewportHeight);
+  }
+
+  @Override
   public String title() {
     return page.title();
   }

@@ -7,7 +7,12 @@ import {
   vi,
   type MockInstance,
 } from "vitest";
-import { ScrollInDirectionTool, ScrollTool } from "@alumnium/core";
+import {
+  PanInDirectionTool,
+  ScrollInDirectionTool,
+  ScrollTool,
+  ZoomTool,
+} from "@alumnium/core";
 import { MaestroDriver } from "./MaestroDriver.ts";
 import { MaestroSession } from "./MaestroSession.ts";
 
@@ -63,6 +68,19 @@ describe(MaestroDriver, () => {
       expect(await driver.getAccessibilityTree()).not.toBe(previous);
     },
   );
+
+  it("pans a map with a swipe and does not offer zoom", async () => {
+    expect(driver.supportedTools.has(PanInDirectionTool)).toBe(true);
+    expect(driver.supportedTools.has(ZoomTool)).toBe(false);
+
+    const previous = await driver.getAccessibilityTree();
+    await driver.panInDirection(2, "left");
+    expect(run).toHaveBeenCalledWith(
+      '- swipe:\n    start: "100,400"\n    end: "300,400"',
+    );
+    expect(await driver.getAccessibilityTree()).not.toBe(previous);
+    expect(() => driver.zoom()).toThrow("not supported");
+  });
 
   it("keeps the Profile swipe on screen and above its bottom controls", async () => {
     inspect.mockResolvedValueOnce({

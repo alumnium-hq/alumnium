@@ -166,6 +166,12 @@ describe(BaseDriver, () => {
       scrollTo(): Promise<void> {
         throw new Error("Not implemented");
       }
+      panInDirection(): Promise<void> {
+        throw new Error("Not implemented");
+      }
+      zoom(): Promise<void> {
+        throw new Error("Not implemented");
+      }
       executeScript(): Promise<void> {
         throw new Error("Not implemented");
       }

@@ -6,6 +6,7 @@ import {
   DragSliderTool,
   type Keys,
   NavigateBackTool,
+  PanInDirectionTool,
   PressKeyTool,
   ScrollTool,
   ScrollInDirectionTool,
@@ -30,6 +31,7 @@ export class XcodeDriver extends BaseDriver<never> {
     DragAndDropTool,
     DragSliderTool,
     NavigateBackTool,
+    PanInDirectionTool,
     PressKeyTool,
     ScrollTool,
     ScrollInDirectionTool,
@@ -182,11 +184,31 @@ export class XcodeDriver extends BaseDriver<never> {
     id: number,
     direction: ScrollInDirectionTool.Direction,
   ): Promise<void> {
+    await this.#swipe(id, direction);
+  }
+
+  // A touch screen pans a map with the swipe that scrolls a list.
+  @span("driver.pan_in_direction", BaseDriver.spanAttrs)
+  @stateful
+  async panInDirection(
+    id: number,
+    direction: PanInDirectionTool.Direction,
+  ): Promise<void> {
+    await this.#swipe(id, direction);
+  }
+
+  zoom(): Promise<void> {
+    throw new Error("Zooming is not supported on Xcode");
+  }
+
+  /** Swipes within the element to move the view in the direction. */
+  async #swipe(
+    id: number,
+    direction: ScrollInDirectionTool.Direction,
+  ): Promise<void> {
     const node = await this.#resolve(id);
     if (!node.frame)
-      throw new Error(
-        "Xcode cannot determine a frame for the scroll container",
-      );
+      throw new Error("Xcode cannot determine a frame for the swipe");
 
     let frame = node.frame;
     for (let parent = node.parent; parent; parent = parent.parent) {

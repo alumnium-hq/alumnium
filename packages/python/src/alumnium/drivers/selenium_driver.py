@@ -22,6 +22,16 @@ from ..tools.type_tool import TypeTool
 from ..tools.upload_tool import UploadTool
 from .base_driver import BaseDriver
 from .keys import Key
+from .map_gestures import (
+    PAN_HOLD_DELAY,
+    PAN_SETTLE_DELAY,
+    PAN_STEPS,
+    ZOOM_SETTLE_DELAY,
+    ZOOM_WHEEL_STEPS,
+    ZoomDirection,
+    pan_points,
+    zoom_wheel_delta,
+)
 from .scroll_area import EXECUTE_SCRIPT, SETTLE_DELAY, ScrollDirection, wheel_delta
 from .slider import Slider, SliderActions
 from .waiter import WAITER_SCRIPT, WAITER_SNAPSHOT_SCRIPT, wait_for_page_to_load
@@ -205,6 +215,48 @@ class SeleniumDriver(BaseDriver):
         origin = ScrollOrigin.from_viewport(round(area["viewportX"]), round(area["viewportY"]))
         ActionChains(self.driver).scroll_from_origin(origin, *wheel_delta(direction, area)).perform()
         sleep(SETTLE_DELAY)
+
+    def pan_in_direction(self, id: int, direction: ScrollDirection):
+        element = self.find_element(id)
+        self._scroll_element_into_center(element)
+        # Pointer offsets are relative to the element's center.
+        width, height = self._visible_size(element)
+        start, end = pan_points({"x": -width / 2, "y": -height / 2, "width": width, "height": height}, direction)
+        # Drag like a user: maps ignore a press and release without moves between,
+        # and fling when released while the pointer is still moving.
+        actions = ActionChains(self.driver, duration=20)
+        actions.move_to_element_with_offset(element, round(start[0]), round(start[1])).click_and_hold()
+        for step in range(1, PAN_STEPS + 1):
+            progress = step / PAN_STEPS
+            actions.move_to_element_with_offset(
+                element,
+                round(start[0] + (end[0] - start[0]) * progress),
+                round(start[1] + (end[1] - start[1]) * progress),
+            )
+        actions.pause(PAN_HOLD_DELAY).release().perform()
+        sleep(PAN_SETTLE_DELAY)
+
+    def zoom(self, id: int, direction: ZoomDirection):
+        element = self.find_element(id)
+        self._scroll_element_into_center(element)
+        # Wheel with Control held is what a trackpad pinch sends. Maps zoom on it
+        # even when they leave the plain wheel to the page.
+        # Each wheel move is performed on its own: Chrome drops moves that are
+        # chained into one sequence. Control stays held between performs.
+        origin = ScrollOrigin.from_element(element)
+        ActionChains(self.driver).key_down(Keys.CONTROL).perform()
+        try:
+            for _ in range(ZOOM_WHEEL_STEPS):
+                ActionChains(self.driver).scroll_from_origin(origin, 0, zoom_wheel_delta(direction)).perform()
+        finally:
+            ActionChains(self.driver).key_up(Keys.CONTROL).perform()
+        sleep(ZOOM_SETTLE_DELAY)
+
+    def _visible_size(self, element: WebElement) -> tuple[float, float]:
+        """The size of the element, limited to what fits on screen."""
+        rect = element.rect
+        width, height = self.driver.execute_script("return [window.innerWidth, window.innerHeight];")
+        return min(rect["width"], width), min(rect["height"], height)
 
     @property
     def title(self) -> str:

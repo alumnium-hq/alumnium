@@ -7,12 +7,14 @@ import {
   HoverTool,
   NavigateBackTool,
   NavigateToUrlTool,
+  PanInDirectionTool,
   PressKeyTool,
   PrintToPdfTool,
   ScrollInDirectionTool,
   ScrollTool,
   TypeTool,
   UploadTool,
+  ZoomTool,
 } from "@alumnium/core";
 import { McpArtifactsStore } from "../McpArtifactsStore.ts";
 import { McpState } from "../McpState.ts";
@@ -31,12 +33,14 @@ const MCPS_DO_TOOLS = [
   HoverTool,
   NavigateBackTool,
   NavigateToUrlTool,
+  PanInDirectionTool,
   PressKeyTool,
   PrintToPdfTool,
   ScrollInDirectionTool,
   ScrollTool,
   TypeTool,
   UploadTool,
+  ZoomTool,
 ];
 
 /**
@@ -68,6 +72,7 @@ export const doMcpTool = McpTool.define("do", {
     "Set vision=true to use a screenshot alongside the accessibility tree when controls are distinguishable by appearance. " +
     "IMPORTANT: Each call operates on the CURRENT PAGE state only. For multi-page workflows, issue separate calls (e.g., first 'navigate to URL', then 'search for X' as a separate call after page loads). " +
     "On web pages, Alumnium can interact with elements outside the viewport. On native apps, use scroll in direction to reveal controls missing from the current accessibility tree. " +
+    "To move or zoom a map, use pan in direction and zoom: scrolling a map zooms it. " +
     McpParams.DESCRIPTION,
 
   inputSchema: z.object({

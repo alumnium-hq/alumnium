@@ -11,12 +11,14 @@ import {
   NavigateBackTool,
   NavigateToUrlTool,
   NavigationPolicy,
+  PanInDirectionTool,
   PrintToPdfTool,
   ScrollInDirectionTool,
   ScrollTool,
   SwitchToNextTabTool,
   SwitchToPreviousTabTool,
   Telemetry,
+  ZoomTool,
 } from "@alumnium/core/internal";
 import { McpArtifactsStore } from "../McpArtifactsStore.ts";
 import {
@@ -423,11 +425,13 @@ export const startMcpTool = McpTool.define("start", {
               ExecuteJavascriptTool,
               NavigateBackTool,
               NavigateToUrlTool,
+              PanInDirectionTool,
               PrintToPdfTool,
               ScrollInDirectionTool,
               ScrollTool,
               SwitchToNextTabTool,
               SwitchToPreviousTabTool,
+              ZoomTool,
             ],
       planner,
       disabledTools,

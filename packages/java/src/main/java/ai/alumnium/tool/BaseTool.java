@@ -24,12 +24,14 @@ public sealed interface BaseTool
         HoverTool,
         NavigateBackTool,
         NavigateToUrlTool,
+        PanInDirectionTool,
         PrintToPdfTool,
         ScrollInDirectionTool,
         ScrollTool,
         SwitchToNextTabTool,
         SwitchToPreviousTabTool,
-        UploadTool {
+        UploadTool,
+        ZoomTool {
 
   /** Run the tool against the given driver. */
   void invoke(BaseDriver driver);

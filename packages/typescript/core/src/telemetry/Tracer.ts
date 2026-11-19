@@ -207,6 +207,14 @@ export namespace Tracer {
       Attrs: SpansDriverAttrs;
     };
 
+    "driver.pan_in_direction": {
+      Attrs: SpansDriverAttrs;
+    };
+
+    "driver.zoom": {
+      Attrs: SpansDriverAttrs;
+    };
+
     "driver.quit": {
       Attrs: SpansDriverAttrs;
     };
