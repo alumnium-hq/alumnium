@@ -130,7 +130,7 @@ class SeleniumDriver(BaseDriver):
         is_slider = Slider.set(
             SliderActions(
                 next=lambda reset: self.driver.execute_script(Slider.EXECUTE_SCRIPT, element, value, reset),
-                # Pointer offsets are relative to the center of the element's visible part. The pointer
+                # Pointer offsets are relative to the element's center. The pointer
                 # stays pressed between performs until it is released.
                 down=lambda point: (
                     ActionChains(self.driver)
@@ -219,7 +219,7 @@ class SeleniumDriver(BaseDriver):
     def pan_in_direction(self, id: int, direction: ScrollDirection):
         element = self.find_element(id)
         self._scroll_element_into_center(element)
-        # Pointer offsets are relative to the element's center.
+        # Pointer offsets are relative to the center of the element's visible part.
         width, height = self._visible_size(element)
         start, end = pan_points({"x": -width / 2, "y": -height / 2, "width": width, "height": height}, direction)
         # Drag like a user: maps ignore a press and release without moves between,

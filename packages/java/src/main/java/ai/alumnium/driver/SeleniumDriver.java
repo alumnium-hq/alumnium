@@ -109,8 +109,7 @@ public abstract non-sealed class SeleniumDriver extends BaseDriver {
                 return executor.executeScript(Slider.EXECUTE_SCRIPT, element, value, reset);
               }
 
-              // Pointer offsets are relative to the center of the element's visible part. The
-              // pointer stays
+              // Pointer offsets are relative to the element's center. The pointer stays
               // pressed between performs until it is released.
               @Override
               public void down(Slider.Point point) {
@@ -216,7 +215,7 @@ public abstract non-sealed class SeleniumDriver extends BaseDriver {
   public void panInDirection(int id, ScrollDirection direction) {
     WebElement element = findElement(id);
     scrollElementIntoCenter(element);
-    // Pointer offsets are relative to the element's center.
+    // Pointer offsets are relative to the center of the element's visible part.
     MapGestures.Frame size = visibleSize(element);
     MapGestures.Drag drag =
         new MapGestures.Frame(-size.width() / 2, -size.height() / 2, size.width(), size.height())
