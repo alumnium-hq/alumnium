@@ -12,7 +12,9 @@ import ai.alumnium.tool.annotation.ToolField;
         + " use ScrollInDirectionTool or ExecuteJavascriptTool on maps: the mouse"
         + " wheel zooms them, and scripts can't drag them. To zoom, use ZoomTool.")
 public record PanInDirectionTool(
-    @ToolField(description = "Identifier (ID) of the map, or of any element inside it") int id,
+    @ToolField(
+            description = "Identifier (ID) of the map itself, not of a marker or control inside it")
+        int id,
     @ToolField(
             description =
                 "The direction named in the request, as it is: right for pan right,"

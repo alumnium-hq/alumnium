@@ -11,7 +11,8 @@ export class ZoomTool extends BaseTool {
     field({
       name: "id",
       type: "integer",
-      description: "Identifier (ID) of the map, or of any element inside it",
+      description:
+        "Identifier (ID) of the map itself, not of a marker or control inside it",
     }),
     field({
       name: "direction",
