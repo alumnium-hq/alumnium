@@ -219,7 +219,7 @@ describe(XcodeDriver, () => {
       "t 100 400 f 300 400 0.3",
       "com.ayodeji.TodoList",
     );
-    expect(() => driver.zoom()).toThrow("not supported");
+    await expect(driver.zoom()).rejects.toThrow("not supported");
   });
 
   it("keeps the gesture inside the visible part of a container", async () => {

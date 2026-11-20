@@ -25,11 +25,16 @@ final class MapGestures {
     Frame clipTo(double viewportWidth, double viewportHeight) {
       double left = Math.max(x, 0);
       double top = Math.max(y, 0);
-      return new Frame(
-          left,
-          top,
-          Math.min(x + width, viewportWidth) - left,
-          Math.min(y + height, viewportHeight) - top);
+      Frame visible =
+          new Frame(
+              left,
+              top,
+              Math.min(x + width, viewportWidth) - left,
+              Math.min(y + height, viewportHeight) - top);
+      if (visible.width <= 0 || visible.height <= 0) {
+        throw new IllegalStateException("Map has no visible area");
+      }
+      return visible;
     }
 
     /** A drag across the middle half of the frame that moves the view in the direction. */

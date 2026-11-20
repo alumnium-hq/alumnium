@@ -544,12 +544,10 @@ export class PlaywrightDriver extends BaseDriver<Locator> {
       ));
     const x = Math.max(box.x, 0);
     const y = Math.max(box.y, 0);
-    return {
-      x,
-      y,
-      width: Math.min(box.x + box.width, viewport.width) - x,
-      height: Math.min(box.y + box.height, viewport.height) - y,
-    };
+    const width = Math.min(box.x + box.width, viewport.width) - x;
+    const height = Math.min(box.y + box.height, viewport.height) - y;
+    if (width <= 0 || height <= 0) throw new Error("Map has no visible area");
+    return { x, y, width, height };
   }
 
   @span("driver.screenshot", BaseDriver.spanAttrs)

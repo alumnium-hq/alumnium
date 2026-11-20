@@ -22,6 +22,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.interactions.Interactive;
 import org.openqa.selenium.interactions.WheelInput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -108,7 +109,8 @@ public abstract non-sealed class SeleniumDriver extends BaseDriver {
                 return executor.executeScript(Slider.EXECUTE_SCRIPT, element, value, reset);
               }
 
-              // Pointer offsets are relative to the element's center. The pointer stays
+              // Pointer offsets are relative to the center of the element's visible part. The
+              // pointer stays
               // pressed between performs until it is released.
               @Override
               public void down(Slider.Point point) {
@@ -233,7 +235,15 @@ public abstract non-sealed class SeleniumDriver extends BaseDriver {
           (int) Math.round(drag.start().x() + (drag.end().x() - drag.start().x()) * progress),
           (int) Math.round(drag.start().y() + (drag.end().y() - drag.start().y()) * progress));
     }
-    actions.pause(Duration.ofMillis(MapGestures.PAN_HOLD_DELAY_MS)).release().perform();
+    try {
+      actions.pause(Duration.ofMillis(MapGestures.PAN_HOLD_DELAY_MS)).release().perform();
+    } catch (RuntimeException e) {
+      // A failed move would leave the button held for the rest of the session.
+      if (driver instanceof Interactive interactive) {
+        interactive.resetInputState();
+      }
+      throw e;
+    }
     sleep(MapGestures.PAN_SETTLE_DELAY_MS);
   }
 
@@ -259,15 +269,18 @@ public abstract non-sealed class SeleniumDriver extends BaseDriver {
     sleep(MapGestures.ZOOM_SETTLE_DELAY_MS);
   }
 
-  /** The size of the element, limited to what fits on screen. */
+  /** The size of the part of the element that is on screen. */
   private MapGestures.Frame visibleSize(WebElement element) {
-    var rect = element.getRect();
-    List<?> viewport =
+    List<?> size =
         (List<?>)
             ((JavascriptExecutor) driver)
-                .executeScript("return [window.innerWidth, window.innerHeight];");
-    return new MapGestures.Frame(0, 0, rect.getWidth(), rect.getHeight())
-        .clipTo(((Number) viewport.get(0)).doubleValue(), ((Number) viewport.get(1)).doubleValue());
+                .executeScript(
+                    "const r = arguments[0].getBoundingClientRect();"
+                        + "return [Math.min(r.right, innerWidth) - Math.max(r.left, 0),"
+                        + " Math.min(r.bottom, innerHeight) - Math.max(r.top, 0)];",
+                    element);
+    return new MapGestures.Frame(
+        0, 0, ((Number) size.get(0)).doubleValue(), ((Number) size.get(1)).doubleValue());
   }
 
   @Override

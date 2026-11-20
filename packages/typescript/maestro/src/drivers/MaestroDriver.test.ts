@@ -79,7 +79,7 @@ describe(MaestroDriver, () => {
       '- swipe:\n    start: "100,400"\n    end: "300,400"',
     );
     expect(await driver.getAccessibilityTree()).not.toBe(previous);
-    expect(() => driver.zoom()).toThrow("not supported");
+    await expect(driver.zoom()).rejects.toThrow("not supported");
   });
 
   it("keeps the Profile swipe on screen and above its bottom controls", async () => {

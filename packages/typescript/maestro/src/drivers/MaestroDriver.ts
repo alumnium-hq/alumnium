@@ -139,10 +139,10 @@ export class MaestroDriver extends BaseDriver<never> {
     id: number,
     direction: PanInDirectionTool.Direction,
   ): Promise<void> {
-    await this.#swipe(id, direction);
+    await this.#swipe(id, direction, "Map");
   }
 
-  zoom(): Promise<void> {
+  async zoom(): Promise<void> {
     throw new Error("Zooming is not supported on Maestro");
   }
 
@@ -150,11 +150,12 @@ export class MaestroDriver extends BaseDriver<never> {
   async #swipe(
     id: number,
     direction: ScrollInDirectionTool.Direction,
+    subject?: string,
   ): Promise<void> {
     const tree =
       (await this.getAccessibilityTree()) as MaestroAccessibilityTree;
     const frame = await tree.scrollFrame(id);
-    const { start, end } = scrollPoints(frame, direction);
+    const { start, end } = scrollPoints(frame, direction, subject);
     const command = lit`
       - swipe:
           start: "${Math.round(start.x)},${Math.round(start.y)}"

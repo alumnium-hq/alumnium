@@ -425,13 +425,15 @@ export const startMcpTool = McpTool.define("start", {
               ExecuteJavascriptTool,
               NavigateBackTool,
               NavigateToUrlTool,
-              PanInDirectionTool,
               PrintToPdfTool,
               ScrollInDirectionTool,
               ScrollTool,
               SwitchToNextTabTool,
               SwitchToPreviousTabTool,
-              ZoomTool,
+              // Only the browser drivers can pan and zoom a map by gesture.
+              ...(platform === "ios" || platform === "android"
+                ? []
+                : [PanInDirectionTool, ZoomTool]),
             ],
       planner,
       disabledTools,

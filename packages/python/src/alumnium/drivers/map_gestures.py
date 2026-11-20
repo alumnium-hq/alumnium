@@ -46,12 +46,11 @@ def clip_to_viewport(box: dict, viewport: dict) -> dict:
     """The part of a box in viewport coordinates that is on screen."""
     x = max(box["x"], 0)
     y = max(box["y"], 0)
-    return {
-        "x": x,
-        "y": y,
-        "width": min(box["x"] + box["width"], viewport["width"]) - x,
-        "height": min(box["y"] + box["height"], viewport["height"]) - y,
-    }
+    width = min(box["x"] + box["width"], viewport["width"]) - x
+    height = min(box["y"] + box["height"], viewport["height"]) - y
+    if width <= 0 or height <= 0:
+        raise RuntimeError("Map has no visible area")
+    return {"x": x, "y": y, "width": width, "height": height}
 
 
 def zoom_wheel_delta(direction: ZoomDirection) -> int:

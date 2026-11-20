@@ -194,10 +194,10 @@ export class XcodeDriver extends BaseDriver<never> {
     id: number,
     direction: PanInDirectionTool.Direction,
   ): Promise<void> {
-    await this.#swipe(id, direction);
+    await this.#swipe(id, direction, "Map");
   }
 
-  zoom(): Promise<void> {
+  async zoom(): Promise<void> {
     throw new Error("Zooming is not supported on Xcode");
   }
 
@@ -205,6 +205,7 @@ export class XcodeDriver extends BaseDriver<never> {
   async #swipe(
     id: number,
     direction: ScrollInDirectionTool.Direction,
+    subject?: string,
   ): Promise<void> {
     const node = await this.#resolve(id);
     if (!node.frame)
@@ -228,7 +229,7 @@ export class XcodeDriver extends BaseDriver<never> {
           ) - y,
       };
     }
-    const { start, end } = scrollPoints(frame, direction);
+    const { start, end } = scrollPoints(frame, direction, subject);
     await this.#perform(
       `t ${start.x} ${start.y} f ${end.x} ${end.y} 0.3`,
       node.activationBundleId,

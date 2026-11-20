@@ -247,7 +247,7 @@ export abstract class SeleniumDriver extends BaseDriver<WebElement> {
   ): Promise<void> {
     const element = await this.findElement(id);
     await this.#scrollElementIntoCenter(element);
-    // Pointer offsets are relative to the element's center.
+    // Pointer offsets are relative to the center of the element's visible part.
     const { width, height } = await this.#visibleSize(element);
     const { start, end } = scrollPoints(
       { x: -width / 2, y: -height / 2, width, height },
@@ -268,7 +268,13 @@ export abstract class SeleniumDriver extends BaseDriver<WebElement> {
         duration: 20,
       });
     }
-    await actions.pause(PanInDirectionTool.HOLD_DELAY).release().perform();
+    try {
+      await actions.pause(PanInDirectionTool.HOLD_DELAY).release().perform();
+    } catch (error) {
+      // A failed move would leave the button held for the rest of the session.
+      await this.driver.actions({ async: true }).clear();
+      throw error;
+    }
     await this.driver.sleep(PanInDirectionTool.SETTLE_DELAY);
   }
 
@@ -302,18 +308,16 @@ export abstract class SeleniumDriver extends BaseDriver<WebElement> {
     await this.driver.sleep(ZoomTool.SETTLE_DELAY);
   }
 
-  /** The size of the element, limited to what fits on screen. */
+  /** The size of the part of the element that is on screen. */
   async #visibleSize(
     element: WebElement,
   ): Promise<{ width: number; height: number }> {
-    const rect = await element.getRect();
     const [width, height] = await this.driver.executeScript<[number, number]>(
-      "return [window.innerWidth, window.innerHeight];",
+      "const r = arguments[0].getBoundingClientRect(); return [Math.min(r.right, innerWidth) - Math.max(r.left, 0), Math.min(r.bottom, innerHeight) - Math.max(r.top, 0)];",
+      element,
     );
-    return {
-      width: Math.min(rect.width, width),
-      height: Math.min(rect.height, height),
-    };
+    if (width <= 0 || height <= 0) throw new Error("Map has no visible area");
+    return { width, height };
   }
 
   @span("driver.title", BaseDriver.spanAttrs)
