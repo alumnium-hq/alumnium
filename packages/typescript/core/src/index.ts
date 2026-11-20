@@ -24,6 +24,7 @@ export {
   Model,
   NavigateBackTool,
   NavigateToUrlTool,
+  PanInDirectionTool,
   PressKeyTool,
   PrintToPdfTool,
   ScrollInDirectionTool,
@@ -38,4 +39,5 @@ export {
   UploadTool,
   WaitForElementTool,
   WaitTool,
+  ZoomTool,
 } from "./internal.ts";

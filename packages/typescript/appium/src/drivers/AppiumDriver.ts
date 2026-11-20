@@ -149,6 +149,14 @@ export class AppiumDriver extends BaseDriver<WebdriverIO.Element> {
     throw new Error("Scrolling in direction is not supported for this driver");
   }
 
+  async panInDirection(): Promise<void> {
+    throw new Error("Panning in direction is not supported for this driver");
+  }
+
+  async zoom(): Promise<void> {
+    throw new Error("Zooming is not supported for this driver");
+  }
+
   @span("driver.quit", BaseDriver.spanAttrs)
   async quit(): Promise<void> {
     // WebdriverIO handles session termination automatically.

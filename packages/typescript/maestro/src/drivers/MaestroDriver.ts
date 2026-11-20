@@ -121,6 +121,14 @@ export class MaestroDriver extends BaseDriver<never> {
     }
   }
 
+  async panInDirection(): Promise<void> {
+    throw new Error("Panning in direction is not supported for this driver");
+  }
+
+  async zoom(): Promise<void> {
+    throw new Error("Zooming is not supported for this driver");
+  }
+
   @span("driver.scroll_in_direction", BaseDriver.spanAttrs)
   @stateful
   async scrollInDirection(

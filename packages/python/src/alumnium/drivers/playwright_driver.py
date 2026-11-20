@@ -18,6 +18,17 @@ from ..tools.type_tool import TypeTool
 from ..tools.upload_tool import UploadTool
 from .base_driver import BaseDriver
 from .keys import Key
+from .map_gestures import (
+    PAN_HOLD_DELAY,
+    PAN_SETTLE_DELAY,
+    PAN_STEPS,
+    ZOOM_SETTLE_DELAY,
+    ZOOM_WHEEL_STEPS,
+    ZoomDirection,
+    clip_to_viewport,
+    pan_points,
+    zoom_wheel_delta,
+)
 from .scroll_area import EVALUATE_SCRIPT, SETTLE_DELAY, ScrollDirection, wheel_delta
 from .slider import Slider, SliderActions, SliderPoint
 from .waiter import WAITER_SCRIPT, WAITER_SNAPSHOT_SCRIPT, wait_for_page_to_load
@@ -179,6 +190,42 @@ class PlaywrightDriver(BaseDriver):
         self.page.mouse.move(box["x"] + area["offsetX"], box["y"] + area["offsetY"])
         self.page.mouse.wheel(*wheel_delta(direction, area))
         self.page.wait_for_timeout(SETTLE_DELAY * 1000)
+
+    def pan_in_direction(self, id: int, direction: ScrollDirection):
+        start, end = pan_points(self._visible_box(id), direction)
+        # Drag like a user: maps ignore a press and release without moves between,
+        # and fling when released while the pointer is still moving.
+        self.page.mouse.move(*start)
+        self.page.mouse.down()
+        try:
+            self.page.mouse.move(*end, steps=PAN_STEPS)
+            self.page.wait_for_timeout(PAN_HOLD_DELAY * 1000)
+        finally:
+            self.page.mouse.up()
+        self.page.wait_for_timeout(PAN_SETTLE_DELAY * 1000)
+
+    def zoom(self, id: int, direction: ZoomDirection):
+        box = self._visible_box(id)
+        # Wheel with Control held is what a trackpad pinch sends. Maps zoom on it
+        # even when they leave the plain wheel to the page.
+        self.page.mouse.move(box["x"] + box["width"] / 2, box["y"] + box["height"] / 2)
+        self.page.keyboard.down("Control")
+        try:
+            for _ in range(ZOOM_WHEEL_STEPS):
+                self.page.mouse.wheel(0, zoom_wheel_delta(direction))
+        finally:
+            self.page.keyboard.up("Control")
+        self.page.wait_for_timeout(ZOOM_SETTLE_DELAY * 1000)
+
+    def _visible_box(self, id: int) -> dict:
+        """The part of the element that is on screen, in page viewport coordinates."""
+        element = self.find_element(id)
+        self._scroll_element_if_needed(element)
+        box = element.bounding_box()
+        if not box:
+            raise RuntimeError(f"Element {id} is not visible")
+        viewport = self.page.viewport_size or self.page.evaluate("({ width: innerWidth, height: innerHeight })")
+        return clip_to_viewport(box, viewport)
 
     @property
     def title(self) -> str:

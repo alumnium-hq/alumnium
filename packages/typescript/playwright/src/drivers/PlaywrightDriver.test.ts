@@ -297,6 +297,54 @@ describe("PlaywrightDriver", () => {
     expect(map.get("widget")).toBe(widget);
   });
 
+  it("drags and pinches the visible part of a map", async () => {
+    const mouse = { move: vi.fn(), down: vi.fn(), up: vi.fn(), wheel: vi.fn() };
+    const keyboard = { down: vi.fn(), up: vi.fn() };
+    const page = {
+      on: vi.fn(),
+      context: () => ({
+        addInitScript: vi.fn(async () => undefined),
+        newCDPSession: vi.fn(async () => ({ send: vi.fn(), on: vi.fn() })),
+        on: vi.fn(),
+      }),
+      mainFrame: () => ({}),
+      frames: () => [],
+      waitForTimeout: vi.fn(async () => undefined),
+      viewportSize: () => ({ width: 1000, height: 600 }),
+      mouse,
+      keyboard,
+    };
+    // A map whose bottom 200px are below the fold.
+    const element = {
+      hover: vi.fn(async () => undefined),
+      boundingBox: vi.fn(async () => ({
+        x: 100,
+        y: 200,
+        width: 800,
+        height: 600,
+      })),
+    };
+    const driver = new PlaywrightDriver(page as unknown as Page);
+    vi.spyOn(driver, "findElement").mockResolvedValue(
+      element as unknown as Locator,
+    );
+
+    // Panning left drags the content right, across the visible center.
+    await driver.panInDirection(1, "left");
+    expect(mouse.move.mock.calls).toEqual([
+      [300, 400],
+      [700, 400, { steps: 10 }],
+    ]);
+    expect(mouse.down).toHaveBeenCalledOnce();
+    expect(mouse.up).toHaveBeenCalledOnce();
+
+    await driver.zoom(1, "in");
+    expect(mouse.move).toHaveBeenLastCalledWith(500, 400);
+    expect(keyboard.down).toHaveBeenCalledWith("Control");
+    expect(mouse.wheel.mock.calls).toEqual(Array(5).fill([0, -40]));
+    expect(keyboard.up).toHaveBeenCalledWith("Control");
+  });
+
   it("wheels over the middle of the visible scroll area", async () => {
     const mouse = { move: vi.fn(), wheel: vi.fn() };
     const page = {

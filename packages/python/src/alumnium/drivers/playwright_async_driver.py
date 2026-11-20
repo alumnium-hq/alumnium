@@ -18,6 +18,17 @@ from ..tools.type_tool import TypeTool
 from ..tools.upload_tool import UploadTool
 from .base_driver import BaseDriver
 from .keys import Key
+from .map_gestures import (
+    PAN_HOLD_DELAY,
+    PAN_SETTLE_DELAY,
+    PAN_STEPS,
+    ZOOM_SETTLE_DELAY,
+    ZOOM_WHEEL_STEPS,
+    ZoomDirection,
+    clip_to_viewport,
+    pan_points,
+    zoom_wheel_delta,
+)
 from .playwright_driver import PlaywrightDriver
 from .scroll_area import EVALUATE_SCRIPT, SETTLE_DELAY, ScrollDirection, wheel_delta
 from .slider import AsyncSliderActions, Slider, SliderPoint
@@ -226,6 +237,48 @@ class PlaywrightAsyncDriver(BaseDriver):
         await self.page.mouse.move(box["x"] + area["offsetX"], box["y"] + area["offsetY"])
         await self.page.mouse.wheel(*wheel_delta(direction, area))
         await self.page.wait_for_timeout(SETTLE_DELAY * 1000)
+
+    def pan_in_direction(self, id: int, direction: ScrollDirection):
+        self._run_async(self._pan_in_direction(id, direction))
+
+    async def _pan_in_direction(self, id: int, direction: ScrollDirection):
+        start, end = pan_points(await self._visible_box(id), direction)
+        # Drag like a user: maps ignore a press and release without moves between,
+        # and fling when released while the pointer is still moving.
+        await self.page.mouse.move(*start)
+        await self.page.mouse.down()
+        try:
+            await self.page.mouse.move(*end, steps=PAN_STEPS)
+            await self.page.wait_for_timeout(PAN_HOLD_DELAY * 1000)
+        finally:
+            await self.page.mouse.up()
+        await self.page.wait_for_timeout(PAN_SETTLE_DELAY * 1000)
+
+    def zoom(self, id: int, direction: ZoomDirection):
+        self._run_async(self._zoom(id, direction))
+
+    async def _zoom(self, id: int, direction: ZoomDirection):
+        box = await self._visible_box(id)
+        # Wheel with Control held is what a trackpad pinch sends. Maps zoom on it
+        # even when they leave the plain wheel to the page.
+        await self.page.mouse.move(box["x"] + box["width"] / 2, box["y"] + box["height"] / 2)
+        await self.page.keyboard.down("Control")
+        try:
+            for _ in range(ZOOM_WHEEL_STEPS):
+                await self.page.mouse.wheel(0, zoom_wheel_delta(direction))
+        finally:
+            await self.page.keyboard.up("Control")
+        await self.page.wait_for_timeout(ZOOM_SETTLE_DELAY * 1000)
+
+    async def _visible_box(self, id: int) -> dict:
+        """The part of the element that is on screen, in page viewport coordinates."""
+        element = await self._find_element(id)
+        await self._scroll_element_if_needed(element)
+        box = await element.bounding_box()
+        if not box:
+            raise RuntimeError(f"Element {id} is not visible")
+        viewport = self.page.viewport_size or await self.page.evaluate("({ width: innerWidth, height: innerHeight })")
+        return clip_to_viewport(box, viewport)
 
     @property
     def title(self) -> str:
