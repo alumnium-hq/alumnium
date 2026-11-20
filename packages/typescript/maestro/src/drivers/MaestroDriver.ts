@@ -7,7 +7,6 @@ import {
   ClickTool,
   type Driver,
   type Keys,
-  PanInDirectionTool,
   PressKeyTool,
   ScrollTool,
   ScrollInDirectionTool,
@@ -34,7 +33,6 @@ export class MaestroDriver extends BaseDriver<never> {
 
   public supportedTools: Set<ToolClass> = new Set([
     ClickTool,
-    PanInDirectionTool,
     PressKeyTool,
     ScrollTool,
     ScrollInDirectionTool,
@@ -123,45 +121,30 @@ export class MaestroDriver extends BaseDriver<never> {
     }
   }
 
+  async panInDirection(): Promise<void> {
+    throw new Error("Panning in direction is not supported for this driver");
+  }
+
+  async zoom(): Promise<void> {
+    throw new Error("Zooming is not supported for this driver");
+  }
+
   @span("driver.scroll_in_direction", BaseDriver.spanAttrs)
   @stateful
   async scrollInDirection(
     id: number,
     direction: ScrollInDirectionTool.Direction,
   ): Promise<void> {
-    await this.#swipe(id, direction);
-  }
-
-  // A touch screen pans a map with the swipe that scrolls a list.
-  @span("driver.pan_in_direction", BaseDriver.spanAttrs)
-  @stateful
-  async panInDirection(
-    id: number,
-    direction: PanInDirectionTool.Direction,
-  ): Promise<void> {
-    await this.#swipe(id, direction, "Map");
-  }
-
-  async zoom(): Promise<void> {
-    throw new Error("Zooming is not supported on Maestro");
-  }
-
-  /** Swipes within the element to move the view in the direction. */
-  async #swipe(
-    id: number,
-    direction: ScrollInDirectionTool.Direction,
-    subject?: string,
-  ): Promise<void> {
     const tree =
       (await this.getAccessibilityTree()) as MaestroAccessibilityTree;
     const frame = await tree.scrollFrame(id);
-    const { start, end } = scrollPoints(frame, direction, subject);
+    const { start, end } = scrollPoints(frame, direction);
     const command = lit`
       - swipe:
           start: "${Math.round(start.x)},${Math.round(start.y)}"
           end: "${Math.round(end.x)},${Math.round(end.y)}"
     `;
-    logger.info("Swiping {direction} within {frame}: {start} to {end}", {
+    logger.info("Scrolling {direction} within {frame}: {start} to {end}", {
       direction,
       frame,
       start,

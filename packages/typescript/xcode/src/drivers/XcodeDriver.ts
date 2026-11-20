@@ -6,7 +6,6 @@ import {
   DragSliderTool,
   type Keys,
   NavigateBackTool,
-  PanInDirectionTool,
   PressKeyTool,
   ScrollTool,
   ScrollInDirectionTool,
@@ -31,7 +30,6 @@ export class XcodeDriver extends BaseDriver<never> {
     DragAndDropTool,
     DragSliderTool,
     NavigateBackTool,
-    PanInDirectionTool,
     PressKeyTool,
     ScrollTool,
     ScrollInDirectionTool,
@@ -178,38 +176,25 @@ export class XcodeDriver extends BaseDriver<never> {
     throw new Error("Xcode element did not become hittable after scrolling");
   }
 
+  async panInDirection(): Promise<void> {
+    throw new Error("Panning in direction is not supported for this driver");
+  }
+
+  async zoom(): Promise<void> {
+    throw new Error("Zooming is not supported for this driver");
+  }
+
   @span("driver.scroll_in_direction", BaseDriver.spanAttrs)
   @stateful
   async scrollInDirection(
     id: number,
     direction: ScrollInDirectionTool.Direction,
   ): Promise<void> {
-    await this.#swipe(id, direction);
-  }
-
-  // A touch screen pans a map with the swipe that scrolls a list.
-  @span("driver.pan_in_direction", BaseDriver.spanAttrs)
-  @stateful
-  async panInDirection(
-    id: number,
-    direction: PanInDirectionTool.Direction,
-  ): Promise<void> {
-    await this.#swipe(id, direction, "Map");
-  }
-
-  async zoom(): Promise<void> {
-    throw new Error("Zooming is not supported on Xcode");
-  }
-
-  /** Swipes within the element to move the view in the direction. */
-  async #swipe(
-    id: number,
-    direction: ScrollInDirectionTool.Direction,
-    subject?: string,
-  ): Promise<void> {
     const node = await this.#resolve(id);
     if (!node.frame)
-      throw new Error("Xcode cannot determine a frame for the swipe");
+      throw new Error(
+        "Xcode cannot determine a frame for the scroll container",
+      );
 
     let frame = node.frame;
     for (let parent = node.parent; parent; parent = parent.parent) {
@@ -229,7 +214,7 @@ export class XcodeDriver extends BaseDriver<never> {
           ) - y,
       };
     }
-    const { start, end } = scrollPoints(frame, direction, subject);
+    const { start, end } = scrollPoints(frame, direction);
     await this.#perform(
       `t ${start.x} ${start.y} f ${end.x} ${end.y} 0.3`,
       node.activationBundleId,

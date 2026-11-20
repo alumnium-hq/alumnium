@@ -12,7 +12,6 @@ import {
   DragAndDropTool,
   DragSliderTool,
   NavigateBackTool,
-  PanInDirectionTool,
   PressKeyTool,
   ScrollTool,
   ScrollInDirectionTool,
@@ -50,7 +49,6 @@ describe(XcodeDriver, () => {
         DragAndDropTool,
         DragSliderTool,
         NavigateBackTool,
-        PanInDirectionTool,
         PressKeyTool,
         ScrollTool,
         ScrollInDirectionTool,
@@ -210,17 +208,6 @@ describe(XcodeDriver, () => {
       expect(await driver.getAccessibilityTree()).not.toBe(previous);
     },
   );
-
-  it("pans a map with a swipe and does not offer zoom", async () => {
-    source =
-      "Application bundle identifier: com.ayodeji.TodoList\nApplication, label: 'Todo'\n  Window, {{0, 0}, {400, 800}}\n    Map, {{0, 100}, {400, 600}}, hitPoint: {200, 400}";
-    await driver.panInDirection(3, "left");
-    expect(capture).toHaveBeenCalledWith(
-      "t 100 400 f 300 400 0.3",
-      "com.ayodeji.TodoList",
-    );
-    await expect(driver.zoom()).rejects.toThrow("not supported");
-  });
 
   it("keeps the gesture inside the visible part of a container", async () => {
     source =
