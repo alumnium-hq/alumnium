@@ -236,6 +236,12 @@ export abstract class SeleniumDriver extends BaseDriver<WebElement> {
     await this.driver.sleep(ScrollInDirectionTool.SETTLE_DELAY);
   }
 
+  @span("driver.element_screenshot", BaseDriver.spanAttrs)
+  override async elementScreenshot(id: number): Promise<string> {
+    const element = await this.findElement(id);
+    return element.takeScreenshot();
+  }
+
   @span("driver.title", BaseDriver.spanAttrs)
   title(): Promise<string> {
     return this.driver.getTitle();

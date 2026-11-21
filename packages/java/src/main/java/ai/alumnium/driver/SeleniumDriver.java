@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Set;
 import org.openqa.selenium.HasCapabilities;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.OutputType;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -190,6 +191,11 @@ public abstract non-sealed class SeleniumDriver extends BaseDriver {
   @Override
   public void visit(String url) {
     driver.get(url);
+  }
+
+  @Override
+  public String elementScreenshot(int id) {
+    return findElement(id).getScreenshotAs(OutputType.BASE64);
   }
 
   @Override

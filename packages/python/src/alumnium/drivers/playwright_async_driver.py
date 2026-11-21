@@ -205,6 +205,13 @@ class PlaywrightAsyncDriver(BaseDriver):
         screenshot_bytes = await self.page.screenshot(full_page=self.full_page_screenshot)
         return b64encode(screenshot_bytes).decode()
 
+    def element_screenshot(self, id: int) -> str:
+        return self._run_async(self._element_screenshot(id))
+
+    async def _element_screenshot(self, id: int) -> str:
+        element = await self._find_element(id)
+        return b64encode(await element.screenshot()).decode()
+
     def scroll_to(self, id: int):
         self._run_async(self._scroll_to(id))
 

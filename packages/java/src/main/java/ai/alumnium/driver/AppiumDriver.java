@@ -150,6 +150,11 @@ public final class AppiumDriver extends BaseDriver {
   }
 
   @Override
+  public String elementScreenshot(int id) {
+    return findElement(id).getScreenshotAs(OutputType.BASE64);
+  }
+
+  @Override
   public void scrollTo(int id) {
     scrollIntoView(findElement(id));
   }

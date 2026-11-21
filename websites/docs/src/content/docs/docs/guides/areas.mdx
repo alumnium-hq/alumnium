@@ -90,7 +90,7 @@ expect(await area.get("first names")).toEqual([
 
 </LanguageContent>
 
-You can use all regular Alumnium methods on areas, including `do`, `get`, `check`, and `find`. Once located, the area is not automatically updated when UI of the application changes. This means that you need to re-locate area again so it's fresh:
+You can use all regular Alumnium methods on areas, including `do`, `get`, `check`, and `find`. When `get` or `check` is called with `vision` on an area, only the area itself is captured in the screenshot rather than the whole page or screen. Once located, the area is not automatically updated when UI of the application changes. This means that you need to re-locate area again so it's fresh:
 
 <LanguageContent lang="java">
 

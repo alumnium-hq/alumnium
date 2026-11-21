@@ -58,6 +58,13 @@ class BaseDriver(ABC):
     def screenshot(self) -> str:
         pass
 
+    def element_screenshot(self, id: int) -> str:
+        """
+        Takes a screenshot of a single element. Drivers that cannot capture
+        individual elements fall back to the whole page/screen screenshot.
+        """
+        return self.screenshot
+
     @abstractmethod
     def scroll_to(self, id: int):
         pass

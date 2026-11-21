@@ -496,6 +496,13 @@ export class PlaywrightDriver extends BaseDriver<Locator> {
     });
   }
 
+  @span("driver.element_screenshot", BaseDriver.spanAttrs)
+  override async elementScreenshot(id: number): Promise<string> {
+    const element = await this.findElement(id);
+    const buffer = await element.screenshot();
+    return buffer.toString("base64");
+  }
+
   @span("driver.title", BaseDriver.spanAttrs)
   async title(): Promise<string> {
     return retry(RETRY_OPTIONS, () => this.page.title());

@@ -239,6 +239,12 @@ public final class PlaywrightDriver extends BaseDriver {
   }
 
   @Override
+  public String elementScreenshot(int id) {
+    byte[] data = findElement(id).screenshot();
+    return Base64.getEncoder().encodeToString(data);
+  }
+
+  @Override
   public void scrollTo(int id) {
     scrollElementIntoCenter(findElement(id));
   }

@@ -116,6 +116,10 @@ class AppiumDriver(BaseDriver):
     def screenshot(self) -> str:
         return self.driver.get_screenshot_as_base64()
 
+    def element_screenshot(self, id: int) -> str:
+        self._ensure_native_app_context()
+        return self.find_element(id).screenshot_as_base64
+
     def scroll_to(self, id: int):
         element = self.find_element(id)
         self._scroll_into_view(element)

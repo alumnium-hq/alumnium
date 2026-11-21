@@ -194,6 +194,9 @@ class SeleniumDriver(BaseDriver):
     def visit(self, url: str):
         self.driver.get(url)
 
+    def element_screenshot(self, id: int) -> str:
+        return self.find_element(id).screenshot_as_base64
+
     def scroll_to(self, id: int):
         element = self.find_element(id)
         self._scroll_element_into_center(element)

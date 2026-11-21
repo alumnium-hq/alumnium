@@ -64,6 +64,14 @@ export abstract class BaseDriver<TElement = unknown> {
   abstract quit(): Promise<void>;
   abstract back(): Promise<void>;
   abstract screenshot(): Promise<string>;
+
+  /**
+   * Takes a screenshot of a single element. Drivers that cannot capture
+   * individual elements fall back to the whole page/screen screenshot.
+   */
+  elementScreenshot(_id: number): Promise<string> {
+    return this.screenshot();
+  }
   abstract title(): string | Promise<string>;
   abstract type(id: number, text: string): Promise<void>;
   abstract url(): string | Promise<string>;

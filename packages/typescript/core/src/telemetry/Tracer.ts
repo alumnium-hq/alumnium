@@ -215,6 +215,10 @@ export namespace Tracer {
       Attrs: SpansDriverAttrs;
     };
 
+    "driver.element_screenshot": {
+      Attrs: SpansDriverAttrs;
+    };
+
     "driver.title": {
       Attrs: SpansDriverAttrs;
     };
