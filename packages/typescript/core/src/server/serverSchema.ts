@@ -139,6 +139,7 @@ export const AddHintBody = CacheableRequestBody.extend({
 export const ForgetLessonBody = z.object({
   kind: z.enum(["do", "get", "check", "find", "area"]),
   instruction: z.string(),
+  app: AppId.optional(),
   layer: KnowledgeLayer.Layer.optional(),
 });
 
@@ -147,6 +148,7 @@ export const ForgetLessonResponse = z.object({
 });
 
 export const ClearLayerBody = z.object({
+  app: AppId.optional(),
   layer: KnowledgeLayer.Layer.optional(),
 });
 

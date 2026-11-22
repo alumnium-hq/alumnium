@@ -133,14 +133,15 @@ export class NativeClient extends Client {
   @span("client.forget_lesson", spanAttrs)
   async forgetLesson(props: Client.ForgetLessonProps): Promise<boolean> {
     const session = await this.session;
-    const { kind, instruction, layer } = props;
-    return session.forgetLesson(kind, instruction, layer);
+    const { kind, instruction, app, layer } = props;
+    return session.forgetLesson(kind, instruction, { app, layer });
   }
 
   @span("client.clear_layer", spanAttrs)
   async clearLayer(props: Client.ClearLayerProps): Promise<void> {
     const session = await this.session;
-    await session.clearLayer(props.layer);
+    const { app, layer } = props;
+    await session.clearLayer({ app, layer });
   }
 
   @span("client.clear_examples", spanAttrs)

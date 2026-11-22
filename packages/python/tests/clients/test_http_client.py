@@ -1,5 +1,7 @@
 from unittest.mock import MagicMock, patch
 
+import pytest
+
 from alumnium.alumni import Alumni
 from alumnium.area import Area
 from alumnium.clients.http_client import HttpClient
@@ -68,3 +70,24 @@ def test_init_omits_knowledge_by_default():
 
 def test_init_sends_knowledge_scope():
     assert create_session_body(knowledge="shop")["knowledge"] == "shop"
+
+
+def test_add_example_raises_with_server_message():
+    with patch("alumnium.clients.http_client.post") as post:
+        post.return_value.ok = False
+        post.return_value.json.return_value = {"message": "Error: Can't learn do lesson before the app is known"}
+        with pytest.raises(RuntimeError, match="before the app is known"):
+            http_client().add_example("log in", ["click 'Login'"], app="about:blank")
+
+
+def test_forget_lesson_sends_app():
+    with patch("alumnium.clients.http_client.post") as post:
+        post.return_value.json.return_value = {"forgotten": True}
+        assert http_client().forget_lesson("do", "log in", app="example.com")
+
+    assert post.call_args.kwargs["json"] == {
+        "kind": "do",
+        "instruction": "log in",
+        "layer": "product",
+        "app": "example.com",
+    }

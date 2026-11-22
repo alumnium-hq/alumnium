@@ -1,3 +1,4 @@
+import { AppId } from "../AppId.ts";
 import type { Client } from "../clients/Client.ts";
 import type { BaseDriver } from "../drivers/BaseDriver.ts";
 import { Telemetry } from "../telemetry/Telemetry.ts";
@@ -25,11 +26,27 @@ export namespace Knowledge {
    * Teaches Alumnium how to handle instructions. Lessons go to the product
    * layer of the knowledge scope; `on()` and `shared()` pick another layer.
    */
-  export interface Scoped extends Layered {
+  export interface Layers extends Layered {
     /** Teaches lessons for one platform of the product. */
     on(platform: Platform): Layered;
     /** Teaches lessons shared by all products. */
     shared(): Layered;
+  }
+
+  /**
+   * Teaches Alumnium how to handle instructions in the app the driver is on;
+   * `app()` names another app.
+   */
+  export interface Scoped extends Layers {
+    /**
+     * Teaches lessons for the app rather than the one the driver is on, e.g.
+     * before navigating to it. The knowledge manifest maps it to its product
+     * like any other app.
+     *
+     * @param app App ID, host or URL as drivers report it, e.g.
+     *   `"example.com"` or `"com.example.app"`.
+     */
+    app(app: string): Layers;
   }
 
   /**
@@ -50,15 +67,19 @@ export class Knowledge {
   #client: Client;
   #driver: BaseDriver;
   #layer: Client.LessonLayer;
+  #app: AppId | undefined;
 
   static scoped(client: Client, driver: BaseDriver): Knowledge.Scoped {
-    const layered = (layer: Client.LessonLayer) =>
-      new Knowledge(client, driver, layer).#layered();
-    return {
-      ...layered("product"),
-      on: (platform: Knowledge.Platform) => layered(platform),
-      shared: () => layered("shared"),
+    const layers = (app?: AppId): Knowledge.Layers => {
+      const layered = (layer: Client.LessonLayer) =>
+        new Knowledge(client, driver, layer, app).#layered();
+      return {
+        ...layered("product"),
+        on: (platform: Knowledge.Platform) => layered(platform),
+        shared: () => layered("shared"),
+      };
     };
+    return { ...layers(), app: (app: string) => layers(AppId.parse(app)) };
   }
 
   /**
@@ -90,6 +111,7 @@ export class Knowledge {
         clear: warned(knowledge.clear),
         on: warned((platform: Knowledge.Platform) => knowledge.on(platform)),
         shared: warned(() => knowledge.shared()),
+        app: warned((app: string) => knowledge.app(app)),
       },
     );
   }
@@ -98,10 +120,12 @@ export class Knowledge {
     client: Client,
     driver: BaseDriver,
     layer: Client.LessonLayer = "product",
+    app?: AppId,
   ) {
     this.#client = client;
     this.#driver = driver;
     this.#layer = layer;
+    this.#app = app;
   }
 
   /**
@@ -115,7 +139,7 @@ export class Knowledge {
     return this.#client.addExample({
       goal,
       actions,
-      app: await this.#driver.app(),
+      app: await this.#appId(),
       layer: this.#layer,
     });
   }
@@ -171,14 +195,22 @@ export class Knowledge {
    * @returns Whether a lesson was forgotten.
    */
   @span("alumni.knowledge.forget", baseSpanAttrs)
-  forget(kind: Client.LessonKind, instruction: string): Promise<boolean> {
-    return this.#client.forgetLesson({ kind, instruction, layer: this.#layer });
+  async forget(kind: Client.LessonKind, instruction: string): Promise<boolean> {
+    return this.#client.forgetLesson({
+      kind,
+      instruction,
+      app: await this.#appId(),
+      layer: this.#layer,
+    });
   }
 
   /** Forgets every lesson in this layer of the knowledge scope. */
   @span("alumni.knowledge.clear", baseSpanAttrs)
-  clear(): Promise<void> {
-    return this.#client.clearLayer({ layer: this.#layer });
+  async clear(): Promise<void> {
+    return this.#client.clearLayer({
+      app: await this.#appId(),
+      layer: this.#layer,
+    });
   }
 
   #layered(): Knowledge.Layered {
@@ -202,9 +234,14 @@ export class Knowledge {
       kind,
       instruction,
       hint,
-      app: await this.#driver.app(),
+      app: await this.#appId(),
       layer: this.#layer,
     });
+  }
+
+  /** App lessons are for: the named one or the one the driver is on. */
+  async #appId(): Promise<AppId> {
+    return this.#app ?? (await this.#driver.app());
   }
 }
 

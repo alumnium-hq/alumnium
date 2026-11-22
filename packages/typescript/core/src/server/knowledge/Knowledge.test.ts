@@ -54,22 +54,59 @@ describe(Knowledge, () => {
       );
     });
 
-    it("defers persisting lessons until the app is known", async () => {
+    it("can't persist lessons before the app is known", async () => {
       const { storeDir } = setup.cur;
       const first = session(blank);
-      await first.knowledge.learn("check", "cart is empty", "no badge");
 
-      expect(first.knowledge.unsaved()).toEqual([
-        { kind: "check", instruction: "cart is empty", layer: "product" },
-      ]);
+      await expect(
+        first.knowledge.learn("check", "cart is empty", "no badge"),
+      ).rejects.toThrow(
+        /Can't learn check lesson "cart is empty" before the app is known/,
+      );
+      expect(await first.knowledge.lessons("check")).toEqual(new Map());
       expect(await storeDir.flatTree()).toEqual([]);
+    });
 
-      first.context.update({ app });
+    it("doesn't persist lessons learned before the app is known in the next app", async () => {
+      const first = session(blank);
+      await first.knowledge.learn("do", "log in", login).catch(() => undefined);
+
+      first.context.update({ app: AppId.parse("accounts.google.com") });
       await first.knowledge.lessons("do");
 
-      expect(first.knowledge.unsaved()).toEqual([]);
-      expect(await session(app).knowledge.lessons("check")).toEqual(
-        new Map([["cart is empty", "no badge"]]),
+      expect(
+        await session(AppId.parse("accounts.google.com")).knowledge.lessons(
+          "do",
+        ),
+      ).toEqual(new Map());
+    });
+
+    it("persists lessons for the explicit app before the session is on it", async () => {
+      const { storeDir } = setup.cur;
+      await session(blank).knowledge.learn("do", "log in", login, { app });
+
+      expect(await storeDir.flatTree()).toEqual(["example-com/lessons.json"]);
+      expect(await session(app).knowledge.lessons("do")).toEqual(
+        new Map([["log in", login]]),
+      );
+    });
+
+    it("prefers the explicit app over the session app", async () => {
+      const other = AppId.parse("other.com");
+      await session(other).knowledge.learn("do", "log in", login, { app });
+
+      expect(await session(other).knowledge.lessons("do")).toEqual(new Map());
+      expect(await session(app).knowledge.lessons("do")).toEqual(
+        new Map([["log in", login]]),
+      );
+    });
+
+    it("learns lessons before the app is known without a store", async () => {
+      const current = session(blank, { store: null });
+      await current.knowledge.learn("do", "log in", login);
+
+      expect(await current.knowledge.lessons("do")).toEqual(
+        new Map([["log in", login]]),
       );
     });
 
@@ -160,7 +197,6 @@ describe(Knowledge, () => {
         layer: "shared",
       });
 
-      expect(first.knowledge.unsaved()).toEqual([]);
       expect(await storeDir.flatTree()).toEqual(["shared.json"]);
       for (const other of [blank, app, AppId.parse("other.com")]) {
         expect(await session(other).knowledge.lessons("check")).toEqual(
@@ -169,14 +205,12 @@ describe(Knowledge, () => {
       }
     });
 
-    it("defers platform lessons with their layer", async () => {
+    it("persists platform lessons for the explicit app in their layer", async () => {
       const first = session(blank, { platform: "android" });
       await first.knowledge.learn("do", "log in", ["tap"], {
         layer: "android",
+        app,
       });
-
-      first.context.update({ app });
-      await first.knowledge.lessons("do");
 
       expect(
         await session(app, { platform: "android" }).knowledge.lessons("do"),
@@ -195,9 +229,9 @@ describe(Knowledge, () => {
 
       const current = session(app, { platform: "android" });
       await current.knowledge.lessons("do");
-      expect(await current.knowledge.forget("do", "log in", "android")).toBe(
-        true,
-      );
+      expect(
+        await current.knowledge.forget("do", "log in", { layer: "android" }),
+      ).toBe(true);
 
       expect(await current.knowledge.lessons("do")).toEqual(
         new Map([["log in", ["product"]]]),
@@ -207,12 +241,21 @@ describe(Knowledge, () => {
       ).toEqual(new Map([["log in", ["product"]]]));
     });
 
-    it("forgets a lesson waiting for its scope", async () => {
-      const current = session(blank);
-      await current.knowledge.learn("do", "log in", login);
+    it("forgets a lesson of the explicit app", async () => {
+      await session(app).knowledge.learn("do", "log in", login);
 
-      expect(await current.knowledge.forget("do", "log in")).toBe(true);
-      expect(current.knowledge.unsaved()).toEqual([]);
+      expect(
+        await session(blank).knowledge.forget("do", "log in", { app }),
+      ).toBe(true);
+      expect(await session(app).knowledge.lessons("do")).toEqual(new Map());
+    });
+
+    it("can't forget a product lesson before the app is known", async () => {
+      await expect(
+        session(blank).knowledge.forget("do", "log in"),
+      ).rejects.toThrow(
+        /Can't forget do lesson "log in" before the app is known/,
+      );
     });
 
     it("reports when nothing was forgotten", async () => {
@@ -237,17 +280,56 @@ describe(Knowledge, () => {
       await teacher.knowledge.learn("do", "sign up", ["web"], {
         layer: "web",
       });
-      await teacher.knowledge.clearLayer("product");
+      await teacher.knowledge.clearLayer({ layer: "product" });
 
       expect(
         await session(app, { platform: "web" }).knowledge.lessons("do"),
       ).toEqual(new Map([["sign up", ["web"]]]));
     });
 
-    it("can't clear a product layer before its scope is known", async () => {
+    it("can't clear a product layer before the app is known", async () => {
       await expect(session(blank).knowledge.clearLayer()).rejects.toThrow(
-        "Can't clear the product layer before its knowledge scope is known",
+        "Can't clear the product layer before the app is known",
       );
+    });
+
+    it("clears a layer of the explicit app", async () => {
+      await session(app).knowledge.learn("do", "log in", login);
+      await session(blank).knowledge.clearLayer({ app });
+
+      expect(await session(app).knowledge.lessons("do")).toEqual(new Map());
+    });
+  });
+
+  describe("unread", () => {
+    it("reports scopes lessons were persisted in but never resolved from", async () => {
+      const current = session(blank);
+      await current.knowledge.learn("do", "log in", login, { app });
+
+      current.context.update({ app: AppId.parse("staging.example.com") });
+      await current.knowledge.lessons("do");
+
+      expect(current.knowledge.unread()).toEqual(["example-com"]);
+      expect(current.knowledge.read()).toEqual(["staging-example-com"]);
+    });
+
+    it("doesn't report scopes the session resolved from", async () => {
+      const current = session(blank);
+      await current.knowledge.learn("do", "log in", login, { app });
+
+      current.context.update({ app: AppId.parse("accounts.google.com") });
+      await current.knowledge.lessons("do");
+      current.context.update({ app });
+      await current.knowledge.lessons("do");
+
+      expect(current.knowledge.unread()).toEqual([]);
+    });
+
+    it("doesn't report scopes of sessions that never resolved lessons", async () => {
+      const current = session(blank);
+      await current.knowledge.learn("do", "log in", login, { app });
+
+      expect(current.knowledge.unread()).toEqual([]);
     });
   });
 
@@ -271,7 +353,6 @@ describe(Knowledge, () => {
       const first = session(blank, { scope: "shop" });
       await first.knowledge.learn("do", "log in", login);
 
-      expect(first.knowledge.unsaved()).toEqual([]);
       expect(await storeDir.flatTree()).toEqual(["shop/lessons.json"]);
       expect(
         await session(app, { scope: "shop" }).knowledge.lessons("do"),
@@ -310,6 +391,17 @@ describe(Knowledge, () => {
       expect(
         await session(app, { scope: "support" }).knowledge.lessons("do"),
       ).toEqual(new Map([["log in", login]]));
+    });
+
+    it("resolves the explicit app through the manifest", async () => {
+      await writeManifest();
+      await session(blank).knowledge.learn("do", "log in", login, { app: web });
+
+      for (const other of [local, android]) {
+        expect(await session(other).knowledge.lessons("do")).toEqual(
+          new Map([["log in", login]]),
+        );
+      }
     });
 
     it("fails on apps claimed by several products", async () => {

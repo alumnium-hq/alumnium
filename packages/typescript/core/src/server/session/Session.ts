@@ -188,19 +188,24 @@ export class Session {
   /**
    * Forgets a lesson in the layer, the product layer by default.
    *
+   * @param options App the lesson is for and layer to forget it in.
    * @returns Whether a lesson was forgotten.
    */
   forgetLesson(
     kind: Knowledge.Kind,
     instruction: string,
-    layer?: Knowledge.Layer,
+    options: Knowledge.LearnOptions = {},
   ): Promise<boolean> {
-    return this.knowledge.forget(kind, instruction, layer);
+    return this.knowledge.forget(kind, instruction, options);
   }
 
-  /** Forgets all lessons of the layer, the product layer by default. */
-  clearLayer(layer?: Knowledge.Layer): Promise<void> {
-    return this.knowledge.clearLayer(layer);
+  /**
+   * Forgets all lessons of the layer, the product layer by default.
+   *
+   * @param options App the layer is for and layer to clear.
+   */
+  clearLayer(options: Knowledge.LearnOptions = {}): Promise<void> {
+    return this.knowledge.clearLayer(options);
   }
 
   /** Forgets lessons learned in the session. Persisted lessons are kept. */
@@ -271,18 +276,16 @@ export class Session {
     );
   }
 
-  /** Ends the session, warning about lessons that were never persisted. */
+  /**
+   * Ends the session, warning about lessons persisted for apps the session
+   * never resolved lessons for.
+   */
   close(): void {
-    const unsaved = this.knowledge.unsaved();
-    if (!unsaved.length) return;
+    const unread = this.knowledge.unread();
+    if (!unread.length) return;
 
-    const lessons = unsaved
-      .map(
-        ({ kind, instruction, layer }) => `${kind} "${instruction}" (${layer})`,
-      )
-      .join(", ");
     logger.warn(
-      `Session ${this.sessionId} ended with ${unsaved.length} lesson(s) never persisted, because no app was known: ${lessons}. Navigate before the first action, or set a knowledge scope with the \`knowledge\` option or ALUMNIUM_KNOWLEDGE_SCOPE.`,
+      `Session ${this.sessionId} persisted lessons in knowledge scope(s) ${unread.join(", ")}, but resolved lessons only from ${this.knowledge.read().join(", ")}, so they don't apply to the apps it visited. Map those apps to one product in knowledge.json, or set a knowledge scope with the \`knowledge\` option or ALUMNIUM_KNOWLEDGE_SCOPE.`,
     );
   }
 

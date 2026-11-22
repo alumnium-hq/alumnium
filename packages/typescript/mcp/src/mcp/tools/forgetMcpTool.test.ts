@@ -39,6 +39,23 @@ describe("forgetMcpTool", () => {
       { type: "text", text: JSON.stringify({ forgotten: false }) },
     ]);
   });
+
+  it("forgets a lesson of the named app", async () => {
+    const forget = vi.fn(async () => true);
+    const app = vi.fn(() => ({ forget }));
+    mockAlumni({ forget: vi.fn(), app });
+
+    await forgetMcpTool.execute({
+      id: "test-123",
+      kind: "do",
+      instruction: "log in",
+      layer: "product",
+      app: "todo.example.com",
+    });
+
+    expect(app).toHaveBeenCalledWith("todo.example.com");
+    expect(forget).toHaveBeenCalledWith("do", "log in");
+  });
 });
 
 function mockAlumni(knowledge: Record<string, unknown>) {

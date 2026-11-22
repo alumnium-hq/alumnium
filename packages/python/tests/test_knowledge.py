@@ -66,14 +66,14 @@ def test_forgets_lessons_in_a_layer():
     subject, client = knowledge()
     client.forget_lesson.return_value = True
     assert subject.forget("do", "log in") is True
-    client.forget_lesson.assert_called_once_with("do", "log in", layer="product")
+    client.forget_lesson.assert_called_once_with("do", "log in", app="example-com", layer="product")
 
 
 def test_clears_a_layer():
     subject, client = knowledge()
     subject = subject.on("web")
     subject.clear()
-    client.clear_layer.assert_called_once_with(layer="web")
+    client.clear_layer.assert_called_once_with(app="example-com", layer="web")
 
 
 def test_forget_lesson_posts_lesson():
@@ -86,3 +86,20 @@ def test_forget_lesson_posts_lesson():
 
     assert post.call_args.args[0] == "http://localhost:8013/v1/sessions/session/lessons/forget"
     assert post.call_args.kwargs["json"] == {"kind": "find", "instruction": "login", "layer": "web"}
+
+
+def test_teaches_lessons_for_the_named_app():
+    subject, client = knowledge()
+    todo = subject.app("todo.example.com")
+
+    todo.do("log in", ["click button 'Login'"])
+    todo.on("ios").find("login", "button 'Sign in'")
+    todo.forget("do", "log in")
+    todo.clear()
+
+    client.add_example.assert_called_once_with(
+        "log in", ["click button 'Login'"], app="todo.example.com", layer="product"
+    )
+    client.add_hint.assert_called_once_with("find", "login", "button 'Sign in'", app="todo.example.com", layer="ios")
+    client.forget_lesson.assert_called_once_with("do", "log in", app="todo.example.com", layer="product")
+    client.clear_layer.assert_called_once_with(app="todo.example.com", layer="product")

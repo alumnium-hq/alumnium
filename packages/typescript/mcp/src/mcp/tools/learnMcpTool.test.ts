@@ -91,6 +91,23 @@ describe("learnMcpTool", () => {
     );
   });
 
+  it("teaches lessons for the named app", async () => {
+    const learn = mockLearn();
+
+    await learnMcpTool.execute({
+      id: "test-123",
+      kind: "do",
+      layer: "android",
+      instruction: "log in",
+      actions: ["tap 'Login'"],
+      app: "com.example.todo",
+    });
+
+    expect(learn.app).toHaveBeenCalledWith("com.example.todo");
+    expect(learn.appLayers.on).toHaveBeenCalledWith("android");
+    expect(learn.do).not.toHaveBeenCalled();
+  });
+
   it("requires actions for do", async () => {
     const learn = mockLearn();
 
@@ -148,9 +165,15 @@ function layer() {
 function mockLearn() {
   const shared = layer();
   const android = layer();
+  const appLayers = Object.assign(layer(), {
+    shared: vi.fn(() => shared),
+    on: vi.fn(() => android),
+  });
   const learn = Object.assign(layer(), {
     shared: vi.fn(() => shared),
     on: vi.fn(() => android),
+    app: vi.fn(() => appLayers),
+    appLayers,
   });
   pushMock(
     vi

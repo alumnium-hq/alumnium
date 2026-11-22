@@ -5,10 +5,14 @@ export namespace McpLearn {
 }
 
 export abstract class McpLearn {
-  /** Picks the knowledge of the layer. */
-  static layered(al: Alumni, layer: McpLearn.Layer) {
-    if (layer === "shared") return al.knowledge.shared();
-    if (layer === "product") return al.knowledge;
-    return al.knowledge.on(layer);
+  /**
+   * Picks the knowledge of the layer, for the app or the one the driver is
+   * on.
+   */
+  static layered(al: Alumni, layer: McpLearn.Layer, app?: string) {
+    const knowledge = app ? al.knowledge.app(app) : al.knowledge;
+    if (layer === "shared") return knowledge.shared();
+    if (layer === "product") return knowledge;
+    return knowledge.on(layer);
   }
 }

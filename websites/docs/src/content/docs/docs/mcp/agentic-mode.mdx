@@ -55,11 +55,11 @@ Teach Alumnium how to handle an instruction after `do`, `get` or `check` handled
 - `actions` for `do`: the [steps][14] that achieve the goal;
 - `hint` for `get` and `check`: where to [look for data][15] or what makes a [statement true][16].
 
-The lesson applies to the rest of the session. Set [`ALUMNIUM_KNOWLEDGE`][17] to `true` to persist it in the `.alumnium/knowledge` directory of the MCP server, so it also applies to later sessions and test runs. Pass `layer` to choose where: `product` (default) for every platform of the app, `web`, `ios` or `android` for one platform, or `shared` for every app. Set `knowledge` in `alumnium:options` of `start` to persist lessons in a named [knowledge scope][18].
+The lesson applies to the rest of the session. Set [`ALUMNIUM_KNOWLEDGE`][17] to `true` to persist it in the `.alumnium/knowledge` directory of the MCP server, so it also applies to later sessions and test runs. Pass `layer` to choose where: `product` (default) for every platform of the app, `web`, `ios` or `android` for one platform, or `shared` for every app. Lessons are persisted for the app the driver is on, so before navigating to it, pass `app` with its host or bundle ID (e.g. `example.com`), or set `knowledge` in `alumnium:options` of `start` to persist lessons in a named [knowledge scope][18].
 
 ### `forget`
 
-Forget a lesson taught with `learn`. Pass the `kind`, the `instruction` exactly as taught, and the `layer` it was taught in (`product` by default). Returns whether a lesson was forgotten.
+Forget a lesson taught with `learn`. Pass the `kind`, the `instruction` exactly as taught, the `layer` it was taught in (`product` by default) and the `app` it was taught for, if any. Returns whether a lesson was forgotten.
 
 ### `wait`
 

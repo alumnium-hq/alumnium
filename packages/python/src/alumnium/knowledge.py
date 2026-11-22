@@ -12,15 +12,22 @@ Layer = Literal["shared", "product", "web", "ios", "android"]
 class Knowledge:
     """
     Teaches Alumnium how to handle instructions, e.g. `al.knowledge.do(goal, actions)`.
-    Lessons go to the product layer of the knowledge scope; `on()` and `shared()`
-    pick another layer. They apply to the session, and to later sessions when
-    `ALUMNIUM_KNOWLEDGE` is enabled.
+    Lessons go to the product layer of the knowledge scope of the app the driver is
+    on; `on()` and `shared()` pick another layer and `app()` another app. They apply
+    to the session, and to later sessions when `ALUMNIUM_KNOWLEDGE` is enabled.
     """
 
-    def __init__(self, client: HttpClient, driver: BaseDriver, layer: Layer = "product"):
+    def __init__(
+        self,
+        client: HttpClient,
+        driver: BaseDriver,
+        layer: Layer = "product",
+        app: str | None = None,
+    ):
         self.client = client
         self.driver = driver
         self.layer: Layer = layer
+        self._app = app
 
     def do(self, goal: str, actions: list[str]) -> None:
         """
@@ -30,7 +37,7 @@ class Knowledge:
             goal: Goal in the same format as in `do`.
             actions: Actions to achieve the goal.
         """
-        self.client.add_example(goal, actions, app=self.driver.app, layer=self.layer)
+        self.client.add_example(goal, actions, app=self._app_id(), layer=self.layer)
 
     def get(self, data: str, hint: str) -> None:
         """
@@ -79,13 +86,23 @@ class Knowledge:
         Args:
             platform: Platform the lessons apply to: "web", "ios" or "android".
         """
-        return Knowledge(self.client, self.driver, platform)
+        return Knowledge(self.client, self.driver, platform, self._app)
 
     def shared(self) -> "Knowledge":
         """
         Teaches lessons shared by all products.
         """
-        return Knowledge(self.client, self.driver, "shared")
+        return Knowledge(self.client, self.driver, "shared", self._app)
+
+    def app(self, app: str) -> "Knowledge":
+        """
+        Teaches lessons for the app rather than the one the driver is on, e.g. before
+        navigating to it. The knowledge manifest maps it to its product like any other app.
+
+        Args:
+            app: App ID, host or URL as drivers report it, e.g. "example.com" or "com.example.app".
+        """
+        return Knowledge(self.client, self.driver, self.layer, app)
 
     def forget(self, kind: LessonKind, instruction: str) -> bool:
         """
@@ -98,13 +115,16 @@ class Knowledge:
         Returns:
             Whether a lesson was forgotten.
         """
-        return self.client.forget_lesson(kind, instruction, layer=self.layer)
+        return self.client.forget_lesson(kind, instruction, app=self._app_id(), layer=self.layer)
 
     def clear(self) -> None:
         """
         Forgets every lesson in this layer of the knowledge scope.
         """
-        self.client.clear_layer(layer=self.layer)
+        self.client.clear_layer(app=self._app_id(), layer=self.layer)
 
     def _add_hint(self, kind: HintKind, instruction: str, hint: str) -> None:
-        self.client.add_hint(kind, instruction, hint, app=self.driver.app, layer=self.layer)
+        self.client.add_hint(kind, instruction, hint, app=self._app_id(), layer=self.layer)
+
+    def _app_id(self) -> str:
+        return self._app or self.driver.app

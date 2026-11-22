@@ -290,7 +290,7 @@ export const serverApp = new Elysia({ prefix: "/v1" })
                 const forgotten = await session.forgetLesson(
                   ctx.body.kind,
                   ctx.body.instruction,
-                  ctx.body.layer,
+                  { app: ctx.body.app, layer: ctx.body.layer },
                 );
                 return { forgotten };
               },
@@ -308,7 +308,10 @@ export const serverApp = new Elysia({ prefix: "/v1" })
               "/lessons/clear",
               async (ctx) => {
                 const { session } = ctx;
-                await session.clearLayer(ctx.body.layer);
+                await session.clearLayer({
+                  app: ctx.body.app,
+                  layer: ctx.body.layer,
+                });
                 return {
                   success: true,
                   message: "Layer cleared successfully",

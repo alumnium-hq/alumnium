@@ -137,10 +137,11 @@ export class HttpClient extends Client {
     return this.spanAttrs();
   })
   async forgetLesson(props: Client.ForgetLessonProps): Promise<boolean> {
-    const { kind, instruction, layer } = props;
+    const { kind, instruction, app, layer } = props;
     const body: ForgetLessonRequest = {
       kind,
       instruction,
+      ...(app ? { app } : {}),
       ...(layer ? { layer } : {}),
     };
     const result = await this.#sessionFetch<ForgetLessonResponse>(
@@ -155,7 +156,11 @@ export class HttpClient extends Client {
     return this.spanAttrs();
   })
   async clearLayer(props: Client.ClearLayerProps): Promise<void> {
-    const body: ClearLayerRequest = props.layer ? { layer: props.layer } : {};
+    const { app, layer } = props;
+    const body: ClearLayerRequest = {
+      ...(app ? { app } : {}),
+      ...(layer ? { layer } : {}),
+    };
     await this.#sessionFetch("POST", "/lessons/clear", body);
   }
 

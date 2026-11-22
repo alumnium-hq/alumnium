@@ -361,19 +361,36 @@ public final class HttpClient implements AutoCloseable {
   }
 
   public boolean forgetLesson(String kind, String instruction, String layer) {
+    return forgetLesson(kind, instruction, null, layer);
+  }
+
+  /**
+   * @param app App the lesson is for, {@code null} for the app of the session.
+   */
+  public boolean forgetLesson(String kind, String instruction, String app, String layer) {
+    Map<String, Object> body = new LinkedHashMap<>();
+    body.put("kind", kind);
+    body.put("instruction", instruction);
+    body.put("layer", layer);
+    if (app != null) body.put("app", app);
     JsonNode data =
         postJson(
-            "/v1/sessions/" + requireSession() + "/lessons/forget",
-            Map.of("kind", kind, "instruction", instruction, "layer", layer),
-            Duration.ofSeconds(30));
+            "/v1/sessions/" + requireSession() + "/lessons/forget", body, Duration.ofSeconds(30));
     return data.path("forgotten").asBoolean(false);
   }
 
   public void clearLayer(String layer) {
-    postJson(
-        "/v1/sessions/" + requireSession() + "/lessons/clear",
-        Map.of("layer", layer),
-        Duration.ofSeconds(30));
+    clearLayer(null, layer);
+  }
+
+  /**
+   * @param app App the layer is for, {@code null} for the app of the session.
+   */
+  public void clearLayer(String app, String layer) {
+    Map<String, Object> body = new LinkedHashMap<>();
+    body.put("layer", layer);
+    if (app != null) body.put("app", app);
+    postJson("/v1/sessions/" + requireSession() + "/lessons/clear", body, Duration.ofSeconds(30));
   }
 
   public void clearExamples() {

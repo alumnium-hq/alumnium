@@ -23,13 +23,20 @@ export const forgetMcpTool = McpTool.define("forget", {
       .enum(["shared", "product", "web", "ios", "android"])
       .default("product")
       .describe("Knowledge layer the lesson was taught in"),
+
+    app: z
+      .string()
+      .optional()
+      .describe(
+        "App the lesson was taught for, if `learn` was given one; the app the driver is on by default",
+      ),
   }),
 
   async execute(input) {
-    const { id, kind, instruction, layer } = input;
+    const { id, kind, instruction, layer, app } = input;
 
     const al = McpState.getDriverAlumni(id);
-    const forgotten = await McpLearn.layered(al, layer).forget(
+    const forgotten = await McpLearn.layered(al, layer, app).forget(
       kind,
       instruction,
     );

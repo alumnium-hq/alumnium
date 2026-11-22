@@ -39,13 +39,20 @@ export const learnMcpTool = McpTool.define("learn", {
       .describe(
         "Knowledge layer: 'product' (default) for every platform of the app, 'web', 'ios' or 'android' for one platform, 'shared' for every app",
       ),
+
+    app: z
+      .string()
+      .optional()
+      .describe(
+        "App the lesson is for, as a host, URL or bundle ID (e.g., 'example.com'); the app the driver is on by default. Required before navigating to the app when knowledge persistence is enabled",
+      ),
   }),
 
   async execute(input) {
-    const { id, kind, instruction, actions, hint, layer } = input;
+    const { id, kind, instruction, actions, hint, layer, app } = input;
 
     const al = McpState.getDriverAlumni(id);
-    const learn = McpLearn.layered(al, layer);
+    const learn = McpLearn.layered(al, layer, app);
 
     if (kind === "do") {
       if (!actions?.length)

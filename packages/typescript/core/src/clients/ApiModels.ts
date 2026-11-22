@@ -125,6 +125,7 @@ export interface AddHintRequest {
 export interface ForgetLessonRequest {
   kind: "do" | "get" | "check" | "find" | "area";
   instruction: string;
+  app?: AppId;
   layer?: LessonLayer;
 }
 
@@ -133,6 +134,7 @@ export interface ForgetLessonResponse {
 }
 
 export interface ClearLayerRequest {
+  app?: AppId;
   layer?: LessonLayer;
 }
 

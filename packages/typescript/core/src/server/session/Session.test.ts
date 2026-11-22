@@ -45,11 +45,7 @@ describe(Session, () => {
 
     it("provides the planner with examples learned in previous sessions", async () => {
       const first = createSession();
-      await first.session.addExample(goal, actions, {
-        app: AppId.parse("about:blank"),
-      });
-      first.session.updateContext({ app });
-      await plan(first);
+      await first.session.addExample(goal, actions, { app });
 
       const second = createSession();
       second.session.updateContext({ app });
@@ -124,6 +120,14 @@ describe(Session, () => {
 
       const prompt = await plan(createSession(other, { knowledge: "shop" }));
       expect(prompt).toContain(learned);
+    });
+
+    it("fails to learn examples before the app is known without a scope", async () => {
+      const first = createSession(blank);
+
+      await expect(first.session.addExample(goal, actions)).rejects.toThrow(
+        /before the app is known/,
+      );
     });
 
     it("takes the knowledge scope from ALUMNIUM_KNOWLEDGE_SCOPE", async () => {

@@ -75,10 +75,12 @@ export namespace Client {
   export interface ForgetLessonProps {
     kind: LessonKind;
     instruction: string;
+    app?: AppId | undefined;
     layer?: LessonLayer | undefined;
   }
 
   export interface ClearLayerProps {
+    app?: AppId | undefined;
     layer?: LessonLayer | undefined;
   }
 

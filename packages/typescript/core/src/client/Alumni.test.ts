@@ -180,11 +180,13 @@ describe("Alumni", () => {
       expect(forgetLesson).toHaveBeenNthCalledWith(1, {
         kind: "do",
         instruction: "log in",
+        app: "example-com",
         layer: "product",
       });
       expect(forgetLesson).toHaveBeenNthCalledWith(2, {
         kind: "find",
         instruction: "login",
+        app: "example-com",
         layer: "web",
       });
     });
@@ -195,8 +197,37 @@ describe("Alumni", () => {
       await al.knowledge.clear();
       await al.knowledge.shared().clear();
 
-      expect(clearLayer).toHaveBeenNthCalledWith(1, { layer: "product" });
-      expect(clearLayer).toHaveBeenNthCalledWith(2, { layer: "shared" });
+      expect(clearLayer).toHaveBeenNthCalledWith(1, {
+        app: "example-com",
+        layer: "product",
+      });
+      expect(clearLayer).toHaveBeenNthCalledWith(2, {
+        app: "example-com",
+        layer: "shared",
+      });
+    });
+
+    it("teaches lessons for the named app", async () => {
+      const { al, addExample, addHint, forgetLesson, clearLayer } = setup();
+      const todo = al.knowledge.app("https://todo.example.com/login");
+
+      await todo.do("log in", ["click 'Login'"]);
+      await todo.on("ios").find("login", "button 'Sign in'");
+      await todo.forget("do", "log in");
+      await todo.clear();
+
+      expect(addExample).toHaveBeenCalledWith(
+        expect.objectContaining({ app: "todo-example-com", layer: "product" }),
+      );
+      expect(addHint).toHaveBeenCalledWith(
+        expect.objectContaining({ app: "todo-example-com", layer: "ios" }),
+      );
+      expect(forgetLesson).toHaveBeenCalledWith(
+        expect.objectContaining({ app: "todo-example-com" }),
+      );
+      expect(clearLayer).toHaveBeenCalledWith(
+        expect.objectContaining({ app: "todo-example-com" }),
+      );
     });
   });
 

@@ -635,7 +635,7 @@ describe("serverApp", () => {
   });
 
   describe("POST /sessions/:session_id/examples", () => {
-    it("adds examples", async () => {
+    it("rejects examples before the app is known", async () => {
       const sessionId = await createSession();
       const response = await serverApp.handle(
         createRequest("POST", `/sessions/${sessionId}/examples`, {
@@ -645,12 +645,12 @@ describe("serverApp", () => {
             "fill password field",
             "click submit",
           ],
+          app: "about:blank",
         }),
       );
-      expect(response.status).toBe(200);
-      expect(await response.json()).toEqual({
-        success: true,
-        message: "Example added successfully",
+      expect(response.status).toBe(500);
+      expect(await response.json()).toMatchObject({
+        message: expect.stringMatching(/before the app is known/),
       });
     });
 
@@ -670,6 +670,10 @@ describe("serverApp", () => {
         }),
       );
       expect(response.status).toBe(200);
+      expect(await response.json()).toEqual({
+        success: true,
+        message: "Example added successfully",
+      });
       expect(await storeDir.flatTree()).toEqual(["example-com/lessons.json"]);
     });
   });
@@ -788,6 +792,34 @@ describe("serverApp", () => {
 
       expect(response.status).toBe(200);
       expect(await response.json()).toEqual({ forgotten: true });
+      expect(await storeDir.flatTree()).toEqual([]);
+    });
+
+    it("forgets and clears lessons of the requested app", async () => {
+      const storeDir = await createMockDir({ prefix: "server-lessons-app" });
+      pushMock(
+        vi
+          .spyOn(GlobalFileStorePaths, "globalSubDir")
+          .mockReturnValue(storeDir.path),
+      );
+      const sessionId = await createSession();
+      const post = (path: string, body: unknown) =>
+        serverApp.handle(
+          createRequest("POST", `/sessions/${sessionId}${path}`, body),
+        );
+      const app = "https://example.com";
+      await post("/hints", { kind: "find", instruction: "a", hint: "x", app });
+      await post("/hints", { kind: "find", instruction: "b", hint: "y", app });
+
+      const forgotten = await post("/lessons/forget", {
+        kind: "find",
+        instruction: "a",
+        app,
+      });
+      expect(await forgotten.json()).toEqual({ forgotten: true });
+
+      const cleared = await post("/lessons/clear", { app });
+      expect(cleared.status).toBe(200);
       expect(await storeDir.flatTree()).toEqual([]);
     });
 
