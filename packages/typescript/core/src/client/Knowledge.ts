@@ -4,7 +4,7 @@ import type { BaseDriver } from "../drivers/BaseDriver.ts";
 import { Telemetry } from "../telemetry/Telemetry.ts";
 import type { Tracer } from "../telemetry/Tracer.ts";
 
-const { logger, tracer } = Telemetry.get(import.meta.url);
+const { tracer } = Telemetry.get(import.meta.url);
 const { span } = tracer.dec();
 
 export namespace Knowledge {
@@ -48,20 +48,7 @@ export namespace Knowledge {
      */
     app(app: string): Layers;
   }
-
-  /**
-   * Deprecated `Alumni.learn`: the same as `Alumni.knowledge`, and calling it
-   * directly is the same as calling `knowledge.do()`.
-   *
-   * @deprecated Use `Alumni.knowledge` instead.
-   */
-  export interface Callable extends Scoped {
-    /** @deprecated Use `Alumni.knowledge.do()` instead. */
-    (goal: string, actions: string[]): Promise<void>;
-  }
 }
-
-let warnedDeprecatedLearn = false;
 
 export class Knowledge {
   #client: Client;
@@ -80,40 +67,6 @@ export class Knowledge {
       };
     };
     return { ...layers(), app: (app: string) => layers(AppId.parse(app)) };
-  }
-
-  /**
-   * Wraps the knowledge as the deprecated `Alumni.learn`, which warns once
-   * when used.
-   */
-  static deprecatedCallable(knowledge: Knowledge.Scoped): Knowledge.Callable {
-    const warned =
-      <Args extends unknown[], Result>(fn: (...args: Args) => Result) =>
-      (...args: Args): Result => {
-        if (!warnedDeprecatedLearn) {
-          warnedDeprecatedLearn = true;
-          logger.warn(
-            "`Alumni.learn` is deprecated and will be removed in a future release, use `Alumni.knowledge` instead, e.g. `al.knowledge.do(goal, actions)`.",
-          );
-        }
-        return fn(...args);
-      };
-
-    return Object.assign(
-      warned((goal: string, actions: string[]) => knowledge.do(goal, actions)),
-      {
-        do: warned(knowledge.do),
-        get: warned(knowledge.get),
-        check: warned(knowledge.check),
-        find: warned(knowledge.find),
-        area: warned(knowledge.area),
-        forget: warned(knowledge.forget),
-        clear: warned(knowledge.clear),
-        on: warned((platform: Knowledge.Platform) => knowledge.on(platform)),
-        shared: warned(() => knowledge.shared()),
-        app: warned((app: string) => knowledge.app(app)),
-      },
-    );
   }
 
   constructor(

@@ -51,7 +51,7 @@ describe("Knowledge", () => {
       'click button "x" near the "this is Al" task',
     ]);
 
-    // The second session is separate and never calls learn().
+    // The second session is separate and never teaches Alumnium.
     const { al, $ } = await setup();
     await $.navigate(TODO_URL);
     await al.do('create a new task "Buy milk"');
@@ -95,7 +95,7 @@ describe("Knowledge", () => {
       teacher.al.knowledge.area("orders table", "the 'Archived orders' table"),
     ]);
 
-    // The second session is separate and never calls learn.
+    // The second session is separate and never teaches Alumnium.
     const { al, $ } = await setup();
     await $.navigate(ACCOUNT_PAGE);
 

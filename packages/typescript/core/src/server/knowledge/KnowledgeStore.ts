@@ -46,7 +46,7 @@ export namespace KnowledgeStore {
 }
 
 /**
- * Persists lessons learned with `Alumni.learn`, so they apply to later
+ * Persists lessons taught with `Alumni.knowledge`, so they apply to later
  * sessions. Lessons are model-agnostic and kept in one readable file per
  * layer, keyed by kind and instruction:
  *

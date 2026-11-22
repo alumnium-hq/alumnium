@@ -1,6 +1,5 @@
 from asyncio import AbstractEventLoop
 from os import getenv
-from warnings import warn
 
 from appium.webdriver.webdriver import WebDriver as Appium
 from playwright.async_api import Page as PageAsync
@@ -19,7 +18,6 @@ from .drivers.playwright_async_driver import PlaywrightAsyncDriver
 from .drivers.playwright_driver import PlaywrightDriver
 from .drivers.selenium_driver import SeleniumDriver
 from .knowledge import Knowledge
-from .learn import Learn
 from .logutils import get_logger
 from .models import Model
 from .result import DoResult, DoStep
@@ -88,21 +86,6 @@ class Alumni:
         # Teaches how to handle instructions of `do`, `get`, `check`, `find` and `area`,
         # e.g. `knowledge.do(goal, actions)`.
         self.knowledge = Knowledge(self.client, self.driver)
-
-    @property
-    def learn(self) -> Learn:
-        """
-        The same as `knowledge`, and calling it directly is the same as `knowledge.do()`.
-
-        Deprecated: use `knowledge` instead, e.g. `al.knowledge.do(goal, actions)`.
-        """
-        warn(
-            "`Alumni.learn` is deprecated and will be removed in a future release, "
-            "use `Alumni.knowledge` instead, e.g. `al.knowledge.do(goal, actions)`.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        return Learn(self.client, self.driver)
 
     def quit(self) -> None:
         self.client.quit()

@@ -20,7 +20,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +40,6 @@ import org.slf4j.LoggerFactory;
 public final class Alumni implements AutoCloseable {
 
   private static final Logger LOG = LoggerFactory.getLogger(Alumni.class);
-  private static final AtomicBoolean WARNED_DEPRECATED_LEARN = new AtomicBoolean();
 
   private final BaseDriver driver;
   private final Model model;
@@ -271,38 +269,6 @@ public final class Alumni implements AutoCloseable {
    */
   public Knowledge knowledge() {
     return knowledge;
-  }
-
-  /**
-   * Teaches the actions to perform to achieve the goal with {@link #act(String)}.
-   *
-   * @param goal The goal to be achieved. Use same format as in {@link #act(String)}.
-   * @param actions A list of actions to achieve the goal.
-   * @deprecated Use {@code knowledge().act(goal, actions)} instead.
-   */
-  @Deprecated
-  public void learn(String goal, List<String> actions) {
-    warnDeprecatedLearn();
-    knowledge.act(goal, actions);
-  }
-
-  /**
-   * The same as {@link #knowledge()}.
-   *
-   * @deprecated Use {@link #knowledge()} instead.
-   */
-  @Deprecated
-  public Learn learn() {
-    warnDeprecatedLearn();
-    return new Learn(client, driver);
-  }
-
-  private static void warnDeprecatedLearn() {
-    if (WARNED_DEPRECATED_LEARN.compareAndSet(false, true)) {
-      LOG.warn(
-          "Alumni.learn() is deprecated and will be removed in a future release, use"
-              + " Alumni.knowledge() instead, e.g. al.knowledge().act(goal, actions).");
-    }
   }
 
   /**

@@ -86,41 +86,6 @@ describe("Alumni", () => {
         });
       },
     );
-    describe("deprecated learn", () => {
-      it("teaches do when called directly", async () => {
-        const { al, addExample } = setup();
-
-        await al.learn("log in", ["click button 'Login'"]);
-
-        expect(addExample).toHaveBeenCalledWith({
-          goal: "log in",
-          actions: ["click button 'Login'"],
-          app,
-          layer: "product",
-        });
-      });
-
-      it("teaches like knowledge", async () => {
-        const { al, addExample, addHint } = setup();
-
-        await al.learn.do("log in", ["click button 'Login'"]);
-        await al.learn.on("android").find("login", "button 'Sign in'");
-
-        expect(addExample).toHaveBeenCalledWith({
-          goal: "log in",
-          actions: ["click button 'Login'"],
-          app,
-          layer: "product",
-        });
-        expect(addHint).toHaveBeenCalledWith({
-          kind: "find",
-          instruction: "login",
-          hint: "button 'Sign in'",
-          app,
-          layer: "android",
-        });
-      });
-    });
   });
 
   describe("knowledge layers", () => {

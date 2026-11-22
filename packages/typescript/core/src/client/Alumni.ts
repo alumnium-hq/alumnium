@@ -87,13 +87,6 @@ export class Alumni<TDriver extends BaseDriver = BaseDriver> {
    * enabled.
    */
   readonly knowledge: Knowledge.Scoped;
-  /**
-   * The same as `knowledge`, and calling it directly is the same as
-   * `knowledge.do()`.
-   *
-   * @deprecated Use `knowledge` instead, e.g. `al.knowledge.do(goal, actions)`.
-   */
-  readonly learn: Knowledge.Callable;
   private changeAnalysis: boolean;
 
   constructor(driver: TDriver, options: Alumni.Options = {}) {
@@ -144,7 +137,6 @@ export class Alumni<TDriver extends BaseDriver = BaseDriver> {
 
     this.cache = new Cache(this.client);
     this.knowledge = Knowledge.scoped(this.client, this.driver);
-    this.learn = Knowledge.deprecatedCallable(this.knowledge);
   }
 
   @span("alumni.model", spanAttrs)

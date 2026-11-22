@@ -14,7 +14,7 @@ export namespace KnowledgeCommand {
 }
 
 /**
- * Inspects and maintains lessons taught with `learn`.
+ * Inspects and maintains lessons taught with `Alumni.knowledge`.
  */
 export abstract class KnowledgeCommand {
   static Args = z.object({
