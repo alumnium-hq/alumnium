@@ -1,5 +1,4 @@
 import fs from "node:fs/promises";
-import { xxh64Str } from "@js-fns/xxhash/str";
 import z from "zod";
 import { Env } from "../../Env.ts";
 import { FileStore } from "../../FileStore/FileStore.ts";
@@ -56,9 +55,6 @@ export namespace KnowledgeStore {
  * <scope>/lessons.json        product layer
  * <scope>/<platform>.json     platform layer: web.json, ios.json, android.json
  * ```
- *
- * Lessons saved by earlier versions in `<scope>/<kind>/<hash>.json` files are
- * read into the product layer, behind its `lessons.json`.
  */
 export class KnowledgeStore extends FileStore {
   static MANIFEST_FILE = "knowledge.json";
@@ -92,16 +88,6 @@ export class KnowledgeStore extends FileStore {
     })
     .partial()
     .strict();
-
-  static LegacyDoLesson = z.object({
-    goal: z.string(),
-    actions: z.array(z.string()),
-  });
-
-  static LegacyHintLesson = z.object({
-    instruction: z.string(),
-    hint: z.string(),
-  });
 
   static #LOCK_TIMEOUT_MS = 10_000;
 
@@ -157,17 +143,6 @@ export class KnowledgeStore extends FileStore {
       value: unknown,
     ) => (lessons[kind] as Map<string, unknown>).set(instruction, value);
 
-    if (layer === "product" && scope) {
-      for (const kind of KnowledgeStore.KINDS) {
-        for (const [instruction, value] of await this.#legacyLessons(
-          scope,
-          kind,
-        )) {
-          set(kind, instruction, value);
-        }
-      }
-    }
-
     const file = await this.#readFile(KnowledgeStore.#layerPath(scope, layer));
     for (const kind of KnowledgeStore.KINDS) {
       for (const [instruction, value] of Object.entries(file[kind] ?? {})) {
@@ -196,8 +171,7 @@ export class KnowledgeStore extends FileStore {
   }
 
   /**
-   * Removes a lesson from a layer, including one saved in the earlier
-   * layout.
+   * Removes a lesson from a layer.
    *
    * @returns Whether a lesson was removed.
    */
@@ -216,35 +190,16 @@ export class KnowledgeStore extends FileStore {
       }
     });
 
-    if (layer === "product" && scope) {
-      const legacyPath = KnowledgeStore.#legacyPath(scope, kind, instruction);
-      if ((await this.mtime(legacyPath)) !== null) {
-        await this.remove(legacyPath);
-        removed = true;
-      }
-    }
-
     return removed;
   }
 
-  /**
-   * Removes all lessons of a layer, including the product layer's lessons
-   * saved in the earlier layout.
-   */
+  /** Removes all lessons of a layer. */
   async clearLayer(
     scope: string | null,
     layer: KnowledgeLayer.Layer,
   ): Promise<void> {
     const relPath = KnowledgeStore.#layerPath(scope, layer);
     await this.#withLock(relPath, () => this.remove(relPath));
-
-    if (layer === "product" && scope) {
-      await Promise.all(
-        KnowledgeStore.KINDS.map((kind) =>
-          this.subStore(safePathJoin(scope, kind)).clear(),
-        ),
-      );
-    }
   }
 
   /** Lists layers that have lessons, the shared layer first. */
@@ -264,54 +219,15 @@ export class KnowledgeStore extends FileStore {
 
     for (const scope of scopes) {
       const files = new Set(await this.list(scope));
-      const legacyCounts = await Promise.all(
-        KnowledgeStore.KINDS.map(
-          async (kind) => (await this.list(safePathJoin(scope, kind))).length,
-        ),
-      );
-      const hasLegacy = legacyCounts.some(Boolean);
       for (const layer of KnowledgeLayer.PRECEDENCE) {
         if (layer === "shared") continue;
-        const fileName = KnowledgeStore.#layerFileName(layer);
-        if (files.has(fileName) || (layer === "product" && hasLegacy)) {
+        if (files.has(KnowledgeStore.#layerFileName(layer))) {
           refs.push({ scope, layer });
         }
       }
     }
 
     return refs;
-  }
-
-  /**
-   * Moves lessons saved in the earlier layout into the product layer file.
-   * Lessons already in the file win.
-   *
-   * @returns The number of lessons moved.
-   */
-  async migrate(scope: string): Promise<number> {
-    const relPath = KnowledgeStore.#layerPath(scope, "product");
-    let moved = 0;
-
-    await this.#update(relPath, async (file) => {
-      for (const kind of KnowledgeStore.KINDS) {
-        const legacy = await this.#legacyLessons(scope, kind);
-        if (!legacy.length) continue;
-
-        const lessons: Record<string, unknown> = { ...file[kind] };
-        for (const [instruction, value] of legacy) {
-          if (!(instruction in lessons)) lessons[instruction] = value;
-          moved++;
-        }
-        file[kind] = lessons as never;
-      }
-    });
-
-    await Promise.all(
-      KnowledgeStore.KINDS.map((kind) =>
-        this.subStore(safePathJoin(scope, kind)).clear(),
-      ),
-    );
-    return moved;
   }
 
   /**
@@ -443,43 +359,6 @@ export class KnowledgeStore extends FileStore {
     }
   }
 
-  async #legacyLessons(
-    scope: string,
-    kind: KnowledgeStore.Kind,
-  ): Promise<Array<[string, unknown]>> {
-    const dir = safePathJoin(scope, kind);
-    const files = (await this.list(dir)).filter((file) =>
-      file.endsWith(".json"),
-    );
-
-    const entries = await Promise.all(
-      files.map(async (file): Promise<[string, unknown] | null> => {
-        const relPath = safePathJoin(dir, file);
-        try {
-          if (kind === "do") {
-            const lesson = await this.readJson(
-              relPath,
-              KnowledgeStore.LegacyDoLesson,
-            );
-            return lesson && [lesson.goal, lesson.actions];
-          }
-          const lesson = await this.readJson(
-            relPath,
-            KnowledgeStore.LegacyHintLesson,
-          );
-          return lesson && [lesson.instruction, lesson.hint];
-        } catch (error) {
-          logger.warn(`Skipping malformed lesson ${relPath}: {error}`, {
-            error,
-          });
-          return null;
-        }
-      }),
-    );
-
-    return entries.filter((entry) => entry !== null);
-  }
-
   static #layerFileName(layer: KnowledgeLayer.Layer): string {
     return layer === "product" ? KnowledgeStore.PRODUCT_FILE : `${layer}.json`;
   }
@@ -488,13 +367,5 @@ export class KnowledgeStore extends FileStore {
     if (layer === "shared") return KnowledgeStore.SHARED_FILE;
     if (!scope) throw new Error(`The ${layer} layer needs a knowledge scope`);
     return safePathJoin(scope, KnowledgeStore.#layerFileName(layer));
-  }
-
-  static #legacyPath(
-    scope: string,
-    kind: KnowledgeStore.Kind,
-    instruction: string,
-  ): string {
-    return safePathJoin(scope, kind, `${xxh64Str(instruction)}.json`);
   }
 }

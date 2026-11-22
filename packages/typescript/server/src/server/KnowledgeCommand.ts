@@ -19,11 +19,11 @@ export namespace KnowledgeCommand {
 export abstract class KnowledgeCommand {
   static Args = z.object({
     action: z
-      .enum(["list", "validate", "explain", "migrate"])
+      .enum(["list", "validate", "explain"])
       .register(CliCommand.positional, {
         name: "action",
         syntax: "<action>",
-        description: "list, validate, explain or migrate",
+        description: "list, validate or explain",
       }),
 
     instruction: z.string().optional().register(CliCommand.positional, {
@@ -35,8 +35,7 @@ export abstract class KnowledgeCommand {
     scope: z.string().optional().register(CliCommand.option, {
       name: "scope",
       syntax: "--scope <scope>",
-      description:
-        "Knowledge scope (product or app id) to list, explain or migrate",
+      description: "Knowledge scope (product or app id) to list or explain",
     }),
 
     app: z.string().optional().register(CliCommand.option, {
@@ -92,8 +91,6 @@ export abstract class KnowledgeCommand {
         return KnowledgeCommand.#validate(store, print);
       case "explain":
         return KnowledgeCommand.#explain(store, args, print);
-      case "migrate":
-        return KnowledgeCommand.#migrate(store, args, print);
     }
   }
 
@@ -178,24 +175,6 @@ export abstract class KnowledgeCommand {
       print(
         `  [${value.layer}] ${match}  ${instruction}  →  ${KnowledgeCommand.#format(value.value)}`,
       );
-    }
-    return true;
-  }
-
-  static async #migrate(
-    store: KnowledgeStore,
-    args: KnowledgeCommand.Args,
-    print: KnowledgeCommand.Print,
-  ): Promise<boolean> {
-    const scopes = args.scope
-      ? [args.scope]
-      : (await store.layers())
-          .filter(({ layer, scope }) => layer === "product" && scope !== null)
-          .map(({ scope }) => scope as string);
-
-    for (const scope of scopes) {
-      const moved = await store.migrate(scope);
-      if (moved) print(`${scope}: moved ${moved} lessons into lessons.json`);
     }
     return true;
   }

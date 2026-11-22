@@ -1,4 +1,3 @@
-import { xxh64Str } from "@js-fns/xxhash/str";
 import { describe, expect, it, vi } from "vitest";
 import {
   createMockDir,
@@ -154,61 +153,12 @@ describe(KnowledgeStore, () => {
     await store.save(null, "shared", "do", "close banner", ["click 'Accept'"]);
     await store.save("b-app", "web", "do", "log in", login);
     await store.save("a-app", "product", "do", "log in", login);
-    await store.writeJson("a-app/do/legacy.json", { goal: "x", actions: [] });
 
     expect(await store.layers()).toEqual([
       { scope: null, layer: "shared" },
       { scope: "a-app", layer: "product" },
       { scope: "b-app", layer: "web" },
     ]);
-  });
-
-  describe("earlier layout", () => {
-    async function writeLegacy() {
-      const { store } = setup.cur;
-      await store.writeJson("shop/do/a.json", {
-        goal: "log in",
-        actions: ["click 'Sign in'"],
-      });
-      await store.writeJson("shop/get/b.json", {
-        instruction: "total",
-        hint: "the Total row",
-      });
-    }
-
-    it("reads lessons into the product layer behind its file", async () => {
-      const { store } = setup.cur;
-      await writeLegacy();
-      await store.save(scope, "product", "do", "log in", login);
-
-      const lessons = await store.layer(scope, "product");
-      expect(lessons.do).toEqual(new Map([["log in", login]]));
-      expect(lessons.get).toEqual(new Map([["total", "the Total row"]]));
-    });
-
-    it("migrates lessons into the product layer file", async () => {
-      const { store, storeDir } = setup.cur;
-      await writeLegacy();
-      await store.save(scope, "product", "do", "log in", login);
-
-      expect(await store.migrate(scope)).toBe(2);
-      expect(await storeDir.flatTree()).toEqual(["shop/lessons.json"]);
-      const lessons = await store.layer(scope, "product");
-      expect(lessons.do).toEqual(new Map([["log in", login]]));
-      expect(lessons.get).toEqual(new Map([["total", "the Total row"]]));
-    });
-
-    it("forgets lessons saved in the earlier layout", async () => {
-      const { store } = setup.cur;
-      await store.save(scope, "product", "get", "placeholder", "x");
-      await store.writeJson(`shop/do/${xxh64Str("log in")}.json`, {
-        goal: "log in",
-        actions: login,
-      });
-
-      expect(await store.forget(scope, "product", "do", "log in")).toBe(true);
-      expect((await store.layer(scope, "product")).do).toEqual(new Map());
-    });
   });
 
   describe("validate", () => {

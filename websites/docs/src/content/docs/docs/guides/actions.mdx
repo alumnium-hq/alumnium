@@ -443,16 +443,15 @@ await al.clearLearnExamples(); // current session only
 
 </LanguageContent>
 
-The `alumnium knowledge` command inspects and maintains persisted examples:
+The `alumnium knowledge` command inspects persisted examples:
 
 ```sh
 alumnium knowledge list
 alumnium knowledge validate
 alumnium knowledge explain 'delete "Test" task' --app todomvc.com --platform web
-alumnium knowledge migrate
 ```
 
-`validate` exits with an error when the manifest or a layer file is invalid, so you can run it in CI. `explain` shows which examples are sent with an instruction and the layer each comes from. `migrate` moves examples saved by earlier versions into `lessons.json`.
+`validate` exits with an error when the manifest or a layer file is invalid, so you can run it in CI. `explain` shows which examples are sent with an instruction and the layer each comes from.
 
 ## Vision
 

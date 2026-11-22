@@ -97,18 +97,4 @@ describe("KnowledgeCommand", () => {
     expect(ok).toBe(false);
     expect(lines).toEqual(["explain needs --scope or --app"]);
   });
-
-  it("migrates lessons saved in the earlier layout", async () => {
-    const { store, storeDir } = setup.cur;
-    await store.writeJson("shop/get/legacy.json", {
-      instruction: "total",
-      hint: "the Total row",
-    });
-
-    const { ok, lines } = await run({ action: "migrate" });
-
-    expect(ok).toBe(true);
-    expect(lines).toEqual(["shop: moved 1 lessons into lessons.json"]);
-    expect(await storeDir.flatTree()).not.toContain("shop/get/legacy.json");
-  });
 });
