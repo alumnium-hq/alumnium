@@ -122,8 +122,11 @@ public class Knowledge {
     return client.forgetLesson(kind, instruction, appId(), layer);
   }
 
-  /** Forgets every lesson in this layer of the knowledge scope. */
-  public void clear() {
+  /**
+   * Deletes every persisted lesson in this layer of the knowledge scope, so no later session uses
+   * them, along with the ones taught in this session.
+   */
+  public void purge() {
     client.clearLayer(appId(), layer);
   }
 

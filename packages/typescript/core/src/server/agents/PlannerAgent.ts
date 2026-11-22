@@ -1,4 +1,3 @@
-import { xxh64Str } from "@js-fns/xxhash/str";
 import type { ModelMessage } from "ai";
 import z from "zod";
 import type { LanguageModel } from "../../llm/LanguageModel.ts";
@@ -84,14 +83,12 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
 `.trim();
 
   toolNames: string[];
-  // TODO: There's a bug in Bun that results in `#baseExamples` compiled to
-  // `__privateGet(this, _baseExamples)` which causes a runtime error.
+  // TODO: There's a bug in Bun that results in `#extraExamples` compiled to
+  // `__privateGet(this, _extraExamples)` which causes a runtime error.
   // Figure out a solution to use private fields without breaking Bun
   // compatibility.
-  private baseExamples = "";
+  /** Examples of using the extra tools, which aren't learned. */
   private extraExamples = "";
-  private learnedExamples = new Map<string, string[]>();
-  private learnedExamplesHash: string | undefined;
 
   constructor(model: Model, llm: LanguageModel, toolNames: string[]) {
     super(model, llm);
@@ -106,74 +103,38 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
     );
 
     if (toolNames.includes(NavigateToUrlTool.name)) {
-      this.baseExamples += `\n\n${PlannerAgent.#NAVIGATE_TO_URL_EXAMPLE}`;
+      this.extraExamples += `\n\n${PlannerAgent.#NAVIGATE_TO_URL_EXAMPLE}`;
     }
 
     if (toolNames.includes(UploadTool.name)) {
-      this.baseExamples += `\n\n${PlannerAgent.#UPLOAD_EXAMPLE}`;
+      this.extraExamples += `\n\n${PlannerAgent.#UPLOAD_EXAMPLE}`;
     }
 
     if (
       toolNames.includes(SwitchToPreviousTabTool.name) ||
       toolNames.includes(SwitchToNextTabTool.name)
     ) {
-      this.baseExamples += `\n\n${PlannerAgent.#SWITCH_TAB_EXAMPLE}`;
+      this.extraExamples += `\n\n${PlannerAgent.#SWITCH_TAB_EXAMPLE}`;
     }
-
-    this.extraExamples = this.baseExamples;
-  }
-
-  clearExamples(): void {
-    this.learnedExamples.clear();
-    this.#renderExamples();
-    logger.info("Examples cleared.");
-  }
-
-  addExample(goal: string, actions: string[]) {
-    logger.info("Adding example:");
-    logger.debug(`  -> Goal: ${goal}`);
-    logger.debug(`  -> Actions: ${actions.join(", ")}`);
-
-    this.learnedExamples.set(goal, actions);
-    this.#renderExamples();
-
-    logger.info("Example added.");
-  }
-
-  /** Replaces all learned examples. */
-  setExamples(examples: Iterable<[goal: string, actions: string[]]>): void {
-    this.learnedExamples = new Map(examples);
-    this.#renderExamples();
   }
 
   /**
-   * Renders learned examples sorted by goal, so the prompt (and the cache keys
-   * derived from it) doesn't depend on the order examples were added in.
-   * Re-learning a goal replaces its previous example.
+   * Replaces learned examples, which are added to the instructions as hints
+   * on the actions that achieve each goal. Re-learning a goal replaces its
+   * previous example.
    */
-  #renderExamples(): void {
-    const learned = [...this.learnedExamples]
-      .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
-      .map(([goal, actions]) => PlannerAgent.#formatExample(goal, actions))
-      .join("\n\n");
-
-    this.extraExamples = learned
-      ? `${this.baseExamples}\n\n${learned}`
-      : this.baseExamples;
-    this.learnedExamplesHash = learned ? xxh64Str(learned) : undefined;
+  setExamples(examples: Iterable<[goal: string, actions: string[]]>): void {
+    this.setHints(
+      [...new Map(examples)].map(([goal, actions]) => ({
+        kind: "do" as const,
+        instruction: goal,
+        hint: PlannerAgent.#formatActions(actions),
+      })),
+    );
   }
 
-  static #formatExample(goal: string, actions: string[]): string {
-    const actionsStr = actions.map((a) => `'${a}'`).join(", ");
-    return `Example:
-Input:
-Given the following XML accessibility tree:
-\`\`\`xml
-\`\`\`
-Outline the actions needed to achieve the following goal: ${goal}
-Output:
-Explanation: To achieve the goal, the following actions will be performed: ${actions.join(", ")}.
-Actions: [${actionsStr}]`.trim();
+  static #formatActions(actions: string[]): string {
+    return `plan these actions: [${actions.map((a) => `'${a}'`).join(", ")}]`;
   }
 
   /**
@@ -205,9 +166,6 @@ Actions: [${actionsStr}]`.trim();
       goal: goal as BaseAgent.Goal,
       treeXml,
       ...(params && Object.keys(params).length ? { params } : {}),
-      ...(this.learnedExamplesHash
-        ? { examplesHash: this.learnedExamplesHash }
-        : {}),
     };
 
     const prompt = pythonicFormat(this.prompts.user, {

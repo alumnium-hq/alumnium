@@ -6,14 +6,42 @@ import { PlannerAgent } from "./PlannerAgent.ts";
 
 describe(PlannerAgent, () => {
   describe("examples", () => {
+    it("adds learned examples to the instructions as hints", async () => {
+      const learned = setup();
+      learned.agent.setExamples([["log in", ["click button 'Login'"]]]);
+
+      const { prompt } = await invoke(learned);
+      const system = systemPrompt(prompt);
+
+      expect(system).toContain(
+        `Follow these hints learned for the application:\n- When achieving "log in": plan these actions: ['click button 'Login'']`,
+      );
+      expect(prompt.filter(({ role }) => role !== "system")).toHaveLength(1);
+      expect(system).not.toContain(
+        "Outline the actions needed to achieve the following goal: log in",
+      );
+    });
+
+    it("keeps examples of extra tools as examples", async () => {
+      const { prompt } = await invoke(setup(["ClickTool", "UploadTool"]));
+
+      expect(systemPrompt(prompt)).toContain(
+        "Outline the actions needed to achieve the following goal: upload",
+      );
+    });
+
     it("renders learned examples independently of the order they were added in", async () => {
       const first = setup();
-      first.agent.addExample("log in", ["click button 'Login'"]);
-      first.agent.addExample("add item", ["click button 'Add'"]);
+      first.agent.setExamples([
+        ["log in", ["click button 'Login'"]],
+        ["add item", ["click button 'Add'"]],
+      ]);
 
       const second = setup();
-      second.agent.addExample("add item", ["click button 'Add'"]);
-      second.agent.addExample("log in", ["click button 'Login'"]);
+      second.agent.setExamples([
+        ["add item", ["click button 'Add'"]],
+        ["log in", ["click button 'Login'"]],
+      ]);
 
       const [firstCall, secondCall] = await Promise.all([
         invoke(first),
@@ -27,11 +55,13 @@ describe(PlannerAgent, () => {
 
     it("replaces the example when a goal is learned again", async () => {
       const relearned = setup();
-      relearned.agent.addExample("log in", ["click button 'Sign in'"]);
-      relearned.agent.addExample("log in", ["click button 'Login'"]);
+      relearned.agent.setExamples([
+        ["log in", ["click button 'Sign in'"]],
+        ["log in", ["click button 'Login'"]],
+      ]);
 
       const learnedOnce = setup();
-      learnedOnce.agent.addExample("log in", ["click button 'Login'"]);
+      learnedOnce.agent.setExamples([["log in", ["click button 'Login'"]]]);
 
       const [relearnedCall, learnedOnceCall] = await Promise.all([
         invoke(relearned),
@@ -47,10 +77,10 @@ describe(PlannerAgent, () => {
 
     it("changes the examples hash when examples change", async () => {
       const login = setup();
-      login.agent.addExample("log in", ["click button 'Login'"]);
+      login.agent.setExamples([["log in", ["click button 'Login'"]]]);
 
       const signIn = setup();
-      signIn.agent.addExample("log in", ["click button 'Sign in'"]);
+      signIn.agent.setExamples([["log in", ["click button 'Sign in'"]]]);
 
       const [loginCall, signInCall] = await Promise.all([
         invoke(login),
@@ -70,8 +100,8 @@ describe(PlannerAgent, () => {
 
     it("omits the examples hash once examples are cleared", async () => {
       const learned = setup();
-      learned.agent.addExample("log in", ["click button 'Login'"]);
-      learned.agent.clearExamples();
+      learned.agent.setExamples([["log in", ["click button 'Login'"]]]);
+      learned.agent.setExamples([]);
 
       const [learnedCall, pristineCall] = await Promise.all([
         invoke(learned),
@@ -84,7 +114,7 @@ describe(PlannerAgent, () => {
   });
 });
 
-function setup() {
+function setup(tools = ["ClickTool"]) {
   const llm = new MockLanguageModelV4({
     doGenerate: AiSdkFactory.generateResult({
       text: JSON.stringify({
@@ -93,9 +123,7 @@ function setup() {
       }),
     }),
   });
-  const agent = new PlannerAgent(Model.parse("openai/test"), llm, [
-    "ClickTool",
-  ]);
+  const agent = new PlannerAgent(Model.parse("openai/test"), llm, tools);
   return { agent, llm };
 }
 
@@ -107,4 +135,11 @@ async function invoke({ agent, llm }: ReturnType<typeof setup>) {
     prompt: call.prompt,
     meta: call.providerOptions?.alumnium?.meta as PlannerAgent.Meta,
   };
+}
+
+function systemPrompt(prompt: Awaited<ReturnType<typeof invoke>>["prompt"]) {
+  const system = prompt.find(({ role }) => role === "system");
+  if (!system || typeof system.content !== "string")
+    throw new Error("Planner did not send instructions");
+  return system.content;
 }

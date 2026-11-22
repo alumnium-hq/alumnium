@@ -69,10 +69,10 @@ def test_forgets_lessons_in_a_layer():
     client.forget_lesson.assert_called_once_with("do", "log in", app="example-com", layer="product")
 
 
-def test_clears_a_layer():
+def test_purges_a_layer():
     subject, client = knowledge()
     subject = subject.on("web")
-    subject.clear()
+    subject.purge()
     client.clear_layer.assert_called_once_with(app="example-com", layer="web")
 
 
@@ -95,7 +95,7 @@ def test_teaches_lessons_for_the_named_app():
     todo.do("log in", ["click button 'Login'"])
     todo.on("ios").find("login", "button 'Sign in'")
     todo.forget("do", "log in")
-    todo.clear()
+    todo.purge()
 
     client.add_example.assert_called_once_with(
         "log in", ["click button 'Login'"], app="todo.example.com", layer="product"

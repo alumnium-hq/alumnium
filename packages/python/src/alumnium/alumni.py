@@ -273,7 +273,7 @@ class Alumni:
     def clear_learn_examples(self) -> None:
         """
         Clears examples and hints learned in this session. Persisted lessons are kept;
-        use `knowledge.forget()` or `knowledge.clear()` to remove them.
+        use `knowledge.forget()` or `knowledge.purge()` to remove them.
         """
         self.client.clear_examples()
 

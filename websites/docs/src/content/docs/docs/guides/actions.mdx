@@ -411,13 +411,13 @@ Alumnium sends only the examples relevant to each instruction: exact matches, th
 
 ### Forgetting Examples
 
-Forget one example, or every example of a layer. Clearing learned examples only drops the ones learned in the current session, so a teardown doesn't erase examples other tests rely on.
+Forget one example, or purge every example of a layer. Purging deletes the layer's persisted examples, so no later session or test run uses them. To drop only the examples learned in the current session, clear them instead, so a teardown doesn't erase examples other tests rely on.
 
 <LanguageContent lang="java">
 
 ```java
 al.knowledge().forget("do", "delete \"Test\" task");
-al.knowledge().on("android").clear();
+al.knowledge().on("android").purge();
 al.clearLearnExamples(); // current session only
 ```
 
@@ -427,7 +427,7 @@ al.clearLearnExamples(); // current session only
 
 ```python
 al.knowledge.forget("do", 'delete "Test" task')
-al.knowledge.on("android").clear()
+al.knowledge.on("android").purge()
 al.clear_learn_examples()  # current session only
 ```
 
@@ -437,7 +437,7 @@ al.clear_learn_examples()  # current session only
 
 ```typescript
 await al.knowledge.forget("do", 'delete "Test" task');
-await al.knowledge.on("android").clear();
+await al.knowledge.on("android").purge();
 await al.clearLearnExamples(); // current session only
 ```
 

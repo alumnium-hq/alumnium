@@ -72,7 +72,7 @@ export namespace Tracer {
       Attrs: SpansAlumniAttrsBase;
     };
 
-    "alumni.knowledge.clear": {
+    "alumni.knowledge.purge": {
       Attrs: SpansAlumniAttrsBase;
     };
 

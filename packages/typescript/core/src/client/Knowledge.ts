@@ -19,7 +19,7 @@ export namespace Knowledge {
     find: Knowledge["find"];
     area: Knowledge["area"];
     forget: Knowledge["forget"];
-    clear: Knowledge["clear"];
+    purge: Knowledge["purge"];
   }
 
   /**
@@ -157,9 +157,12 @@ export class Knowledge {
     });
   }
 
-  /** Forgets every lesson in this layer of the knowledge scope. */
-  @span("alumni.knowledge.clear", baseSpanAttrs)
-  async clear(): Promise<void> {
+  /**
+   * Deletes every persisted lesson in this layer of the knowledge scope, so
+   * no later session uses them, along with the ones taught in this session.
+   */
+  @span("alumni.knowledge.purge", baseSpanAttrs)
+  async purge(): Promise<void> {
     return this.#client.clearLayer({
       app: await this.#appId(),
       layer: this.#layer,
@@ -174,7 +177,7 @@ export class Knowledge {
       find: this.find.bind(this),
       area: this.area.bind(this),
       forget: this.forget.bind(this),
-      clear: this.clear.bind(this),
+      purge: this.purge.bind(this),
     };
   }
 

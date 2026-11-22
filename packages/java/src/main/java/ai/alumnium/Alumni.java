@@ -273,7 +273,7 @@ public final class Alumni implements AutoCloseable {
 
   /**
    * Clears examples and hints learned in this session. Persisted lessons are kept; use {@link
-   * Knowledge#forget(String, String)} or {@link Knowledge#clear()} to remove them.
+   * Knowledge#forget(String, String)} or {@link Knowledge#purge()} to remove them.
    */
   public void clearLearnExamples() {
     client.clearExamples();

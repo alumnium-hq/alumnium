@@ -117,9 +117,10 @@ class Knowledge:
         """
         return self.client.forget_lesson(kind, instruction, app=self._app_id(), layer=self.layer)
 
-    def clear(self) -> None:
+    def purge(self) -> None:
         """
-        Forgets every lesson in this layer of the knowledge scope.
+        Deletes every persisted lesson in this layer of the knowledge scope, so no later
+        session uses them, along with the ones taught in this session.
         """
         self.client.clear_layer(app=self._app_id(), layer=self.layer)
 

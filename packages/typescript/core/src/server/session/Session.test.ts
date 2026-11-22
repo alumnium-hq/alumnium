@@ -41,7 +41,7 @@ describe(Session, () => {
     const goal = "delete Test task";
     const actions = ["hover Test task", "click x button near Test task"];
     // Only the learned example carries the actions; the goal is in every plan.
-    const learned = actions.join(", ");
+    const learned = actions.map((action) => `'${action}'`).join(", ");
 
     it("provides the planner with examples learned in previous sessions", async () => {
       const first = createSession();
@@ -112,7 +112,7 @@ describe(Session, () => {
     const goal = "delete Test task";
     const actions = ["hover Test task", "click x button near Test task"];
     // Only the learned example carries the actions; the goal is in every plan.
-    const learned = actions.join(", ");
+    const learned = actions.map((action) => `'${action}'`).join(", ");
 
     it("persists examples in the knowledge scope without an app", async () => {
       const first = createSession(blank, { knowledge: "shop" });

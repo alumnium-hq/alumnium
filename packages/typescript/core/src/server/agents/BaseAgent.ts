@@ -68,7 +68,7 @@ export namespace BaseAgent {
 
   /** Learned hint on how to handle an instruction. */
   export interface Hint {
-    kind: KnowledgeStore.HintKind;
+    kind: KnowledgeStore.Kind;
     instruction: string;
     hint: string;
   }
@@ -110,7 +110,8 @@ export class BaseAgent {
     this.prompts = prompts;
   }
 
-  static readonly #HINT_VERBS: Record<KnowledgeStore.HintKind, string> = {
+  static readonly #HINT_VERBS: Record<KnowledgeStore.Kind, string> = {
+    do: "achieving",
     get: "retrieving",
     check: "verifying",
     find: "locating",

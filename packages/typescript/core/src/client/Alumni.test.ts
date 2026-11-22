@@ -156,11 +156,11 @@ describe("Alumni", () => {
       });
     });
 
-    it("clears a layer", async () => {
+    it("purges a layer", async () => {
       const { al, clearLayer } = setup();
 
-      await al.knowledge.clear();
-      await al.knowledge.shared().clear();
+      await al.knowledge.purge();
+      await al.knowledge.shared().purge();
 
       expect(clearLayer).toHaveBeenNthCalledWith(1, {
         app: "example-com",
@@ -179,7 +179,7 @@ describe("Alumni", () => {
       await todo.do("log in", ["click 'Login'"]);
       await todo.on("ios").find("login", "button 'Sign in'");
       await todo.forget("do", "log in");
-      await todo.clear();
+      await todo.purge();
 
       expect(addExample).toHaveBeenCalledWith(
         expect.objectContaining({ app: "todo-example-com", layer: "product" }),
