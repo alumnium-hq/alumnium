@@ -160,6 +160,13 @@ export class AppiumDriver extends BaseDriver<WebdriverIO.Element> {
     return this.driver.takeScreenshot();
   }
 
+  @span("driver.element_screenshot", BaseDriver.spanAttrs)
+  override async elementScreenshot(id: number): Promise<string> {
+    await this.ensureNativeAppContext();
+    const element = await this.findElement(id);
+    return this.driver.takeElementScreenshot(element.elementId);
+  }
+
   @span("driver.title", BaseDriver.spanAttrs)
   async title(): Promise<string> {
     await this.ensureWebviewContext();

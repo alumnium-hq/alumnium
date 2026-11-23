@@ -10,7 +10,7 @@ import type { Alumni } from "./Alumni.ts";
 import { AssertionError } from "./errors/AssertionError.ts";
 import type { DoResult, DoStep } from "./result.ts";
 
-const { tracer } = Telemetry.get(import.meta.url);
+const { tracer, logger } = Telemetry.get(import.meta.url);
 const { span } = tracer.dec();
 
 export class Area<TDriver extends BaseDriver = BaseDriver> {
@@ -116,9 +116,7 @@ export class Area<TDriver extends BaseDriver = BaseDriver> {
     options: Alumni.CheckOptions = {},
   ): Promise<string> {
     return retry(async () => {
-      const screenshot = options.vision
-        ? await this.driver.screenshot()
-        : undefined;
+      const screenshot = options.vision ? await this.#screenshot() : undefined;
       const [explanation, value] = await this.client.retrieve({
         statement: `Is the following true or false - ${statement}`,
         params: options.params,
@@ -146,9 +144,7 @@ export class Area<TDriver extends BaseDriver = BaseDriver> {
   }))
   async get(data: string, options: Alumni.GetOptions = {}): Promise<Data> {
     return retry(async () => {
-      const screenshot = options.vision
-        ? await this.driver.screenshot()
-        : undefined;
+      const screenshot = options.vision ? await this.#screenshot() : undefined;
       const [explanation, value] = await this.client.retrieve({
         statement: data,
         params: options.params,
@@ -185,5 +181,19 @@ export class Area<TDriver extends BaseDriver = BaseDriver> {
         BaseDriver.ElementOf<TDriver>
       >;
     });
+  }
+
+  /**
+   * Takes a screenshot of the area element only, falling back to the whole
+   * page/screen when the element cannot be captured (e.g. it has no size).
+   */
+  async #screenshot(): Promise<string> {
+    this.driver.setAccessibilityTree(this.accessibilityTree);
+    try {
+      return await this.driver.elementScreenshot(this.id);
+    } catch (error) {
+      logger.debug(`Falling back to full screenshot for area: ${error}`);
+      return this.driver.screenshot();
+    }
   }
 }

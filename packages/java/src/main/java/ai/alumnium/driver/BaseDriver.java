@@ -55,6 +55,14 @@ public abstract sealed class BaseDriver permits SeleniumDriver, PlaywrightDriver
 
   public abstract String screenshot();
 
+  /**
+   * Takes a screenshot of a single element. Drivers that cannot capture individual elements fall
+   * back to the whole page/screen screenshot.
+   */
+  public String elementScreenshot(int id) {
+    return screenshot();
+  }
+
   public abstract void scrollTo(int id);
 
   public abstract void scrollInDirection(int id, ScrollDirection direction);

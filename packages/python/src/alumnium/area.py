@@ -108,7 +108,7 @@ class Area:
             self.accessibility_tree.to_str(),
             title=self.driver.title,
             url=self.driver.url,
-            screenshot=self.driver.screenshot if vision else None,
+            screenshot=self._screenshot() if vision else None,
             app=self.driver.app,
             params=params,
             cache=cache,
@@ -135,12 +135,24 @@ class Area:
             self.accessibility_tree.to_str(),
             title=self.driver.title,
             url=self.driver.url,
-            screenshot=self.driver.screenshot if vision else None,
+            screenshot=self._screenshot() if vision else None,
             app=self.driver.app,
             params=params,
             cache=cache,
         )
         return explanation if value is None else value
+
+    def _screenshot(self) -> str:
+        """
+        Takes a screenshot of the area element only, falling back to the whole
+        page/screen when the element cannot be captured (e.g. it has no size).
+        """
+        self.driver.set_accessibility_tree(self.accessibility_tree)
+        try:
+            return self.driver.element_screenshot(self.id)
+        except Exception as e:
+            logger.debug(f"Falling back to full screenshot for area: {e}")
+            return self.driver.screenshot
 
     def _retrieval_statement(self, statement: str, vision: bool) -> str:
         if not vision:

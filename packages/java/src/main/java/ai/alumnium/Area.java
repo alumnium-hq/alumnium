@@ -18,8 +18,12 @@ import ai.alumnium.util.Retry;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Area {
+  private static final Logger LOG = LoggerFactory.getLogger(Area.class);
+
   private final int id;
   private final String description;
   private final BaseDriver driver;
@@ -156,7 +160,7 @@ public class Area {
                   accessibilityTree.toStr(),
                   driver.title(),
                   driver.url(),
-                  vision ? driver.screenshot() : null,
+                  vision ? screenshot() : null,
                   driver.app(),
                   params,
                   cache);
@@ -197,7 +201,7 @@ public class Area {
                   accessibilityTree.toStr(),
                   driver.title(),
                   driver.url(),
-                  vision ? driver.screenshot() : null,
+                  vision ? screenshot() : null,
                   driver.app(),
                   params,
                   cache);
@@ -236,5 +240,19 @@ public class Area {
               client.findElement(description, accessibilityTree.toStr(), driver.app(), cache);
           return driver.findElement(response.id());
         });
+  }
+
+  /**
+   * Take a screenshot of the area element only, falling back to the whole page/screen when the
+   * element cannot be captured (e.g. it has no size).
+   */
+  private String screenshot() {
+    driver.setAccessibilityTree(accessibilityTree);
+    try {
+      return driver.elementScreenshot(id);
+    } catch (RuntimeException e) {
+      LOG.debug("Falling back to full screenshot for area: {}", e.getMessage());
+      return driver.screenshot();
+    }
   }
 }

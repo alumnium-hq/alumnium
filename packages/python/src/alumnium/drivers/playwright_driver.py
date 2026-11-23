@@ -164,6 +164,9 @@ class PlaywrightDriver(BaseDriver):
     def screenshot(self) -> str:
         return b64encode(self.page.screenshot(full_page=self.full_page_screenshot)).decode()
 
+    def element_screenshot(self, id: int) -> str:
+        return b64encode(self.find_element(id).screenshot()).decode()
+
     def scroll_to(self, id: int):
         element = self.find_element(id)
         self._scroll_element_into_center(element)
