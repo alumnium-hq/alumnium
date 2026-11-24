@@ -403,6 +403,24 @@ describe(ElementsCache, () => {
       ).toEqual({ explanation: "Login button", id: 99 });
       expect(baseModel.doGenerateCalls).toHaveLength(1);
     });
+
+    it("marks entries as used on file hits", async () => {
+      const { cache, cacheDir } = await setup();
+      const request = plannerRequest('<button id="1" name="Login" />');
+      await cache.update(
+        request,
+        AiSdkFactory.generateResult({ text: "step1" }),
+      );
+      await cache.save();
+      const filePath = `${cacheDir.path}/test-app/openai/test/elements/planner/fda0aa9253105607/response.json`;
+      const past = new Date("2026-01-01T00:00:00.000Z");
+      await fs.utimes(filePath, past, past);
+
+      expect(await cache.lookup(request)).not.toBeNull();
+
+      const { mtimeMs } = await fs.stat(filePath);
+      expect(mtimeMs).toBeGreaterThan(past.getTime());
+    });
   });
 
   describe("update", () => {

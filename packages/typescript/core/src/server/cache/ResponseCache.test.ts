@@ -1,3 +1,4 @@
+import fs from "node:fs/promises";
 import type { LanguageModelV4CallOptions } from "@ai-sdk/provider";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
@@ -50,6 +51,20 @@ describe(ResponseCache, () => {
       "test-app/openai/test/responses/first/request.json",
       "test-app/openai/test/responses/first/response.json",
     ]);
+  });
+
+  it("marks entries as used on file hits", async () => {
+    const { cache, cacheDir, request1 } = await setup();
+    await cache.update(request1, AiSdkFactory.generateResult({ text: "Hi" }));
+    await cache.save();
+    const filePath = `${cacheDir.path}/test-app/openai/test/responses/first/response.json`;
+    const past = new Date("2026-01-01T00:00:00.000Z");
+    await fs.utimes(filePath, past, past);
+
+    expect(await cache.lookup(request1)).not.toBeNull();
+
+    const { mtimeMs } = await fs.stat(filePath);
+    expect(mtimeMs).toBeGreaterThan(past.getTime());
   });
 
   it("supports multiple cache instances saving concurrently", async () => {

@@ -72,6 +72,7 @@ export class ResponseCache extends ServerCache {
         });
 
         const result = AiSdk.fromStored(storedResult);
+        await entryStore.touch("response.json");
         this.applyUsage(result);
         return result;
       } catch (error) {
