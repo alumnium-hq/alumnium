@@ -1,6 +1,6 @@
 import os from "node:os";
 import z from "zod";
-import { CliCommand, Driver, Env, Logger } from "@alumnium/core/internal";
+import { CliCommand, Env, Logger } from "@alumnium/core/internal";
 import { ensurePlaywrightChromiumInstalled } from "../standalone/installPlaywrightBrowsers.ts";
 
 const logger = Logger.get(import.meta.url);
@@ -12,21 +12,16 @@ export const InstallCommand = CliCommand.define({
   description: "Install browsers for a driver",
 
   Args: z.object({
-    driver: Driver.Id.default(Env.ALUMNIUM_DRIVER).register(CliCommand.option, {
+    driver: CliCommand.envOption("ALUMNIUM_DRIVER", {
       name: "driver",
       syntax: "--driver <driver>",
-      description:
-        "Driver to install browsers for (defaults to ALUMNIUM_DRIVER or selenium)",
+      description: "Driver to install browsers for",
     }),
-    browser: z
-      .enum(["chrome", "firefox"])
-      .default(Env.ALUMNIUM_SELENIUM_BROWSER)
-      .register(CliCommand.option, {
-        name: "browser",
-        syntax: "--browser <browser>",
-        description:
-          "Browser to install for Selenium: chrome or firefox (defaults to ALUMNIUM_SELENIUM_BROWSER or chrome)",
-      }),
+    browser: CliCommand.envOption("ALUMNIUM_SELENIUM_BROWSER", {
+      name: "browser",
+      syntax: "--browser <browser>",
+      description: "Browser to install for Selenium: chrome or firefox",
+    }),
   }),
 
   action: async ({ args }) => {

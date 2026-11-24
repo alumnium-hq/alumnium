@@ -150,9 +150,9 @@ The cache will be updated automatically when the tests or UI of the application 
 
 Alumnium uses two complementary cache layers that work together to skip LLM calls as often as possible.
 
-| Layer    | Description                                                                                                                                                                                                                                                                                                   |
-| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Response | Stores full AI responses keyed by the exact request content — instruction, accessibility tree, and model. A cache miss occurs when the instruction or the page structure changes.                                                                                                                             |
+| Layer    | Description                                                                                                                                                                                                      |
+| -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Response | Stores full AI responses keyed by the exact request content — instruction, accessibility tree, and model. A cache miss occurs when the instruction or the page structure changes.                                |
 | Elements | Stores AI decisions together with the UI elements they reference. Resolves cached elements to their current IDs in the accessibility tree, so the cache remains valid even when element IDs change between runs. |
 
 ## Placeholders
@@ -238,6 +238,19 @@ await al.find("search button", { cache: false });
 </LanguageContent>
 
 To disable the cache for all calls, set `ALUMNIUM_CACHE` to `false`.
+
+## Pruning
+
+The cache keeps growing as pages and goals change, so Alumnium prunes it automatically. Once the cache grows above `ALUMNIUM_CACHE_MAX_SIZE` (`1GB` by default), Alumnium removes the least recently used entries until the cache is down to 90% of that size. Set `ALUMNIUM_CACHE_MAX_AGE` to also remove entries that weren't used for a while, e.g. `30d`.
+
+Pruning runs after saving the cache, at most once an hour across all processes sharing the cache directory. Entries used within the last hour are always kept, so parallel test runs never lose entries they are using.
+
+You can also inspect and prune the cache with the CLI:
+
+```bash
+alumnium cache stats
+alumnium cache prune --max-size 500MB --max-age 30d --dry-run
+```
 
 ## GitHub Actions
 

@@ -26,10 +26,10 @@ export const ServerCommand = CliCommand.define({
   description: "Run HTTP server",
 
   Args: z.object({
-    host: z.string().default(Env.ALUMNIUM_HOST).register(CliCommand.option, {
+    host: CliCommand.envOption("ALUMNIUM_HOST", {
       name: "host",
       syntax: "--host <host>",
-      description: "Host to bind to (defaults to ALUMNIUM_HOST or 127.0.0.1)",
+      description: "Host to bind to",
     }),
 
     port: z.coerce

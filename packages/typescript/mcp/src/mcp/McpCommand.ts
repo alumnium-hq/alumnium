@@ -1,11 +1,5 @@
 import z from "zod";
-import {
-  CliCommand,
-  Env,
-  Logger,
-  McpMode,
-  McpTransport,
-} from "@alumnium/core/internal";
+import { CliCommand, Logger } from "@alumnium/core/internal";
 import { McpServer } from "./McpServer.ts";
 
 const logger = Logger.get(import.meta.url);
@@ -17,21 +11,16 @@ export const McpCommand = CliCommand.define({
   description: "Run MCP server",
 
   Args: z.object({
-    transport: McpTransport.default(Env.ALUMNIUM_MCP_TRANSPORT).register(
-      CliCommand.option,
-      {
-        name: "transport",
-        syntax: "--transport <transport>",
-        description:
-          "Transport: stdio or http (defaults to ALUMNIUM_MCP_TRANSPORT or stdio)",
-      },
-    ),
+    transport: CliCommand.envOption("ALUMNIUM_MCP_TRANSPORT", {
+      name: "transport",
+      syntax: "--transport <transport>",
+      description: "Transport: stdio or http",
+    }),
 
-    host: z.string().default(Env.ALUMNIUM_HOST).register(CliCommand.option, {
+    host: CliCommand.envOption("ALUMNIUM_HOST", {
       name: "host",
       syntax: "--host <host>",
-      description:
-        "Host to bind to for HTTP transport (defaults to ALUMNIUM_HOST or 127.0.0.1)",
+      description: "Host to bind to for HTTP transport",
     }),
 
     port: z.coerce
@@ -46,11 +35,11 @@ export const McpCommand = CliCommand.define({
         description: "Port to bind to for HTTP transport",
       }),
 
-    mode: McpMode.default(Env.ALUMNIUM_MCP_MODE).register(CliCommand.option, {
+    mode: CliCommand.envOption("ALUMNIUM_MCP_MODE", {
       name: "mode",
       syntax: "--mode <mode>",
       description:
-        "Execution mode: agentic or direct (defaults to ALUMNIUM_MCP_MODE or agentic). HTTP clients can override it per request with ?mode=agentic|direct",
+        "Execution mode: agentic or direct. HTTP clients can override it per request with ?mode=agentic|direct",
     }),
   }),
 

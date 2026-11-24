@@ -30,11 +30,13 @@ export namespace Env {
   }
 
   export type Var = keyof typeof Env;
+  export type VarName = Extract<Var, Uppercase<Var>>;
 }
 
 const secrets = new Set();
 
 let cachedVars: Env.VarsRecord = {};
+let capturedSchema: { Schema?: z.ZodType } | undefined;
 let envLogger: LoggerSchema.Like | undefined = undefined;
 
 export const Env = {
@@ -566,6 +568,24 @@ export const Env = {
   },
 };
 
+/**
+ * Returns the schema of an env var without reading it, e.g. to parse a CLI
+ * option the same way.
+ */
+export function envVarSchema<Name extends Env.VarName>(
+  name: Name,
+): z.ZodType<(typeof Env)[Name]> {
+  const capture: { Schema?: z.ZodType } = {};
+  capturedSchema = capture;
+  try {
+    void Env[name];
+  } finally {
+    capturedSchema = undefined;
+  }
+  if (!capture.Schema) throw new Error(`Env var ${name} has no schema`);
+  return capture.Schema as z.ZodType<(typeof Env)[Name]>;
+}
+
 function secretEnvVar<Type>(name: string, Schema: z.ZodType<Type>): Type {
   return envVar(name, Schema, true);
 }
@@ -575,6 +595,11 @@ function envVar<Type>(
   Schema: z.ZodType<Type>,
   isSecretVar?: boolean,
 ): Type {
+  if (capturedSchema) {
+    capturedSchema.Schema = Schema;
+    return undefined as Type;
+  }
+
   if (!(name in cachedVars)) {
     // oxlint-disable-next-line no-process-env -- We need it to read env vars
     const envVal = expandEnvCommand(name, process.env[name], isSecretVar);
