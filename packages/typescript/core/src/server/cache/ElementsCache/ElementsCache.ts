@@ -223,6 +223,7 @@ export class ElementsCache extends ServerCache {
         );
         if (!unmaskedGeneration) return null;
 
+        await cacheStore.touch("response.json");
         this.applyUsage(unmaskedGeneration);
 
         logger.debug(

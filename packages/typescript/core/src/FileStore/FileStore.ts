@@ -191,6 +191,17 @@ export class FileStore {
   }
 
   /**
+   * Sets the last-modified time of the file at the specified relative path to
+   * now without changing its content. Doesn't throw if the file doesn't exist.
+   *
+   * @param relPath Store-relative file path
+   */
+  async touch(relPath: string): Promise<void> {
+    const now = new Date();
+    await fs.utimes(this.resolve(relPath), now, now).catch(() => {});
+  }
+
+  /**
    * Creates a sub-store under the current store directory. The subdirectory is
    * resolved from the specified relative (to the current store directory) path.
    *

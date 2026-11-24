@@ -289,6 +289,29 @@ describe("FileStore", () => {
     });
   });
 
+  describe("touch", () => {
+    const setup = setupBeforeEach(async () => {
+      const mockDir = await createMockDir();
+      const store = new FileStore(mockDir.path);
+      return { mockDir, store };
+    });
+
+    it("updates the last-modified time without changing the content", async () => {
+      const { store } = setup.cur;
+      const filePath = await store.writeFile("file.txt", "Hello");
+      const past = new Date("2026-01-01T00:00:00.000Z");
+      await fs.utimes(filePath, past, past);
+      await store.touch("file.txt");
+      expect(await store.mtime("file.txt")).toBeGreaterThan(past.getTime());
+      expect(await store.readText("file.txt")).toBe("Hello");
+    });
+
+    it("doesn't throw if the file doesn't exist", async () => {
+      const { store } = setup.cur;
+      await expect(store.touch("nonexistent.txt")).resolves.toBeUndefined();
+    });
+  });
+
   describe("rename", () => {
     const setup = setupBeforeEach(async () => {
       const mockDir = await createMockDir();
