@@ -139,6 +139,9 @@ jobs:
 
       - name: Build
         run: mise :build
+        env:
+          # Docs fetch GitHub metadata, which is rate-limited without a token.
+          GITHUB_TOKEN: ${{ github.token }}
 
       - name: Check Formatting
         run: mise :format/check
