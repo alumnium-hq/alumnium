@@ -1,4 +1,6 @@
+from collections.abc import Mapping
 from enum import Enum
+from typing import Any
 
 from .scroll_area import ScrollDirection
 
@@ -42,7 +44,7 @@ def pan_points(frame: dict, direction: ScrollDirection) -> tuple[Point, Point]:
     }[direction]
 
 
-def clip_to_viewport(box: dict, viewport: dict) -> dict:
+def clip_to_viewport(box: Mapping[str, Any], viewport: Mapping[str, Any]) -> dict:
     """The part of a box in viewport coordinates that is on screen."""
     x = max(box["x"], 0)
     y = max(box["y"], 0)
