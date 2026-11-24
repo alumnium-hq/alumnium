@@ -17,9 +17,11 @@ import {
   Env,
   HoverTool,
   type Keys,
+  PanInDirectionTool,
   PressKeyTool,
   retry,
   ScrollInDirectionTool,
+  scrollPoints,
   Slider,
   type SliderPoint,
   type SliderScript,
@@ -31,6 +33,7 @@ import {
   WAITER_SNAPSHOT_SCRIPT,
   waiterScriptSource,
   waitForPageStability,
+  ZoomTool,
 } from "@alumnium/core/internal";
 
 // NOTE: While macros work well in Bun, it fails when using Alumnium client from
@@ -484,6 +487,72 @@ export class PlaywrightDriver extends BaseDriver<Locator> {
     await this.page.mouse.move(box.x + area.offsetX, box.y + area.offsetY);
     await this.page.mouse.wheel(deltaX, deltaY);
     await this.page.waitForTimeout(ScrollInDirectionTool.SETTLE_DELAY);
+  }
+
+  @span("driver.pan_in_direction", BaseDriver.spanAttrs)
+  @stateful
+  async panInDirection(
+    id: number,
+    direction: PanInDirectionTool.Direction,
+  ): Promise<void> {
+    const { start, end } = scrollPoints(await this.#visibleBox(id), direction);
+    // Drag like a user: maps ignore a press and release without moves between,
+    // and fling when released while the pointer is still moving.
+    await this.page.mouse.move(start.x, start.y);
+    await this.page.mouse.down();
+    try {
+      await this.page.mouse.move(end.x, end.y, {
+        steps: PanInDirectionTool.STEPS,
+      });
+      await this.page.waitForTimeout(PanInDirectionTool.HOLD_DELAY);
+    } finally {
+      await this.page.mouse.up();
+    }
+    await this.page.waitForTimeout(PanInDirectionTool.SETTLE_DELAY);
+  }
+
+  @span("driver.zoom", BaseDriver.spanAttrs)
+  @stateful
+  async zoom(id: number, direction: ZoomTool.Direction): Promise<void> {
+    const box = await this.#visibleBox(id);
+    // Wheel with Control held is what a trackpad pinch sends. Maps zoom on it
+    // even when they leave the plain wheel to the page.
+    await this.page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    await this.page.evaluate(ZoomTool.WHEEL_PROBE);
+    await this.page.keyboard.down("Control");
+    try {
+      await this.page.mouse.wheel(0, ZoomTool.wheelDelta(direction));
+      const received = await this.page.evaluate<number | undefined>(
+        ZoomTool.WHEEL_RECEIVED,
+      );
+      for (const delta of ZoomTool.remainingWheelDeltas(direction, received)) {
+        await this.page.mouse.wheel(0, delta);
+      }
+    } finally {
+      await this.page.keyboard.up("Control");
+    }
+    await this.page.waitForTimeout(ZoomTool.SETTLE_DELAY);
+  }
+
+  /** The part of the element that is on screen, in page viewport coordinates. */
+  async #visibleBox(
+    id: number,
+  ): Promise<{ x: number; y: number; width: number; height: number }> {
+    const element = await this.findElement(id);
+    await this.#scrollElementIfNeeded(element);
+    const box = await element.boundingBox();
+    if (!box) throw new Error(`Element ${id} is not visible`);
+    const viewport =
+      this.page.viewportSize() ??
+      (await this.page.evaluate<{ width: number; height: number }>(
+        "({ width: innerWidth, height: innerHeight })",
+      ));
+    const x = Math.max(box.x, 0);
+    const y = Math.max(box.y, 0);
+    const width = Math.min(box.x + box.width, viewport.width) - x;
+    const height = Math.min(box.y + box.height, viewport.height) - y;
+    if (width <= 0 || height <= 0) throw new Error("Map has no visible area");
+    return { x, y, width, height };
   }
 
   @span("driver.screenshot", BaseDriver.spanAttrs)

@@ -22,6 +22,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.interactions.Interactive;
 import org.openqa.selenium.interactions.WheelInput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -208,6 +209,74 @@ public abstract non-sealed class SeleniumDriver extends BaseDriver {
     ScrollArea.Delta delta = area.wheelDelta(direction);
     new Actions(driver).scrollFromOrigin(origin, delta.x(), delta.y()).perform();
     sleep(ScrollArea.SETTLE_DELAY_MS);
+  }
+
+  @Override
+  public void panInDirection(int id, ScrollDirection direction) {
+    WebElement element = findElement(id);
+    scrollElementIntoCenter(element);
+    // Pointer offsets are relative to the center of the element's visible part.
+    MapGestures.Frame size = visibleSize(element);
+    MapGestures.Drag drag =
+        new MapGestures.Frame(-size.width() / 2, -size.height() / 2, size.width(), size.height())
+            .pan(direction);
+    // Drag like a user: maps ignore a press and release without moves between,
+    // and fling when released while the pointer is still moving.
+    Actions actions =
+        new Actions(driver, Duration.ofMillis(20))
+            .moveToElement(
+                element, (int) Math.round(drag.start().x()), (int) Math.round(drag.start().y()))
+            .clickAndHold();
+    for (int step = 1; step <= MapGestures.PAN_STEPS; step++) {
+      double progress = (double) step / MapGestures.PAN_STEPS;
+      actions.moveToElement(
+          element,
+          (int) Math.round(drag.start().x() + (drag.end().x() - drag.start().x()) * progress),
+          (int) Math.round(drag.start().y() + (drag.end().y() - drag.start().y()) * progress));
+    }
+    try {
+      actions.pause(Duration.ofMillis(MapGestures.PAN_HOLD_DELAY_MS)).release().perform();
+    } catch (RuntimeException e) {
+      // A failed move would leave the button held for the rest of the session.
+      if (driver instanceof Interactive interactive) {
+        interactive.resetInputState();
+      }
+      throw e;
+    }
+    sleep(MapGestures.PAN_SETTLE_DELAY_MS);
+  }
+
+  @Override
+  public void zoom(int id, ZoomDirection direction) {
+    WebElement element = findElement(id);
+    scrollElementIntoCenter(element);
+    // Wheel with Control held is what a trackpad pinch sends. Maps zoom on it
+    // even when they leave the plain wheel to the page.
+    // Each wheel move is performed on its own: Chrome drops moves that are
+    // chained into one sequence. Control stays held between performs.
+    WheelInput.ScrollOrigin origin = WheelInput.ScrollOrigin.fromElement(element);
+    new Actions(driver).keyDown(org.openqa.selenium.Keys.CONTROL).perform();
+    try {
+      for (int step = 0; step < MapGestures.ZOOM_WHEEL_STEPS; step++) {
+        new Actions(driver)
+            .scrollFromOrigin(origin, 0, MapGestures.zoomWheelDelta(direction))
+            .perform();
+      }
+    } finally {
+      new Actions(driver).keyUp(org.openqa.selenium.Keys.CONTROL).perform();
+    }
+    sleep(MapGestures.ZOOM_SETTLE_DELAY_MS);
+  }
+
+  /** The size of the element, limited to what fits on screen. */
+  private MapGestures.Frame visibleSize(WebElement element) {
+    var rect = element.getRect();
+    List<?> viewport =
+        (List<?>)
+            ((JavascriptExecutor) driver)
+                .executeScript("return [window.innerWidth, window.innerHeight];");
+    return new MapGestures.Frame(0, 0, rect.getWidth(), rect.getHeight())
+        .clipTo(((Number) viewport.get(0)).doubleValue(), ((Number) viewport.get(1)).doubleValue());
   }
 
   @Override

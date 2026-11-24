@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 from ..accessibility import BaseAccessibilityTree
 from . import Element
 from .keys import Key
+from .map_gestures import ZoomDirection
 from .scroll_area import ScrollDirection
 
 
@@ -64,6 +65,14 @@ class BaseDriver(ABC):
 
     @abstractmethod
     def scroll_in_direction(self, id: int, direction: ScrollDirection):
+        pass
+
+    @abstractmethod
+    def pan_in_direction(self, id: int, direction: ScrollDirection):
+        pass
+
+    @abstractmethod
+    def zoom(self, id: int, direction: ZoomDirection):
         pass
 
     @property

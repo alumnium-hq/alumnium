@@ -11,6 +11,7 @@ import {
   type JSONSchemaType,
   NavigateBackTool,
   NavigateToUrlTool,
+  PanInDirectionTool,
   PressKeyTool,
   PrintToPdfTool,
   ScrollInDirectionTool,
@@ -21,6 +22,7 @@ import {
   UploadTool,
   WaitForElementTool,
   WaitTool,
+  ZoomTool,
 } from "@alumnium/core";
 import { McpState } from "../McpState.ts";
 import { fetchAccessibilityTreeMcpTool } from "./fetchAccessibilityTreeMcpTool.ts";
@@ -34,6 +36,7 @@ const ACTOR_TOOLS = [
   HoverTool,
   NavigateBackTool,
   NavigateToUrlTool,
+  PanInDirectionTool,
   PressKeyTool,
   PrintToPdfTool,
   ScrollInDirectionTool,
@@ -44,6 +47,7 @@ const ACTOR_TOOLS = [
   UploadTool,
   WaitForElementTool,
   WaitTool,
+  ZoomTool,
 ];
 
 const ELEMENT_PARAMETERS: Record<string, string> = {

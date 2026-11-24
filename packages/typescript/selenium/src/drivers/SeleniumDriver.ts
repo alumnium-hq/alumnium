@@ -14,8 +14,10 @@ import {
   Env,
   HoverTool,
   Keys,
+  PanInDirectionTool,
   PressKeyTool,
   ScrollInDirectionTool,
+  scrollPoints,
   Slider,
   type SliderStep,
   Telemetry,
@@ -26,6 +28,7 @@ import {
   waiterScriptSource,
   type WaiterSnapshot,
   waitForPageStability,
+  ZoomTool,
 } from "@alumnium/core/internal";
 
 const { tracer, logger } = Telemetry.get(import.meta.url);
@@ -234,6 +237,91 @@ export abstract class SeleniumDriver extends BaseDriver<WebElement> {
       )
       .perform();
     await this.driver.sleep(ScrollInDirectionTool.SETTLE_DELAY);
+  }
+
+  @span("driver.pan_in_direction", BaseDriver.spanAttrs)
+  @stateful
+  async panInDirection(
+    id: number,
+    direction: PanInDirectionTool.Direction,
+  ): Promise<void> {
+    const element = await this.findElement(id);
+    await this.#scrollElementIntoCenter(element);
+    // Pointer offsets are relative to the center of the element's visible part.
+    const { width, height } = await this.#visibleSize(element);
+    const { start, end } = scrollPoints(
+      { x: -width / 2, y: -height / 2, width, height },
+      direction,
+    );
+    // Drag like a user: maps ignore a press and release without moves between,
+    // and fling when released while the pointer is still moving.
+    const actions = this.driver
+      .actions({ async: true })
+      .move({ origin: element, x: Math.round(start.x), y: Math.round(start.y) })
+      .press();
+    for (let step = 1; step <= PanInDirectionTool.STEPS; step++) {
+      const progress = step / PanInDirectionTool.STEPS;
+      actions.move({
+        origin: element,
+        x: Math.round(start.x + (end.x - start.x) * progress),
+        y: Math.round(start.y + (end.y - start.y) * progress),
+        duration: 20,
+      });
+    }
+    try {
+      await actions.pause(PanInDirectionTool.HOLD_DELAY).release().perform();
+    } catch (error) {
+      // A failed move would leave the button held for the rest of the session.
+      await this.driver.actions({ async: true }).clear();
+      throw error;
+    }
+    await this.driver.sleep(PanInDirectionTool.SETTLE_DELAY);
+  }
+
+  @span("driver.zoom", BaseDriver.spanAttrs)
+  @stateful
+  async zoom(id: number, direction: ZoomTool.Direction): Promise<void> {
+    const element = await this.findElement(id);
+    await this.#scrollElementIntoCenter(element);
+    // Wheel with Control held is what a trackpad pinch sends. Maps zoom on it
+    // even when they leave the plain wheel to the page.
+    // Each wheel move is performed on its own: Chrome drops moves that are
+    // chained into one sequence. Control stays held between performs.
+    await this.driver
+      .actions({ async: true })
+      .keyDown(SeleniumKey.CONTROL)
+      .perform();
+    try {
+      for (let step = 0; step < ZoomTool.WHEEL_STEPS; step++) {
+        await this.driver
+          .actions({ async: true })
+          // @ts-expect-error -- Actions.scroll() exists since selenium-webdriver 4.2 but is missing from @types/selenium-webdriver.
+          .scroll(0, 0, 0, ZoomTool.wheelDelta(direction), element)
+          .perform();
+      }
+    } finally {
+      await this.driver
+        .actions({ async: true })
+        .keyUp(SeleniumKey.CONTROL)
+        .perform();
+    }
+    await this.driver.sleep(ZoomTool.SETTLE_DELAY);
+  }
+
+  /** The size of the element, limited to what fits on screen. */
+  async #visibleSize(
+    element: WebElement,
+  ): Promise<{ width: number; height: number }> {
+    const rect = await element.getRect();
+    const [width, height] = await this.driver.executeScript<[number, number]>(
+      "return [window.innerWidth, window.innerHeight];",
+    );
+    if (rect.width <= 0 || rect.height <= 0)
+      throw new Error("Map has no visible area");
+    return {
+      width: Math.min(rect.width, width),
+      height: Math.min(rect.height, height),
+    };
   }
 
   @span("driver.title", BaseDriver.spanAttrs)

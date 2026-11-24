@@ -6,6 +6,7 @@ from .execute_javascript_tool import ExecuteJavascriptTool
 from .hover_tool import HoverTool
 from .navigate_back_tool import NavigateBackTool
 from .navigate_to_url_tool import NavigateToUrlTool
+from .pan_in_direction_tool import PanInDirectionTool
 from .press_key_tool import PressKeyTool
 from .print_to_pdf_tool import PrintToPdfTool
 from .scroll_in_direction_tool import ScrollInDirectionTool
@@ -14,6 +15,7 @@ from .switch_to_next_tab_tool import SwitchToNextTabTool
 from .switch_to_previous_tab_tool import SwitchToPreviousTabTool
 from .type_tool import TypeTool
 from .upload_tool import UploadTool
+from .zoom_tool import ZoomTool
 
 __all__ = [
     "BaseTool",
@@ -24,6 +26,7 @@ __all__ = [
     "HoverTool",
     "NavigateBackTool",
     "NavigateToUrlTool",
+    "PanInDirectionTool",
     "PressKeyTool",
     "PrintToPdfTool",
     "ScrollInDirectionTool",
@@ -32,4 +35,5 @@ __all__ = [
     "SwitchToPreviousTabTool",
     "TypeTool",
     "UploadTool",
+    "ZoomTool",
 ]

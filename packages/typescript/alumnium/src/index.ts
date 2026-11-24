@@ -32,6 +32,7 @@ export {
   Model,
   NavigateBackTool,
   NavigateToUrlTool,
+  PanInDirectionTool,
   PressKeyTool,
   PrintToPdfTool,
   ScrollInDirectionTool,
@@ -46,6 +47,7 @@ export {
   UploadTool,
   WaitForElementTool,
   WaitTool,
+  ZoomTool,
 } from "@alumnium/core";
 export { Alumni, wrapDriver } from "./Alumni.ts";
 export { resolveModel } from "./models.ts";

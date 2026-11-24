@@ -11,12 +11,14 @@ import {
   NavigateBackTool,
   NavigateToUrlTool,
   NavigationPolicy,
+  PanInDirectionTool,
   PrintToPdfTool,
   ScrollInDirectionTool,
   ScrollTool,
   SwitchToNextTabTool,
   SwitchToPreviousTabTool,
   Telemetry,
+  ZoomTool,
 } from "@alumnium/core/internal";
 import { McpArtifactsStore } from "../McpArtifactsStore.ts";
 import {
@@ -428,6 +430,10 @@ export const startMcpTool = McpTool.define("start", {
               ScrollTool,
               SwitchToNextTabTool,
               SwitchToPreviousTabTool,
+              // Only the browser drivers can pan and zoom a map by gesture.
+              ...(platform === "ios" || platform === "android"
+                ? []
+                : [PanInDirectionTool, ZoomTool]),
             ],
       planner,
       disabledTools,

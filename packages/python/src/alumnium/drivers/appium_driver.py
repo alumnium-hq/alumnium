@@ -17,6 +17,7 @@ from ..tools.press_key_tool import PressKeyTool
 from ..tools.type_tool import TypeTool
 from .base_driver import BaseDriver
 from .keys import Key
+from .map_gestures import ZoomDirection
 from .scroll_area import ScrollDirection
 
 logger = get_logger(__name__)
@@ -122,6 +123,12 @@ class AppiumDriver(BaseDriver):
 
     def scroll_in_direction(self, id: int, direction: ScrollDirection):
         raise NotImplementedError("Scrolling in direction is not supported for this driver")
+
+    def pan_in_direction(self, id: int, direction: ScrollDirection):
+        raise NotImplementedError("Panning in direction is not supported for this driver")
+
+    def zoom(self, id: int, direction: ZoomDirection):
+        raise NotImplementedError("Zooming is not supported for this driver")
 
     @property
     def title(self) -> str:

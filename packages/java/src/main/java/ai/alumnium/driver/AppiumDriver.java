@@ -160,6 +160,16 @@ public final class AppiumDriver extends BaseDriver {
   }
 
   @Override
+  public void panInDirection(int id, ScrollDirection direction) {
+    throw new UnsupportedOperationException("panInDirection not supported for Appium");
+  }
+
+  @Override
+  public void zoom(int id, ZoomDirection direction) {
+    throw new UnsupportedOperationException("zoom not supported for Appium");
+  }
+
+  @Override
   public String title() {
     ensureWebviewContext();
     try {

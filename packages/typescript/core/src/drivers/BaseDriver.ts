@@ -4,7 +4,9 @@ import { Env } from "../Env.ts";
 import { NavigationPolicy } from "../NavigationPolicy.ts";
 import { Telemetry } from "../telemetry/Telemetry.ts";
 import type { ToolClass } from "../tools/BaseTool.ts";
+import type { PanInDirectionTool } from "../tools/PanInDirectionTool.ts";
 import type { ScrollInDirectionTool } from "../tools/ScrollInDirectionTool.ts";
+import type { ZoomTool } from "../tools/ZoomTool.ts";
 import { TreeDevDrill } from "../tree/dev/TreeDevDrill.ts";
 import { TreeDevDrillError } from "../tree/dev/TreeDevDrillError.ts";
 import { TreeDevDrillStore } from "../tree/dev/TreeDevDrillStore.ts";
@@ -75,6 +77,11 @@ export abstract class BaseDriver<TElement = unknown> {
     id: number,
     direction: ScrollInDirectionTool.Direction,
   ): Promise<void>;
+  abstract panInDirection(
+    id: number,
+    direction: PanInDirectionTool.Direction,
+  ): Promise<void>;
+  abstract zoom(id: number, direction: ZoomTool.Direction): Promise<void>;
   abstract executeScript(script: string): Promise<void>;
   abstract switchToNextTab(): Promise<void>;
   abstract switchToPreviousTab(): Promise<void>;
