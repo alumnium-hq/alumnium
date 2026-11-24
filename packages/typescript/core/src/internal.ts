@@ -50,6 +50,7 @@ export * from "./server/accessibility/ServerChromiumAccessibilityTree.ts";
 export * from "./server/accessibility/ServerMaestroAccessibilityTree.ts";
 export * from "./server/accessibility/ServerXCUITestAccessibilityTree.ts";
 export * from "./server/accessibility/ServerXcodeAccessibilityTree.ts";
+export * from "./server/cache/CachePruner.ts";
 export * from "./server/serverSchema.ts";
 export * from "./server/session/SessionId.ts";
 export * from "./telemetry/Logger.ts";
