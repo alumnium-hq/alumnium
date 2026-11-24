@@ -485,6 +485,9 @@ async function main() {
           );
         }
 
+        if (os === "darwin" && process.platform === "darwin")
+          await $`codesign --force --sign - ${binPath}`.quiet();
+
         console.log(`🟢 ${target} (${cwdRelPath(binPath)})`);
       }),
     );
