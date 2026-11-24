@@ -32,9 +32,33 @@ export class ZoomTool extends BaseTool {
   /** Maps keep animating and loading tiles after zooming. */
   static readonly SETTLE_DELAY = 500;
 
+  /** Page script that records the distance of the next wheel move it gets. */
+  static readonly WHEEL_PROBE =
+    '(() => { window.__alumniumWheel = undefined; addEventListener("wheel", (event) => { window.__alumniumWheel = event.deltaY; }, { capture: true, once: true, passive: true }); })()';
+  /** Page expression for the distance recorded by the probe. */
+  static readonly WHEEL_RECEIVED = "window.__alumniumWheel";
+
   /** Distance of each wheel move. Wheeling up zooms in. */
   static wheelDelta(direction: ZoomTool.Direction): number {
     return direction === "in" ? -ZoomTool.WHEEL_DELTA : ZoomTool.WHEEL_DELTA;
+  }
+
+  /**
+   * Wheel moves that follow the first one, given the distance the page
+   * received for it. A headed Chromium driven by Playwright scales wheel
+   * distances by the screen's pixel ratio, so the rest of the burst is
+   * corrected to make a zoom the same everywhere.
+   */
+  static remainingWheelDeltas(
+    direction: ZoomTool.Direction,
+    received?: number,
+  ): number[] {
+    const delta = ZoomTool.wheelDelta(direction);
+    const scale = received && received / delta > 0 ? received / delta : 1;
+    const rest = ZoomTool.WHEEL_STEPS - 1;
+    return Array<number>(rest).fill(
+      (delta * ZoomTool.WHEEL_STEPS - delta * scale) / rest / scale,
+    );
   }
 
   id: number;

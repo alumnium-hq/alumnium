@@ -518,10 +518,15 @@ export class PlaywrightDriver extends BaseDriver<Locator> {
     // Wheel with Control held is what a trackpad pinch sends. Maps zoom on it
     // even when they leave the plain wheel to the page.
     await this.page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    await this.page.evaluate(ZoomTool.WHEEL_PROBE);
     await this.page.keyboard.down("Control");
     try {
-      for (let step = 0; step < ZoomTool.WHEEL_STEPS; step++) {
-        await this.page.mouse.wheel(0, ZoomTool.wheelDelta(direction));
+      await this.page.mouse.wheel(0, ZoomTool.wheelDelta(direction));
+      const received = await this.page.evaluate<number | undefined>(
+        ZoomTool.WHEEL_RECEIVED,
+      );
+      for (const delta of ZoomTool.remainingWheelDeltas(direction, received)) {
+        await this.page.mouse.wheel(0, delta);
       }
     } finally {
       await this.page.keyboard.up("Control");

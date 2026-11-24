@@ -286,10 +286,13 @@ public final class PlaywrightDriver extends BaseDriver {
     // Wheel with Control held is what a trackpad pinch sends. Maps zoom on it
     // even when they leave the plain wheel to the page.
     page.mouse().move(frame.x() + frame.width() / 2, frame.y() + frame.height() / 2);
+    page.evaluate(MapGestures.ZOOM_WHEEL_PROBE);
     page.keyboard().down("Control");
     try {
-      for (int step = 0; step < MapGestures.ZOOM_WHEEL_STEPS; step++) {
-        page.mouse().wheel(0, MapGestures.zoomWheelDelta(direction));
+      page.mouse().wheel(0, MapGestures.zoomWheelDelta(direction));
+      Number received = (Number) page.evaluate(MapGestures.ZOOM_WHEEL_RECEIVED);
+      for (double delta : MapGestures.remainingZoomWheelDeltas(direction, received)) {
+        page.mouse().wheel(0, delta);
       }
     } finally {
       page.keyboard().up("Control");

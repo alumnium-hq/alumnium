@@ -258,14 +258,10 @@ class SeleniumDriver(BaseDriver):
         sleep(ZOOM_SETTLE_DELAY)
 
     def _visible_size(self, element: WebElement) -> tuple[float, float]:
-        """The size of the part of the element that is on screen."""
-        width, height = self.driver.execute_script(
-            "const r = arguments[0].getBoundingClientRect();"
-            "return [Math.min(r.right, innerWidth) - Math.max(r.left, 0),"
-            " Math.min(r.bottom, innerHeight) - Math.max(r.top, 0)];",
-            element,
-        )
-        return width, height
+        """The size of the element, limited to what fits on screen."""
+        rect = element.rect
+        width, height = self.driver.execute_script("return [window.innerWidth, window.innerHeight];")
+        return min(rect["width"], width), min(rect["height"], height)
 
     @property
     def title(self) -> str:

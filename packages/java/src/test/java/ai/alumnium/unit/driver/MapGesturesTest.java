@@ -32,6 +32,17 @@ class MapGesturesTest {
     assertThat(MapGestures.zoomWheelDelta(ZoomDirection.OUT)).isEqualTo(40);
   }
 
+  @Test
+  void correctsTheBurstWhenThePageGetsScaledWheelDistances() {
+    assertThat(MapGestures.remainingZoomWheelDeltas(ZoomDirection.IN, null))
+        .containsExactly(-40, -40, -40, -40);
+    // The page got twice the distance: 80 + 4 * 15 * 2 is the 200 of a burst.
+    assertThat(MapGestures.remainingZoomWheelDeltas(ZoomDirection.IN, -80))
+        .containsExactly(-15, -15, -15, -15);
+    assertThat(MapGestures.remainingZoomWheelDeltas(ZoomDirection.OUT, 20))
+        .containsExactly(90, 90, 90, 90);
+  }
+
   private static MapGestures.Drag drag(double startX, double startY, double endX, double endY) {
     return new MapGestures.Drag(
         new MapGestures.Point(startX, startY), new MapGestures.Point(endX, endY));

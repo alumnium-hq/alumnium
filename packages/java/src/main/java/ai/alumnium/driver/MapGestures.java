@@ -15,6 +15,13 @@ final class MapGestures {
   static final int ZOOM_WHEEL_DELTA = 40;
   // Maps keep animating and loading tiles after zooming.
   static final int ZOOM_SETTLE_DELAY_MS = 500;
+  // Page script that records the distance of the next wheel move it gets.
+  static final String ZOOM_WHEEL_PROBE =
+      "(() => { window.__alumniumWheel = undefined; "
+          + "addEventListener('wheel', (event) => { window.__alumniumWheel = event.deltaY; }, "
+          + "{ capture: true, once: true, passive: true }); })()";
+  // Page expression for the distance recorded by the probe.
+  static final String ZOOM_WHEEL_RECEIVED = "window.__alumniumWheel";
 
   record Point(double x, double y) {}
 
@@ -63,6 +70,21 @@ final class MapGestures {
   /** Distance of each wheel move. Wheeling up zooms in. */
   static int zoomWheelDelta(ZoomDirection direction) {
     return direction == ZoomDirection.IN ? -ZOOM_WHEEL_DELTA : ZOOM_WHEEL_DELTA;
+  }
+
+  /**
+   * Wheel moves that follow the first one, given the distance the page received for it. A headed
+   * Chromium driven by Playwright scales wheel distances by the screen's pixel ratio, so the rest
+   * of the burst is corrected to make a zoom the same everywhere.
+   */
+  static double[] remainingZoomWheelDeltas(ZoomDirection direction, Number received) {
+    double delta = zoomWheelDelta(direction);
+    double ratio = received == null ? 0 : received.doubleValue() / delta;
+    double scale = ratio > 0 ? ratio : 1;
+    int rest = ZOOM_WHEEL_STEPS - 1;
+    double[] deltas = new double[rest];
+    java.util.Arrays.fill(deltas, (delta * ZOOM_WHEEL_STEPS - delta * scale) / rest / scale);
+    return deltas;
   }
 
   private MapGestures() {}

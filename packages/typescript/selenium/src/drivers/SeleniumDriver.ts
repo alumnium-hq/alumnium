@@ -308,16 +308,20 @@ export abstract class SeleniumDriver extends BaseDriver<WebElement> {
     await this.driver.sleep(ZoomTool.SETTLE_DELAY);
   }
 
-  /** The size of the part of the element that is on screen. */
+  /** The size of the element, limited to what fits on screen. */
   async #visibleSize(
     element: WebElement,
   ): Promise<{ width: number; height: number }> {
+    const rect = await element.getRect();
     const [width, height] = await this.driver.executeScript<[number, number]>(
-      "const r = arguments[0].getBoundingClientRect(); return [Math.min(r.right, innerWidth) - Math.max(r.left, 0), Math.min(r.bottom, innerHeight) - Math.max(r.top, 0)];",
-      element,
+      "return [window.innerWidth, window.innerHeight];",
     );
-    if (width <= 0 || height <= 0) throw new Error("Map has no visible area");
-    return { width, height };
+    if (rect.width <= 0 || rect.height <= 0)
+      throw new Error("Map has no visible area");
+    return {
+      width: Math.min(rect.width, width),
+      height: Math.min(rect.height, height),
+    };
   }
 
   @span("driver.title", BaseDriver.spanAttrs)

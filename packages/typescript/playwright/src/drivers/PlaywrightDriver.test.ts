@@ -9,6 +9,7 @@ import { describe, expect, it, vi } from "vitest";
 import {
   type BaseAccessibilityTree,
   TreeDevDrillError,
+  ZoomTool,
 } from "@alumnium/core/internal";
 import { TestTreeFactory } from "../../../core/src/drivers/__factories__/TestTreeFactory.ts";
 import { PlaywrightDriver } from "./PlaywrightDriver.ts";
@@ -311,6 +312,10 @@ describe("PlaywrightDriver", () => {
       frames: () => [],
       waitForTimeout: vi.fn(async () => undefined),
       viewportSize: () => ({ width: 1000, height: 600 }),
+      // The page reports twice the wheel distance, as a headed browser does.
+      evaluate: vi.fn(async (script: string) =>
+        script === ZoomTool.WHEEL_RECEIVED ? -80 : undefined,
+      ),
       mouse,
       keyboard,
     };
@@ -341,7 +346,10 @@ describe("PlaywrightDriver", () => {
     await driver.zoom(1, "in");
     expect(mouse.move).toHaveBeenLastCalledWith(500, 400);
     expect(keyboard.down).toHaveBeenCalledWith("Control");
-    expect(mouse.wheel.mock.calls).toEqual(Array(5).fill([0, -40]));
+    expect(mouse.wheel.mock.calls).toEqual([
+      [0, -40],
+      ...Array(4).fill([0, -15]),
+    ]);
     expect(keyboard.up).toHaveBeenCalledWith("Control");
   });
 

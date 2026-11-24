@@ -23,10 +23,12 @@ from .map_gestures import (
     PAN_SETTLE_DELAY,
     PAN_STEPS,
     ZOOM_SETTLE_DELAY,
-    ZOOM_WHEEL_STEPS,
+    ZOOM_WHEEL_PROBE,
+    ZOOM_WHEEL_RECEIVED,
     ZoomDirection,
     clip_to_viewport,
     pan_points,
+    remaining_zoom_wheel_deltas,
     zoom_wheel_delta,
 )
 from .playwright_driver import PlaywrightDriver
@@ -262,10 +264,13 @@ class PlaywrightAsyncDriver(BaseDriver):
         # Wheel with Control held is what a trackpad pinch sends. Maps zoom on it
         # even when they leave the plain wheel to the page.
         await self.page.mouse.move(box["x"] + box["width"] / 2, box["y"] + box["height"] / 2)
+        await self.page.evaluate(ZOOM_WHEEL_PROBE)
         await self.page.keyboard.down("Control")
         try:
-            for _ in range(ZOOM_WHEEL_STEPS):
-                await self.page.mouse.wheel(0, zoom_wheel_delta(direction))
+            await self.page.mouse.wheel(0, zoom_wheel_delta(direction))
+            received = await self.page.evaluate(ZOOM_WHEEL_RECEIVED)
+            for delta in remaining_zoom_wheel_deltas(direction, received):
+                await self.page.mouse.wheel(0, delta)
         finally:
             await self.page.keyboard.up("Control")
         await self.page.wait_for_timeout(ZOOM_SETTLE_DELAY * 1000)

@@ -1,6 +1,12 @@
 from pytest import raises
 
-from alumnium.drivers.map_gestures import ZoomDirection, clip_to_viewport, pan_points, zoom_wheel_delta
+from alumnium.drivers.map_gestures import (
+    ZoomDirection,
+    clip_to_viewport,
+    pan_points,
+    remaining_zoom_wheel_deltas,
+    zoom_wheel_delta,
+)
 from alumnium.drivers.scroll_area import ScrollDirection
 
 
@@ -32,3 +38,11 @@ def test_rejects_a_box_that_is_outside_the_viewport():
 def test_wheels_up_to_zoom_in_and_down_to_zoom_out():
     assert zoom_wheel_delta(ZoomDirection.IN) == -40
     assert zoom_wheel_delta(ZoomDirection.OUT) == 40
+
+
+def test_corrects_the_burst_when_the_page_gets_scaled_wheel_distances():
+    assert remaining_zoom_wheel_deltas(ZoomDirection.IN) == [-40] * 4
+    assert remaining_zoom_wheel_deltas(ZoomDirection.IN, -40) == [-40] * 4
+    # The page got twice the distance: 80 + 4 * 15 * 2 is the 200 of a burst.
+    assert remaining_zoom_wheel_deltas(ZoomDirection.IN, -80) == [-15] * 4
+    assert remaining_zoom_wheel_deltas(ZoomDirection.OUT, 20) == [90] * 4

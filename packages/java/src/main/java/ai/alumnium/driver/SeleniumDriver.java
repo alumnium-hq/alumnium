@@ -268,18 +268,15 @@ public abstract non-sealed class SeleniumDriver extends BaseDriver {
     sleep(MapGestures.ZOOM_SETTLE_DELAY_MS);
   }
 
-  /** The size of the part of the element that is on screen. */
+  /** The size of the element, limited to what fits on screen. */
   private MapGestures.Frame visibleSize(WebElement element) {
-    List<?> size =
+    var rect = element.getRect();
+    List<?> viewport =
         (List<?>)
             ((JavascriptExecutor) driver)
-                .executeScript(
-                    "const r = arguments[0].getBoundingClientRect();"
-                        + "return [Math.min(r.right, innerWidth) - Math.max(r.left, 0),"
-                        + " Math.min(r.bottom, innerHeight) - Math.max(r.top, 0)];",
-                    element);
-    return new MapGestures.Frame(
-        0, 0, ((Number) size.get(0)).doubleValue(), ((Number) size.get(1)).doubleValue());
+                .executeScript("return [window.innerWidth, window.innerHeight];");
+    return new MapGestures.Frame(0, 0, rect.getWidth(), rect.getHeight())
+        .clipTo(((Number) viewport.get(0)).doubleValue(), ((Number) viewport.get(1)).doubleValue());
   }
 
   @Override
