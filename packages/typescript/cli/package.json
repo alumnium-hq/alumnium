@@ -13,6 +13,7 @@
     "@alumnium/mcp": "workspace:*",
     "@alumnium/server": "workspace:*",
     "cac": "^7.0.0",
-    "picocolors": "^1.1.1"
+    "picocolors": "^1.1.1",
+    "zod": "^4.4.1"
   }
 }

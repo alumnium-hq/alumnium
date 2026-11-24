@@ -9,8 +9,7 @@ import { SessionContext } from "../session/SessionContext.ts";
 export class CacheStore extends FileStore {
   #sessionContext: SessionContext;
   #model: Model;
-  #baseDir =
-    Env.ALUMNIUM_CACHE_PATH ?? GlobalFileStorePaths.globalSubDir("cache");
+  #baseDir = CacheStore.rootDir();
   #subDir: string;
   #appOverride: AppId | undefined;
 
@@ -35,6 +34,12 @@ export class CacheStore extends FileStore {
       provider,
       name,
       this.#subDir,
+    );
+  }
+
+  static rootDir(): string {
+    return (
+      Env.ALUMNIUM_CACHE_PATH ?? GlobalFileStorePaths.globalSubDir("cache")
     );
   }
 

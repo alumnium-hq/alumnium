@@ -8,12 +8,22 @@ import { ServerCache } from "./ServerCache.ts";
 const { logger, tracer } = Telemetry.get(import.meta.url);
 const { span } = tracer.dec();
 
+export namespace ChainedCache {
+  export type AfterSaveFn = () => Promise<void>;
+}
+
 export class ChainedCache extends ServerCache {
   caches: ServerCache[];
+  #afterSave: ChainedCache.AfterSaveFn | undefined;
 
-  constructor(sessionContext: SessionContext, caches: ServerCache[]) {
+  constructor(
+    sessionContext: SessionContext,
+    caches: ServerCache[],
+    afterSave?: ChainedCache.AfterSaveFn,
+  ) {
     super(sessionContext);
     this.caches = caches;
+    this.#afterSave = afterSave;
   }
 
   @span("cache.lookup", spanAttrs)
@@ -56,6 +66,7 @@ export class ChainedCache extends ServerCache {
   @span("cache.save", spanAttrs)
   async save(): Promise<void> {
     await Promise.all(this.caches.map((cache) => cache.save()));
+    await this.#afterSave?.();
   }
 
   @span("cache.discard", spanAttrs)

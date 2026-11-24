@@ -1,6 +1,7 @@
 import { Env } from "../Env.ts";
 import { Model } from "../Model.ts";
 import { Logger } from "../telemetry/Logger.ts";
+import { CachePruner } from "./cache/CachePruner.ts";
 import { CacheStore } from "./cache/CacheStore.ts";
 import { ChainedCache } from "./cache/ChainedCache.ts";
 import { ElementsCache } from "./cache/ElementsCache/ElementsCache.ts";
@@ -28,10 +29,15 @@ export class CacheFactory {
       case "filesystem": {
         logger.info("Using filesystem cache");
         const cacheStore = new CacheStore(sessionContext, model);
-        return new ChainedCache(sessionContext, [
-          new ResponseCache(sessionContext, cacheStore),
-          new ElementsCache(sessionContext, cacheStore),
-        ]);
+        const pruner = new CachePruner(CacheStore.rootDir());
+        return new ChainedCache(
+          sessionContext,
+          [
+            new ResponseCache(sessionContext, cacheStore),
+            new ElementsCache(sessionContext, cacheStore),
+          ],
+          () => pruner.autoPrune(),
+        );
       }
 
       case false:
