@@ -17,6 +17,7 @@ from .drivers.appium_driver import AppiumDriver
 from .drivers.playwright_async_driver import PlaywrightAsyncDriver
 from .drivers.playwright_driver import PlaywrightDriver
 from .drivers.selenium_driver import SeleniumDriver
+from .knowledge import Knowledge
 from .logutils import get_logger
 from .models import Model
 from .result import DoResult, DoStep
@@ -36,6 +37,7 @@ class Alumni:
         change_analysis: bool | None = None,
         exclude_attributes: set[str] | None = None,
         disabled_tools: list[str] | None = None,
+        knowledge: str | None = None,
     ):
         planner = planner if planner is not None else PLANNER
         self.change_analysis = change_analysis if change_analysis is not None else CHANGE_ANALYSIS
@@ -74,12 +76,16 @@ class Alumni:
             self.tools,
             planner,
             exclude_attributes,
+            knowledge,
         )
         self.model = self.client.model
 
         logger.info(f"Using model: {self.model.provider.value}/{self.model.name}")
 
         self.cache = Cache(self.client)
+        # Teaches how to handle instructions of `do`, `get`, `check`, `find` and `area`,
+        # e.g. `knowledge.do(goal, actions)`.
+        self.knowledge = Knowledge(self.client, self.driver)
 
     def quit(self) -> None:
         self.client.quit()
@@ -264,19 +270,10 @@ class Alumni:
             client=self.client,
         )
 
-    def learn(self, goal: str, actions: list[str]) -> None:
-        """
-        Adds a new learning example on what steps should be take to achieve the goal.
-
-        Args:
-            goal: The goal to be achieved. Use same format as in `do`.
-            actions: A list of actions to achieve the goal.
-        """
-        self.client.add_example(goal, actions)
-
     def clear_learn_examples(self) -> None:
         """
-        Clears the learn examples.
+        Clears examples and hints learned in this session. Persisted lessons are kept;
+        use `knowledge.forget()` or `knowledge.purge()` to remove them.
         """
         self.client.clear_examples()
 

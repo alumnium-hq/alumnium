@@ -39,6 +39,7 @@ export class PlannerAgent extends BaseAgent {
     goal: BaseAgent.Goal,
     treeXml: z.string(),
     params: z.record(z.string(), z.string()).optional(),
+    examplesHash: z.string().optional(),
   });
 
   static readonly #NAVIGATE_TO_URL_EXAMPLE = `
@@ -82,11 +83,11 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
 `.trim();
 
   toolNames: string[];
-  // TODO: There's a bug in Bun that results in `#baseExamples` compiled to
-  // `__privateGet(this, _baseExamples)` which causes a runtime error.
+  // TODO: There's a bug in Bun that results in `#extraExamples` compiled to
+  // `__privateGet(this, _extraExamples)` which causes a runtime error.
   // Figure out a solution to use private fields without breaking Bun
   // compatibility.
-  private baseExamples = "";
+  /** Examples of using the extra tools, which aren't learned. */
   private extraExamples = "";
 
   constructor(model: Model, llm: LanguageModel, toolNames: string[]) {
@@ -102,49 +103,38 @@ Actions: ['upload ["/tmp/test.txt", "/tmp/image.png"] to button "Choose File"']
     );
 
     if (toolNames.includes(NavigateToUrlTool.name)) {
-      this.baseExamples += `\n\n${PlannerAgent.#NAVIGATE_TO_URL_EXAMPLE}`;
+      this.extraExamples += `\n\n${PlannerAgent.#NAVIGATE_TO_URL_EXAMPLE}`;
     }
 
     if (toolNames.includes(UploadTool.name)) {
-      this.baseExamples += `\n\n${PlannerAgent.#UPLOAD_EXAMPLE}`;
+      this.extraExamples += `\n\n${PlannerAgent.#UPLOAD_EXAMPLE}`;
     }
 
     if (
       toolNames.includes(SwitchToPreviousTabTool.name) ||
       toolNames.includes(SwitchToNextTabTool.name)
     ) {
-      this.baseExamples += `\n\n${PlannerAgent.#SWITCH_TAB_EXAMPLE}`;
+      this.extraExamples += `\n\n${PlannerAgent.#SWITCH_TAB_EXAMPLE}`;
     }
-
-    this.extraExamples = this.baseExamples;
   }
 
-  clearExamples(): void {
-    this.extraExamples = this.baseExamples;
-    logger.info("Examples cleared.");
+  /**
+   * Replaces learned examples, which are added to the instructions as hints
+   * on the actions that achieve each goal. Re-learning a goal replaces its
+   * previous example.
+   */
+  setExamples(examples: Iterable<[goal: string, actions: string[]]>): void {
+    this.setHints(
+      [...new Map(examples)].map(([goal, actions]) => ({
+        kind: "do" as const,
+        instruction: goal,
+        hint: PlannerAgent.#formatActions(actions),
+      })),
+    );
   }
 
-  addExample(goal: string, actions: string[]) {
-    logger.info("Adding example:");
-    logger.debug(`  -> Goal: ${goal}`);
-    logger.debug(`  -> Actions: ${actions.join(", ")}`);
-
-    this.extraExamples += `\n\n${PlannerAgent.#formatExample(goal, actions)}`;
-
-    logger.info("Example added.");
-  }
-
-  static #formatExample(goal: string, actions: string[]): string {
-    const actionsStr = actions.map((a) => `'${a}'`).join(", ");
-    return `Example:
-Input:
-Given the following XML accessibility tree:
-\`\`\`xml
-\`\`\`
-Outline the actions needed to achieve the following goal: ${goal}
-Output:
-Explanation: To achieve the goal, the following actions will be performed: ${actions.join(", ")}.
-Actions: [${actionsStr}]`.trim();
+  static #formatActions(actions: string[]): string {
+    return `plan these actions: [${actions.map((a) => `'${a}'`).join(", ")}]`;
   }
 
   /**

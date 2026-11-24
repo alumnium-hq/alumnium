@@ -216,7 +216,7 @@ You can either provide the exact steps manually each time (see the section above
 <LanguageContent lang="java">
 
 ```java
-al.learn(
+al.knowledge().act(
   "delete \"Test\" task",
   List.of(
     "hover \"Test\" task",
@@ -230,7 +230,7 @@ al.learn(
 <LanguageContent lang="python">
 
 ```python
-al.learn(
+al.knowledge.do(
   goal='delete "Test" task',
   actions=[
     'hover "Test" task',
@@ -244,10 +244,10 @@ al.learn(
 <LanguageContent lang="typescript">
 
 ```typescript
-await al.learn({
-  goal: 'delete "Test" task',
-  actions: ['hover "Test" task', 'click "x" button near "Test" task'],
-});
+await al.knowledge.do('delete "Test" task', [
+  'hover "Test" task',
+  'click "x" button near "Test" task',
+]);
 ```
 
 </LanguageContent>
@@ -268,6 +268,190 @@ From now on, Alumnium knows what to do when told to delete a task.
   <source src="/videos/learn-2.mp4" type="video/mp4" />
   <source src="/videos/learn-2.webm" type="video/webm" />
 </video>
+
+Alumnium can also learn hints for [retrievals][get], [verifications][check], [elements][find] and [areas][area].
+
+Examples apply to the current session only, so teach them in the setup phase of your tests. Set [`ALUMNIUM_KNOWLEDGE`][knowledge] to `true` to persist them in the `.alumnium/knowledge` directory, so they also apply to later test runs.
+
+### Knowledge Scope
+
+When knowledge is persisted, examples are kept for the app the driver is on: the website host, or the bundle ID or package of a mobile app. Mobile apps are known as soon as the session starts, but a browser starts on a blank page, so teaching Alumnium before navigating fails rather than guessing the app, as the first page may be a sign-in or consent page of another host. Navigate first, or name the app the examples are for:
+
+<LanguageContent lang="java">
+
+```java
+al.knowledge().app("shop.example.org").act(
+  "log in as admin",
+  List.of("type \"admin\" into username", "click \"Sign in\"")
+);
+```
+
+</LanguageContent>
+
+<LanguageContent lang="python">
+
+```python
+al.knowledge.app("shop.example.org").do(
+    "log in as admin",
+    ['type "admin" into username', 'click "Sign in"'],
+)
+```
+
+</LanguageContent>
+
+<LanguageContent lang="typescript">
+
+```typescript
+await al.knowledge
+  .app("shop.example.org")
+  .do("log in as admin", ['type "admin" into username', 'click "Sign in"']);
+```
+
+</LanguageContent>
+
+The named app is resolved like the one the driver is on, so `app()` combines with `on()` and `shared()`, and the manifest below maps it to its product. When a session persists examples for an app but only ever acts on apps of other scopes, Alumnium warns when it ends, as the examples won't apply to those apps.
+
+To share examples between apps, such as staging and production hosts or the web, iOS and Android builds of one product, map them to a product in `.alumnium/knowledge/knowledge.json`. An app entry is matched as drivers report it, and `*` matches any part of it:
+
+```json
+{
+  "products": {
+    "shop": {
+      "apps": ["*.example.org", "localhost:*", "com.example.chat"]
+    }
+  }
+}
+```
+
+You can also set the scope explicitly, which lets you teach Alumnium without opening the app at all and ignores the app the examples are taught for. The `knowledge` option takes precedence over [`ALUMNIUM_KNOWLEDGE_SCOPE`][knowledge-scope-env], which takes precedence over the manifest.
+
+<LanguageContent lang="java">
+
+```java
+Alumni al = new Alumni(driver, new Alumni.Options().withKnowledge("shop"));
+```
+
+</LanguageContent>
+
+<LanguageContent lang="python">
+
+```python
+al = Alumni(driver, knowledge="shop")
+```
+
+</LanguageContent>
+
+<LanguageContent lang="typescript">
+
+```typescript
+const al = new Alumni(driver, { knowledge: "shop" });
+```
+
+</LanguageContent>
+
+### Knowledge Layers
+
+Examples are learned in the product layer and apply to every platform. When steps differ on one platform, teach them for that platform; when an example applies to every app, such as dismissing a cookie banner, teach it as shared. On the same instruction, the platform layer wins over the product layer, which wins over the shared layer.
+
+<LanguageContent lang="java">
+
+```java
+al.knowledge().on("android").act(
+  "delete \"Test\" task",
+  List.of("long-press \"Test\" task", "tap \"Delete\"")
+);
+al.knowledge().shared().act("dismiss cookie banner", List.of("click \"Accept\" button"));
+```
+
+</LanguageContent>
+
+<LanguageContent lang="python">
+
+```python
+al.knowledge.on("android").do('delete "Test" task', ['long-press "Test" task', 'tap "Delete"'])
+al.knowledge.shared().do("dismiss cookie banner", ['click "Accept" button'])
+```
+
+</LanguageContent>
+
+<LanguageContent lang="typescript">
+
+```typescript
+await al.knowledge.on("android").do('delete "Test" task', [
+  'long-press "Test" task',
+  'tap "Delete"',
+]);
+await al.knowledge.shared().do("dismiss cookie banner", ['click "Accept" button']);
+```
+
+</LanguageContent>
+
+Each layer is a readable JSON file you can review and edit by hand:
+
+```
+.alumnium/knowledge/
+  knowledge.json           # products manifest
+  shared.json              # shared layer
+  shop/lessons.json   # product layer
+  shop/android.json   # platform layer: web.json, ios.json, android.json
+```
+
+```json
+{
+  "do": {
+    "delete \"Test\" task": ["hover \"Test\" task", "click \"x\" button near \"Test\" task"]
+  },
+  "get": {
+    "total amount": "use the 'Total' row, not 'Subtotal'"
+  }
+}
+```
+
+Alumnium sends only the examples relevant to each instruction: exact matches, then up to [`ALUMNIUM_KNOWLEDGE_TOP_K`][knowledge-top-k] of the most similar ones.
+
+### Forgetting Examples
+
+Forget one example, or purge every example of a layer. Purging deletes the layer's persisted examples, so no later session or test run uses them. To drop only the examples learned in the current session, clear them instead, so a teardown doesn't erase examples other tests rely on.
+
+<LanguageContent lang="java">
+
+```java
+al.knowledge().forget("do", "delete \"Test\" task");
+al.knowledge().on("android").purge();
+al.clearLearnExamples(); // current session only
+```
+
+</LanguageContent>
+
+<LanguageContent lang="python">
+
+```python
+al.knowledge.forget("do", 'delete "Test" task')
+al.knowledge.on("android").purge()
+al.clear_learn_examples()  # current session only
+```
+
+</LanguageContent>
+
+<LanguageContent lang="typescript">
+
+```typescript
+await al.knowledge.forget("do", 'delete "Test" task');
+await al.knowledge.on("android").purge();
+await al.clearLearnExamples(); // current session only
+```
+
+</LanguageContent>
+
+The `alumnium knowledge` command inspects persisted examples:
+
+```sh
+alumnium knowledge list
+alumnium knowledge validate
+alumnium knowledge explain 'delete "Test" task' --app todomvc.com --platform web
+```
+
+`validate` exits with an error when the manifest or a layer file is invalid, so you can run it in CI. `explain` shows which examples are sent with an instruction and the layer each comes from.
 
 ## Vision
 
@@ -466,3 +650,11 @@ Alumnium automatically waits for the following conditions before attempting to p
 4. XHR/fetch requests are finished.
 
 In addition, Alumnium automatically retries actions when errors occur during their execution. This is usually sufficient to handle common scenarios such as changes to page content during interaction or issues caused by an overzealous LLM.
+
+[knowledge]: /docs/reference#alumnium_knowledge
+[get]: /docs/guides/retrievals#teach-with-hints
+[check]: /docs/guides/verifications#teach-with-hints
+[find]: /docs/guides/elements#teach-with-hints
+[area]: /docs/guides/areas#teach-with-hints
+[knowledge-scope-env]: /docs/reference#alumnium_knowledge_scope
+[knowledge-top-k]: /docs/reference#alumnium_knowledge_top_k

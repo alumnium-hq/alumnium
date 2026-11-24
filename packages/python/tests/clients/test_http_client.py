@@ -1,5 +1,7 @@
 from unittest.mock import MagicMock, patch
 
+import pytest
+
 from alumnium.alumni import Alumni
 from alumnium.area import Area
 from alumnium.clients.http_client import HttpClient
@@ -51,3 +53,41 @@ def test_area_find_passes_cache_to_client():
     Area.find(area, "login button", cache=False)
 
     assert area.client.find_element.call_args.kwargs["cache"] is False
+
+
+def create_session_body(**kwargs) -> dict:
+    with patch("alumnium.clients.http_client.post") as post:
+        post.return_value.json.return_value = {"session_id": "session", "model": "openai/gpt-5-nano"}
+        HttpClient("http://localhost:8013", None, "chromium", {}, **kwargs)
+
+    assert post.call_args.args[0] == "http://localhost:8013/v1/sessions"
+    return post.call_args.kwargs["json"]
+
+
+def test_init_omits_knowledge_by_default():
+    assert "knowledge" not in create_session_body()
+
+
+def test_init_sends_knowledge_scope():
+    assert create_session_body(knowledge="shop")["knowledge"] == "shop"
+
+
+def test_add_example_raises_with_server_message():
+    with patch("alumnium.clients.http_client.post") as post:
+        post.return_value.ok = False
+        post.return_value.json.return_value = {"message": "Error: Can't learn do lesson before the app is known"}
+        with pytest.raises(RuntimeError, match="before the app is known"):
+            http_client().add_example("log in", ["click 'Login'"], app="about:blank")
+
+
+def test_forget_lesson_sends_app():
+    with patch("alumnium.clients.http_client.post") as post:
+        post.return_value.json.return_value = {"forgotten": True}
+        assert http_client().forget_lesson("do", "log in", app="example.com")
+
+    assert post.call_args.kwargs["json"] == {
+        "kind": "do",
+        "instruction": "log in",
+        "layer": "product",
+        "app": "example.com",
+    }

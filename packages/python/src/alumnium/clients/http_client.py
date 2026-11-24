@@ -28,6 +28,7 @@ class HttpClient:
         tools: dict[str, type[BaseTool]],
         planner: bool = True,
         exclude_attributes: set[str] | None = None,
+        knowledge: str | None = None,
     ):
         self._server_pid: str | None = None
         self.base_url = self._resolve_url(url)
@@ -40,6 +41,7 @@ class HttpClient:
             "platform": platform,
             "planner": planner,
             "exclude_attributes": list(exclude_attributes or []),
+            **({"knowledge": knowledge} if knowledge else {}),
             **(
                 {
                     "provider": model.provider.value,
@@ -115,13 +117,40 @@ class HttpClient:
         response_data = response.json()
         return (response_data["explanation"], response_data["steps"])
 
-    def add_example(self, goal: str, actions: list[str]):
+    def add_example(self, goal: str, actions: list[str], app: str = "unknown", layer: str = "product"):
         response = post(
             f"{self.base_url}/v1/sessions/{self.session_id}/examples",
-            json={"goal": goal, "actions": actions},
+            json={"goal": goal, "actions": actions, "app": app, "layer": layer},
             timeout=30,
         )
-        response.raise_for_status()
+        self._raise_for_status(response)
+        return response.json()
+
+    def add_hint(self, kind: str, instruction: str, hint: str, app: str = "unknown", layer: str = "product"):
+        response = post(
+            f"{self.base_url}/v1/sessions/{self.session_id}/hints",
+            json={"kind": kind, "instruction": instruction, "hint": hint, "app": app, "layer": layer},
+            timeout=30,
+        )
+        self._raise_for_status(response)
+        return response.json()
+
+    def forget_lesson(self, kind: str, instruction: str, app: str | None = None, layer: str = "product") -> bool:
+        response = post(
+            f"{self.base_url}/v1/sessions/{self.session_id}/lessons/forget",
+            json={"kind": kind, "instruction": instruction, "layer": layer, **({"app": app} if app else {})},
+            timeout=30,
+        )
+        self._raise_for_status(response)
+        return bool(response.json()["forgotten"])
+
+    def clear_layer(self, app: str | None = None, layer: str = "product"):
+        response = post(
+            f"{self.base_url}/v1/sessions/{self.session_id}/lessons/clear",
+            json={"layer": layer, **({"app": app} if app else {})},
+            timeout=30,
+        )
+        self._raise_for_status(response)
         return response.json()
 
     def clear_examples(self):
@@ -263,6 +292,19 @@ class HttpClient:
         )
         response.raise_for_status()
         return response.json()
+
+    @staticmethod
+    def _raise_for_status(response) -> None:
+        """Raises with the server's error message, e.g. why a lesson can't be learned."""
+        if response.ok:
+            return
+        try:
+            message = response.json().get("message")
+        except ValueError:
+            message = None
+        if not message:
+            response.raise_for_status()
+        raise RuntimeError(message)
 
     def _resolve_url(self, url_option: str | None) -> str:
         if url_option:

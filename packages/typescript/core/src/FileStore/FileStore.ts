@@ -149,6 +149,20 @@ export class FileStore {
   }
 
   /**
+   * Lists names of files in the directory at the specified relative path. If
+   * the directory doesn't exist, it returns an empty list.
+   *
+   * @param relPath Store-relative directory path
+   */
+  async list(relPath = ""): Promise<string[]> {
+    const dirPath = this.resolve(relPath);
+    const entries = await fs
+      .readdir(dirPath, { withFileTypes: true })
+      .catch(() => []);
+    return entries.filter((entry) => entry.isFile()).map((entry) => entry.name);
+  }
+
+  /**
    * Removes the store directory.
    */
   async clear(): Promise<void> {

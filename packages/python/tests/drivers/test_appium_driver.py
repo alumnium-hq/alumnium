@@ -1,7 +1,7 @@
 from unittest.mock import MagicMock
 
 from appium.webdriver.common.appiumby import AppiumBy as By
-from pytest import raises
+from pytest import mark, raises
 from selenium.common.exceptions import NoSuchElementException
 
 from alumnium.accessibility import AccessibilityElement
@@ -67,3 +67,48 @@ def ios_remote() -> MagicMock:
     remote = MagicMock()
     remote.capabilities = {"automationName": "XCUITest"}
     return remote
+
+
+def app_remote(capabilities: dict, url: str = "https://www.bstackdemo.com/checkout") -> MagicMock:
+    remote = MagicMock()
+    remote.capabilities = capabilities
+    remote.contexts = ["NATIVE_APP", "WEBVIEW_1"]
+    remote.current_url = url
+    return remote
+
+
+def test_app_identifies_native_apps_by_bundle_id():
+    remote = app_remote({"automationName": "XCUITest", "appium:bundleId": "com.example.todo"})
+
+    assert AppiumDriver(remote).app == "com.example.todo"
+    remote.switch_to.context.assert_not_called()
+
+
+def test_app_identifies_native_apps_by_package():
+    remote = app_remote({"automationName": "UiAutomator2", "appium:appPackage": "com.example.todo"})
+
+    assert AppiumDriver(remote).app == "com.example.todo"
+
+
+@mark.parametrize(
+    "capabilities",
+    [
+        {"automationName": "XCUITest", "appium:bundleId": "com.apple.mobilesafari"},
+        {"automationName": "UiAutomator2", "appium:appPackage": "com.android.chrome"},
+        {"automationName": "XCUITest", "browserName": "Safari"},
+    ],
+)
+def test_app_identifies_websites_in_browsers_by_host(capabilities):
+    assert AppiumDriver(app_remote(capabilities)).app == "www.bstackdemo.com"
+
+
+def test_app_keeps_blank_pages_unknown():
+    remote = app_remote({"automationName": "XCUITest", "appium:bundleId": "com.apple.mobilesafari"}, "about:blank")
+
+    assert AppiumDriver(remote).app == "unknown"
+
+
+def test_app_falls_back_to_bundle_id_when_url_is_unavailable():
+    remote = app_remote({"automationName": "XCUITest", "appium:bundleId": "com.apple.mobilesafari"}, "")
+
+    assert AppiumDriver(remote).app == "com.apple.mobilesafari"

@@ -198,6 +198,30 @@ describe("FileStore", () => {
     });
   });
 
+  describe("list", () => {
+    const setup = setupBeforeEach(async () => {
+      const mockDir = await createMockDir();
+      const store = new FileStore(mockDir.path);
+      return { mockDir, store };
+    });
+
+    it("lists file names in a directory", async () => {
+      const { store } = setup.cur;
+      await store.writeFile("dir/a.json", "{}");
+      await store.writeFile("dir/b.json", "{}");
+      await store.writeFile("dir/nested/c.json", "{}");
+      expect((await store.list("dir")).toSorted()).toEqual([
+        "a.json",
+        "b.json",
+      ]);
+    });
+
+    it("returns empty list if directory doesn't exist", async () => {
+      const { store } = setup.cur;
+      expect(await store.list("nonexistent")).toEqual([]);
+    });
+  });
+
   describe("readJson", () => {
     const setup = setupBeforeEach(async () => {
       const mockDir = await createMockDir();
