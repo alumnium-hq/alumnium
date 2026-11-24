@@ -42,6 +42,31 @@ describe(CachePruner, () => {
     });
   });
 
+  describe("pruneEvery", () => {
+    it("prunes at most once per interval", async () => {
+      const { cacheDir, pruner } = await setup();
+      await writeEntry(cacheDir.path, "app/responses/a", 100, DAY);
+      await writeEntry(cacheDir.path, "app/responses/b", 100, DAY);
+
+      expect(await pruner.pruneEvery(HOUR, { maxSize: 150 })).toMatchObject({
+        removedEntries: 1,
+      });
+      expect(await pruner.pruneEvery(HOUR, { maxSize: 0 })).toBeNull();
+
+      await setAge(path.join(cacheDir.path, ".prune.stamp"), 2 * HOUR);
+      expect(await pruner.pruneEvery(HOUR, { maxSize: 50 })).toMatchObject({
+        removedEntries: 1,
+      });
+    });
+
+    it("skips a missing cache directory", async () => {
+      const { cacheDir } = await setup();
+      const pruner = new CachePruner(path.join(cacheDir.path, "missing"));
+
+      expect(await pruner.pruneEvery(HOUR, { maxSize: 0 })).toBeNull();
+    });
+  });
+
   describe("prune", () => {
     it("keeps the cache when it's under the max size", async () => {
       const { cacheDir, pruner } = await setup();
@@ -103,6 +128,18 @@ describe(CachePruner, () => {
 
       expect(await remainingEntries(cacheDir.path, pruner)).toEqual([
         "app/responses/used",
+      ]);
+    });
+
+    it("reports without removing in dry run", async () => {
+      const { cacheDir, pruner } = await setup();
+      await writeEntry(cacheDir.path, "app/responses/a", 100, DAY);
+
+      const result = await pruner.prune({ maxSize: 50, dryRun: true });
+
+      expect(result).toMatchObject({ removedEntries: 1, removedSize: 100 });
+      expect(await remainingEntries(cacheDir.path, pruner)).toEqual([
+        "app/responses/a",
       ]);
     });
 

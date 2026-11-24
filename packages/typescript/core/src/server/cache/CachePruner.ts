@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
+import { Env } from "../../Env.ts";
 import { Logger } from "../../telemetry/Logger.ts";
 
 const logger = Logger.get(import.meta.url);
@@ -9,6 +10,7 @@ export namespace CachePruner {
   export interface Options {
     maxAge?: number | undefined; // ms
     maxSize?: number | undefined; // bytes
+    dryRun?: boolean | undefined;
   }
 
   export interface Entry {
@@ -28,10 +30,12 @@ export namespace CachePruner {
 export class CachePruner {
   static TARGET_SIZE_RATIO = 0.9;
   static GRACE_PERIOD_MS = 60 * 60 * 1000;
+  static AUTO_PRUNE_INTERVAL_MS = 60 * 60 * 1000;
   static STALE_LOCK_MS = 10 * 60 * 1000;
 
   static #ENTRY_FILE = "response.json";
   static #LOCK_FILE = ".prune.lock";
+  static #STAMP_FILE = ".prune.stamp";
   static #TRASH_PREFIX = ".trash-";
 
   readonly dir: string;
@@ -66,11 +70,48 @@ export class CachePruner {
     }
   }
 
+  async pruneEvery(
+    interval: number,
+    options: CachePruner.Options,
+  ): Promise<CachePruner.Result | null> {
+    const stampPath = path.join(this.dir, CachePruner.#STAMP_FILE);
+    const stamp = await fs.stat(stampPath).catch(() => null);
+    if (stamp && Date.now() - stamp.mtimeMs < interval) return null;
+
+    const exists = await fs.stat(this.dir).catch(() => null);
+    if (!exists) return null;
+
+    await fs.writeFile(stampPath, "");
+    return this.prune(options);
+  }
+
+  async autoPrune(): Promise<void> {
+    const maxSize = Env.ALUMNIUM_CACHE_MAX_SIZE || undefined;
+    const maxAge = Env.ALUMNIUM_CACHE_MAX_AGE;
+    if (!maxSize && !maxAge) return;
+
+    try {
+      const result = await this.pruneEvery(CachePruner.AUTO_PRUNE_INTERVAL_MS, {
+        maxSize,
+        maxAge,
+      });
+
+      if (result?.removedEntries)
+        logger.info(
+          `Pruned {removedEntries} of {entries} cache entries ({removedSize} of {size} bytes)`,
+          { ...result },
+        );
+    } catch (error) {
+      logger.warn(`Failed to prune cache: {error}`, { error });
+    }
+  }
+
   async #prune({
     maxSize = Infinity,
     maxAge = Infinity,
+    dryRun = false,
   }: CachePruner.Options): Promise<CachePruner.Result> {
-    await this.#removeTrash();
+    if (!dryRun) await this.#removeTrash();
 
     const now = Date.now();
     const entries = await this.entries();
@@ -87,7 +128,7 @@ export class CachePruner {
       if (age < CachePruner.GRACE_PERIOD_MS) break;
       if (remainingSize <= targetSize && age <= maxAge) break;
 
-      if (await this.#remove(entry)) {
+      if (dryRun || (await this.#remove(entry))) {
         remainingSize -= entry.size;
         removedEntries++;
       }

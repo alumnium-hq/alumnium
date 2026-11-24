@@ -95,6 +95,14 @@ Sets the cache provider used by Alumnium. Supported values are:
 
 Set to `true` to store the full LLM request in `request.json` next to each cached response. It helps to investigate why a request misses the cache. Requests include the whole accessibility tree, so they take up most of the cache size. Default is `false`.
 
+### `ALUMNIUM_CACHE_MAX_AGE`
+
+Prunes cache entries that weren't used for longer than this duration, e.g. `12h` or `30d`. Supported units are `ms`, `s`, `m`, `h`, `d` and `w`. Not set by default.
+
+### `ALUMNIUM_CACHE_MAX_SIZE`
+
+Prunes the least recently used cache entries once the cache grows above this size, e.g. `500MB` or `2GB`. Supported units are `B`, `KB`, `MB`, `GB` and `TB`, in powers of 1024. Set to `0` to disable pruning by size. Default is `1GB`.
+
 ### `ALUMNIUM_CACHE_PATH`
 
 Sets the directory where the filesystem cache is stored. Default is `.alumnium/cache`.

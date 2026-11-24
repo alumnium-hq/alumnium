@@ -127,6 +127,29 @@ describe(ChainedCache, () => {
       expect(cache1.save).toHaveBeenCalledTimes(1);
       expect(cache2.save).toHaveBeenCalledTimes(1);
     });
+
+    it("runs afterSave once all caches are saved", async () => {
+      const { sessionContext, cache1, cache2 } = setup();
+      const calls: string[] = [];
+      vi.mocked(cache1.save).mockImplementation(async () => {
+        await new Promise((resolve) => setTimeout(resolve, 5));
+        calls.push("cache1");
+      });
+      vi.mocked(cache2.save).mockImplementation(async () => {
+        calls.push("cache2");
+      });
+      const chained = new ChainedCache(
+        sessionContext,
+        [cache1, cache2],
+        async () => {
+          calls.push("afterSave");
+        },
+      );
+
+      await chained.save();
+
+      expect(calls).toEqual(["cache2", "cache1", "afterSave"]);
+    });
   });
 
   describe("discard", () => {

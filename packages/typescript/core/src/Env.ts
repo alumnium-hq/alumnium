@@ -11,9 +11,11 @@ import { defaultModelProvider, Model } from "./Model.ts";
 import { LoggerSchema } from "./telemetry/LoggerSchema.ts";
 import {
   arrayString,
+  durationString,
   filenameString,
   jsonString,
   pathString,
+  sizeString,
 } from "./utils/schema.ts";
 import { maskString } from "./utils/string.ts";
 
@@ -47,6 +49,17 @@ export const Env = {
 
   get ALUMNIUM_CACHE_DEBUG() {
     return envVar("ALUMNIUM_CACHE_DEBUG", z.stringbool().default(false));
+  },
+
+  get ALUMNIUM_CACHE_MAX_AGE() {
+    return envVar("ALUMNIUM_CACHE_MAX_AGE", durationString().optional());
+  },
+
+  get ALUMNIUM_CACHE_MAX_SIZE() {
+    return envVar(
+      "ALUMNIUM_CACHE_MAX_SIZE",
+      sizeString().default(1024 ** 3), // 1GB
+    );
   },
 
   get ALUMNIUM_CACHE_PATH() {
