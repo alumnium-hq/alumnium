@@ -7,7 +7,7 @@ import {
   it,
   vi,
 } from "vitest";
-import { Env } from "./Env.ts";
+import { Env, envVarSchema } from "./Env.ts";
 import { defaultModelProvider } from "./Model.ts";
 
 afterEach(() => {
@@ -27,6 +27,15 @@ describe("Env", () => {
   it("applies the schema default when the variable is unset", () => {
     vi.stubEnv("ALUMNIUM_CACHE", undefined);
     expect(Env.ALUMNIUM_CACHE).toBe("filesystem");
+  });
+
+  it("returns a variable schema without reading the variable", () => {
+    vi.stubEnv("ALUMNIUM_SELENIUM_BROWSER", "invalid");
+    const Schema = envVarSchema("ALUMNIUM_SELENIUM_BROWSER");
+
+    expect(Schema.parse(undefined)).toBe("chrome");
+    expect(Schema.parse("firefox")).toBe("firefox");
+    expect(() => Env.ALUMNIUM_SELENIUM_BROWSER).toThrow();
   });
 
   it.each([

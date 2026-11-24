@@ -5,18 +5,18 @@ description: Configure Alumnium with AI providers like OpenAI, Anthropic, Google
 
 Alumnium needs access to an AI model to work. The following models are supported:
 
-| Provider                | Model                   |
-| ----------------------- | ----------------------- |
-| [Anthropic][1]          | Claude 5.5 Haiku        |
-| [Google][2]             | Gemini 3.5 Flash Lite   |
-| [OpenAI][3] _(default)_ | GPT-6 Luna              |
-| [OpenRouter][27]        | GPT-6 Luna              |
-| [Codex][22]             | GPT-6 Luna              |
-| [DeepSeek][12]          | DeepSeek Flash          |
-| [Meta][8]               | Muse Spark 1.3          |
-| [MistralAI][16]         | Mistral Large 4         |
-| [Ollama][15]            | Qwen 3.6                |
-| [xAI][18]               | Grok 4.3                |
+| Provider                | Model                 |
+| ----------------------- | --------------------- |
+| [Anthropic][1]          | Claude 5.5 Haiku      |
+| [Google][2]             | Gemini 3.5 Flash Lite |
+| [OpenAI][3] _(default)_ | GPT-6 Luna            |
+| [OpenRouter][27]        | GPT-6 Luna            |
+| [Codex][22]             | GPT-6 Luna            |
+| [DeepSeek][12]          | DeepSeek Flash        |
+| [Meta][8]               | Muse Spark 1.3        |
+| [MistralAI][16]         | Mistral Large 4       |
+| [Ollama][15]            | Qwen 3.6              |
+| [xAI][18]               | Grok 4.3              |
 
 These models were chosen because they provide the best balance between intelligence, performance, and cost. Most models now support reasoning capabilities for improved accuracy and decision-making in test automation.
 
