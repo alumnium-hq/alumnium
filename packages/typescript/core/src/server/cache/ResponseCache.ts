@@ -1,5 +1,6 @@
 import type { LanguageModelV4GenerateResult } from "@ai-sdk/provider";
 import { AppId } from "../../AppId.ts";
+import { Env } from "../../Env.ts";
 import { AiSdk } from "../../llm/AiSdk.ts";
 import { Telemetry } from "../../telemetry/Telemetry.ts";
 import type { Tracer } from "../../telemetry/Tracer.ts";
@@ -117,14 +118,15 @@ export class ResponseCache extends ServerCache {
 
         await Promise.all([
           entryStore.writeJson("response.json", result),
-          entryStore.writeJson("request.json", {
-            version: "ai-sdk-v1",
-            key: request.key,
-            app,
-            model: request.model,
-            params: request.params,
-            meta: request.meta,
-          }),
+          Env.ALUMNIUM_CACHE_DEBUG &&
+            entryStore.writeJson("request.json", {
+              version: "ai-sdk-v1",
+              key: request.key,
+              app,
+              model: request.model,
+              params: request.params,
+              meta: request.meta,
+            }),
         ]);
       }),
     );

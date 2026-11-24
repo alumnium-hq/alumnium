@@ -1,10 +1,11 @@
 import type { LanguageModelV4CallOptions } from "@ai-sdk/provider";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   createMockDir,
   pushMock,
 } from "../../../../alumnium/tests/unit/mocks.ts";
 import { AppId } from "../../AppId.ts";
+import { Env } from "../../Env.ts";
 import { GlobalFileStorePaths } from "../../FileStore/GlobalFileStorePaths.ts";
 import { AiSdkFactory } from "../../llm/__factories__/AiSdkFactory.ts";
 import { Model } from "../../Model.ts";
@@ -14,6 +15,11 @@ import { SessionId } from "../session/SessionId.ts";
 import { CacheStore } from "./CacheStore.ts";
 import { ResponseCache } from "./ResponseCache.ts";
 import type { ServerCache } from "./ServerCache.ts";
+
+afterEach(() => {
+  vi.unstubAllEnvs();
+  Env.reset();
+});
 
 describe(ResponseCache, () => {
   it("saves and looks up cached response", async () => {
@@ -25,13 +31,25 @@ describe(ResponseCache, () => {
 
     const files = await cacheDir.flatTree();
     expect(files).toEqual([
-      "test-app/openai/test/responses/first/request.json",
       "test-app/openai/test/responses/first/response.json",
     ]);
 
     const cached = await cache.lookup(request1);
     expect(cached).toEqual(result);
     expect(cached).not.toBeNull();
+  });
+
+  it("writes requests only when ALUMNIUM_CACHE_DEBUG is enabled", async () => {
+    vi.stubEnv("ALUMNIUM_CACHE_DEBUG", "true");
+    const { cache, cacheDir, request1 } = await setup();
+
+    await cache.update(request1, AiSdkFactory.generateResult({ text: "Hi" }));
+    await cache.save();
+
+    expect(await cacheDir.flatTree()).toEqual([
+      "test-app/openai/test/responses/first/request.json",
+      "test-app/openai/test/responses/first/response.json",
+    ]);
   });
 
   it("supports multiple cache instances saving concurrently", async () => {
@@ -49,9 +67,7 @@ describe(ResponseCache, () => {
 
     const files = await cacheDir.flatTree();
     expect(files).toEqual([
-      "test-app/openai/test/responses/first/request.json",
       "test-app/openai/test/responses/first/response.json",
-      "test-app/openai/test/responses/second/request.json",
       "test-app/openai/test/responses/second/response.json",
     ]);
 
@@ -115,7 +131,6 @@ describe(ResponseCache, () => {
 
     const files = await cacheDir.flatTree();
     expect(files).toEqual([
-      "test-app/openai/test/responses/first/request.json",
       "test-app/openai/test/responses/first/response.json",
     ]);
   });

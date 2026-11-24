@@ -91,6 +91,10 @@ Sets the cache provider used by Alumnium. Supported values are:
 - `filesystem` (default)
 - `none` or `false`
 
+### `ALUMNIUM_CACHE_DEBUG`
+
+Set to `true` to store the full LLM request in `request.json` next to each cached response. It helps to investigate why a request misses the cache. Requests include the whole accessibility tree, so they take up most of the cache size. Default is `false`.
+
 ### `ALUMNIUM_CACHE_PATH`
 
 Sets the directory where the filesystem cache is stored. Default is `.alumnium/cache`.

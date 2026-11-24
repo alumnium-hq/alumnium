@@ -45,6 +45,10 @@ export const Env = {
     );
   },
 
+  get ALUMNIUM_CACHE_DEBUG() {
+    return envVar("ALUMNIUM_CACHE_DEBUG", z.stringbool().default(false));
+  },
+
   get ALUMNIUM_CACHE_PATH() {
     return envVar("ALUMNIUM_CACHE_PATH", pathString().optional());
   },
