@@ -41,7 +41,7 @@ describe("McpTool", () => {
       get: vi.fn(async () => ""),
     };
     pushMock(
-      vi.spyOn(McpState, "getDriverAlumni").mockReturnValue(al as any),
+      vi.spyOn(McpState, "getDriverState").mockReturnValue({ al } as any),
       vi.spyOn(McpArtifactsStore, "saveScreenshot").mockResolvedValue(null),
     );
 
@@ -50,6 +50,34 @@ describe("McpTool", () => {
     expect(al[method]).toHaveBeenCalledWith(expect.any(String), {
       vision: false,
       cache: false,
+    });
+  });
+
+  it("adds the files an action downloaded to the do result", async () => {
+    const al = {
+      do: vi.fn(async () => ({ explanation: "Done", steps: [], changes: "" })),
+    };
+    const downloads = {
+      report: vi.fn(async () => ({
+        downloads: [{ file: "report.xlsx", bytes: 2048 }],
+      })),
+    };
+    pushMock(
+      vi
+        .spyOn(McpState, "getDriverState")
+        .mockReturnValue({ al, downloads } as any),
+      vi.spyOn(McpArtifactsStore, "saveScreenshot").mockResolvedValue(null),
+    );
+
+    const [content] = await doMcpTool.execute(
+      { id: "test", goal: "click export", vision: false },
+      {},
+    );
+
+    expect(JSON.parse(content!.text)).toEqual({
+      explanation: "Done",
+      performed_steps: [],
+      downloads: [{ file: "report.xlsx", bytes: 2048 }],
     });
   });
 });

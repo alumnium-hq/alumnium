@@ -11,6 +11,7 @@ import {
 } from "@alumnium/core/internal";
 import { PlaywrightDriver } from "@alumnium/playwright";
 import type { McpArtifactsStore } from "./McpArtifactsStore.ts";
+import { McpDownloads } from "./McpDownloads.ts";
 import type { McpDriver } from "./mcpDrivers.ts";
 
 const { logger, tracer } = Telemetry.get(import.meta.url);
@@ -24,6 +25,8 @@ export namespace McpState {
     tree?: BaseServerAccessibilityTree | undefined;
     readonly mcpDriver: McpDriver;
     readonly artifactsStore: McpArtifactsStore;
+    /** Set for Playwright-driven browsers, the only ones whose downloads are saved. */
+    readonly downloads?: McpDownloads | undefined;
     stepCounter: number;
   }
 }
@@ -56,10 +59,17 @@ export abstract class McpState {
   ): void {
     this.#registerCleanupHooks();
 
+    let downloads: McpDownloads | undefined;
+    if (al.driver instanceof PlaywrightDriver) {
+      downloads = new McpDownloads(artifactsStore);
+      downloads.watch(al.driver.page.context());
+    }
+
     this.#drivers[id] = {
       al,
       mcpDriver,
       artifactsStore: artifactsStore,
+      downloads,
       stepCounter: 1,
     };
 
@@ -101,6 +111,14 @@ export abstract class McpState {
 
     const { al } = driverState;
     const stats = await al.getStats();
+
+    // Closing the browser deletes a download that is still being saved.
+    const { download_errors: downloadErrors } =
+      (await driverState.downloads?.report()) ?? {};
+    if (downloadErrors)
+      logger.warn(`Driver ${id}: downloads not saved: {errors}`, {
+        errors: downloadErrors,
+      });
 
     if (al.driver instanceof PlaywrightDriver) {
       logger.debug(`Driver ${id}: Stopping Playwright tracing`);
