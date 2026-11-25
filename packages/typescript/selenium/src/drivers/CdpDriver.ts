@@ -56,6 +56,15 @@ export class CdpDriver extends SeleniumDriver {
   #shadowChildToHostMap: Partial<Record<number, number>> = {};
   #cdpConnection: CdpConnection | null = null;
 
+  @span("driver.set_geolocation", BaseDriver.spanAttrs)
+  async setGeolocation(latitude: number, longitude: number): Promise<void> {
+    await this.executeCdpCommand("Emulation.setGeolocationOverride", {
+      latitude,
+      longitude,
+      accuracy: 1,
+    });
+  }
+
   @span("driver.fetch_accessibility_tree", BaseDriver.spanAttrs)
   protected override async fetchAccessibilityTree(): Promise<BaseAccessibilityTree> {
     // Switch to default content to ensure we're at the top level for frame enumeration

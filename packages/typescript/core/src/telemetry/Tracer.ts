@@ -215,6 +215,10 @@ export namespace Tracer {
       Attrs: SpansDriverAttrs;
     };
 
+    "driver.set_geolocation": {
+      Attrs: SpansDriverAttrs;
+    };
+
     "driver.quit": {
       Attrs: SpansDriverAttrs;
     };

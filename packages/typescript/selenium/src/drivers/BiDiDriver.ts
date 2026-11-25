@@ -71,6 +71,13 @@ interface BiDiDataResponse {
 export class BiDiDriver extends SeleniumDriver {
   platform = "firefox" as const;
 
+  @span("driver.set_geolocation", BaseDriver.spanAttrs)
+  async setGeolocation(latitude: number, longitude: number): Promise<void> {
+    await this.#sendBiDiCommand("emulation.setGeolocationOverride", {
+      coordinates: { latitude, longitude },
+    });
+  }
+
   @span("driver.fetch_accessibility_tree", BaseDriver.spanAttrs)
   protected override async fetchAccessibilityTree(): Promise<BaseAccessibilityTree> {
     await this.driver.switchTo().defaultContent();

@@ -133,6 +133,9 @@ describe(BaseDriver, () => {
       pressKey(_key: Keys.Key): Promise<void> {
         throw new Error("Not implemented");
       }
+      setGeolocation(): Promise<void> {
+        throw new Error("Not implemented");
+      }
       quit(): Promise<void> {
         throw new Error("Not implemented");
       }

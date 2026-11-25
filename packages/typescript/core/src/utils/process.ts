@@ -22,7 +22,10 @@ export async function exec(
 export function spawn(
   command: string,
   args: string[],
-  options: Pick<SpawnOptionsWithoutStdio, "env" | "timeout"> = {},
+  options: Pick<
+    SpawnOptionsWithoutStdio,
+    "env" | "timeout" | "signal" | "killSignal"
+  > = {},
 ): Promise<{ status: number | null; stdout: string; stderr: string }> {
   return new Promise((resolve, reject) => {
     const child = spawnProcess(command, args, {

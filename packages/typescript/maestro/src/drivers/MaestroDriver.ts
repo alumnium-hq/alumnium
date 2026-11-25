@@ -6,6 +6,7 @@ import {
   BaseDriver,
   ClickTool,
   type Driver,
+  exec,
   type Keys,
   PressKeyTool,
   ScrollTool,
@@ -177,6 +178,24 @@ export class MaestroDriver extends BaseDriver<never> {
   async wait(seconds: number): Promise<void> {
     const clampedSeconds = Math.max(1, Math.min(30, seconds));
     await sleep(clampedSeconds * 1000);
+  }
+
+  @span("driver.set_geolocation", BaseDriver.spanAttrs)
+  async setGeolocation(latitude: number, longitude: number): Promise<void> {
+    if (this.platform === "ios")
+      await exec("xcrun", [
+        "simctl",
+        "location",
+        this.session.deviceId,
+        "set",
+        `${latitude},${longitude}`,
+      ]);
+    else
+      await this.session.run(lit`
+        - setLocation:
+            latitude: ${latitude}
+            longitude: ${longitude}
+      `);
   }
 
   @span("driver.quit", BaseDriver.spanAttrs)

@@ -63,6 +63,7 @@ export abstract class BaseDriver<TElement = unknown> {
   abstract dragSlider(id: number, value: number): void | Promise<void>;
   abstract dragAndDrop(fromId: number, toId: number): Promise<void>;
   abstract pressKey(key: Keys.Key): Promise<void>;
+  abstract setGeolocation(latitude: number, longitude: number): Promise<void>;
   abstract quit(): Promise<void>;
   abstract back(): Promise<void>;
   abstract screenshot(): Promise<string>;
