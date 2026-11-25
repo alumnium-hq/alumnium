@@ -16,6 +16,7 @@ import {
 import {
   type Driver,
   Env,
+  exec,
   FileStore,
   Logger,
   TypeUtils,
@@ -43,11 +44,64 @@ export async function closeMcpDriver(driver: McpDriver): Promise<void> {
   } else await driver.close();
 }
 
+export async function setMcpDriverGeolocation(
+  driver: McpDriver,
+  platform: Driver.Platform,
+  [latitude, longitude]: McpDriver.Geolocation,
+  device?: string,
+): Promise<void> {
+  const coordinates = { latitude, longitude };
+  if (driver instanceof XcodeSession || driver instanceof MaestroSession) {
+    if (driver instanceof MaestroSession && platform === "android") {
+      await driver.run(
+        `- setLocation:\n    latitude: ${latitude}\n    longitude: ${longitude}`,
+      );
+    } else {
+      const udid = driver instanceof MaestroSession ? driver.deviceId : device;
+      if (!udid)
+        throw new Error("An iOS simulator UDID is required for geolocation");
+      await exec("xcrun", [
+        "simctl",
+        "location",
+        udid,
+        "set",
+        `${latitude},${longitude}`,
+      ]);
+    }
+  } else if ("context" in driver) {
+    await driver.context().setGeolocation(coordinates);
+  } else if ("deleteSession" in driver) {
+    if (platform === "ios")
+      await driver.execute("mobile: setSimulatedLocation", coordinates);
+    else await driver.setGeoLocation({ ...coordinates, altitude: 0 });
+  } else if (platform === "firefox") {
+    const bidi = await driver.getBidi();
+    const response = (await bidi.send({
+      method: "emulation.setGeolocationOverride",
+      params: { coordinates },
+    })) as { error?: string; message?: string };
+    if (response.error)
+      throw new Error(
+        `Could not set geolocation: ${response.message ?? response.error}`,
+      );
+  } else {
+    const cdp: McpDriver.SeleniumCdpConnection =
+      await driver.createCDPConnection("page");
+    const response = (await cdp.send("Emulation.setGeolocationOverride", {
+      ...coordinates,
+      accuracy: 1,
+    })) as { error?: { message: string } };
+    if (response.error)
+      throw new Error(`Could not set geolocation: ${response.error.message}`);
+  }
+}
+
 export namespace McpDriver {
   type PlaywrightCookie = Parameters<BrowserContext["addCookies"]>[0][number];
 
   export type Cookies = PlaywrightCookie[];
   export type Headers = Record<string, string | Record<string, string>>;
+  export type Geolocation = [latitude: number, longitude: number];
 
   export interface MobileOptions {
     /**

@@ -12,7 +12,7 @@ const devicesSchema = z.object({
         z.object({
           udid: z.string(),
           name: z.string(),
-          deviceTypeIdentifier: z.string(),
+          state: z.string(),
           isAvailable: z.boolean().optional(),
         }),
       ),
@@ -54,43 +54,42 @@ let installation:
     }
   | undefined;
 
+export async function findIosSimulator(device?: string, signal?: AbortSignal) {
+  const result = await exec(
+    "xcrun",
+    ["simctl", "list", "devices", "available", "--json"],
+    { signal, killSignal: "SIGKILL" },
+  );
+  const { devices } = devicesSchema.parse(JSON.parse(result.stdout));
+  const available = Object.entries(devices)
+    .filter(([runtime]) =>
+      runtime.startsWith("com.apple.CoreSimulator.SimRuntime.iOS-"),
+    )
+    .flatMap(([, entries]) => entries)
+    .filter((entry) => entry.isAvailable !== false);
+  if (!device) return available.find((entry) => entry.state === "Booted");
+  const matches = available.filter(
+    (entry) =>
+      entry.udid.toLowerCase() === device.toLowerCase() ||
+      entry.name === device,
+  );
+  if (matches.length > 1)
+    throw new Error(
+      `Multiple iOS simulators match "${device}"; select a simulator by UDID`,
+    );
+  return matches[0];
+}
+
 export async function resolveIosSimulatorProfile(
   device?: string,
   signal?: AbortSignal,
 ): Promise<{
+  name: string;
   deviceType: string;
   runtime: string;
 }> {
   signal?.throwIfAborted();
   const commandOptions = { signal, killSignal: "SIGKILL" as const };
-  if (device) {
-    const result = await exec(
-      "xcrun",
-      ["simctl", "list", "devices", "available", "--json"],
-      commandOptions,
-    );
-    const { devices } = devicesSchema.parse(JSON.parse(result.stdout));
-    const matches = Object.entries(devices)
-      .flatMap(([runtime, entries]) =>
-        entries.map((entry) => ({ runtime, ...entry })),
-      )
-      .filter(
-        (entry) =>
-          entry.isAvailable !== false &&
-          (entry.udid.toLowerCase() === device.toLowerCase() ||
-            entry.name === device),
-      );
-    const [template, ...others] = matches;
-    if (!template || others.length)
-      throw new Error(
-        "The simulator template is unavailable or ambiguous; select an available simulator by UDID or omit device to create one automatically",
-      );
-    return {
-      deviceType: template.deviceTypeIdentifier,
-      runtime: template.runtime,
-    };
-  }
-
   let version: string;
   try {
     version = (
@@ -108,20 +107,26 @@ export async function resolveIosSimulatorProfile(
     );
   }
   let catalog = await readCatalog(signal);
-  if (!catalog.devicetypes.some(isDefaultDevice))
+  const matchesDevice = (type: Catalog["devicetypes"][number]) =>
+    device
+      ? type.name === device || type.identifier === device
+      : isDefaultDevice(type);
+  if (!catalog.devicetypes.some(matchesDevice))
     throw new Error(
-      "Xcode has no iPhone device profiles. Complete Xcode's first-launch setup before creating a simulator",
+      device
+        ? `No available iOS simulator or device type matches "${device}"`
+        : "Xcode has no iPhone device profiles. Complete Xcode's first-launch setup before creating a simulator",
     );
-  let profile = findProfile(catalog, version);
+  let profile = findProfile(catalog, version, matchesDevice);
   if (!profile) {
     await installRuntime(version, signal);
     catalog = await readCatalog(signal);
-    profile = findProfile(catalog, version);
+    profile = findProfile(catalog, version, matchesDevice);
   }
   signal?.throwIfAborted();
   if (!profile)
     throw new Error(
-      `No compatible iPhone simulator is available for iOS ${version} after runtime installation. Check the iOS runtime in Xcode Settings > Components`,
+      `No compatible ${device ?? "iPhone"} simulator is available for iOS ${version} after runtime installation. Check the iOS runtime in Xcode Settings > Components`,
     );
   return profile;
 }
@@ -134,7 +139,11 @@ async function readCatalog(signal?: AbortSignal): Promise<Catalog> {
   return catalogSchema.parse(JSON.parse(result.stdout));
 }
 
-function findProfile(catalog: Catalog, version: string) {
+function findProfile(
+  catalog: Catalog,
+  version: string,
+  matchesDevice: (type: Catalog["devicetypes"][number]) => boolean,
+) {
   const runtimes = catalog.runtimes
     .filter(
       (runtime) =>
@@ -151,7 +160,7 @@ function findProfile(catalog: Catalog, version: string) {
         a.identifier.localeCompare(b.identifier),
     );
   const types = catalog.devicetypes
-    .filter(isDefaultDevice)
+    .filter(matchesDevice)
     .sort(
       (a, b) =>
         b.minRuntimeVersion - a.minRuntimeVersion ||
@@ -173,7 +182,11 @@ function findProfile(catalog: Catalog, version: string) {
           )),
     );
     if (deviceType)
-      return { deviceType: deviceType.identifier, runtime: runtime.identifier };
+      return {
+        name: deviceType.name,
+        deviceType: deviceType.identifier,
+        runtime: runtime.identifier,
+      };
   }
 }
 

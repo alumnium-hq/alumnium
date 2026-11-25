@@ -29,6 +29,7 @@ import {
   createFirefoxDriver,
   createMobileDriver,
   type McpDriver,
+  setMcpDriverGeolocation,
 } from "../mcpDrivers.ts";
 import { McpProfilesStore } from "../McpProfilesStore.ts";
 import { McpState } from "../McpState.ts";
@@ -109,7 +110,7 @@ export const startMcpTool = McpTool.define("start", {
           Example file path: "/path/to/capabilities.json".
 
           Alumnium-specific options go in "alumnium:options":
-            - "app" (string) — the mobile app to run: an iOS bundle id or Android package name (e.g. "com.example.app"); path to .app/.ipa/.apk (Appium; Maestro accepts a local .app when deviceLifecycle is "create"); path to .xcodeproj/.xcworkspace (Xcode); cloud provider URL (e.g. "lt://123-456") (Appium);
+            - "app" (string) — the mobile app to run: an iOS bundle id or Android package name (e.g. "com.example.app"); path to .app/.ipa/.apk (Appium; Maestro accepts a local iOS .app); path to .xcodeproj/.xcworkspace (Xcode); cloud provider URL (e.g. "lt://123-456") (Appium);
             - "appArguments" (string[]) — command-line arguments to launch the mobile app with, e.g. ["-UITesting"];
             - "appEnvironment" (object) — environment variables to launch the mobile app with, e.g. {"API_URL": "https://staging.example.com"};
             - "appReset" (boolean, default false) — wipe the app's state before launching it. A newly created simulator already has fresh app state;
@@ -117,13 +118,12 @@ export const startMcpTool = McpTool.define("start", {
             - "baseUrl" (string) — URL to navigate to automatically after driver start, e.g. "https://example.com";
             - "changeAnalysis" (boolean, default true) — enable UI changes analysis agent;
             - "cookies" (array) — cookies to set, supported for Selenium and Playwright, e.g. [{"name": "session", "value": "abc123", "domain": ".example.com"}];
-            - "device" (string or object) — the device to run on, e.g. "iPhone 16" (Playwright built-in preset name or a custom object with viewport/userAgent/deviceScaleFactor/isMobile/hasTouch, iOS real device unique device identifier, Android/iOS simulator name, etc.);
-            - "deviceLifecycle" ("reuse" or "create", default "reuse") — with "create" (Maestro and Xcode only), create a fresh temporary iOS simulator. Without "device", choose a compatible iPhone for the selected Xcode and download its iOS runtime if needed. "device" optionally pins an existing simulator template. Stop and process shutdown delete only the simulator created by this session. Android device creation is not supported yet;
-            - "deviceLocation" (object) — GPS coordinates {"latitude": 37.7, "longitude": -122.4} for a temporary device; requires "deviceLifecycle": "create";
+            - "device" (string or object) — a Playwright preset name or custom viewport/userAgent/deviceScaleFactor/isMobile/hasTouch object for browsers; a device name, UDID, or serial for mobile. For local iOS simulators (Maestro and Xcode), reuse an existing simulator by name or UDID, booting it if needed, or create one from a device type such as "iPhone 17 Pro". If omitted, reuse a booted simulator or create a compatible iPhone, downloading the selected Xcode SDK's runtime if needed. Simulators are retained after stop;
             - "disabledTools" (string[]) — tool class names to disable for this session, e.g. ["ExecuteJavascriptTool"];
             - "excludeAttributes" (string[]) — accessibility attributes to exclude from the tree, e.g., ["src"];
             - "executablePath" (string) — path to a custom Chrome or Firefox executable;
             - "fullPageScreenshot" (boolean, default false) — capture full-page screenshots.
+            - "geolocation" ([number, number]) — GPS coordinates [latitude, longitude], e.g. [37.7, -122.4]. Supported for Playwright, Selenium, Appium, Maestro, and Xcode, including existing simulators; browser geolocation permissions must be granted separately;
             - "headers" (object) — extra HTTP headers, supported for Selenium and Playwright. A string value is sent with every request, e.g. {"Authorization": "Bearer token"}; an object value is sent only to hosts matching the key, e.g. {".example.com": {"X-Feature": "on"}};
             - "headless" (boolean, default false) — run browsers/simulators headless, supported for Maestro, Playwright, Selenium, and Xcode;
             - "navigationPolicy" (object) — domain allowlist/denylist for navigation, e.g. {"allowedDomains": ["(^|\\.)example\\.com$"], "deniedDomains": ["internal"]}. Both fields are string[] of case-insensitive regex patterns matched against the hostname and full URL. When "allowedDomains" is non-empty, only matching URLs are allowed; otherwise everything is allowed except "deniedDomains" matches. Link-local/metadata IPs and file:// are always blocked;
@@ -245,6 +245,10 @@ export const startMcpTool = McpTool.define("start", {
     const profilesStore = new McpProfilesStore();
 
     const device = parseDeviceOption(alumniumOptions["device"]);
+    const geolocation = z
+      .tuple([z.number().min(-90).max(90), z.number().min(-180).max(180)])
+      .optional()
+      .parse(alumniumOptions["geolocation"]);
 
     const driverOptions: McpDriver.DriverOptions = {
       ...(alumniumOptions["headers"] !== undefined && {
@@ -325,11 +329,10 @@ export const startMcpTool = McpTool.define("start", {
       "changeAnalysis",
       "cookies",
       "device",
-      "deviceLifecycle",
-      "deviceLocation",
       "disabledTools",
       "excludeAttributes",
       "executablePath",
+      "geolocation",
       "headers",
       "headless",
       "navigationPolicy",
@@ -348,7 +351,7 @@ export const startMcpTool = McpTool.define("start", {
 
     logger.info(`Starting driver ${id} for platform: ${platformName}`);
 
-    const mobileDevice = createMobileDevice(platformName, alumniumOptions, id);
+    const mobileDevice = createMobileDevice(platformName);
     return McpState.startDriver(async (signal) => {
       let al: Alumni | undefined;
       let driver: McpDriver | undefined;
@@ -431,6 +434,13 @@ export const startMcpTool = McpTool.define("start", {
         }
 
         signal.throwIfAborted();
+        if (geolocation)
+          await setMcpDriverGeolocation(
+            driver,
+            platform,
+            geolocation,
+            preparedMobileOptions.device,
+          );
         tracer.span("mcp.driver.active", { "mcp.driver.id": id }, id);
 
         al = new Alumni(driver, {
@@ -447,6 +457,7 @@ export const startMcpTool = McpTool.define("start", {
                   ScrollTool,
                   SwitchToNextTabTool,
                   SwitchToPreviousTabTool,
+                  // Only the browser drivers can pan and zoom a map by gesture.
                   ...(platform === "ios" || platform === "android"
                     ? []
                     : [PanInDirectionTool, ZoomTool]),
