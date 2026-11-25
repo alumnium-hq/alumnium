@@ -88,7 +88,6 @@ export async function resolveIosSimulatorProfile(
   deviceType: string;
   runtime: string;
 }> {
-  signal?.throwIfAborted();
   const commandOptions = { signal, killSignal: "SIGKILL" as const };
   let version: string;
   try {
@@ -100,7 +99,7 @@ export async function resolveIosSimulatorProfile(
       )
     ).stdout.trim();
   } catch (error) {
-    signal?.throwIfAborted();
+    if (signal?.aborted) throw error;
     throw new Error(
       `iOS simulators require Xcode with iOS support. Install Xcode, complete its first-launch setup, and select it in Xcode Settings > Locations: ${error}`,
       { cause: error },
@@ -123,7 +122,6 @@ export async function resolveIosSimulatorProfile(
     catalog = await readCatalog(signal);
     profile = findProfile(catalog, version, matchesDevice);
   }
-  signal?.throwIfAborted();
   if (!profile)
     throw new Error(
       `No compatible ${device ?? "iPhone"} simulator is available for iOS ${version} after runtime installation. Check the iOS runtime in Xcode Settings > Components`,

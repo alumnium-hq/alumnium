@@ -22,7 +22,6 @@ export class IosSimulator implements MobileDevice {
     options: McpDriver.MobileOptions,
   ): Promise<McpDriver.MobileOptions> {
     const signal = this.#preparation.signal;
-    signal.throwIfAborted();
     const commandOptions = { signal, killSignal: "SIGKILL" as const };
     const existing = await findIosSimulator(options.device, signal);
     let device = existing?.udid;
@@ -35,7 +34,6 @@ export class IosSimulator implements MobileDevice {
       );
       device = created.stdout.trim();
     }
-    signal.throwIfAborted();
     if (existing?.state !== "Booted")
       await exec("xcrun", ["simctl", "boot", device], commandOptions);
     await exec("xcrun", ["simctl", "bootstatus", device, "-b"], commandOptions);

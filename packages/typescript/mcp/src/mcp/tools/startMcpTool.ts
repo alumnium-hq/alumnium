@@ -24,7 +24,6 @@ import {
 import { createMobileDevice } from "../devices/MobileDevice.ts";
 import { McpArtifactsStore } from "../McpArtifactsStore.ts";
 import {
-  closeMcpDriver,
   createChromeDriver,
   createFirefoxDriver,
   createMobileDriver,
@@ -110,10 +109,10 @@ export const startMcpTool = McpTool.define("start", {
           Example file path: "/path/to/capabilities.json".
 
           Alumnium-specific options go in "alumnium:options":
-            - "app" (string) — the mobile app to run: an iOS bundle id or Android package name (e.g. "com.example.app"); path to .app/.ipa/.apk (Appium; Maestro accepts a local iOS .app); path to .xcodeproj/.xcworkspace (Xcode); cloud provider URL (e.g. "lt://123-456") (Appium);
+            - "app" (string) — the mobile app to run: an iOS bundle id or Android package name (e.g. "com.example.app"); path to .app/.ipa/.apk (Appium and Maestro); path to .xcodeproj/.xcworkspace (Xcode); cloud provider URL (e.g. "lt://123-456") (Appium);
             - "appArguments" (string[]) — command-line arguments to launch the mobile app with, e.g. ["-UITesting"];
             - "appEnvironment" (object) — environment variables to launch the mobile app with, e.g. {"API_URL": "https://staging.example.com"};
-            - "appReset" (boolean, default false) — wipe the app's state before launching it. A newly created simulator already has fresh app state;
+            - "appReset" (boolean, default false) — wipe the app's state before launching it;
             - "autoswitchToNewTab" (boolean, default true) — auto-switch to newly opened tabs;
             - "baseUrl" (string) — URL to navigate to automatically after driver start, e.g. "https://example.com";
             - "changeAnalysis" (boolean, default true) — enable UI changes analysis agent;
@@ -352,16 +351,14 @@ export const startMcpTool = McpTool.define("start", {
     logger.info(`Starting driver ${id} for platform: ${platformName}`);
 
     const mobileDevice = createMobileDevice(platformName);
-    return McpState.startDriver(async (signal) => {
+    return McpState.startDriver(async () => {
       let al: Alumni | undefined;
-      let driver: McpDriver | undefined;
       try {
-        signal.throwIfAborted();
         const platform = Driver.Platform.safeParse(platformName).data;
         const preparedMobileOptions = mobileDevice
           ? await mobileDevice.prepare(mobileOptions)
           : mobileOptions;
-        signal.throwIfAborted();
+        let driver: McpDriver;
         switch (platform) {
           case "chromium": {
             driver = await tracer.span(
@@ -433,7 +430,6 @@ export const startMcpTool = McpTool.define("start", {
             never(platform);
         }
 
-        signal.throwIfAborted();
         if (geolocation)
           await setMcpDriverGeolocation(
             driver,
@@ -501,7 +497,6 @@ export const startMcpTool = McpTool.define("start", {
           driverName += " (cloakbrowser)";
         }
 
-        signal.throwIfAborted();
         McpState.registerDriver(id, al, driver, artifactsStore, mobileDevice);
 
         return [
@@ -518,7 +513,6 @@ export const startMcpTool = McpTool.define("start", {
       } catch (error) {
         try {
           if (al) await al.quit();
-          else if (driver) await closeMcpDriver(driver);
         } catch (cleanupError) {
           logger.warn(`Driver startup cleanup failed: ${cleanupError}`);
         } finally {

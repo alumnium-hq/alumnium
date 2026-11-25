@@ -104,7 +104,7 @@ export abstract class McpState {
   }
 
   static async startDriver<T>(
-    start: (signal: AbortSignal) => Promise<T>,
+    start: () => Promise<T>,
     device?: MobileDevice,
   ): Promise<T> {
     if (this.#cleanupAllPromise)
@@ -114,13 +114,18 @@ export abstract class McpState {
     this.#registerCleanupHooks();
     const controller = new AbortController();
     const starting = {
-      promise: Promise.resolve().then(() => start(controller.signal)),
+      promise: Promise.resolve().then(() => {
+        controller.signal.throwIfAborted();
+        return start();
+      }),
       controller,
       device,
     };
     this.#starting.add(starting);
     try {
-      return await starting.promise;
+      const result = await starting.promise;
+      controller.signal.throwIfAborted();
+      return result;
     } finally {
       this.#starting.delete(starting);
     }
