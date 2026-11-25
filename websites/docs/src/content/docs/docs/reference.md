@@ -242,7 +242,7 @@ execution. Default is `false`; labels remain optional unless enabled.
 
 ### `ALUMNIUM_MCP_ARTIFACTS_DIR`
 
-Sets the directory where the MCP server stores artifacts such as screenshots. Default is `.alumnium/artifacts`.
+Sets the directory where the MCP server stores artifacts such as screenshots and the files a Playwright-driven browser downloads (saved in `<id>/downloads`). Default is `.alumnium/artifacts`.
 
 ### `ALUMNIUM_MCP_PROFILES_DIR`
 

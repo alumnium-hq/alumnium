@@ -116,7 +116,7 @@ export const doMcpTool = McpTool.define("do", {
     const { id, goal, vision, params } = input;
     McpParams.validate(goal, params, "goal");
 
-    const al = McpState.getDriverAlumni(id);
+    const { al, downloads } = McpState.getDriverState(id);
     const { steps, explanation, changes } = await al.do(goal, {
       vision,
       params,
@@ -135,6 +135,8 @@ export const doMcpTool = McpTool.define("do", {
     const response = Object.assign(
       { explanation, performed_steps: performedSteps },
       changes ? { changes } : {},
+      // Waits for the files this action downloaded, so the caller can read them straight away.
+      await downloads?.report(),
     );
 
     return [{ type: "text", text: JSON.stringify(response, null, 2) }];

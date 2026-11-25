@@ -112,8 +112,13 @@ export const directMcpTools = ACTOR_TOOLS.map((Tool) => {
         state.al.driver,
       );
 
+      const downloads = await state.downloads?.report();
+
       return [
         { type: "text", text: result },
+        ...(downloads && Object.keys(downloads).length
+          ? [{ type: "text" as const, text: JSON.stringify(downloads) }]
+          : []),
         ...(await fetchAccessibilityTreeMcpTool.execute({ id })),
       ];
     },
