@@ -19,8 +19,10 @@ import {
   SwitchToNextTabTool,
   SwitchToPreviousTabTool,
   Telemetry,
+  TypeUtils,
   ZoomTool,
 } from "@alumnium/core/internal";
+import { alumniumOptionsSchema } from "../alumniumOptionsSchema.ts";
 import { createMobileDevice } from "../devices/MobileDevice.ts";
 import { McpArtifactsStore } from "../McpArtifactsStore.ts";
 import {
@@ -37,24 +39,6 @@ import { McpTool } from "./McpTool.ts";
 const { tracer } = Telemetry.get(import.meta.url);
 
 /**
- * Parses `alumnium:options.device` into either a device name/identifier (string) or a Playwright
- * device-descriptor object (e.g. pasted directly from Playwright's own device list). A string is
- * a Playwright catalog name for browsers and a device name, UDID or serial for mobile drivers.
- * Field-level validation of the object form happens downstream in `resolveDeviceOptions`.
- */
-function parseDeviceOption(
-  value: unknown,
-): string | McpDriver.DeviceDescriptor | undefined {
-  if (typeof value === "string") {
-    return value;
-  }
-  if (typeof value !== "object" || value === null) {
-    return undefined;
-  }
-  return value as McpDriver.DeviceDescriptor;
-}
-
-/**
  * Resolves whether a session analyzes UI changes: the `alumnium.ai/change-analysis` request meta
  * first, so a caller can turn it off whatever the capabilities say (e.g. a replay of a recording,
  * which never reads it), then `alumnium:options.changeAnalysis`, then `ALUMNIUM_CHANGE_ANALYSIS`
@@ -68,26 +52,6 @@ export function parseChangeAnalysisOption(
   if (typeof metaValue === "boolean") return metaValue;
   if (typeof optionValue === "boolean") return optionValue;
   return envValue ?? true;
-}
-
-/**
- * Parses `alumnium:options.navigationPolicy` into `NavigationPolicy.Options`, keeping only the
- * domain fields without `allowedFilePaths`.
- */
-function parseNavigationPolicyOption(value: unknown): NavigationPolicy.Options {
-  if (typeof value !== "object" || value === null) {
-    return {};
-  }
-  const record = value as Record<string, unknown>;
-  const stringArray = (entry: unknown): string[] | undefined =>
-    Array.isArray(entry)
-      ? entry.filter((item): item is string => typeof item === "string")
-      : undefined;
-
-  return {
-    allowedDomains: stringArray(record["allowedDomains"]),
-    deniedDomains: stringArray(record["deniedDomains"]),
-  };
 }
 
 /**
@@ -188,46 +152,43 @@ export const startMcpTool = McpTool.define("start", {
       typeof input["server_url"] === "string" ? input["server_url"] : null;
 
     // Extract alumnium:options for Alumnium driver configuration
-    const alumniumOptions =
-      (capabilities["alumnium:options"] as
-        | Record<string, unknown>
-        | undefined) || {};
+    const {
+      app,
+      appArguments,
+      appEnvironment,
+      appReset,
+      baseUrl,
+      changeAnalysis: changeAnalysisOption,
+      cookies,
+      device,
+      disabledTools,
+      excludeAttributes,
+      executablePath,
+      geolocation,
+      headers,
+      headless,
+      navigationPolicy = {},
+      permissions,
+      planner,
+      profile,
+      proxy,
+      recordVideos,
+      userAgent,
+      ...driverSettings
+    } = alumniumOptionsSchema.parse(capabilities["alumnium:options"] ?? {});
     delete capabilities["alumnium:options"];
 
-    const disabledTools = Array.isArray(alumniumOptions["disabledTools"])
-      ? alumniumOptions["disabledTools"].filter(
-          (value): value is string => typeof value === "string",
-        )
-      : undefined;
-    const baseUrl =
-      typeof alumniumOptions["baseUrl"] === "string"
-        ? alumniumOptions["baseUrl"]
-        : undefined;
-    const planner =
-      typeof alumniumOptions["planner"] === "boolean"
-        ? alumniumOptions["planner"]
-        : undefined;
     const changeAnalysis = parseChangeAnalysisOption(
       meta[McpTool.CHANGE_ANALYSIS_META_KEY],
-      alumniumOptions["changeAnalysis"],
+      changeAnalysisOption,
       Env.ALUMNIUM_CHANGE_ANALYSIS,
-    );
-    const excludeAttributes = Array.isArray(
-      alumniumOptions["excludeAttributes"],
-    )
-      ? alumniumOptions["excludeAttributes"].filter(
-          (value): value is string => typeof value === "string",
-        )
-      : undefined;
-    const navigationPolicy = parseNavigationPolicyOption(
-      alumniumOptions["navigationPolicy"],
     );
 
     // Validate the domain policy immediately, before a browser/Appium process is spawned below —
     // NavigationPolicy.create() throws on a malformed pattern; the result is discarded here and
     // rebuilt (cheaply) inside `new Alumni()`.
     try {
-      NavigationPolicy.create(navigationPolicy ?? {});
+      NavigationPolicy.create(navigationPolicy);
     } catch (error) {
       const message = `Invalid domain policy configuration: ${error}`;
       logger.error(message);
@@ -243,110 +204,32 @@ export const startMcpTool = McpTool.define("start", {
     const artifactsStore = new McpArtifactsStore(id);
     const profilesStore = new McpProfilesStore();
 
-    const device = parseDeviceOption(alumniumOptions["device"]);
-    const geolocation = z
-      .tuple([z.number().min(-90).max(90), z.number().min(-180).max(180)])
-      .optional()
-      .parse(alumniumOptions["geolocation"]);
-
-    const driverOptions: McpDriver.DriverOptions = {
-      ...(alumniumOptions["headers"] !== undefined && {
-        headers: alumniumOptions["headers"] as McpDriver.Headers,
-      }),
-      ...(alumniumOptions["cookies"] !== undefined && {
-        cookies: alumniumOptions["cookies"] as McpDriver.Cookies,
-      }),
-      ...(Array.isArray(alumniumOptions["permissions"]) && {
-        permissions: alumniumOptions["permissions"] as string[],
-      }),
-      ...(typeof alumniumOptions["headless"] === "boolean" && {
-        headless: alumniumOptions["headless"],
-      }),
-      ...(typeof alumniumOptions["profile"] === "string" && {
-        profileDir: await profilesStore.ensureDir(alumniumOptions["profile"]),
-      }),
-      ...(typeof alumniumOptions["executablePath"] === "string" && {
-        executablePath: alumniumOptions["executablePath"],
-      }),
-      ...(typeof alumniumOptions["userAgent"] === "string" && {
-        userAgent: alumniumOptions["userAgent"],
-      }),
-      ...(device !== undefined && { device }),
-      ...(typeof alumniumOptions["proxy"] === "object" &&
-        alumniumOptions["proxy"] !== null &&
-        typeof (alumniumOptions["proxy"] as Record<string, unknown>)[
-          "server"
-        ] === "string" && {
-          proxy: alumniumOptions["proxy"] as {
-            server: string;
-            bypass?: string;
-            username?: string;
-            password?: string;
-          },
-        }),
-      ...(typeof alumniumOptions["recordVideos"] === "boolean" && {
-        recordVideos: alumniumOptions["recordVideos"],
-      }),
-    };
+    const driverOptions =
+      TypeUtils.fromExactOptionalTypes<McpDriver.DriverOptions>({
+        cookies,
+        device,
+        executablePath,
+        headers,
+        headless,
+        permissions,
+        profileDir:
+          profile !== undefined
+            ? await profilesStore.ensureDir(profile)
+            : undefined,
+        proxy,
+        recordVideos,
+        userAgent,
+      });
 
     // Shared mobile options, translated per driver in `createMobileDriver`.
     const mobileOptions: McpDriver.MobileOptions = {
-      ...(typeof alumniumOptions["headless"] === "boolean" && {
-        headless: alumniumOptions["headless"],
-      }),
-      ...(typeof alumniumOptions["app"] === "string" && {
-        app: alumniumOptions["app"],
-      }),
-      ...(typeof device === "string" && { device }),
-      ...(typeof alumniumOptions["appReset"] === "boolean" && {
-        appReset: alumniumOptions["appReset"],
-      }),
-      ...(Array.isArray(alumniumOptions["appArguments"]) && {
-        appArguments: alumniumOptions["appArguments"].filter(
-          (value): value is string => typeof value === "string",
-        ),
-      }),
-      ...(typeof alumniumOptions["appEnvironment"] === "object" &&
-        alumniumOptions["appEnvironment"] !== null &&
-        !Array.isArray(alumniumOptions["appEnvironment"]) &&
-        Object.values(alumniumOptions["appEnvironment"]).every(
-          (value) => typeof value === "string",
-        ) && {
-          appEnvironment: alumniumOptions["appEnvironment"] as Record<
-            string,
-            string
-          >,
-        }),
+      app,
+      appArguments,
+      appEnvironment,
+      appReset,
+      device: typeof device === "string" ? device : undefined,
+      headless,
     };
-
-    const alumniumOptionsNonDriverKeys = new Set([
-      "app",
-      "appArguments",
-      "appEnvironment",
-      "appReset",
-      "baseUrl",
-      "changeAnalysis",
-      "cookies",
-      "device",
-      "disabledTools",
-      "excludeAttributes",
-      "executablePath",
-      "geolocation",
-      "headers",
-      "headless",
-      "navigationPolicy",
-      "permissions",
-      "planner",
-      "proxy",
-      "recordVideos",
-      "userAgent",
-    ]);
-    const driverSettings: Record<string, unknown> = {};
-    for (const [key, value] of Object.entries(alumniumOptions)) {
-      if (!alumniumOptionsNonDriverKeys.has(key)) {
-        driverSettings[key] = value;
-      }
-    }
 
     logger.info(`Starting driver ${id} for platform: ${platformName}`);
 
