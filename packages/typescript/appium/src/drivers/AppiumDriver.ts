@@ -157,6 +157,16 @@ export class AppiumDriver extends BaseDriver<WebdriverIO.Element> {
     throw new Error("Zooming is not supported for this driver");
   }
 
+  @span("driver.set_geolocation", BaseDriver.spanAttrs)
+  async setGeolocation(latitude: number, longitude: number): Promise<void> {
+    if (this.platform === "ios")
+      await this.driver.execute("mobile: setSimulatedLocation", {
+        latitude,
+        longitude,
+      });
+    else await this.driver.setGeoLocation({ latitude, longitude, altitude: 0 });
+  }
+
   @span("driver.quit", BaseDriver.spanAttrs)
   async quit(): Promise<void> {
     // WebdriverIO handles session termination automatically.

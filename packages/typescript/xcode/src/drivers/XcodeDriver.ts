@@ -4,6 +4,7 @@ import {
   ClickTool,
   DragAndDropTool,
   DragSliderTool,
+  exec,
   type Keys,
   NavigateBackTool,
   PressKeyTool,
@@ -259,6 +260,17 @@ export class XcodeDriver extends BaseDriver<never> {
   @span("driver.screenshot", BaseDriver.spanAttrs)
   screenshot(): Promise<string> {
     return this.session.screenshot();
+  }
+
+  @span("driver.set_geolocation", BaseDriver.spanAttrs)
+  async setGeolocation(latitude: number, longitude: number): Promise<void> {
+    await exec("xcrun", [
+      "simctl",
+      "location",
+      this.session.deviceId,
+      "set",
+      `${latitude},${longitude}`,
+    ]);
   }
 
   @span("driver.quit", BaseDriver.spanAttrs)

@@ -91,6 +91,7 @@ export class XcodeSession {
   readonly #props: XcodeSession.Props;
   #key: string | undefined;
   #appId: string;
+  #deviceId: string | undefined;
   readonly #simulatorWindow = new SimulatorWindow();
   #approving = false;
 
@@ -101,6 +102,11 @@ export class XcodeSession {
 
   get appId(): string {
     return this.#appId;
+  }
+
+  get deviceId(): string {
+    if (!this.#deviceId) throw new Error("Xcode session is not started");
+    return this.#deviceId;
   }
 
   static async start(props: XcodeSession.Props): Promise<XcodeSession> {
@@ -159,6 +165,7 @@ export class XcodeSession {
       throw new Error(
         "XcodeDriver supports iOS simulators only; select a simulator using the device option",
       );
+    this.#deviceId = result.deviceUUID;
     await this.#simulatorWindow.open(result.deviceUUID, this.#props.headless);
     if (workspace) {
       await this.#call("DeviceInteractionInstallAndRun", {

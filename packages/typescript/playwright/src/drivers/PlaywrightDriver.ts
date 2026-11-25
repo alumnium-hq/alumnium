@@ -436,6 +436,11 @@ export class PlaywrightDriver extends BaseDriver<Locator> {
     );
   }
 
+  @span("driver.set_geolocation", BaseDriver.spanAttrs)
+  async setGeolocation(latitude: number, longitude: number): Promise<void> {
+    await this.page.context().setGeolocation({ latitude, longitude });
+  }
+
   @span("driver.quit", BaseDriver.spanAttrs)
   async quit(): Promise<void> {
     await this.cdpReady;

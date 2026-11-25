@@ -30,7 +30,6 @@ import {
   createFirefoxDriver,
   createMobileDriver,
   type McpDriver,
-  setMcpDriverGeolocation,
 } from "../mcpDrivers.ts";
 import { McpProfilesStore } from "../McpProfilesStore.ts";
 import { McpState } from "../McpState.ts";
@@ -313,13 +312,6 @@ export const startMcpTool = McpTool.define("start", {
             never(platform);
         }
 
-        if (geolocation)
-          await setMcpDriverGeolocation(
-            driver,
-            platform,
-            geolocation,
-            preparedMobileOptions.device,
-          );
         tracer.span("mcp.driver.active", { "mcp.driver.id": id }, id);
 
         al = new Alumni(driver, {
@@ -347,6 +339,8 @@ export const startMcpTool = McpTool.define("start", {
           excludeAttributes,
           navigationPolicy,
         });
+
+        if (geolocation) await al.driver.setGeolocation(...geolocation);
 
         // Apply driver options to Alumnium driver
         if (Object.keys(driverSettings).length) {
